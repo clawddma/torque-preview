@@ -47,6 +47,19 @@ Los colores de datos son la paleta validada para fondo oscuro:
 `#3987e5` (azul), `#d95926` (naranja), `#199e70` (aqua), y la rampa secuencial azul
 `#cde2fb → #184f95`. Si agregas un gráfico, usa esos y no inventes colores.
 
+## La marca
+
+| Pieza | Texto | Dónde |
+|---|---|---|
+| Nombre | **TORQ** | nav y footer |
+| Eslogan | **Tu carro, tu mejor decisión.** | bajo el logo en el footer, firma de las piezas de pauta |
+| Descriptor | **Compra y renting de carros.** | siempre acompañando al eslogan |
+
+El descriptor **no es opcional**: TORQ es una marca desconocida y sin él nadie sabe a
+qué se dedica. Decisión de Daniel, 26 de julio de 2026: la claridad sobre a qué nos
+dedicamos pesa más que dejar la puerta abierta a otras categorías. Si algún día entran
+motos, maquinaria amarilla o pesados, se cambia el par eslogan+descriptor — no el logo.
+
 ## Lenguaje
 
 Regla madre: **nunca nombres el miedo, ni siquiera para negarlo.** "No te quedes sin
