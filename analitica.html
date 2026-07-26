@@ -189,8 +189,8 @@ footer{border-top:1px solid var(--line);margin-top:56px;padding:34px 0 60px;font
   <div class="mapgrid">
     <div class="panel">
       <div class="phead">
-        <div class="ptitle">Mapa de matrículas por departamento</div>
-        <div class="psub">El área de cada círculo es proporcional a las unidades matriculadas. El anillo indica si Corautos tiene presencia física.</div>
+        <div class="ptitle" id="map-t">Mapa de matrículas</div>
+        <div class="psub" id="map-s">El área de cada círculo es proporcional a las unidades matriculadas. El anillo indica si Corautos tiene presencia física.</div>
       </div>
       <div id="map"></div>
       <div class="legend" id="map-legend"></div>
@@ -202,7 +202,7 @@ footer{border-top:1px solid var(--line);margin-top:56px;padding:34px 0 60px;font
         <div class="psub">Ordenado por unidades. El color del punto marca la cobertura; la cifra de la derecha es el crecimiento anual.</div>
       </div>
       <div class="rank" id="rank"></div>
-      <div class="note"><b>Cauca (Popayán) y Magdalena (Santa Marta)</b> tienen presencia de Corautos pero quedan agrupados dentro de “Otros” en el boletín de Fenalco-ANDI, así que no aparecen con cifra propia.</div>
+      <div class="note" id="rank-note"></div>
     </div>
   </div>
 
@@ -228,14 +228,14 @@ footer{border-top:1px solid var(--line);margin-top:56px;padding:34px 0 60px;font
     <div class="panel">
       <div class="phead">
         <div class="ptitle">Segmentos de vehículo</div>
-        <div class="psub">Acumulado ene–jun 2026 y su crecimiento anual.</div>
+        <div class="psub" id="segs-s"></div>
       </div>
       <div class="rank" id="segs"></div>
     </div>
     <div class="panel">
       <div class="phead">
         <div class="ptitle">Marcas</div>
-        <div class="psub">Top 15 por unidades acumuladas. Dongfeng resaltado.</div>
+        <div class="psub" id="marcas-s"></div>
       </div>
       <div class="rank" id="marcas"></div>
     </div>
@@ -274,7 +274,7 @@ var D = [
   {n:"Meta",               lat:3.80, lon:-73.20, acu:[3466,2154],   jun:[710,348],   cob:2, sede:"Villavicencio"},
   {n:"Risaralda",          lat:5.10, lon:-75.85, acu:[2885,2031],   jun:[485,326],   cob:2, sede:"Pereira"},
   {n:"Caldas",             lat:5.30, lon:-75.30, acu:[2709,2791],   jun:[493,470],   cob:2, sede:"Manizales"},
-  {n:"Bolívar",            lat:9.20, lon:-74.60, acu:[2704,1871],   jun:[423,331],   cob:1, sede:"Cartagena (solo taller)"},
+  {n:"Bolívar",            lat:9.20, lon:-74.60, acu:[2704,1871],   jun:[423,331],   cob:1, sede:"Cartagena · solo servicio"},
   {n:"Tolima",             lat:4.10, lon:-75.20, acu:[2319,1781],   jun:[417,322],   cob:2, sede:"Ibagué"},
   {n:"Boyacá",             lat:5.75, lon:-73.10, acu:[2223,1566],   jun:[424,263],   cob:2, sede:"Tunja · Duitama"},
   {n:"Cesar",              lat:9.60, lon:-73.55, acu:[1809,1069],   jun:[311,198],   cob:2, sede:"Valledupar"},
@@ -342,7 +342,7 @@ var SER = {
 };
 
 var TOT={acu:[157620,105006], jun:[29038,18038]};
-var C={s1:"#3987e5",s2:"#d95926",s3:"#199e70",neutral:"#383835",ok:"#0ca30c",warn:"#fab219",mut:"#8b9199",mut2:"#5d636b",paper:"#fafafa",grid:"#1e2126",axis:"#2f343b"};
+var C={s1:"#3987e5",s2:"#d95926",s3:"#199e70",neutral:"#383835",ok:"#0ca30c",warn:"#fab219",mut:"#8b9199",mut2:"#5d636b",paper:"#fafafa",grid:"#1e2126",axis:"#2f343b",surf:"#0e1013",brand:"#c8f24a"};
 // rampa secuencial azul validada (clara → oscura)
 var RAMP=["#cde2fb","#9ec5f4","#6da7ec","#3987e5","#256abf","#184f95"];
 var COBC=[C.mut2, C.warn, C.ok];
@@ -409,7 +409,7 @@ function visible(d){
   if(state.cob==="no") return d.cob===0;
   return true;
 }
-function rows(){return D.map(function(d){
+function rows(){return dataset().map(function(d){
   var v=cur(d); return {d:d,u:v[0],p:v[1],g:pct(v[0],v[1])};
 })}
 
@@ -426,8 +426,8 @@ function kpis(){
   var cards=[
     {k:"Mercado nacional · "+lbl, v:fmt(t[0]), d:'<span class="up">'+pctTxt(pct(t[0],t[1]))+'</span> vs. año anterior'},
     {k:"En la selección actual", v:fmt(sumU), d:pctTxt(pct(sumU,sumP))+" · "+(sumU/t[0]*100).toFixed(1).replace(".",",")+"% del país"},
-    {k:"Alcanzable con sede física", v:(conSede/t[0]*100).toFixed(1).replace(".",",")+"%", d:fmt(conSede)+" unidades"},
-    {k:"Mercado sin cobertura", v:(sinSede/t[0]*100).toFixed(1).replace(".",",")+"%", d:fmt(sinSede)+" unidades sin sala"},
+    {k:"Alcanzable con punto propio", v:(conSede/t[0]*100).toFixed(1).replace(".",",")+"%", d:fmt(conSede)+" unidades"},
+    {k:"Mercado sin punto propio", v:(sinSede/t[0]*100).toFixed(1).replace(".",",")+"%", d:fmt(sinSede)+" unidades por atender"},
     {k:"Plaza que más acelera", v:best?best.d.n.split(" ")[0]:"—", d:best?'<span class="up">'+pctTxt(best.g)+'</span> · '+fmt(best.u)+" unidades":""}
   ];
   el("kpis").innerHTML=cards.map(function(c){
@@ -608,6 +608,15 @@ function drawLines(){
     var y=2024+Math.floor(i/12), m=MESES[i%12];
     s+='<text x="'+X(i)+'" y="'+(H-P.b+20)+'" fill="'+C.mut2+'" font-size="'+(nw?11.5:10.5)+'" text-anchor="middle">'+m+" "+String(y).slice(2)+'</text>';
   }
+  /* el período activo se marca sobre la serie: el filtro también manda aquí */
+  var half=(W-P.l-P.r)/(n-1)/2;
+  if(state.per==="acu"){
+    s+='<rect x="'+(X(24)-half).toFixed(1)+'" y="'+P.t+'" width="'+(X(29)-X(24)+half*2).toFixed(1)+'" height="'+(H-P.t-P.b)+'" fill="'+C.brand+'" fill-opacity=".07"/>'
+      +'<text x="'+((X(24)+X(29))/2).toFixed(1)+'" y="'+(P.t+15)+'" fill="'+C.mut+'" font-size="10.5" text-anchor="middle" letter-spacing="1.5">ACUMULADO ENE–JUN 2026</text>';
+  }else{
+    s+='<line x1="'+X(29)+'" y1="'+P.t+'" x2="'+X(29)+'" y2="'+(H-P.b)+'" stroke="'+C.brand+'" stroke-width="1.5" stroke-opacity=".55"/>'
+      +'<text x="'+(X(29)-8)+'" y="'+(P.t+15)+'" fill="'+C.mut+'" font-size="10.5" text-anchor="end" letter-spacing="1.5">JUNIO 2026</text>';
+  }
   s+='<path d="'+mk(SER.total)+'" fill="none" stroke="'+C.s1+'" stroke-width="2"/>';
   s+='<path d="'+mk(SER.hib)+'" fill="none" stroke="'+C.s2+'" stroke-width="2"/>';
   s+='<path d="'+mk(SER.ele)+'" fill="none" stroke="'+C.s3+'" stroke-width="2"/>';
@@ -637,19 +646,32 @@ function drawLines(){
   }).join("");
 }
 
-/* ---------- BARRAS SIMPLES ---------- */
+/* ---------- BARRAS (reaccionan al período) ---------- */
 function drawBars(node,data,hi){
-  var max=Math.max.apply(null,data.map(function(d){return d[1]}));
-  el(node).innerHTML=data.map(function(d){
-    var g=pct(d[1],d[2]);
+  var ix=pi();
+  var val=function(d){return d[ix[0]]}, prev=function(d){return d[ix[1]]};
+  /* se reordena con el período: en junio el podio no es el mismo que en el acumulado */
+  var sorted=data.slice().sort(function(a,b){return val(b)-val(a)});
+  var max=val(sorted[0]);
+  el(node).innerHTML=sorted.map(function(d){
+    var g=pct(val(d),prev(d));
     var isHi=hi&&d[0]===hi;
     return '<div class="row">'
       +'<div class="nm" style="'+(isHi?"color:"+C.paper+";font-weight:700":"")+'">'+d[0]+'</div>'
-      +'<div class="bw"><div class="bf" style="width:'+(d[1]/max*100).toFixed(1)+'%;background:'+(isHi?C.s2:C.s1)+'"></div></div>'
-      +'<div class="vv num">'+fmt(d[1])+'</div>'
-      +'<div class="gg num '+(g>=0?"up":"down")+'">'+(d[2]<20?"nuevo":pctTxt(g))+'</div>'
+      +'<div class="bw"><div class="bf" style="width:'+(val(d)/max*100).toFixed(1)+'%;background:'+(isHi?C.s2:C.s1)+'"></div></div>'
+      +'<div class="vv num">'+fmt(val(d))+'</div>'
+      +'<div class="gg num '+(g>=0?"up":"down")+'">'+(prev(d)<20?"nuevo":pctTxt(g))+'</div>'
       +'</div>';
   }).join("");
+}
+
+function drawSegs(){
+  drawBars("segs",SEG);
+  el("segs-s").textContent=perLabel()+" y su crecimiento frente al mismo período del año anterior.";
+}
+function drawMarcas(){
+  drawBars("marcas",MAR,"Dongfeng");
+  el("marcas-s").textContent="Top 20 de "+perLabel().toLowerCase()+". Dongfeng resaltado.";
 }
 
 /* ---------- CONTEXTO ---------- */
@@ -667,21 +689,52 @@ function drawCtx(){
 }
 
 /* ---------- RENDER ---------- */
-function render(){kpis();drawMap();drawRank();drawScatter();drawLines()}
+function render(){
+  var t=state.per==="acu"?TOT.acu:TOT.jun;
+  var vis=rows().reduce(function(a,r){return a+r.u},0);
+  el("rank-note").innerHTML=(state.geo==="dep"
+    ? '<b>Cauca (Popayán) y Magdalena (Santa Marta)</b> tienen presencia de Corautos pero quedan agrupados dentro de “Otros” en el boletín de Fenalco-ANDI, así que no aparecen con cifra propia. '
+    : '<b>La vista por ciudad es la honesta para captación:</b> el comprador va a una ciudad, no a un departamento. Por eso el alcance real baja frente a la vista departamental, que le acredita a una sede todo el departamento. ')
+    +'Estas '+rows().length+' plazas suman '+fmt(vis)+' de '+fmt(t[0])+' unidades ('
+    +(vis/t[0]*100).toFixed(1).replace(".",",")+'% del país); el resto va agrupado en “Otras”.';
+  el("map-t").textContent="Mapa de matrículas por "+geoLabel();
+  el("map-s").textContent=(state.geo==="dep"
+    ? "El área de cada círculo es proporcional a las unidades matriculadas. El anillo indica si Corautos tiene presencia física."
+    : "Áreas metropolitanas. Los municipios de la Sabana se separan para que se lean; sus centroides reales se solapan con Bogotá.");
+  kpis();drawMap();drawRank();drawScatter();drawLines();drawSegs();drawMarcas();
+}
+
+/* El estado vive en la URL: así una vista concreta se puede compartir tal cual. */
+function syncPills(){
+  Array.prototype.forEach.call(document.querySelectorAll(".pills"),function(box){
+    var key=box.id.split("-")[1];
+    Array.prototype.forEach.call(box.querySelectorAll(".pill"),function(p){
+      p.setAttribute("aria-pressed",String(p.dataset.v===state[key]));
+    });
+  });
+}
+function writeHash(){
+  var h="#"+["per","geo","met","cob"].map(function(k){return k+"="+state[k]}).join("&");
+  if(location.hash!==h) history.replaceState(null,"",h);
+}
+function readHash(){
+  var valid={per:["acu","jun"],geo:["dep","am"],met:["uni","cre"],cob:["all","si","no"]};
+  location.hash.replace(/^#/,"").split("&").forEach(function(p){
+    var kv=p.split("=");
+    if(valid[kv[0]] && valid[kv[0]].indexOf(kv[1])>-1) state[kv[0]]=kv[1];
+  });
+}
 
 Array.prototype.forEach.call(document.querySelectorAll(".pills"),function(box){
   box.addEventListener("click",function(e){
     var b=e.target.closest(".pill"); if(!b)return;
-    Array.prototype.forEach.call(box.querySelectorAll(".pill"),function(p){p.setAttribute("aria-pressed",String(p===b))});
-    var key=box.id.split("-")[1];
-    state[key]=b.dataset.v;
-    render();
+    state[box.id.split("-")[1]]=b.dataset.v;
+    syncPills(); writeHash(); render();
   });
 });
 
+readHash(); syncPills(); writeHash();
 render();
-drawBars("segs",SEG);
-drawBars("marcas",MAR,"Dongfeng");
 drawCtx();
 window.addEventListener("scroll",hideTip,{passive:true});
 
