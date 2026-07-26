@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#08090a">
+<meta name="color-scheme" content="dark">
+<title>TORQ · Tablero de piezas</title>
+<style>
+:root{--ink:#08090a;--surf:#0e1013;--line:#1c1f24;--paper:#fafafa;--mut:#8b9199;--mut2:#5d636b;--brand:#c8f24a;--warn:#fab219}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:0 40px}
+.eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--brand);font-weight:700}
+
+nav{position:sticky;top:0;z-index:60;backdrop-filter:blur(18px);background:rgba(8,9,10,.84);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1240px;margin:0 auto;padding:0 40px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.logo{display:flex;align-items:center;gap:1px;font-size:19px;font-weight:800;letter-spacing:.19em}
+.logo svg{width:21px;height:21px;margin-left:2px;display:block}
+.nav-links{display:flex;gap:22px;list-style:none}
+.nav-links a{color:var(--mut);text-decoration:none;font-size:12.5px}
+.nav-links a:hover,.nav-links a.on{color:var(--paper)}
+
+header{padding:52px 0 26px}
+h1{font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-.032em;line-height:1;margin-top:13px}
+.lede{color:var(--mut);font-size:14.5px;max-width:640px;margin-top:17px;line-height:1.7;font-weight:300}
+
+.alerta{border:1px solid rgba(250,178,25,.32);background:rgba(250,178,25,.05);border-radius:6px;padding:20px 22px;margin:30px 0 44px;font-size:13px;line-height:1.7;color:#d8d3c4}
+.alerta b{color:var(--warn);display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px}
+
+.pieza{border-top:1px solid var(--line);padding:44px 0}
+.ph{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.ph h2{font-size:25px;font-weight:800;letter-spacing:-.02em}
+.cod{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:var(--brand);border:1px solid rgba(200,242,74,.28);border-radius:4px;padding:4px 9px}
+.chip{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:4px 9px;border-radius:4px;background:#191d23;color:var(--mut)}
+.chip.frio{background:rgba(57,135,229,.14);color:#7fb3f0}
+.chip.ret{background:rgba(217,89,38,.14);color:#e79470}
+.porque{font-size:13px;color:var(--mut);line-height:1.7;max-width:660px;margin-bottom:26px;font-weight:300}
+
+.cuerpo{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:34px;align-items:start}
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.shot{position:relative}
+.shot img{width:100%;height:auto;display:block;border-radius:5px;border:1px solid var(--line);background:#000}
+.shot span{position:absolute;left:7px;top:7px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;background:rgba(8,9,10,.78);color:var(--mut);padding:3px 7px;border-radius:3px;backdrop-filter:blur(6px)}
+.shot a{display:block}
+
+.copy{background:var(--surf);border:1px solid var(--line);border-radius:6px;padding:24px 22px}
+.k{font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--mut2);font-weight:700;margin-bottom:7px}
+.k:not(:first-child){margin-top:20px}
+.v{font-size:13.5px;line-height:1.65;color:#d6dae0}
+.v.big{font-size:17px;font-weight:700;color:var(--paper);letter-spacing:-.01em}
+.v code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--brand);word-break:break-all}
+
+footer{border-top:1px solid var(--line);margin-top:20px;padding:34px 0 64px;font-size:11.5px;color:var(--mut2);line-height:1.8}
+footer b{color:var(--mut)}
+
+@media(max-width:900px){
+  .wrap,.nav-in{padding-left:calc(20px + env(safe-area-inset-left,0px));padding-right:calc(20px + env(safe-area-inset-right,0px))}
+  .cuerpo{grid-template-columns:minmax(0,1fr);gap:22px}
+  .nav-links{gap:16px}
+  .nav-links a{font-size:12px}
+  header{padding:34px 0 20px}
+  .pieza{padding:34px 0}
+}
+</style>
+</head>
+<body>
+
+<nav><div class="nav-in">
+  <div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div>
+  <ul class="nav-links">
+    <li><a href="../index.html">Showroom</a></li>
+    <li><a href="../analitica.html">Inteligencia</a></li>
+    <li><a href="index.html" class="on">Piezas</a></li>
+  </ul>
+</div></nav>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Tablero de piezas · Fase 1</div>
+  <h1>Todo lo que iría<br>a pauta.</h1>
+  <p class="lede">Cinco ganchos en tres formatos cada uno. Toca cualquier pieza para verla en tamaño completo. Nada de esto está publicado ni programado: es material de revisión.</p>
+</header>
+
+<div class="alerta">
+  <b>Nada sale sin esto</b>
+  Las piezas nombran <strong>Dongfeng</strong> y usan fotografías de la sala. Sin autorización escrita de Corautos, Meta las rechaza y deja marcada la cuenta publicitaria. Faltan además el número de WhatsApp en <code>var WA</code> y la política de datos completa. Y antes que todo lo anterior: el contrato con la compañía.
+</div>
+
+<div id="app"></div>
+
+<footer>
+  <b>Formatos:</b> 4:5 es el principal del feed · 1:1 sirve para feed y para Google Display · 9:16 es stories y reels, donde el alcance sale más barato.<br>
+  <b>Cómo se cambian:</b> las piezas salen de <code>piezas.html</code>, el generador. Se edita el texto ahí y se vuelven a exportar — no se retocan a mano.<br>
+  <b>Pendiente de decisión:</b> a escala real de feed la firma lee «TOR» más un ícono de carga, porque el dial punteado colapsa al reducirse. La versión maciza con abertura sí lee como Q.
+</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var P=[
+ {id:"H1",t:"Tanqueada",cod:"H1-BOG-F1",tipo:"frio",
+  porque:"Es una pregunta, no una afirmación: obliga a hacer la cuenta mental. Y esa cuenta la termina el simulador, que ya está construido en el sitio.",
+  titular:"La mitad de las tanqueadas", cta:"Calcular lo mío",
+  texto:"¿Cuántas veces pasas por la bomba al mes? Haz la cuenta: son horas y son varios cientos de miles de pesos. Con 4,9 litros cada 100 km esa cuenta se parte por la mitad. Calcula lo tuyo con tus propios números, toma un minuto.",
+  destino:"index.html?c=H1-BOG-F1#simulador"},
+ {id:"H2",t:"Enchufe",cod:"H2-BOG-F1",tipo:"frio",
+  porque:"En Colombia la objeción número uno contra electrificarse es dónde cargar. Esta pieza la elimina de entrada, y casi nadie la está usando.",
+  titular:"Sin cargador, sin instalación", cta:"Ver cómo funciona",
+  texto:"No necesitas cargador, ni instalación en la casa, ni salir a buscar estación. El sistema híbrido se recarga solo mientras andas. 288 hp, 4,9 litros cada 100 km y más de 1.000 km de autonomía.",
+  destino:"index.html?c=H2-BOG-F1"},
+ {id:"S1",t:"Simulador",cod:"S1-BOG-F1",tipo:"frio",
+  porque:"La pieza que no parece pieza. La gente se resiste a un aviso de carros; no se resiste a descubrir cuánto está gastando de más. Es el activo que ningún concesionario tiene.",
+  titular:"Lo que te estás gastando de más", cta:"Calcular lo mío",
+  texto:"Con tu consumo real y los kilómetros que haces al mes, el cálculo toma un minuto. Los números son tuyos; nosotros solo ponemos el 4,9 L cada 100 km de la ficha técnica.",
+  destino:"index.html?c=S1-BOG-F1#simulador"},
+ {id:"H4",t:"Mantenimiento",cod:"H4-BOG-R1",tipo:"ret",
+  porque:"Pone la duda en boca del cliente, no en la nuestra. Le da permiso para tenerla y la resuelve en la misma pieza, sin que nosotros mencionemos jamás una falla. Va en retargeting: el manejo de objeciones no funciona en frío.",
+  titular:"26 centros de servicio", cta:"Ver el más cercano",
+  texto:"Es la primera pregunta que hace todo el mundo cuando la marca no le suena. La respuesta son 26 centros de servicio en 19 ciudades del país: más sitios para atenderla que para comprarla.",
+  destino:"index.html?c=H4-BOG-R1#ciudades"},
+ {id:"H3",t:"Viaje",cod:"H3-BOG-R1",tipo:"ret",
+  porque:"«Más de 1.000 km» no significa nada; «ida y vuelta a Medellín sin parar» sí. Traducir la cifra a una escena vivida es lo que la vuelve memorable.",
+  titular:"Con un solo tanque", cta:"Ver la ficha",
+  texto:"Bogotá–Medellín, ida y vuelta: 830 km de los más de 1.000 de autonomía. Sin parar a tanquear.",
+  destino:"index.html?c=H3-BOG-R1#ficha"}
+];
+var F=[["45","Feed 4:5"],["11","Cuadrada"],["916","Stories 9:16"]];
+var tipoTxt={frio:"Prospección en frío",ret:"Retargeting"};
+
+document.getElementById("app").innerHTML=P.map(function(p){
+  return '<div class="pieza">'
+    +'<div class="ph"><h2>'+p.id+' · '+p.t+'</h2>'
+      +'<span class="cod">'+p.cod+'</span>'
+      +'<span class="chip '+p.tipo+'">'+tipoTxt[p.tipo]+'</span></div>'
+    +'<p class="porque">'+p.porque+'</p>'
+    +'<div class="cuerpo">'
+      +'<div class="shots">'+F.map(function(f){
+          return '<div class="shot"><a href="'+p.id+'-'+f[0]+'.png" target="_blank" rel="noopener">'
+            +'<img src="'+p.id+'-'+f[0]+'.png" alt="'+p.id+' '+f[1]+'" loading="lazy">'
+            +'<span>'+f[1]+'</span></a></div>';
+        }).join("")+'</div>'
+      +'<div class="copy">'
+        +'<div class="k">Titular</div><div class="v big">'+p.titular+'</div>'
+        +'<div class="k">Texto principal</div><div class="v">'+p.texto+'</div>'
+        +'<div class="k">Botón</div><div class="v">'+p.cta+'</div>'
+        +'<div class="k">Destino</div><div class="v"><code>'+p.destino+'</code></div>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+}).join("");
+})();
+</script>
+</body>
+</html>
