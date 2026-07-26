@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>TORQUE · Nueva MAGE HEV — Dongfeng</title>
+<style>
+:root{
+  --ink:#08090a; --ink2:#0e1013; --line:#1c1f24; --line2:#2a2e35;
+  --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b; --acc:#c8f24a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--paper);font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:1320px;margin:0 auto;padding:0 40px}
+.eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.muted{color:var(--mut)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(18px);background:rgba(8,9,10,.72);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1320px;margin:0 auto;padding:0 40px;height:74px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:1px;font-size:21px;font-weight:800;letter-spacing:.19em;line-height:1}
+.logo svg{width:21px;height:21px;display:block;margin:0 1px}
+.nav-links{display:flex;gap:38px;list-style:none}
+.nav-links a{color:var(--mut);text-decoration:none;font-size:12.5px;letter-spacing:.06em;transition:color .25s}
+.nav-links a:hover{color:var(--paper)}
+.btn{display:inline-flex;align-items:center;gap:9px;background:var(--acc);color:#0a0c07;padding:12px 22px;border-radius:100px;font-size:12.5px;font-weight:700;letter-spacing:.04em;text-decoration:none;transition:transform .25s,box-shadow .25s;border:none;cursor:pointer}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(200,242,74,.22)}
+.btn-ghost{background:transparent;color:var(--paper);border:1px solid var(--line2)}
+.btn-ghost:hover{border-color:var(--paper);box-shadow:none}
+
+/* HERO */
+.hero{position:relative;height:100vh;min-height:660px;display:flex;align-items:flex-end;overflow:hidden}
+.hero-img{position:absolute;inset:0}
+.hero-img img{width:100%;height:100%;object-fit:cover;object-position:center 42%}
+.hero-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,9,10,.80) 0%,rgba(8,9,10,.20) 30%,rgba(8,9,10,.55) 62%,rgba(8,9,10,.93) 88%,var(--ink) 100%)}
+.hero-in{position:relative;width:100%;padding-bottom:92px}
+.hero-grid{display:flex;align-items:flex-end;justify-content:space-between;gap:50px;flex-wrap:wrap}
+h1{font-size:clamp(62px,10.5vw,148px);font-weight:800;letter-spacing:-.035em;line-height:.84;margin:20px 0 0;text-shadow:0 2px 40px rgba(8,9,10,.5)}
+h1 span{color:transparent;-webkit-text-stroke:1.5px rgba(250,250,250,.62);font-weight:300;letter-spacing:.01em}
+.hero-sub{font-size:17px;color:#cfd4da;font-weight:300;margin-top:24px;max-width:440px;line-height:1.55}
+.hero-price{text-align:right;flex-shrink:0}
+.hero-price .lbl{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--mut);margin-bottom:9px}
+.hero-price .val{font-size:clamp(32px,4vw,48px);font-weight:800;letter-spacing:-.03em;line-height:1}
+.hero-price .note{font-size:11px;color:var(--mut);margin-top:9px}
+.hero-price:before{content:"";display:block;width:38px;height:2px;background:var(--acc);margin:0 0 20px auto}
+.hero-cta{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap}
+.scroll-hint{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:#41464d}
+
+/* SPEC STRIP */
+.specs{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--ink2)}
+.specs-in{max-width:1320px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:repeat(5,1fr)}
+.spec{padding:34px 26px 32px;border-right:1px solid var(--line)}
+.spec:last-child{border-right:none}
+.spec .n{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.spec .n em{font-style:normal;font-size:16px;font-weight:600;color:var(--mut);margin-left:3px}
+.spec .k{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);margin-top:11px}
+
+/* SECTIONS */
+section{padding:118px 0}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin-bottom:52px;flex-wrap:wrap}
+h2{font-size:clamp(34px,4.6vw,58px);font-weight:800;letter-spacing:-.032em;line-height:.98;margin-top:16px}
+.sec-head p{color:var(--mut);font-size:14.5px;max-width:380px;line-height:1.65;font-weight:300}
+
+/* CAROUSEL */
+.car{position:relative}
+.car-stage{position:relative;aspect-ratio:16/9;border-radius:6px;overflow:hidden;background:var(--ink2)}
+.car-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .7s cubic-bezier(.4,0,.2,1)}
+.car-stage img.on{opacity:1}
+.car-cap{position:absolute;left:0;bottom:0;padding:26px 30px;background:linear-gradient(0deg,rgba(8,9,10,.9),transparent);width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+.car-cap .t{font-size:14px;font-weight:600;letter-spacing:.02em}
+.car-cap .c{font-size:11px;color:var(--mut);letter-spacing:.16em;font-variant-numeric:tabular-nums}
+.car-nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:rgba(8,9,10,.55);border:1px solid var(--line2);color:var(--paper);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s,border-color .25s;backdrop-filter:blur(8px)}
+.car-nav:hover{background:var(--acc);border-color:var(--acc);color:#0a0c07}
+.car-nav.prev{left:18px}.car-nav.next{right:18px}
+.thumbs{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-top:12px}
+.thumb{aspect-ratio:16/10;border-radius:3px;overflow:hidden;cursor:pointer;opacity:.34;transition:opacity .3s;position:relative}
+.thumb.on{opacity:1}
+.thumb:hover{opacity:.8}
+.thumb.on:after{content:"";position:absolute;inset:0;border:1.5px solid var(--acc);border-radius:3px}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* COMPARADOR */
+.cmp{border:1px solid var(--line);border-radius:6px;overflow-x:auto;background:var(--ink2)}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{padding:19px 22px;text-align:left;font-size:13.5px;border-bottom:1px solid var(--line)}
+thead th{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);font-weight:700;background:#0b0d10}
+thead th.me{color:var(--acc)}
+tbody td:first-child{color:var(--mut);font-size:12px;letter-spacing:.03em}
+td.me{color:var(--paper);font-weight:700;background:rgba(200,242,74,.045);border-left:1px solid rgba(200,242,74,.22);border-right:1px solid rgba(200,242,74,.22)}
+tbody tr:last-child td{border-bottom:none}
+.cmp-note{font-size:11px;color:var(--mut2);margin-top:14px;line-height:1.6}
+
+/* BENEFICIO */
+.ben{display:grid;grid-template-columns:1.15fr 1fr;gap:14px}
+.card{border:1px solid var(--line);border-radius:6px;padding:42px 38px;background:var(--ink2)}
+.card.hi{border-color:rgba(200,242,74,.3);background:linear-gradient(180deg,rgba(200,242,74,.05),transparent)}
+.card h3{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:16px 0 14px;line-height:1.12}
+.card p{color:var(--mut);font-size:14px;line-height:1.7;font-weight:300}
+.big-n{font-size:clamp(44px,6vw,72px);font-weight:800;letter-spacing:-.035em;color:var(--acc);line-height:1;margin:22px 0 6px}
+.strike{color:var(--mut2);text-decoration:line-through;font-weight:400}
+
+/* CIUDADES */
+.city-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.city{border:1px solid var(--line);border-radius:5px;padding:17px 16px;transition:border-color .25s,background .25s;cursor:pointer;background:var(--ink2)}
+.city:hover{border-color:var(--acc);background:rgba(200,242,74,.05)}
+.city .nm{font-size:13.5px;font-weight:600}
+.city .tg{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--mut2);margin-top:7px}
+.city.svc .tg{color:#ff9c7a}
+
+/* CLOSER */
+.closer{border-top:1px solid var(--line);padding:106px 0 0;text-align:center}
+.closer h2{margin:0 auto 22px}
+.closer p{color:var(--mut);max-width:490px;margin:0 auto 34px;font-size:15px;line-height:1.7;font-weight:300}
+footer{border-top:1px solid var(--line);margin-top:96px;padding:38px 0 46px}
+.foot-in{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-start}
+.legal{font-size:10.5px;color:var(--mut2);line-height:1.75;max-width:660px}
+
+@media(max-width:980px){
+  .wrap,.nav-in,.specs-in{padding-left:22px;padding-right:22px}
+  .nav-links{display:none}
+  .specs-in{grid-template-columns:repeat(2,1fr)}
+  .spec{border-bottom:1px solid var(--line)}
+  .ben{grid-template-columns:1fr}
+  .city-grid{grid-template-columns:repeat(2,1fr)}
+  .thumbs{grid-template-columns:repeat(4,1fr)}
+  .hero-price{text-align:left}
+}
+a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.car-stage{touch-action:pan-y}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+@media(max-width:620px){
+  /* en celular la foto va arriba y el texto abajo sobre negro: nada se monta */
+  .hero{height:auto;min-height:0;display:flex;flex-direction:column;padding-top:74px;background:var(--ink)}
+  .hero-img{position:relative;inset:auto;width:100%;aspect-ratio:1/1}
+  .hero-veil{top:74px;bottom:auto;left:0;right:0;aspect-ratio:1/1;background:linear-gradient(180deg,rgba(8,9,10,.55) 0%,rgba(8,9,10,0) 42%,rgba(8,9,10,.55) 82%,var(--ink) 100%)}
+  .hero-in{padding:30px 0 52px}
+  .hero-grid{flex-direction:column;align-items:stretch;gap:30px}
+  h1{font-size:clamp(54px,16vw,86px);margin-top:14px}
+  .hero-sub{font-size:15.5px;margin-top:18px;max-width:none}
+  .hero-cta{margin-top:26px;gap:10px}
+  .hero-cta .btn{flex:1;justify-content:center;padding:14px 16px}
+  .hero-price{text-align:left;border-top:1px solid var(--line);padding-top:24px}
+  .hero-price:before{margin:0 auto 16px 0}
+  .hero-price .val{font-size:38px}
+  .scroll-hint{display:none}
+  section{padding:70px 0}
+  .sec-head{margin-bottom:34px}
+  .car-nav{width:38px;height:38px}
+  .car-nav.prev{left:10px}.car-nav.next{right:10px}
+  .car-cap{padding:15px 17px}
+  .car-cap .t{font-size:12.5px}
+  .card{padding:30px 24px}
+  .closer{padding-top:70px}
+  footer{margin-top:60px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="37" fill="none" stroke="#fafafa" stroke-width="13"/><path d="M64 64 L88 88" stroke="#c8f24a" stroke-width="13" stroke-linecap="round"/><path d="M74 92 L92 92 L92 74" fill="none" stroke="#c8f24a" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>UE</div>
+    <ul class="nav-links">
+      <li><a href="#galeria">Galería</a></li>
+      <li><a href="#ficha">Ficha</a></li>
+      <li><a href="#comparar">Comparar</a></li>
+      <li><a href="#beneficio">Beneficio</a></li>
+      <li><a href="#ciudades">Ciudades</a></li>
+    </ul>
+    <a href="#contacto" class="btn">Hablar por WhatsApp</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-img"><img src="img/hero.jpg" alt="Nueva Dongfeng MAGE HEV"></div>
+  <div class="hero-veil"></div>
+  <div class="hero-in"><div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Dongfeng · Corautos Andino</div>
+        <h1>MAGE <span>HEV</span></h1>
+        <p class="hero-sub">288 caballos y 4,9 litros cada 100 km. La potencia de una gama superior, al precio de una gama media.</p>
+        <div class="hero-cta">
+          <a href="#contacto" class="btn">Agendar prueba de ruta</a>
+          <a href="#comparar" class="btn btn-ghost">Ver comparativo</a>
+        </div>
+      </div>
+      <div class="hero-price">
+        <div class="lbl">Precio de lanzamiento</div>
+        <div class="val">$109.000.000</div>
+        <div class="note">IVA incluido · Unidades limitadas</div>
+      </div>
+    </div>
+  </div></div>
+  <div class="scroll-hint">Desliza</div>
+</div>
+
+<div class="specs"><div class="specs-in">
+  <div class="spec"><div class="n">288<em>hp</em></div><div class="k">Potencia combinada</div></div>
+  <div class="spec"><div class="n">565<em>Nm</em></div><div class="k">Torque máximo</div></div>
+  <div class="spec"><div class="n">4,9<em>L</em></div><div class="k">Consumo /100 km</div></div>
+  <div class="spec"><div class="n">1.000<em>km+</em></div><div class="k">Autonomía total</div></div>
+  <div class="spec"><div class="n">8<em>años</em></div><div class="k">Garantía de batería</div></div>
+</div></div>
+
+<section id="galeria"><div class="wrap">
+  <div class="sec-head">
+    <div><div class="eyebrow">Galería</div><h2>Mírala de cerca.</h2></div>
+    <p>Cada detalle fotografiado en sala. Sin renders, sin retoques: así es la unidad que puedes ir a ver hoy.</p>
+  </div>
+  <div class="car">
+    <div class="car-stage" id="stage">
+      <img class="on" src="img/g1.jpg" alt="MAGE HEV frente tres cuartos" data-t="Frontal · Parrilla Orbital y faros Starlight LED">
+      <img src="img/g2.jpg" alt="MAGE HEV posterior tres cuartos" data-t="Posterior · Luz pasante Interstellar y salidas dobles">
+      <img src="img/g3.jpg" alt="MAGE HEV vista trasera" data-t="Trasera · Alerón StarSpeed Phantom Track">
+      <img src="img/g4.jpg" alt="Parrilla MAGE HEV" data-t="Detalle · Firma frontal Aeolus">
+      <img src="img/g5.jpg" alt="Tablero MAGE HEV" data-t="Cabina · Pantalla Star River Waterfall de 13,2″">
+      <img src="img/g6.jpg" alt="Interior MAGE HEV" data-t="Interior · Techo panorámico de 1,08 m²">
+      <img src="img/g7.jpg" alt="Emblema en el volante" data-t="Detalle · Volante multifunción en cuero">
+      <img src="img/g8.jpg" alt="Llaves inteligentes" data-t="Detalle · Llave inteligente con arranque PEPS">
+      <div class="car-cap"><div class="t" id="cap">Frontal · Parrilla Orbital y faros Starlight LED</div><div class="c" id="cnt">01 / 08</div></div>
+      <button class="car-nav prev" id="prev" aria-label="Anterior"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="car-nav next" id="next" aria-label="Siguiente"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+    <div class="thumbs" id="thumbs">
+      <div class="thumb on"><img src="img/g1.jpg" alt=""></div>
+      <div class="thumb"><img src="img/g2.jpg" alt=""></div>
+      <div class="thumb"><img src="img/g3.jpg" alt=""></div>
+      <div class="thumb"><img src="img/g4.jpg" alt=""></div>
+      <div class="thumb"><img src="img/g5.jpg" alt=""></div>
+      <div class="thumb"><img src="img/g6.jpg" alt=""></div>
+      <div class="thumb"><img src="img/g7.jpg" alt=""></div>
+      <div class="thumb"><img src="img/g8.jpg" alt=""></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="comparar" style="padding-top:0"><div class="wrap">
+  <div class="sec-head">
+    <div><div class="eyebrow">Comparativo</div><h2>Contra las que<br>ya conoces.</h2></div>
+    <p>Las cuatro híbridas más vendidas del país en su rango. Los números hablan solos.</p>
+  </div>
+  <div class="cmp"><table>
+    <thead><tr><th></th><th class="me">Dongfeng MAGE HEV</th><th>Toyota Corolla Cross</th><th>Kia Sportage</th><th>Ford Territory</th><th>Mazda CX-30</th></tr></thead>
+    <tbody>
+      <tr><td>Precio</td><td class="me">$109.000.000</td><td>$136.000.000</td><td>$126.000.000</td><td>$121.000.000</td><td>$113.000.000</td></tr>
+      <tr><td>Potencia</td><td class="me">288 hp</td><td>122 hp</td><td>180 hp</td><td>238 hp</td><td>146 hp</td></tr>
+      <tr><td>Torque</td><td class="me">565 Nm</td><td>142 Nm</td><td>265 Nm</td><td>376 Nm</td><td>200 Nm</td></tr>
+      <tr><td>Consumo</td><td class="me">4,9 L/100 km</td><td>4,3 L/100 km</td><td>6,7 L/100 km</td><td>5,6 L/100 km</td><td>6,9 L/100 km</td></tr>
+      <tr><td>Garantía batería</td><td class="me">8 años / 200.000 km</td><td>8 años / 160.000 km</td><td>8 años / 160.000 km</td><td>8 años / 160.000 km</td><td>—</td></tr>
+      <tr><td>Techo panorámico</td><td class="me">1,08 m² · estándar</td><td>No disponible</td><td>Opcional</td><td>Estándar</td><td>Opcional</td></tr>
+    </tbody>
+  </table></div>
+  <p class="cmp-note">Precios de referencia de mercado a junio de 2026 (Informe de Movilidad, cálculos sobre datos RUNT). Las especificaciones de la competencia corresponden a su versión híbrida de acceso y están sujetas a verificación con cada marca. Imágenes de referencia.</p>
+</div></section>
+
+<section id="beneficio" style="padding-top:0"><div class="wrap">
+  <div class="sec-head">
+    <div><div class="eyebrow">Momento de compra</div><h2>Por qué ahora<br>y no en tres meses.</h2></div>
+    <p>Dos hechos con fecha, verificables, que hoy juegan a favor del comprador.</p>
+  </div>
+  <div class="ben">
+    <div class="card hi">
+      <div class="eyebrow">Reforma tributaria · radicada 22 jul 2026</div>
+      <h3>El IVA de los híbridos<br>pasaría de 5% a 19%.</h3>
+      <div class="big-n">+$14.533.333</div>
+      <p>Es lo que costaría esta misma MAGE si el proyecto se aprueba: <span class="strike">$109.000.000</span> → $123.533.333. El precio de hoy es el precio de hoy.</p>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Certificación UPME</div>
+      <h3>Podrías recuperar<br>el IVA que pagaste.</h3>
+      <div class="big-n">$5.190.476</div>
+      <p>La DIAN estableció el procedimiento para devolver el IVA de vehículos certificados por la UPME, dentro de los 5 años siguientes a la factura. Te ayudamos a verificar si tu caso aplica.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="ciudades" style="padding-top:0"><div class="wrap">
+  <div class="sec-head">
+    <div><div class="eyebrow">Cobertura nacional</div><h2>Dónde verla,<br>dónde repararla.</h2></div>
+    <p>22 puntos de venta y 26 talleres de servicio técnico. Elige tu ciudad y te conectamos con la sala que te corresponde.</p>
+  </div>
+  <div class="city-grid">
+    <div class="city"><div class="nm">Bogotá</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Medellín</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Cali</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Barranquilla</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Bucaramanga</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Cúcuta</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Villavicencio</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Montería</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Valledupar</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Pasto</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Pereira</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Manizales</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Ibagué</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Neiva</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Popayán</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Duitama</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Copacabana</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Tunja</div><div class="tg">Sala</div></div>
+    <div class="city svc"><div class="nm">Cartagena</div><div class="tg">Taller · Venta digital</div></div>
+    <div class="city svc"><div class="nm">Santa Marta</div><div class="tg">Taller · Venta digital</div></div>
+  </div>
+</div></section>
+
+<div class="closer" id="contacto"><div class="wrap">
+  <div class="eyebrow">Siguiente paso</div>
+  <h2>Resuelve tus dudas<br>en dos minutos.</h2>
+  <p>Escríbenos por WhatsApp. Te decimos disponibilidad real, cuota estimada y si tu caso aplica a la devolución de IVA — sin que tengas que ir a una sala.</p>
+  <a href="#" class="btn">Hablar por WhatsApp</a>
+  <footer><div class="foot-in">
+    <div class="logo" style="font-size:15px">TOR<svg viewBox="0 0 100 100" style="width:15px;height:15px" aria-label="Q"><circle cx="50" cy="50" r="37" fill="none" stroke="#fafafa" stroke-width="13"/><path d="M64 64 L88 88" stroke="#c8f24a" stroke-width="13" stroke-linecap="round"/><path d="M74 92 L92 92 L92 74" fill="none" stroke="#c8f24a" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>UE</div>
+    <p class="legal">Precio de lanzamiento válido hasta agotar existencias, sujeto a confirmación de vigencia. Imágenes de referencia; las especificaciones exactas deben validarse con el asesor comercial. La autonomía y el consumo varían según hábitos de conducción, clima y estado de la vía. Los cálculos de cuota e impuestos son ilustrativos y no constituyen una oferta de crédito ni asesoría tributaria. TORQUE es un canal digital independiente de generación de contactos comerciales; la venta, facturación y entrega del vehículo las realiza el concesionario aliado. Al enviarnos tus datos autorizas su tratamiento conforme a nuestra Política de Tratamiento de Datos Personales (Ley 1581 de 2012) y su transferencia al concesionario aliado para ser contactado con una oferta comercial.</p>
+  </div></footer>
+</div></div>
+
+<script>
+(function(){
+  var imgs=[].slice.call(document.querySelectorAll('#stage img'));
+  var ths=[].slice.call(document.querySelectorAll('#thumbs .thumb'));
+  var cap=document.getElementById('cap'), cnt=document.getElementById('cnt'), i=0;
+  function go(n){
+    i=(n+imgs.length)%imgs.length;
+    imgs.forEach(function(el,k){el.classList.toggle('on',k===i)});
+    ths.forEach(function(el,k){el.classList.toggle('on',k===i)});
+    cap.textContent=imgs[i].dataset.t;
+    cnt.textContent=('0'+(i+1)).slice(-2)+' / '+('0'+imgs.length).slice(-2);
+  }
+  document.getElementById('next').onclick=function(){go(i+1)};
+  document.getElementById('prev').onclick=function(){go(i-1)};
+  ths.forEach(function(el,k){el.onclick=function(){go(k)}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight')go(i+1); if(e.key==='ArrowLeft')go(i-1);
+  });
+  setInterval(function(){go(i+1)},6500);
+})();
+</script>
+</body>
+</html>
