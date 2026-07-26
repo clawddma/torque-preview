@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>TORQ · Generador de piezas</title>
+<style>
+:root{--ink:#08090a;--paper:#fafafa;--mut:#9aa1a9;--brand:#c8f24a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* ---- lienzo: el tamaño lo fija el formato ---- */
+.pz{position:relative;overflow:hidden;background:var(--ink);color:var(--paper);display:flex;flex-direction:column}
+.pz.f45{width:1080px;height:1350px}
+.pz.f11{width:1080px;height:1080px}
+.pz.f916{width:1080px;height:1920px}
+
+.ph{position:relative;flex:0 0 auto;overflow:hidden}
+.f45 .ph{height:660px}
+.f11 .ph{height:470px}
+.f916 .ph{height:1010px}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+/* el velo cierra la foto contra el negro: sin él el texto pelea con la imagen */
+.ph:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,9,10,.34) 0%,rgba(8,9,10,0) 26%,rgba(8,9,10,.62) 74%,var(--ink) 100%)}
+
+/* posicionado y por encima: la foto lleva position:relative y si no, la tapa */
+.body{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:0 74px 70px}
+.f916 .body{padding:0 74px 190px}   /* zona segura de Stories abajo */
+.f11 .body{padding:0 64px 56px}
+
+.hl{font-size:96px;font-weight:800;letter-spacing:-.035em;line-height:.98;margin-top:-70px}
+.f11 .hl{font-size:82px;margin-top:-54px}
+.f916 .hl{font-size:104px;margin-top:-84px}
+.hl em{font-style:normal;color:var(--brand)}
+.sub{font-size:33px;font-weight:300;color:#cdd2d8;line-height:1.42;margin-top:34px;max-width:22ch}
+.f11 .sub{font-size:29px;margin-top:26px}
+.f916 .sub{font-size:35px;margin-top:38px}
+
+.foot{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin-top:56px}
+.lock{display:flex;flex-direction:column;gap:11px}
+.wm{display:flex;align-items:center;gap:2px;font-size:40px;font-weight:800;letter-spacing:.17em;line-height:1}
+.wm svg{width:44px;height:44px;display:block;margin-left:3px}
+.tag{font-size:14.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--mut);font-weight:700}
+.cta{background:var(--brand);color:#0a0c07;font-size:31px;font-weight:700;padding:26px 44px;border-radius:100px;white-space:nowrap}
+.f11 .cta{font-size:28px;padding:22px 38px}
+
+/* ---- pieza de simulador: se lee como información, no como aviso ---- */
+.sim{flex:1;display:flex;flex-direction:column;justify-content:center;padding:96px 84px 0}
+.f916 .sim{justify-content:flex-start;padding-top:280px}
+.sim-card{background:#0e1013;border:1px solid #23272e;border-radius:26px;padding:60px 56px}
+.sim-k{font-size:24px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);font-weight:700}
+.sim-v{font-size:132px;font-weight:800;letter-spacing:-.04em;color:var(--brand);line-height:1;margin:26px 0 10px}
+.f11 .sim-v{font-size:112px}
+.sim-d{font-size:27px;color:#cdd2d8;font-weight:300}
+.sim-rows{margin-top:44px;padding-top:34px;border-top:1px solid #23272e;display:flex;flex-direction:column;gap:20px}
+.sim-row{display:flex;justify-content:space-between;font-size:26px;color:var(--mut)}
+.sim-row b{color:var(--paper);font-weight:600;font-variant-numeric:tabular-nums}
+.sim-t{font-size:78px;font-weight:800;letter-spacing:-.03em;line-height:1.02;margin-bottom:44px}
+.f11 .sim-t{font-size:66px;margin-bottom:34px}
+.sim-t em{font-style:normal;color:var(--brand)}
+
+/* ---- índice de contacto (solo pantalla, no se captura) ---- */
+.idx{padding:40px;color:#ddd;font-size:14px;line-height:2}
+.idx a{color:var(--brand)}
+body.shot{background:var(--ink)}
+body.shot .idx{display:none}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+"use strict";
+
+/* La Q en piezas: el dial de la marca tiene 16 marcas y a tamaño de anuncio
+   se convierte en una mancha. Aquí lleva 10 marcas más gruesas — misma idea,
+   legible en el feed. Es la versión reducida del sistema, no otro logo. */
+function Q(){
+  return '<svg viewBox="0 0 100 100" aria-label="Q">'
+    +'<circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="15" '
+    +'stroke-dasharray="8.4 12.96" stroke-dashoffset="4.2" shape-rendering="geometricPrecision"/>'
+    +'<path d="M60 60 L89 89" stroke="#c8f24a" stroke-width="14" stroke-linecap="round"/></svg>';
+}
+function lock(){
+  return '<div class="lock"><div class="wm">TOR'+Q()+'</div>'
+    +'<div class="tag">Tu carro, tu mejor decisión.</div></div>';
+}
+
+var P = {
+  H1:{img:"img/g1.jpg", hl:'¿Cuántas veces<br>tanqueas<br><em>al mes?</em>',
+      sub:"Con 4,9 litros cada 100 km, la mitad. Calcula lo tuyo en un minuto con tus propios números.",
+      cta:"Calcular lo mío"},
+  H2:{img:"img/hero.jpg", hl:'Híbrida que<br><em>nunca vas<br>a enchufar.</em>',
+      sub:"Se recarga sola mientras andas. Sin cargador, sin instalación en la casa, sin buscar estación.",
+      cta:"Ver cómo funciona"},
+  H3:{img:"img/g2.jpg", hl:'Bogotá–Medellín,<br>ida y vuelta,<br><em>con un tanque.</em>',
+      sub:"830 km de los más de 1.000 de autonomía. Sin parar a tanquear.",
+      cta:"Ver la ficha"},
+  H4:{img:"img/g5.jpg", hl:'«¿Y dónde le hago<br>los mantenimientos?»',
+      sub:"Es la primera pregunta que hace todo el mundo. La respuesta son 26 centros de servicio en 19 ciudades del país.",
+      cta:"Ver el más cercano"},
+  S1:{sim:true, t:'Lo que te estás<br><em>gastando de más.</em>',
+      k:"Te ahorrarías cada mes", v:"$233.317", d:"solo en gasolina, frente a tu carro actual",
+      rows:[["Tu carro hoy","11 L/100 km"],["MAGE HEV","4,9 L/100 km"],["En un año","$2.799.804"]],
+      cta:"Calcular lo mío"}
+};
+var FORMATS={"45":"f45","11":"f11","916":"f916"};
+
+function render(id,fmt){
+  var d=P[id], f=FORMATS[fmt]||"f45";
+  if(d.sim){
+    return '<div class="pz '+f+'" id="canvas">'
+      +'<div class="sim">'
+        +'<div class="sim-t">'+d.t+'</div>'
+        +'<div class="sim-card">'
+          +'<div class="sim-k">'+d.k+'</div>'
+          +'<div class="sim-v">'+d.v+'</div>'
+          +'<div class="sim-d">'+d.d+'</div>'
+          +'<div class="sim-rows">'+d.rows.map(function(r){
+              return '<div class="sim-row"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>'}).join("")
+          +'</div>'
+        +'</div>'
+      +'</div>'
+      +'<div class="body" style="flex:0 0 auto"><div class="foot">'+lock()
+      +'<div class="cta">'+d.cta+'</div></div></div>'
+    +'</div>';
+  }
+  return '<div class="pz '+f+'" id="canvas">'
+    +'<div class="ph"><img src="'+d.img+'" alt=""></div>'
+    +'<div class="body">'
+      +'<div><div class="hl">'+d.hl+'</div><div class="sub">'+d.sub+'</div></div>'
+      +'<div class="foot">'+lock()+'<div class="cta">'+d.cta+'</div></div>'
+    +'</div>'
+  +'</div>';
+}
+
+var q=new URLSearchParams(location.search);
+var id=q.get("p"), fmt=q.get("f")||"45";
+
+if(id && P[id]){
+  document.body.classList.add("shot");
+  document.getElementById("app").innerHTML=render(id,fmt);
+}else{
+  var out='<div class="idx"><b style="color:#fff;font-size:17px">Generador de piezas TORQ</b><br>'
+    +'Abre una pieza con <code>?p=ID&f=FORMATO</code>. Formatos: 45 (feed 4:5), 11 (cuadrada), 916 (stories).<br><br>';
+  Object.keys(P).forEach(function(k){
+    out+='<b style="color:#fff">'+k+'</b> &nbsp;';
+    Object.keys(FORMATS).forEach(function(f){
+      out+='<a href="?p='+k+'&f='+f+'">'+f+'</a> &nbsp;';
+    });
+    out+='<br>';
+  });
+  document.getElementById("app").innerHTML=out+'</div>';
+}
+})();
+</script>
+</body>
+</html>

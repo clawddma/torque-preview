@@ -139,3 +139,30 @@ fuga más cara del sector.
    Corautos, Meta las rechaza.
 2. El destino exige la política de datos completa.
 3. `var WA` con el número: vacío, el calificador no envía.
+
+---
+
+# CÓMO SE REGENERAN
+
+Las piezas ya no se dibujan a mano: salen de `piezas.html`, que es el generador.
+Editas el texto ahí (objeto `P`) y vuelves a exportar. Una pieza nueva son cinco líneas.
+
+**Ver una en el navegador:** `piezas.html?p=H1&f=45`
+**Formatos:** `45` feed 4:5 (1080×1350) · `11` cuadrada (1080×1080) · `916` stories (1080×1920)
+
+**Exportar las 15 de una vez** (con el sitio servido en el puerto 8912):
+
+```bash
+CH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+for p in H1 H2 H3 H4 S1; do for f in 45 11 916; do
+  case $f in 45) H=1350;; 11) H=1080;; 916) H=1920;; esac
+  "$CH" --headless --disable-gpu --hide-scrollbars --window-size=1080,$H \
+    --screenshot="piezas/${p}-${f}.png" "http://127.0.0.1:8912/piezas.html?p=$p&f=$f"
+done; done
+```
+
+`S1` es la pieza de simulador — la que no parece pieza. Va en frío junto con H1 y H2.
+
+**Pendiente de decisión:** a escala real de feed la firma lee «TOR» + un ícono de carga,
+porque el dial de 16 marcas colapsa. La versión reducida (dial macizo con abertura, que
+sí lee como Q) está probada y es un cambio de dos líneas en `piezas.html`.
