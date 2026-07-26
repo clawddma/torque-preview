@@ -1,7 +1,7 @@
 # TORQ — Contexto del proyecto
 
 > Documento de traspaso. Si estás retomando este proyecto en una sesión nueva
-> (celular, web, o terminal), lee esto primero. Actualizado: 26 de julio de 2026.
+> (celular, web, o terminal), lee esto primero. Actualizado: 26 de julio de 2026 (tarde).
 
 ## Qué es esto
 
@@ -24,35 +24,40 @@ automotriz: motos, combustión, híbridos, eléctricos, maquinaria amarilla, pes
   **$1.557.143 (1,5%)** por unidad vendida.
 - Con $1.000.000 de pauta mensual, el punto de equilibrio es **0,8 unidades**.
 
-## Estado de la marca
+## La marca — CERRADA
 
-El nombre **NO está cerrado**. TORQ es provisional, por decisión de Daniel.
+**Nombre: TORQ.** Se cerró el 26 de julio de 2026. La Q es un instrumento: el anillo es
+la escala de un dial (`stroke-dasharray`) y la cola lima sale del centro. Vive en el
+`<div class="logo">` del nav y del pie — cambiarla es editar esos dos puntos.
 
-Historia de descartes (no repetir estos caminos):
-- **Criterio** — descartado: nombra lo que hacemos nosotros, no lo que siente el cliente.
-- **Rumbo** — descartado: a Daniel no le gustó el nombre en sí.
-- **CERO** — descartado por Camilo: implica cero emisiones, y contradice híbridos,
-  combustión, maquinaria amarilla y pesados. Además la MAGE consume 4,9 L/100 km,
-  así que sería una afirmación ambiental falsa sobre nuestro propio producto de
-  lanzamiento (riesgo de publicidad engañosa, Ley 1480).
-- **NAVE** — descartado: suena infantil para vender maquinaria amarilla y
-  tractocamiones a empresas.
+- **Eslogan:** «Tu carro, tu mejor decisión.»
+- **Descriptor:** «Compra y renting de carros.» — **no es opcional**: sin él nadie sabe
+  a qué se dedica una marca que nadie conoce.
+- Van juntos bajo el logo en el nav (todos los anchos) y en la firma antes del cierre.
 
-**Criterios vigentes para el nombre:** corto; neutro en tecnología (debe servir para
-una híbrida, un diésel y una retroexcavadora); que denote respaldo y seguridad; que
-suene a empresa generadora de contenido relevante, no a producto o repuesto.
+Las propuestas y por qué ganó ésta: `logo.html` (primera vuelta) y `logo-escala.html`
+(segunda vuelta, ganó la variante 1). La Q va unos píxeles más grande que las letras:
+un círculo punteado lee más pequeño que una versal maciza.
+
+Historia de descartes del **nombre** (no repetir): **Criterio** (nombra lo que hacemos
+nosotros, no lo que siente el cliente) · **Rumbo** (no le gustó) · **CERO** (Camilo:
+contradice híbridos, combustión y maquinaria; además la MAGE consume 4,9 L/100 km) ·
+**NAVE** (infantil para vender maquinaria a empresas).
 
 **Línea gráfica aprobada:** fondo negro de alto contraste, fotografía a sangre,
 tipografía pesada. Referencias: Polestar, Zeekr, configurador de Porsche.
-Acento lima `#c8f24a` — solo en interfaz, nunca codificando datos.
+Acento lima `#c8f24a` — solo interfaz, nunca codificando datos.
 
 ## Qué hay construido
 
 | Archivo | Qué es |
 |---|---|
-| `index.html` | Showroom de la MAGE: hero, specs, carrusel de 9 fotos, comparador, bloque de IVA/reforma, 20 ciudades |
-| `analitica.html` | Inteligencia de mercado: mapa de Colombia, matriz de oportunidad, evolución mensual, segmentos, marcas |
-| `img/` | 9 fotos optimizadas a 1400px |
+| `index.html` | Showroom: hero con dirección de arte, specs, galería con gesto, comparador, IVA/reforma, **simulador de costo**, respaldo, calificador |
+| `analitica.html` | Inteligencia de mercado: mapa, matriz, series, segmentos, marcas — todo táctil |
+| `politica-datos.html` | Política Ley 1581 — **borrador**, campos pendientes marcados en lima |
+| `logo.html` · `logo-escala.html` | Las propuestas de marca y la decisión |
+| `PAUTA.md` | Motor de captación: aritmética, códigos de campaña, malla, ruta de pauta |
+| `img/` | 9 fotos a 1400px + 8 miniaturas + hero doble (vertical y horizontal) |
 
 Sin dependencias externas. Todo el SVG está escrito a mano. Se publica en GitHub Pages.
 **URL:** https://clawddma.github.io/torque-preview/
@@ -92,26 +97,37 @@ empaquetado) viven **solo en el Mac de Daniel**, en
   ya está resuelta.
 - Manizales es el único mercado en rojo (−2,9%) y sí tiene sede. No pautar ahí.
 
-## Pendientes — bloqueantes antes de publicar
+## Pendientes — bloqueantes antes de pautar
 
-1. **Verificar ficha por ficha los datos de competencia del comparador**
-   (Corolla Cross, Sportage, Territory, CX-30). Hoy son estimados de mercado.
-   Publicar un dato errado de otra marca nos expone.
-2. **Autorización escrita de Corautos** para usar marcas Dongfeng y las fotografías.
-3. **Política de Tratamiento de Datos** (Ley 1581) enlazada de verdad, con el texto
-   de consentimiento que menciona expresamente la transferencia al concesionario.
-4. **Contrato con Corautos**: definición de lead válido, ventana de atribución
-   (90 días), regla de deduplicación, SLA de reporte, disparador de pago, umbrales
-   exactos de la escala 1,2% → 1,5%.
-5. **Confirmar vigencia** del precio de lanzamiento de $109.000.000.
+1. **Número de WhatsApp** — va en `var WA` de `index.html`, un solo lugar. Sin él el
+   calificador funciona pero no envía. Es una línea.
+2. **Política de datos**: existe y está enlazada, pero faltan nueve campos (documento,
+   domicilio, correo dedicado, razón social y NIT de Corautos, vigencia, fecha) y la
+   revisión de un abogado.
+3. **Autorización escrita de Corautos** para marcas Dongfeng y fotografías. Meta rechaza
+   anuncios de marcas de terceros sin respaldo.
+4. **Contrato con Corautos**: lead válido, atribución 90 días, dedup, SLA de respuesta,
+   disparador de pago, escala 1,2% → 1,5%. Hoy el acuerdo es verbal: es el mayor riesgo
+   abierto del negocio.
+5. **Verificar ficha por ficha la competencia del comparador** (Corolla Cross, Sportage,
+   Territory, CX-30). Hoy son estimados de mercado y publicar un dato errado expone.
+6. **Confirmar vigencia** del precio de $109.000.000.
+7. **El renting no está modelado.** El descriptor lo anuncia pero el sitio entero está
+   construido sobre la compra. Falta saber quién es la contraparte (arrendadora, banco,
+   Corautos) — de eso depende también el párrafo legal del pie.
 
 ## Pendientes — construcción
 
-- Calculadora de cuota (falta que Corautos defina tasa y plazo).
-- Línea de WhatsApp: Daniel ya la tiene, falta cablearla. Los botones existen sin destino.
-- Bot calificador de WhatsApp y su malla de calificación.
+- Bloque de renting en el showroom (falta cuota, plazo y contraparte).
+- Calculadora de cuota de crédito (falta que Corautos defina tasa y plazo).
+- Seguro e impuesto de la MAGE en el simulador (hoy los confirma el asesor).
 - CRM de leads y reporte de estado hacia Corautos.
 - Motor de ingesta mensual de informes de mercado.
+- Piezas creativas para Meta a partir de los dos ángulos de `PAUTA.md`.
+
+**Ya resuelto** (no rehacer): la malla de calificación vive en la página, no en un bot;
+el código de campaña viaja por `?c=` hasta el mensaje de WhatsApp; el simulador calcula
+solo con datos del usuario más el 4,9 L/100 km de la ficha.
 
 ## Notas legales resueltas
 
