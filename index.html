@@ -107,7 +107,12 @@ tbody tr:last-child td{border-bottom:none}
 .city:hover{border-color:var(--acc);background:rgba(200,242,74,.05)}
 .city .nm{font-size:13.5px;font-weight:600}
 .city .tg{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--mut2);margin-top:7px}
-.city.svc .tg{color:#ff9c7a}
+.city.svc .tg{color:var(--mut)}
+.rsp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.rsp .b{border:1px solid var(--line);border-radius:5px;padding:26px 24px;background:var(--ink2)}
+.rsp .n{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.rsp .n em{font-style:normal;font-size:14px;font-weight:600;color:var(--mut);margin-left:5px}
+.rsp .k{font-size:12px;color:var(--mut);margin-top:10px;line-height:1.55;font-weight:300}
 
 /* CLOSER */
 .closer{border-top:1px solid var(--line);padding:106px 0 0;text-align:center}
@@ -123,6 +128,7 @@ footer{border-top:1px solid var(--line);margin-top:96px;padding:38px 0 46px}
   .specs-in{grid-template-columns:repeat(2,1fr)}
   .spec{border-bottom:1px solid var(--line)}
   .ben{grid-template-columns:1fr}
+  .rsp{grid-template-columns:1fr}
   .city-grid{grid-template-columns:repeat(2,1fr)}
   .thumbs{grid-template-columns:repeat(4,1fr)}
   .hero-price{text-align:left}
@@ -167,7 +173,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
       <li><a href="#ficha">Ficha</a></li>
       <li><a href="#comparar">Comparar</a></li>
       <li><a href="#beneficio">Beneficio</a></li>
-      <li><a href="#ciudades">Ciudades</a></li>
+      <li><a href="#ciudades">Respaldo</a></li>
       <li><a href="analitica.html">Inteligencia de mercado</a></li>
     </ul>
     <a href="#contacto" class="btn">Hablar por WhatsApp</a>
@@ -191,7 +197,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
       <div class="hero-price">
         <div class="lbl">Precio de lanzamiento</div>
         <div class="val">$109.000.000</div>
-        <div class="note">IVA incluido · Unidades limitadas</div>
+        <div class="note">IVA del 5% incluido · Sujeto a disponibilidad</div>
       </div>
     </div>
   </div></div>
@@ -280,37 +286,42 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
 
 <section id="ciudades" style="padding-top:0"><div class="wrap">
   <div class="sec-head">
-    <div><div class="eyebrow">Cobertura nacional</div><h2>Dónde verla,<br>dónde repararla.</h2></div>
-    <p>22 puntos de venta y 26 talleres de servicio técnico. Elige tu ciudad y te conectamos con la sala que te corresponde.</p>
+    <div><div class="eyebrow">Respaldo nacional</div><h2>Dónde verla,<br>dónde cuidarla.</h2></div>
+    <p>Hay más sitios para atenderla que para comprarla. Dinos tu ciudad y te conectamos con el punto más cercano.</p>
+  </div>
+  <div class="rsp">
+    <div class="b"><div class="n">26<em>centros</em></div><div class="k">de servicio técnico, en 19 ciudades del país.</div></div>
+    <div class="b"><div class="n">22<em>salas</em></div><div class="k">para verla, probarla y comprarla, en 18 ciudades.</div></div>
+    <div class="b"><div class="n">8<em>años</em></div><div class="k">de garantía de batería, o 200.000 kilómetros.</div></div>
   </div>
   <div class="city-grid">
-    <div class="city"><div class="nm">Bogotá</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Medellín</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Cali</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Barranquilla</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Bucaramanga</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Cúcuta</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Villavicencio</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Montería</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Valledupar</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Pasto</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Pereira</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Manizales</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Ibagué</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Neiva</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Popayán</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Duitama</div><div class="tg">Sala · Taller</div></div>
-    <div class="city"><div class="nm">Copacabana</div><div class="tg">Sala · Taller</div></div>
+    <div class="city"><div class="nm">Bogotá</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Medellín</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Cali</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Barranquilla</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Bucaramanga</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Cúcuta</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Villavicencio</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Montería</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Valledupar</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Pasto</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Pereira</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Manizales</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Ibagué</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Neiva</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Popayán</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Duitama</div><div class="tg">Sala · Servicio</div></div>
+    <div class="city"><div class="nm">Copacabana</div><div class="tg">Sala · Servicio</div></div>
     <div class="city"><div class="nm">Tunja</div><div class="tg">Sala</div></div>
-    <div class="city svc"><div class="nm">Cartagena</div><div class="tg">Taller · Venta digital</div></div>
-    <div class="city svc"><div class="nm">Santa Marta</div><div class="tg">Taller · Venta digital</div></div>
+    <div class="city svc"><div class="nm">Cartagena</div><div class="tg">Servicio · Compra asistida</div></div>
+    <div class="city svc"><div class="nm">Santa Marta</div><div class="tg">Servicio · Compra asistida</div></div>
   </div>
 </div></section>
 
 <div class="closer" id="contacto"><div class="wrap">
   <div class="eyebrow">Siguiente paso</div>
   <h2>Resuelve tus dudas<br>en dos minutos.</h2>
-  <p>Escríbenos por WhatsApp. Te decimos disponibilidad real, cuota estimada y si tu caso aplica a la devolución de IVA — sin que tengas que ir a una sala.</p>
+  <p>Escríbenos por WhatsApp. Te decimos disponibilidad real, cuota estimada y si tu caso aplica a la devolución de IVA. Y cuando quieras verla, te agendamos en la sala más cercana.</p>
   <a href="#" class="btn">Hablar por WhatsApp</a>
   <footer><div class="foot-in">
     <div class="logo" style="font-size:15px">TOR<svg viewBox="0 0 100 100" style="width:15px;height:15px" aria-label="Q"><circle cx="50" cy="50" r="37" fill="none" stroke="#fafafa" stroke-width="13"/><path d="M64 64 L88 88" stroke="#c8f24a" stroke-width="13" stroke-linecap="round"/><path d="M74 92 L92 92 L92 74" fill="none" stroke="#c8f24a" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>UE</div>

@@ -41,6 +41,33 @@ Los colores de datos son la paleta validada para fondo oscuro:
 `#3987e5` (azul), `#d95926` (naranja), `#199e70` (aqua), y la rampa secuencial azul
 `#cde2fb → #184f95`. Si agregas un gráfico, usa esos y no inventes colores.
 
+## Lenguaje
+
+Regla madre: **nunca nombres el miedo, ni siquiera para negarlo.** "No te quedes sin
+respaldo" instala la duda que no estaba. El miedo se responde con un hecho verificable
+que lo vuelve irrelevante, no con adjetivos ni con promesas.
+
+El comprador de una marca china no teme el taller: teme quedarse solo. Toda palabra que
+presuponga una falla trabaja en su contra.
+
+| No uses | Por qué | Usa |
+|---|---|---|
+| reparar, arreglar | presupone que se dañó | atender, cuidar, mantener |
+| taller | lugar al que se va cuando algo salió mal | centro de servicio, servicio |
+| falla, avería, problema, daño | escribe la escena que él teme | (no se menciona) |
+| posventa | jerga interna del gremio | acompañamiento, respaldo |
+| "no te preocupes", "tranquilo" | la negación activa la preocupación | un número concreto |
+| "unidades limitadas", "última oportunidad" | presión sin prueba; riesgo Ley 1480 | "sujeto a disponibilidad" |
+
+Cifras antes que adjetivos. "26 centros de servicio" convence; "amplia red de respaldo"
+no dice nada y no se puede verificar.
+
+Nada que insinúe que ir a la sala del aliado es un fastidio: Corautos es el socio, no
+el obstáculo. TORQUE resuelve antes de la visita, no en lugar de la visita.
+
+Toda afirmación en condicional cuando el hecho lo es (`pasaría`, `podrías`), en
+indicativo cuando está probado. Un condicional mal puesto es una promesa.
+
 ## Datos
 
 Todas las cifras salen de fuentes citadas al pie de cada página (Fenalco-ANDI y Sufi,
