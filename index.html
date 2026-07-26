@@ -152,6 +152,34 @@ tbody tr:last-child td{border-bottom:none}
 .dock .btn{flex:1;padding:13px 10px;font-size:12.5px}
 body.menu-open .dock{transform:translateY(115%)}
 
+/* CALIFICADOR */
+.qz{max-width:560px;margin:0 auto;text-align:left;border:1px solid var(--line);border-radius:8px;background:var(--ink2);overflow:hidden}
+.qz-bar{height:2px;background:var(--line)}
+.qz-bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .4s cubic-bezier(.4,0,.2,1)}
+.qz-in{padding:30px 28px 28px}
+.qz-n{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut2);font-weight:700}
+.qz-q{font-size:21px;font-weight:700;letter-spacing:-.02em;line-height:1.25;margin:12px 0 20px}
+.qz-opts{display:grid;gap:8px}
+.qz-opts.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.qz-chip{display:flex;align-items:center;min-height:52px;padding:14px 18px;border:1px solid var(--line2);border-radius:6px;background:transparent;color:var(--paper);font-size:15px;font-family:inherit;text-align:left;cursor:pointer;transition:border-color .2s,background .2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.qz-chip:hover,.qz-chip:active{border-color:var(--acc);background:rgba(200,242,74,.06)}
+/* 16px o iOS hace zoom solo al enfocar */
+.qz-field{width:100%;min-height:52px;padding:14px 16px;border:1px solid var(--line2);border-radius:6px;background:#0a0c0e;color:var(--paper);font-size:16px;font-family:inherit}
+.qz-field:focus{outline:none;border-color:var(--acc)}
+select.qz-field{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--mut) 50%),linear-gradient(135deg,var(--mut) 50%,transparent 50%);background-position:calc(100% - 20px) 23px,calc(100% - 14px) 23px;background-size:6px 6px;background-repeat:no-repeat}
+.qz-consent{display:flex;gap:11px;align-items:flex-start;margin-top:18px;font-size:11.5px;color:var(--mut);line-height:1.6;text-align:left}
+.qz-consent input{width:22px;height:22px;flex-shrink:0;accent-color:var(--acc);margin-top:1px}
+.qz-consent a{color:var(--mut);text-decoration:underline}
+.qz-send{width:100%;margin-top:18px}
+.qz-send[aria-disabled="true"]{opacity:.34;pointer-events:none}
+.qz-back{background:none;border:none;color:var(--mut2);font-size:12px;font-family:inherit;cursor:pointer;padding:12px 2px;margin-top:14px;min-height:44px;touch-action:manipulation}
+.qz-back:hover{color:var(--paper)}
+.qz-sum{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.qz-sum span{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:100px;padding:6px 11px}
+.qz-skip{display:inline-block;margin-top:22px;font-size:12.5px;color:var(--mut2);text-decoration:underline;min-height:44px;line-height:44px}
+.qz-skip:hover{color:var(--paper)}
+.qz-done{font-size:15px;color:var(--mut);line-height:1.7}
+
 /* CLOSER */
 .closer{border-top:1px solid var(--line);padding:106px 0 0;text-align:center}
 .closer h2{margin:0 auto 22px}
@@ -415,8 +443,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
 <div class="closer" id="contacto"><div class="wrap">
   <div class="eyebrow">Siguiente paso</div>
   <h2>Resuelve tus dudas<br>en dos minutos.</h2>
-  <p>Escríbenos por WhatsApp. Te decimos disponibilidad real, cuota estimada y si tu caso aplica a la devolución de IVA. Y cuando quieras verla, te agendamos en la sala más cercana.</p>
-  <a href="#contacto" class="btn" data-wa>Hablar por WhatsApp</a>
+  <p>Cuatro preguntas rápidas y te escribimos por WhatsApp con disponibilidad real, cuota estimada y si tu caso aplica a la devolución de IVA. Y cuando quieras verla, te agendamos en la sala más cercana.</p>
+
+  <div class="qz" id="qz">
+    <div class="qz-bar"><i id="qz-bar"></i></div>
+    <div class="qz-in" id="qz-in"></div>
+  </div>
+  <a href="#" class="qz-skip" id="wa-directo">Prefiero escribir directo</a>
   <footer><div class="foot-in">
     <div class="logo" style="font-size:15px">TOR<svg viewBox="0 0 100 100" style="width:15px;height:15px" aria-label="Q"><circle cx="50" cy="50" r="37" fill="none" stroke="#fafafa" stroke-width="13"/><path d="M64 64 L88 88" stroke="#c8f24a" stroke-width="13" stroke-linecap="round"/><path d="M74 92 L92 92 L92 74" fill="none" stroke="#c8f24a" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>UE</div>
     <p class="legal">Precio de lanzamiento válido hasta agotar existencias, sujeto a confirmación de vigencia. Imágenes de referencia; las especificaciones exactas deben validarse con el asesor comercial. La autonomía y el consumo varían según hábitos de conducción, clima y estado de la vía. Los cálculos de cuota e impuestos son ilustrativos y no constituyen una oferta de crédito ni asesoría tributaria. TORQUE es un canal digital independiente de generación de contactos comerciales; la venta, facturación y entrega del vehículo las realiza el concesionario aliado. Al enviarnos tus datos autorizas su tratamiento conforme a nuestra Política de Tratamiento de Datos Personales (Ley 1581 de 2012) y su transferencia al concesionario aliado para ser contactado con una oferta comercial.</p>
@@ -429,15 +462,133 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
 </div>
 
 <script>
-/* Línea de WhatsApp. Vacío = los botones bajan a la sección de contacto.
-   Al poner el número aquí, TODOS los botones del sitio quedan cableados. */
+/* ═══ MOTOR DE CAPTACIÓN ═══════════════════════════════════════════════
+   ÚNICO punto a tocar: el número de la línea, en formato internacional
+   sin "+" ni espacios. Ej: "573001234567". Vacío = el calificador
+   funciona pero no envía (útil para revisar sin generar leads reales). */
 var WA="";
+
+var TQ=(function(){
+  /* El código de campaña viaja en la URL del anuncio (?c=A-BOG-REFORMA)
+     y sobrevive a la navegación entre páginas. Sin esto no hay forma de
+     saber qué anuncio pagó cada conversación. */
+  var m=location.search.match(/[?&](?:c|utm_content)=([^&]+)/);
+  var c=m?decodeURIComponent(m[1].replace(/\+/g," ")):"";
+  try{
+    if(c) sessionStorage.setItem("tq_c",c);
+    else  c=sessionStorage.getItem("tq_c")||"";
+  }catch(e){}
+  c=(c||"directo").slice(0,40);
+  return {
+    code:c,
+    link:function(extra){
+      var t="Hola, vengo de TORQUE.\nCódigo: "+c+(extra?"\n"+extra:"");
+      return WA ? "https://wa.me/"+WA+"?text="+encodeURIComponent(t) : "";
+    }
+  };
+})();
+
+/* ═══ CALIFICADOR ══════════════════════════════════════════════════════
+   La malla vive aquí, no en la conversación: el lead llega a WhatsApp
+   ya calificado y con su código de campaña. */
 (function(){
-  if(!WA)return;
-  Array.prototype.forEach.call(document.querySelectorAll('[data-wa]'),function(a){
-    a.href="https://wa.me/"+WA+"?text="+encodeURIComponent("Hola, quiero informacion de la MAGE HEV");
-    a.target="_blank"; a.rel="noopener";
+  var box=document.getElementById("qz-in"), bar=document.getElementById("qz-bar");
+  if(!box)return;
+
+  var CIUDADES=["Bogotá","Medellín","Copacabana","Cali","Barranquilla","Bucaramanga",
+    "Cúcuta","Villavicencio","Montería","Valledupar","Pasto","Pereira","Manizales",
+    "Ibagué","Neiva","Popayán","Duitama","Tunja","Cartagena","Santa Marta","Otra ciudad"];
+
+  var PASOS=[
+    {k:"Ciudad",  q:"¿En qué ciudad estás?", select:CIUDADES},
+    {k:"Compra",  q:"¿Para cuándo la estás pensando?", opts:["Este mes","En 1 a 3 meses","Más adelante","Todavía estoy mirando"]},
+    {k:"Pago",    q:"¿Cómo la comprarías?", opts:["Con crédito","De contado","Aún no lo sé"], two:true},
+    {k:"Retoma",  q:"¿Tienes vehículo para entregar en parte de pago?", opts:["Sí","No"], two:true},
+    {k:"Nombre",  q:"¿Cómo te llamas?", campo:"Tu nombre"}
+  ];
+
+  var i=0, r={};
+
+  function esc(s){return String(s).replace(/[<>&"]/g,function(x){
+    return {"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[x]})}
+
+  function avanzar(v){ r[PASOS[i].k]=v; i++; pintar(); }
+
+  function pintar(){
+    bar.style.width=(i/PASOS.length*100)+"%";
+    if(i>=PASOS.length) return cerrar();
+    var p=PASOS[i], h="";
+    h+='<div class="qz-n">Pregunta '+(i+1)+' de '+PASOS.length+'</div>';
+    h+='<div class="qz-q">'+p.q+'</div>';
+    if(p.select){
+      h+='<select class="qz-field" id="qz-sel"><option value="">Elige tu ciudad</option>'
+        +p.select.map(function(c){return '<option>'+c+'</option>'}).join("")+'</select>';
+    }else if(p.campo){
+      h+='<input class="qz-field" id="qz-txt" type="text" autocomplete="given-name" '
+        +'enterkeyhint="done" placeholder="'+p.campo+'" maxlength="40">';
+    }else{
+      h+='<div class="qz-opts'+(p.two?" two":"")+'">'
+        +p.opts.map(function(o){return '<button class="qz-chip" data-v="'+esc(o)+'">'+o+'</button>'}).join("")
+        +'</div>';
+    }
+    if(i>0) h+='<button class="qz-back" id="qz-back">Volver</button>';
+    box.innerHTML=h;
+
+    var sel=document.getElementById("qz-sel");
+    if(sel) sel.onchange=function(){ if(sel.value) avanzar(sel.value) };
+
+    var txt=document.getElementById("qz-txt");
+    if(txt){
+      var ir=function(){ if(txt.value.trim().length>1) avanzar(txt.value.trim()) };
+      txt.onkeydown=function(e){ if(e.key==="Enter"){e.preventDefault();ir()} };
+      box.insertAdjacentHTML("beforeend",'<button class="btn qz-send" id="qz-ok">Continuar</button>');
+      document.getElementById("qz-ok").onclick=ir;
+    }
+    Array.prototype.forEach.call(box.querySelectorAll(".qz-chip"),function(b){
+      b.onclick=function(){ avanzar(b.dataset.v) };
+    });
+    var back=document.getElementById("qz-back");
+    if(back) back.onclick=function(){ i--; pintar() };
+  }
+
+  function cerrar(){
+    bar.style.width="100%";
+    var resumen=PASOS.map(function(p){return p.k+": "+(r[p.k]||"—")}).join("\n");
+    var h='<div class="qz-n">Último paso</div>';
+    h+='<div class="qz-q">Listo, '+esc(r.Nombre.split(" ")[0])+'. Te escribimos por WhatsApp.</div>';
+    h+='<div class="qz-sum">'+PASOS.slice(0,4).map(function(p){
+        return '<span>'+esc(r[p.k])+'</span>'}).join("")+'</div>';
+    /* La autorización debe mencionar la transferencia al concesionario:
+       entregarle el lead a Corautos es una transferencia a un tercero. */
+    h+='<label class="qz-consent"><input type="checkbox" id="qz-ok-datos">'
+      +'<span>Autorizo el tratamiento de mis datos conforme a la '
+      +'<a href="politica-datos.html">Política de Tratamiento de Datos Personales</a> '
+      +'y su transferencia al concesionario aliado para ser contactado con una oferta comercial.</span></label>';
+    h+='<a class="btn qz-send" id="qz-wa" aria-disabled="true" role="button">Abrir WhatsApp</a>';
+    h+='<button class="qz-back" id="qz-back">Volver</button>';
+    box.innerHTML=h;
+
+    var chk=document.getElementById("qz-ok-datos"), wa=document.getElementById("qz-wa");
+    chk.onchange=function(){
+      if(chk.checked && WA){
+        wa.setAttribute("aria-disabled","false");
+        wa.href=TQ.link(resumen); wa.target="_blank"; wa.rel="noopener";
+      }else{
+        wa.setAttribute("aria-disabled","true");
+        wa.removeAttribute("href");
+      }
+    };
+    document.getElementById("qz-back").onclick=function(){ i--; pintar() };
+  }
+
+  /* atajo para quien solo quiere preguntar algo: igual carga el código */
+  var d=document.getElementById("wa-directo");
+  if(d) d.addEventListener("click",function(e){
+    var u=TQ.link(""); if(!u){e.preventDefault();return}
+    d.href=u; d.target="_blank"; d.rel="noopener";
   });
+
+  pintar();
 })();
 (function(){
   var imgs=[].slice.call(document.querySelectorAll('#stage img'));

@@ -16,6 +16,7 @@ mercado, los hallazgos del tablero y los pendientes legales.
 | `analitica.html` | Inteligencia de mercado (mapa, matriz de oportunidad, series) |
 | `img/` | 9 fotos optimizadas a 1400px |
 | `CONTEXTO.md` | Traspaso completo del proyecto |
+| `PAUTA.md` | Motor de captación: códigos de campaña, malla de calificación, ruta de pauta |
 
 Se publica en GitHub Pages: https://clawddma.github.io/torque-preview/
 
@@ -74,6 +75,15 @@ Todas las cifras salen de fuentes citadas al pie de cada página (Fenalco-ANDI y
 junio 2026, sobre datos RUNT). **No estimar ni interpolar.** Si un dato no existe en
 la fuente, se dice que no existe — por ejemplo, no hay desglose de híbridos y
 eléctricos por departamento, y el tablero lo declara explícitamente.
+
+## Captación
+
+El número de WhatsApp vive en **un solo lugar**: `var WA` al inicio del script de
+`index.html`. Vacío = el calificador funciona pero no envía. Todo lo demás
+(códigos de campaña, malla, enlace directo) cuelga de ahí — ver `PAUTA.md`.
+
+El código de campaña entra por `?c=CODIGO`, sobrevive el salto entre páginas y
+llega escrito en el mensaje de WhatsApp. **Ningún anuncio sale sin código.**
 
 ## Publicar
 

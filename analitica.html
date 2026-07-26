@@ -747,5 +747,16 @@ window.addEventListener("resize",function(){
 },{passive:true});
 })();
 </script>
+<script>
+/* el código de campaña sobrevive el salto entre páginas */
+(function(){
+  var m=location.search.match(/[?&](?:c|utm_content)=([^&]+)/);
+  var c=m?decodeURIComponent(m[1].replace(/\+/g," ")):"";
+  try{ if(c) sessionStorage.setItem("tq_c",c); else c=sessionStorage.getItem("tq_c")||""; }catch(e){}
+  if(!c) return;
+  var a=document.querySelector('.nav-links a[href="index.html"]');
+  if(a) a.href="index.html?c="+encodeURIComponent(c);
+})();
+</script>
 </body>
 </html>
