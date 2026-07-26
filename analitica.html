@@ -27,6 +27,8 @@ nav{position:sticky;top:0;z-index:60;backdrop-filter:blur(18px);background:rgba(
 .nav-in{max-width:1320px;margin:0 auto;padding:0 40px;height:70px;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .logo{display:flex;align-items:center;gap:1px;font-size:19px;font-weight:800;letter-spacing:.19em}
 .logo svg{width:22px;height:22px;margin:0 1px}
+.logo-lock{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.nav-tag{font-size:8.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--mut2);font-weight:700;white-space:nowrap}
 .nav-links{display:flex;gap:26px;list-style:none}
 .nav-links a{color:var(--mut);text-decoration:none;font-size:12.5px}
 .nav-links a:hover,.nav-links a.on{color:var(--paper)}
@@ -138,6 +140,7 @@ footer{border-top:1px solid var(--line);margin-top:56px;padding:34px 0 60px;font
 }
 @media(max-width:400px){
   .wrap,.nav-in{padding-left:calc(16px + env(safe-area-inset-left,0px));padding-right:calc(16px + env(safe-area-inset-right,0px))}
+  .nav-tag{font-size:8px;letter-spacing:.13em}
   .row{grid-template-columns:84px minmax(0,1fr) 48px 46px;gap:6px}
   .kpi .v{font-size:24px}
 }
@@ -147,7 +150,7 @@ footer{border-top:1px solid var(--line);margin-top:56px;padding:34px 0 60px;font
 <body>
 
 <nav><div class="nav-in">
-  <div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45" shape-rendering="geometricPrecision"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div>
+  <div class="logo-lock"><div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45" shape-rendering="geometricPrecision"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div><div class="nav-tag">Tu carro, tu mejor decisión.</div></div>
   <ul class="nav-links">
     <li><a href="index.html">Showroom</a></li>
     <li><a href="analitica.html" class="on">Inteligencia de mercado</a></li>
