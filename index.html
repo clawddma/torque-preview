@@ -28,6 +28,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(18px);b
 .nav-in{max-width:1320px;margin:0 auto;padding:0 calc(var(--pad) + var(--safe-r)) 0 calc(var(--pad) + var(--safe-l));height:var(--nav);display:flex;align-items:center;justify-content:space-between;gap:14px}
 .logo{display:flex;align-items:center;gap:1px;font-size:21px;font-weight:800;letter-spacing:.19em;line-height:1;flex-shrink:0}
 .logo svg{width:24px;height:24px;display:block;margin:0 1px}
+.logo-lock{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.nav-tag{font-size:8.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--mut2);font-weight:700;white-space:nowrap}
 .nav-links{display:flex;gap:38px;list-style:none}
 .nav-links a{color:var(--mut);text-decoration:none;font-size:12.5px;letter-spacing:.06em;transition:color .25s}
 .nav-links a:hover{color:var(--paper)}
@@ -146,6 +148,35 @@ tbody tr:last-child td{border-bottom:none}
 .rsp .n em{font-style:normal;font-size:14px;font-weight:600;color:var(--mut);margin-left:5px}
 .rsp .k{font-size:12px;color:var(--mut);margin-top:10px;line-height:1.55;font-weight:300}
 
+/* SIMULADOR */
+.sim{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:8px;align-items:start}
+.sim-box{border:1px solid var(--line);border-radius:6px;background:var(--ink2);padding:30px 28px}
+.sim-box.hi{border-color:rgba(200,242,74,.3);background:linear-gradient(180deg,rgba(200,242,74,.06),transparent)}
+.f{margin-bottom:19px}
+.f:last-child{margin-bottom:0}
+.f label{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:700;margin-bottom:9px}
+.f .hint{font-size:11px;color:var(--mut2);margin-top:8px;line-height:1.55}
+.fld{width:100%;min-height:52px;padding:14px 16px;border:1px solid var(--line2);border-radius:6px;background:#0a0c0e;color:var(--paper);font-size:16px;font-family:inherit;font-variant-numeric:tabular-nums}
+.fld:focus{outline:none;border-color:var(--acc)}
+select.fld{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--mut) 50%),linear-gradient(135deg,var(--mut) 50%,transparent 50%);background-position:calc(100% - 20px) 23px,calc(100% - 14px) 23px;background-size:6px 6px;background-repeat:no-repeat}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sim-k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);font-weight:700}
+.sim-n{font-size:clamp(38px,7vw,60px);font-weight:800;letter-spacing:-.035em;color:var(--acc);line-height:1;margin:14px 0 6px;font-variant-numeric:tabular-nums}
+.sim-sub{font-size:13.5px;color:var(--mut);line-height:1.65;font-weight:300}
+.sim-sub b{color:var(--paper);font-weight:600}
+.bars{margin:26px 0 0}
+.bar{margin-bottom:15px}
+.bar .t{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;color:var(--mut);margin-bottom:8px}
+.bar .t b{color:var(--paper);font-weight:600;font-variant-numeric:tabular-nums}
+.bar .track{height:10px;border-radius:2px;background:#161a1f;overflow:hidden}
+.bar .fill{height:100%;border-radius:0 2px 2px 0;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.rows{border-top:1px solid var(--line);margin-top:22px;padding-top:8px}
+.r2{display:flex;justify-content:space-between;gap:14px;font-size:13px;padding:11px 0;color:var(--mut);border-bottom:1px solid var(--line)}
+.r2:last-child{border-bottom:none}
+.r2 b{color:var(--paper);font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+.sim-note{font-size:11px;color:var(--mut2);line-height:1.7;margin-top:18px}
+.sim-cta{margin-top:22px;width:100%}
+
 /* BARRA DE ACCIÓN MÓVIL */
 .dock{display:none;position:fixed;left:0;right:0;bottom:0;z-index:98;gap:9px;padding:11px calc(16px + var(--safe-l)) calc(11px + env(safe-area-inset-bottom,0px)) calc(16px + var(--safe-r));background:rgba(8,9,10,.93);backdrop-filter:blur(18px);border-top:1px solid var(--line);transform:translateY(115%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
 .dock.up{transform:none}
@@ -182,6 +213,11 @@ select.qz-field{appearance:none;-webkit-appearance:none;background-image:linear-
 
 /* CLOSER */
 .closer{border-top:1px solid var(--line);padding:106px 0 0;text-align:center}
+.firma{margin:56px auto 0;padding-top:38px;border-top:1px solid var(--line);max-width:560px;display:flex;flex-direction:column;align-items:center}
+.firma .logo{font-size:26px}
+.firma .logo svg{width:29px;height:29px}
+.firma .tag{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--paper);font-weight:600;margin-top:18px}
+.firma .desc{font-size:13px;color:var(--mut);margin-top:10px;font-weight:300}
 .closer h2{margin:0 auto 22px}
 .closer p{color:var(--mut);max-width:490px;margin:0 auto 34px;font-size:15px;line-height:1.7;font-weight:300}
 footer{border-top:1px solid var(--line);margin-top:96px;padding:38px 0 46px}
@@ -195,6 +231,7 @@ footer{border-top:1px solid var(--line);margin-top:96px;padding:38px 0 46px}
   :root{--pad:22px}
   .specs-in{padding-left:calc(22px + var(--safe-l));padding-right:calc(22px + var(--safe-r))}
   .nav-links{display:none}
+  .nav-tag{display:none}
   .burger{display:flex}
   .nav-in .btn{display:none}
   .specs-in{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -202,6 +239,7 @@ footer{border-top:1px solid var(--line);margin-top:96px;padding:38px 0 46px}
   .spec:nth-child(2n){border-right:none}
   .spec:last-child{grid-column:1/-1;border-right:none;border-bottom:none}
   .ben{grid-template-columns:1fr}
+  .sim{grid-template-columns:minmax(0,1fr)}
   .rsp{grid-template-columns:1fr}
   .city-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .thumbs{grid-template-columns:repeat(4,1fr)}
@@ -245,7 +283,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
   th:first-child,td:first-child{max-width:104px}
   tbody td:first-child{font-size:11.5px}
   .cmp-hint{display:flex}
-  .card{padding:30px 24px}
+  .card,.sim-box{padding:26px 22px}
   .big-n{margin:18px 0 6px}
   .rsp .n{font-size:30px}
   .closer{padding-top:70px}
@@ -260,8 +298,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
   .hero-price .val{font-size:34px}
   .spec .n{font-size:32px}
   .spec{padding:22px 16px}
-  .card{padding:26px 20px}
+  .card,.sim-box{padding:22px 18px}
   .card h3{font-size:22px}
+  .pair{grid-template-columns:minmax(0,1fr)}
   .city-grid{gap:6px}
   .city{padding:14px 13px;min-height:60px}
   .city .nm{font-size:13px}
@@ -280,12 +319,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
 
 <nav>
   <div class="nav-in">
-    <div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45" shape-rendering="geometricPrecision"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div>
+    <div class="logo-lock"><div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45" shape-rendering="geometricPrecision"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div><div class="nav-tag">Tu carro, tu mejor decisión.</div></div>
     <ul class="nav-links">
       <li><a href="#galeria">Galería</a></li>
       <li><a href="#ficha">Ficha</a></li>
       <li><a href="#comparar">Comparar</a></li>
       <li><a href="#beneficio">Beneficio</a></li>
+      <li><a href="#simulador">Simulador</a></li>
       <li><a href="#ciudades">Respaldo</a></li>
       <li><a href="analitica.html">Inteligencia de mercado</a></li>
     </ul>
@@ -299,6 +339,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
   <a href="#ficha">Ficha técnica <span class="ar">&rsaquo;</span></a>
   <a href="#comparar">Comparar <span class="ar">&rsaquo;</span></a>
   <a href="#beneficio">Por qué ahora <span class="ar">&rsaquo;</span></a>
+  <a href="#simulador">Simulador <span class="ar">&rsaquo;</span></a>
   <a href="#ciudades">Respaldo <span class="ar">&rsaquo;</span></a>
   <a href="analitica.html">Inteligencia de mercado <span class="ar">&rsaquo;</span></a>
   <a href="#contacto" class="hl" data-wa>Hablar por WhatsApp <span class="ar">&rsaquo;</span></a>
@@ -417,6 +458,90 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
   </div>
 </div></section>
 
+<section id="simulador" style="padding-top:0"><div class="wrap">
+  <div class="sec-head">
+    <div><div class="eyebrow">Simulador</div><h2>Lo que te cuesta<br>tu carro de hoy.</h2></div>
+    <p>Pon tus propios números. Los tuyos, no los nuestros: nosotros solo ponemos el 4,9 L/100 km de la ficha.</p>
+  </div>
+  <div class="sim">
+    <div class="sim-box">
+      <div class="f">
+        <label for="s-perfil">Tu carro actual</label>
+        <select class="fld" id="s-perfil">
+          <option value="7.5">Sedán pequeño</option>
+          <option value="8.5">Sedán mediano</option>
+          <option value="9.5" selected>SUV compacta</option>
+          <option value="11.5">SUV grande o camioneta</option>
+          <option value="12.5">Pick-up</option>
+          <option value="5.5">Ya tengo una híbrida</option>
+          <option value="9">No sé cuál poner</option>
+        </select>
+        <div class="hint">Esto solo llena el consumo con un punto de partida. Si conoces el de tu carro, cámbialo abajo — el resultado es tan bueno como ese número.</div>
+      </div>
+      <div class="pair">
+        <div class="f">
+          <label for="s-cons">Consumo · L/100 km</label>
+          <input class="fld" id="s-cons" type="number" inputmode="decimal" value="9.5" min="2" max="30">
+        </div>
+        <div class="f">
+          <label for="s-km">Kilómetros al mes</label>
+          <input class="fld" id="s-km" type="number" inputmode="numeric" value="1200" min="50" max="10000">
+        </div>
+      </div>
+      <div class="pair">
+        <div class="f">
+          <label for="s-gal">Galón de gasolina</label>
+          <input class="fld" id="s-gal" type="number" inputmode="numeric" value="16000" min="1000" max="60000">
+        </div>
+        <div class="f">
+          <label for="s-tan">Tanque · litros</label>
+          <input class="fld" id="s-tan" type="number" inputmode="numeric" value="50" min="20" max="120">
+        </div>
+      </div>
+      <div class="pair">
+        <div class="f">
+          <label for="s-seg">Seguro al año</label>
+          <input class="fld" id="s-seg" type="number" inputmode="numeric" value="2200000" min="0" max="30000000">
+        </div>
+        <div class="f">
+          <label for="s-imp">Impuesto al año</label>
+          <input class="fld" id="s-imp" type="number" inputmode="numeric" value="900000" min="0" max="30000000">
+        </div>
+      </div>
+      <div class="hint">Ajusta el precio del galón al de tu ciudad. El seguro y el impuesto son los que tú pagas hoy.</div>
+    </div>
+
+    <div class="sim-box hi">
+      <div class="sim-k">Te ahorrarías cada mes</div>
+      <div class="sim-n" id="s-mes">$0</div>
+      <div class="sim-sub" id="s-cinco">&nbsp;</div>
+
+      <div class="bars">
+        <div class="bar">
+          <div class="t"><span>Tu carro hoy · combustible al mes</span><b id="s-b1">$0</b></div>
+          <div class="track"><div class="fill" id="s-f1" style="background:#d95926;width:0"></div></div>
+        </div>
+        <div class="bar">
+          <div class="t"><span>MAGE HEV · combustible al mes</span><b id="s-b2">$0</b></div>
+          <div class="track"><div class="fill" id="s-f2" style="background:#199e70;width:0"></div></div>
+        </div>
+      </div>
+
+      <div class="rows">
+        <div class="r2"><span>Kilómetros por tanqueada · tu carro</span><b id="s-a1">—</b></div>
+        <div class="r2"><span>Autonomía total de la MAGE</span><b>1.000 km +</b></div>
+        <div class="r2"><span>Veces que tanqueas al mes · tú</span><b id="s-t1">—</b></div>
+        <div class="r2"><span>Veces que tanqueas al mes · MAGE</span><b id="s-t2">—</b></div>
+        <div class="r2"><span>Recargas eléctricas necesarias</span><b>Ninguna</b></div>
+        <div class="r2"><span>Lo que pagas hoy al año · todo incluido</span><b id="s-anio">—</b></div>
+      </div>
+
+      <p class="sim-note" id="s-nota">La MAGE HEV no se enchufa: el sistema híbrido se recarga solo mientras andas. Sin cargador, sin instalación y sin depender de una estación. Su seguro e impuesto dependen de tu perfil y los confirma el asesor.</p>
+      <a href="#contacto" class="btn sim-cta">Pedir mi cálculo exacto</a>
+    </div>
+  </div>
+</div></section>
+
 <section id="ciudades" style="padding-top:0"><div class="wrap">
   <div class="sec-head">
     <div><div class="eyebrow">Respaldo nacional</div><h2>Dónde verla,<br>dónde cuidarla.</h2></div>
@@ -461,6 +586,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
     <div class="qz-in" id="qz-in"></div>
   </div>
   <a href="#" class="qz-skip" id="wa-directo">Prefiero escribir directo</a>
+  <div class="firma">
+    <div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div>
+    <div class="tag">Tu carro, tu mejor decisión.</div>
+    <div class="desc">Compra y renting de carros.</div>
+  </div>
   <footer><div class="foot-in">
     <div class="foot-brand"><div class="logo" style="font-size:15px">TOR<svg viewBox="0 0 100 100" style="width:17px;height:17px" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45" shape-rendering="geometricPrecision"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div>
       <div class="foot-tag">Tu carro, tu mejor decisión.</div>
@@ -568,7 +698,8 @@ var TQ=(function(){
 
   function cerrar(){
     bar.style.width="100%";
-    var resumen=PASOS.map(function(p){return p.k+": "+(r[p.k]||"—")}).join("\n");
+    var resumen=PASOS.map(function(p){return p.k+": "+(r[p.k]||"—")}).join("\n")
+      +(window.TQ_SIM?"\n"+window.TQ_SIM:"");
     var h='<div class="qz-n">Último paso</div>';
     h+='<div class="qz-q">Listo, '+esc(r.Nombre.split(" ")[0])+'. Te escribimos por WhatsApp.</div>';
     h+='<div class="qz-sum">'+PASOS.slice(0,4).map(function(p){
@@ -659,6 +790,55 @@ var TQ=(function(){
     if(Math.abs(dx)>42){stop();go(dx<0?i+1:i-1)}
     x0=null;
   },{passive:true});
+})();
+
+/* ═══ SIMULADOR ════════════════════════════════════════════════════════
+   Todo lo que entra lo pone el usuario. Lo único nuestro es el 4,9 L/100 km
+   de la ficha. Si el cálculo no favorece a la MAGE, lo dice. */
+(function(){
+  var GAL=3.785411784, MAGE=4.9;
+  var $=function(id){return document.getElementById(id)};
+  var perfil=$("s-perfil"); if(!perfil)return;
+  var cons=$("s-cons"), km=$("s-km"), gal=$("s-gal"), tan=$("s-tan"), seg=$("s-seg"), imp=$("s-imp");
+  var pesos=function(n){return "$"+Math.round(n).toLocaleString("es-CO")};
+  var num=function(el,def){var v=parseFloat(String(el.value).replace(",","."));return isFinite(v)&&v>0?v:def};
+
+  function calc(){
+    var c=num(cons,9.5), k=num(km,1200), g=num(gal,16000), t=num(tan,50);
+    var mio=k*c/100/GAL*g, mage=k*MAGE/100/GAL*g, dif=mio-mage;
+    var max=Math.max(mio,mage,1);
+
+    $("s-b1").textContent=pesos(mio);
+    $("s-b2").textContent=pesos(mage);
+    $("s-f1").style.width=(mio/max*100)+"%";
+    $("s-f2").style.width=(mage/max*100)+"%";
+
+    if(dif>0){
+      $("s-mes").textContent=pesos(dif);
+      $("s-mes").style.color="var(--acc)";
+      $("s-cinco").innerHTML="Son <b>"+pesos(dif*12)+"</b> al año y <b>"+pesos(dif*60)+"</b> en cinco años, solo en gasolina.";
+      window.TQ_SIM="Ahorro estimado: "+pesos(dif)+"/mes en gasolina";
+    }else{
+      /* honestidad: si tu carro ya gasta menos, el simulador lo dice */
+      $("s-mes").textContent=pesos(0);
+      $("s-mes").style.color="var(--mut)";
+      $("s-cinco").innerHTML="Con ese consumo tu carro ya gasta lo mismo o menos que la MAGE. La diferencia no estaría en la gasolina, sino en los <b>288 hp</b>, la <b>garantía de 8 años</b> de batería y el precio de entrada.";
+      window.TQ_SIM="Simulación: sin ahorro de gasolina frente a su carro actual";
+    }
+
+    var autoMio=t/(c/100);
+    $("s-a1").textContent=Math.round(autoMio).toLocaleString("es-CO")+" km";
+    $("s-t1").textContent=(k/autoMio).toFixed(1).replace(".",",");
+    $("s-t2").textContent=(k/(t/(MAGE/100))).toFixed(1).replace(".",",");
+    $("s-anio").textContent=pesos(mio*12+num(seg,0)+num(imp,0));
+  }
+
+  perfil.addEventListener("change",function(){cons.value=perfil.value;calc()});
+  [cons,km,gal,tan,seg,imp].forEach(function(el){
+    el.addEventListener("input",calc);
+    el.addEventListener("blur",function(){if(!el.value)el.value=el.defaultValue;calc()});
+  });
+  calc();
 })();
 
 /* MENÚ MÓVIL */
