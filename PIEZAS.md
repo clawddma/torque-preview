@@ -1,141 +1,141 @@
 # TORQ — Piezas de pauta · Fase 1
 
-> Presupuesto: **$1.200.000/mes**. Ángulos A (reloj fiscal) y B (respaldo).
-> Los códigos y la aritmética están en `PAUTA.md`.
+> Presupuesto: **$1.200.000/mes**. La aritmética y los códigos, en `PAUTA.md`.
 
-## Reparto entre canales
+## La lección que costó la primera versión
 
-**Meta $1.000.000 · Google $200.000.**
+El primer juego de piezas lideraba con **+$14.533.333** y con **26 centros de servicio**.
+Las dos se descartaron, y la razón sirve para todo lo que venga:
 
-La razón no es preferencia, es cómo funciona cada canal. Dongfeng está en el puesto 16 y
-casi nadie la busca por nombre: en Google **no hay demanda que capturar**, hay que
-crearla. Eso lo hace Meta. Google entra solo para recoger a los pocos que ya escriben
-"dongfeng mage" — son baratos y convierten, pero son pocos. Meterle mitad y mitad
-mataría la señal de los dos.
+- **Una cifra sin referente no comunica.** Quien scrollea no sabe si $14.533.333 es
+  mucho o poco, ni qué tiene que ver con él. El número funciona *después* del gancho,
+  nunca como gancho.
+- **No se responde una objeción antes de ganarse la atención.** "26 centros de servicio"
+  contesta una duda que la persona todavía no ha formulado.
+- Las dos hablaban de **nosotros** (la reforma, nuestra red). Ninguna hablaba de **él**.
 
----
+Regla: **el gancho sale del dolor del cliente; la cifra es la prueba, no el anzuelo.**
 
-# META
+## El mapa de dolores
 
-Destino: `index.html?c=CODIGO`. Objetivo: mensajes o tráfico al calificador.
-Formatos entregados en `piezas/`: **1080×1350** (el que más rinde en feed y reels) y
-**1080×1080**.
+| Dolor real | Cómo suena en su cabeza | Gancho |
+|---|---|---|
+| La gasolina se come el sueldo | "Vivo tanqueando" | **H1 · Tanqueada** |
+| No quiere eléctrico: no tiene dónde cargar | "¿Y yo dónde lo enchufo?" | **H2 · Enchufe** |
+| Marca desconocida, ¿quién responde después? | "¿Y dónde le hago los mantenimientos?" | **H4 · Mantenimiento** |
+| La autonomía es un número abstracto | "¿Cuánto aguanta de verdad?" | **H3 · Viaje** |
 
-## Ángulo A · Reloj fiscal → `A-BOG-F1`
+## Estructura de campaña
 
-**Texto principal — variante 1**
-> El IVA de los híbridos podría pasar de 5% a 19%. En esta camioneta son $14.533.333 más.
-> Mientras el proyecto no se apruebe, el precio de hoy es el de hoy. 288 hp, 4,9 L cada 100 km.
+**Prospección en frío → H1 vs H2.** Son los dos ganchos que funcionan con alguien que no
+te conoce: uno ataca un gasto que ya siente, el otro derriba la objeción que frena la
+electrificación en Colombia.
 
-**Variante 2**
-> Se radicó una reforma que subiría el IVA de los híbridos del 5% al 19%. Todavía no se
-> aprueba. Si estabas pensando en cambiar de carro, esta es la ventana.
+**Retargeting → H4 y H3.** El manejo de objeciones **no va en frío**: va sobre quien ya
+hizo clic y está evaluando. Ahí sí "26 centros de servicio" pesa, porque ya tiene la duda.
 
-**Variante 3 — la más directa**
-> $14.533.333. Eso es lo que costaría de más esta camioneta si la reforma pasa.
-> Hoy todavía no ha pasado.
-
-**Titulares (40)** · MAGE HEV · $109.000.000 hoy | El precio de hoy es el de hoy | 288 hp desde $109.000.000
-**Descripción (30)** · Prueba de ruta sin compromiso
-**Botón** · Enviar mensaje · Más información
-
-## Ángulo B · Respaldo → `B-BOG-F1`
-
-**Texto principal — variante 1**
-> 26 centros de servicio en 19 ciudades. Hay más sitios para atenderla que para comprarla.
-> Eso es lo que sostiene una camioneta de 288 hp con 8 años de garantía de batería.
-
-**Variante 2**
-> Antes de mirar la ficha, mira el mapa: 22 salas y 26 centros de servicio en el país.
-> Después hablamos de los 288 hp y de los 4,9 litros cada 100 km.
-
-**Variante 3 — la humana**
-> La pregunta no es cuánto rinde. Es quién responde cuando toque el mantenimiento.
-> 26 centros de servicio, 19 ciudades.
-
-**Titulares (40)** · 26 centros de servicio en 19 ciudades | Más sitios para atenderla que para comprarla
-**Descripción (30)** · Mira dónde queda el tuyo
-**Botón** · Enviar mensaje · Cómo llegar
-
-## Segmentación Fase 1
-
-- **Solo Bogotá.** 44.735 unidades, 28,4% del país.
-- **Público amplio**, 25–60. Con presupuesto mínimo, sobre-segmentar mata el aprendizaje.
-  La precisión va en el mapa, no en el público.
-- **Prueba A/B de Meta**, no ad sets manuales: reparte la audiencia al azar y da
-  significancia. Los ad sets manuales se canibalizan.
-- **Nunca pautar en Manizales** (−2,9%) ni a mostrador en Cundinamarca (crece 2,3%: es
-  flota y leasing).
+**La reforma pasa a Fase 3.** En julio, con 142 días de legislatura por delante, el reloj
+no aprieta. En noviembre sí. Un gancho de urgencia gastado antes de tiempo llega
+desgastado cuando de verdad sirve.
 
 ---
 
-# GOOGLE ADS
+## H1 · Tanqueada → `H1-BOG-F1` · frío
 
-Campaña de **búsqueda**, concordancia de frase y exacta. $200.000/mes. No usar
-Performance Max con este presupuesto: se come la plata en display sin dejar aprendizaje.
+> **¿Cuántas veces tanqueas al mes?**
+> Con 4,9 litros cada 100 km, la mitad.
 
-## Titulares (máx. 30 caracteres)
+**Por qué funciona:** es una pregunta, no una afirmación — obliga a hacer la cuenta
+mental. Y esa cuenta la termina el simulador, que ya está construido.
 
-| # | Titular |
-|---|---|
-| 1 | Dongfeng MAGE HEV Colombia |
-| 2 | MAGE HEV desde $109.000.000 |
-| 3 | 288 hp y 4,9 L cada 100 km |
-| 4 | 26 centros de servicio |
-| 5 | Híbrida que no se enchufa |
-| 6 | Más de 1.000 km de autonomía |
-| 7 | Garantía de batería: 8 años |
-| 8 | Prueba de ruta sin costo |
-| 9 | IVA de híbridos: 5% hoy |
-| 10 | Compra o renting |
-| 11 | Red Corautos Andino |
-| 12 | Cotiza por WhatsApp |
+**Texto principal**
+> ¿Cuántas veces pasas por la bomba al mes? Haz la cuenta: son horas y son varios cientos
+> de miles de pesos. Con 4,9 litros cada 100 km esa cuenta se parte por la mitad.
+> Calcula lo tuyo con tus propios números, toma un minuto.
 
-## Descripciones (máx. 90 caracteres)
+**Titular** · La mitad de las tanqueadas · **CTA** · Calcular lo mío
+**Destino** · `index.html?c=H1-BOG-F1#simulador`
 
-1. 288 hp, 4,9 L cada 100 km y más de 1.000 km de autonomía. Agenda tu prueba de ruta.
-2. 26 centros de servicio en 19 ciudades. Más sitios para atenderla que para comprarla.
-3. El IVA de los híbridos podría subir de 5% a 19%. Consulta el precio vigente hoy.
-4. Calcula en un minuto cuánto te ahorras frente a tu carro actual. Sin compromiso.
+## H2 · Enchufe → `H2-BOG-F1` · frío
 
-## Palabras clave
+> **Híbrida que nunca vas a enchufar.**
+> Se recarga sola mientras andas.
 
-**Marca y modelo** (la que más convierte, la más barata)
-`dongfeng mage` · `mage hev` · `mage hev precio` · `dongfeng mage colombia` ·
-`dongfeng hibrida` · `aeolus mage`
+**Por qué funciona:** en Colombia la objeción #1 contra electrificarse es dónde cargar.
+Esta pieza la elimina de entrada, y casi nadie la está usando.
 
-**Categoría** (más cara, más volumen)
-`camioneta hibrida colombia` · `suv hibrida precio` · `camioneta hibrida 2026` ·
-`suv hibrida colombia`
+**Texto principal**
+> No necesitas cargador, ni instalación en la casa, ni salir a buscar estación. El
+> sistema híbrido se recarga solo mientras andas. 288 hp, 4,9 litros cada 100 km y más
+> de 1.000 km de autonomía.
 
-**Renting**
-`renting de carros colombia` · `renting camioneta hibrida`
+**Titular** · Sin cargador, sin instalación · **CTA** · Ver cómo funciona
 
-## Negativas — obligatorias desde el día 1
+## H3 · Viaje → `H3-BOG-R1` · retargeting / alcance
 
-`usado` `usada` `segunda mano` `repuestos` `partes` `taller` `manual` `pdf` `ficha
-tecnica pdf` `juguete` `escala` `miniatura` `a control remoto` `empleo` `trabajo`
-`vacantes` `rent a car` `alquiler por dias` `alquiler por horas` `opiniones problemas`
+> **Bogotá–Medellín, ida y vuelta, con un tanque.**
+> 830 km de los más de 1.000 de autonomía.
 
-Sin esas negativas, "renting" y "mage" traen tráfico de alquiler por días y de carros a
-escala. Es la fuga más común y la más cara.
+**Por qué funciona:** "1.000 km" no significa nada; "ida y vuelta a Medellín sin parar"
+sí. Traducir la cifra a una escena vivida es lo que la vuelve memorable.
+
+## H4 · Mantenimiento → `H4-BOG-R1` · retargeting
+
+> **«¿Y dónde le hago los mantenimientos?»**
+> 26 centros de servicio en 19 ciudades.
+
+**Por qué funciona:** pone la duda en boca del cliente, no en la nuestra. Le da permiso
+para tenerla y la resuelve en la misma pieza — sin que nosotros mencionemos jamás una
+falla.
 
 ---
 
-# NOMENCLATURA
+## Lo que hay que probar además del mensaje
 
-Todo anuncio apunta a `index.html?c=ANGULO-PLAZA-FASE`.
-Ejemplos: `A-BOG-F1` · `B-BOG-F1` · `A-BOG-G1` (Google).
+Con presupuesto chico, **la diversidad de formato rinde más que la de copy**:
 
-El código viaja en la URL, sobrevive entre páginas y llega escrito en el mensaje de
-WhatsApp junto a las cinco respuestas del calificador y el ahorro que simuló el cliente.
-**Ningún anuncio sale sin código.**
+1. **La pieza que no parece pieza.** Una captura del simulador —"Te ahorrarías $233.317
+   cada mes"— suele ganarle en costo por conversación a un aviso bien diseñado, porque
+   se lee como información y no como publicidad.
+2. **El anuncio vende la calculadora, no el carro.** La gente se resiste a un aviso de
+   carros; no se resiste a "descubre cuánto estás gastando de más". Es el activo que
+   ningún concesionario tiene.
+3. **Video de 6 segundos**: solo la aguja del tablero y el titular. Meta abarata mucho
+   el alcance en video corto.
+
+---
+
+# GOOGLE ADS · $200.000 de los $1.200.000
+
+Meta crea la demanda; Google recoge la poca que ya existe. Dongfeng está en el puesto 16:
+casi nadie la busca por nombre. Mitad y mitad mataría la señal de los dos.
+
+**Titulares (30)** · Híbrida que no se enchufa · La mitad de las tanqueadas · 4,9 litros
+cada 100 km · Más de 1.000 km sin tanquear · Dongfeng MAGE HEV Colombia · MAGE HEV
+$109.000.000 · 26 centros de servicio · Garantía de batería 8 años · Prueba de ruta sin
+costo · Compra o renting · Cotiza por WhatsApp · Calcula cuánto te ahorras
+
+**Descripciones (90)**
+1. Sin cargador ni instalación: el sistema híbrido se recarga solo mientras manejas.
+2. Calcula en un minuto cuánto gastas de más con tu carro actual. Con tus números.
+3. 26 centros de servicio en 19 ciudades. Más sitios para atenderla que para comprarla.
+4. 288 hp, 4,9 L cada 100 km y más de 1.000 km de autonomía. Agenda tu prueba de ruta.
+
+**Claves** · `dongfeng mage` `mage hev` `mage hev precio` `dongfeng hibrida`
+`camioneta hibrida colombia` `suv hibrida precio` `renting camioneta hibrida`
+
+**Negativas obligatorias desde el día 1** · `usado` `usada` `segunda mano` `repuestos`
+`partes` `taller` `manual` `pdf` `juguete` `escala` `miniatura` `control remoto` `empleo`
+`trabajo` `rent a car` `alquiler por dias` `alquiler por horas`
+
+Sin esas negativas, "renting" y "mage" traen alquiler por días y carros a escala. Es la
+fuga más cara del sector.
 
 ---
 
 # ANTES DE SUBIR
 
-1. Las piezas nombran **Dongfeng** y usan fotos de la sala: hace falta la autorización
-   escrita de Corautos o Meta las rechaza.
-2. El destino exige la política de datos completa y firmada.
-3. Revisar que `var WA` tenga el número: si está vacío, el calificador no envía.
+1. Las piezas nombran **Dongfeng** y usan fotos de la sala: sin autorización escrita de
+   Corautos, Meta las rechaza.
+2. El destino exige la política de datos completa.
+3. `var WA` con el número: vacío, el calificador no envía.
