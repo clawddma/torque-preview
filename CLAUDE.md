@@ -26,9 +26,13 @@ Se publica en GitHub Pages: https://clawddma.github.io/torque-preview/
   está escrito a mano. Si necesitas un gráfico, lo dibujas; no importas librerías.
 - **HTML monolítico**, un archivo por página, estilos en un `<style>` al inicio.
 - **Español de Colombia.** Miles con punto, decimales con coma ($109.000.000, 4,9 L).
-- **La marca es TORQ**, con la Q como instrumento (bisel + anillo + cola lima). Vive
-  aislada en el `<div class="logo">` del nav y en el footer — cambiarla sigue siendo
-  editar esos dos puntos. Las tres propuestas y por qué ganó esta: `logo.html`.
+- **La marca es TORQ**, con la Q punteada: el anillo es la escala del instrumento
+  (`stroke-dasharray`) y la cola lima sale del centro. Vive aislada en el
+  `<div class="logo">` del nav y en el footer — cambiarla sigue siendo editar esos dos
+  puntos. Las propuestas: `logo.html` y `logo-escala.html` (ganó la variante 1).
+  La Q va **unos píxeles más grande que las letras** (24 vs 21 en el nav): un círculo
+  punteado lee más pequeño que una versal maciza y cada punto necesita píxeles.
+  Es textura fina: se ve nítida en pantallas retina y se empasta a 1×.
 - **`noindex` en todas las páginas.** Esto es material de revisión interna, no
   producción. No quitar el meta hasta resolver los pendientes legales de `CONTEXTO.md`.
 
