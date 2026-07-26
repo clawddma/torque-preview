@@ -155,11 +155,12 @@ tbody tr:last-child td{border-bottom:none}
 .f{margin-bottom:19px}
 .f:last-child{margin-bottom:0}
 .f label{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:700;margin-bottom:9px}
-.f .hint{font-size:11px;color:var(--mut2);margin-top:8px;line-height:1.55}
+.hint{font-size:11px;color:var(--mut2);margin-top:8px;line-height:1.6}
 .fld{width:100%;min-height:52px;padding:14px 16px;border:1px solid var(--line2);border-radius:6px;background:#0a0c0e;color:var(--paper);font-size:16px;font-family:inherit;font-variant-numeric:tabular-nums}
 .fld:focus{outline:none;border-color:var(--acc)}
 select.fld{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--mut) 50%),linear-gradient(135deg,var(--mut) 50%,transparent 50%);background-position:calc(100% - 20px) 23px,calc(100% - 14px) 23px;background-size:6px 6px;background-repeat:no-repeat}
-.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:19px}
+.pair .f{margin-bottom:0}
 .sim-k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);font-weight:700}
 .sim-n{font-size:clamp(38px,7vw,60px);font-weight:800;letter-spacing:-.035em;color:var(--acc);line-height:1;margin:14px 0 6px;font-variant-numeric:tabular-nums}
 .sim-sub{font-size:13.5px;color:var(--mut);line-height:1.65;font-weight:300}
@@ -481,31 +482,31 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
       <div class="pair">
         <div class="f">
           <label for="s-cons">Consumo · L/100 km</label>
-          <input class="fld" id="s-cons" type="number" inputmode="decimal" value="9.5" min="2" max="30">
+          <input class="fld" id="s-cons" type="text" inputmode="decimal" value="9,5" autocomplete="off">
         </div>
         <div class="f">
           <label for="s-km">Kilómetros al mes</label>
-          <input class="fld" id="s-km" type="number" inputmode="numeric" value="1200" min="50" max="10000">
+          <input class="fld" id="s-km" type="text" inputmode="numeric" value="1.200" autocomplete="off">
         </div>
       </div>
       <div class="pair">
         <div class="f">
           <label for="s-gal">Galón de gasolina</label>
-          <input class="fld" id="s-gal" type="number" inputmode="numeric" value="16000" min="1000" max="60000">
+          <input class="fld" id="s-gal" type="text" inputmode="numeric" value="16.000" autocomplete="off">
         </div>
         <div class="f">
           <label for="s-tan">Tanque · litros</label>
-          <input class="fld" id="s-tan" type="number" inputmode="numeric" value="50" min="20" max="120">
+          <input class="fld" id="s-tan" type="text" inputmode="numeric" value="50" autocomplete="off">
         </div>
       </div>
       <div class="pair">
         <div class="f">
           <label for="s-seg">Seguro al año</label>
-          <input class="fld" id="s-seg" type="number" inputmode="numeric" value="2200000" min="0" max="30000000">
+          <input class="fld" id="s-seg" type="text" inputmode="numeric" value="2.200.000" autocomplete="off">
         </div>
         <div class="f">
           <label for="s-imp">Impuesto al año</label>
-          <input class="fld" id="s-imp" type="number" inputmode="numeric" value="900000" min="0" max="30000000">
+          <input class="fld" id="s-imp" type="text" inputmode="numeric" value="900.000" autocomplete="off">
         </div>
       </div>
       <div class="hint">Ajusta el precio del galón al de tu ciudad. El seguro y el impuesto son los que tú pagas hoy.</div>
@@ -801,7 +802,11 @@ var TQ=(function(){
   var perfil=$("s-perfil"); if(!perfil)return;
   var cons=$("s-cons"), km=$("s-km"), gal=$("s-gal"), tan=$("s-tan"), seg=$("s-seg"), imp=$("s-imp");
   var pesos=function(n){return "$"+Math.round(n).toLocaleString("es-CO")};
-  var num=function(el,def){var v=parseFloat(String(el.value).replace(",","."));return isFinite(v)&&v>0?v:def};
+  var num=function(el,def){
+    var t=String(el.value).replace(/\./g,"").replace(",",".").replace(/[^0-9.]/g,"");
+    var v=parseFloat(t); return isFinite(v)&&v>0?v:def;
+  };
+  var mil=function(n){return Math.round(n).toLocaleString("es-CO")};
 
   function calc(){
     var c=num(cons,9.5), k=num(km,1200), g=num(gal,16000), t=num(tan,50);
@@ -833,10 +838,16 @@ var TQ=(function(){
     $("s-anio").textContent=pesos(mio*12+num(seg,0)+num(imp,0));
   }
 
-  perfil.addEventListener("change",function(){cons.value=perfil.value;calc()});
+  perfil.addEventListener("change",function(){cons.value=String(perfil.value).replace(".",",");calc()});
   [cons,km,gal,tan,seg,imp].forEach(function(el){
     el.addEventListener("input",calc);
-    el.addEventListener("blur",function(){if(!el.value)el.value=el.defaultValue;calc()});
+    el.addEventListener("blur",function(){
+      var v=num(el,0);
+      if(!v){el.value=el.defaultValue}
+      else if(el===cons){el.value=String(v).replace(".",",")}
+      else{el.value=mil(v)}
+      calc();
+    });
   });
   calc();
 })();
