@@ -1,4 +1,4 @@
-# TORQUE
+# TORQ
 
 Motor de generación de leads calificados para el sector automotriz colombiano.
 Socios: Daniel Mesa (tecnología, datos, growth) y Camilo (industria automotriz).
@@ -26,8 +26,9 @@ Se publica en GitHub Pages: https://clawddma.github.io/torque-preview/
   está escrito a mano. Si necesitas un gráfico, lo dibujas; no importas librerías.
 - **HTML monolítico**, un archivo por página, estilos en un `<style>` al inicio.
 - **Español de Colombia.** Miles con punto, decimales con coma ($109.000.000, 4,9 L).
-- **Marca provisional.** TORQUE no está cerrado. Está aislado en el `<div class="logo">`
-  del nav y en el footer de cada página — cambiarlo debe ser editar esos dos puntos.
+- **La marca es TORQ**, con la Q como instrumento (bisel + anillo + cola lima). Vive
+  aislada en el `<div class="logo">` del nav y en el footer — cambiarla sigue siendo
+  editar esos dos puntos. Las tres propuestas y por qué ganó esta: `logo.html`.
 - **`noindex` en todas las páginas.** Esto es material de revisión interna, no
   producción. No quitar el meta hasta resolver los pendientes legales de `CONTEXTO.md`.
 
@@ -64,7 +65,7 @@ Cifras antes que adjetivos. "26 centros de servicio" convence; "amplia red de re
 no dice nada y no se puede verificar.
 
 Nada que insinúe que ir a la sala del aliado es un fastidio: Corautos es el socio, no
-el obstáculo. TORQUE resuelve antes de la visita, no en lugar de la visita.
+el obstáculo. TORQ resuelve antes de la visita, no en lugar de la visita.
 
 Toda afirmación en condicional cuando el hecho lo es (`pasaría`, `podrías`), en
 indicativo cuando está probado. Un condicional mal puesto es una promesa.

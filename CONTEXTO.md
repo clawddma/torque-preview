@@ -1,4 +1,4 @@
-# TORQUE — Contexto del proyecto
+# TORQ — Contexto del proyecto
 
 > Documento de traspaso. Si estás retomando este proyecto en una sesión nueva
 > (celular, web, o terminal), lee esto primero. Actualizado: 26 de julio de 2026.
@@ -26,7 +26,7 @@ automotriz: motos, combustión, híbridos, eléctricos, maquinaria amarilla, pes
 
 ## Estado de la marca
 
-El nombre **NO está cerrado**. TORQUE es provisional, por decisión de Daniel.
+El nombre **NO está cerrado**. TORQ es provisional, por decisión de Daniel.
 
 Historia de descartes (no repetir estos caminos):
 - **Criterio** — descartado: nombra lo que hacemos nosotros, no lo que siente el cliente.

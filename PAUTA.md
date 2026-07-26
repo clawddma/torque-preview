@@ -1,4 +1,4 @@
-# TORQUE — Motor de captación y ruta de pauta
+# TORQ — Motor de captación y ruta de pauta
 
 > Documento operativo. Presupuesto de referencia: **$1.200.000/mes**.
 > Actualizado: 26 de julio de 2026.
@@ -21,7 +21,7 @@ Por encima de eso se trabaja gratis. Para operar con margen (pauta ≤30% de la
 comisión): **CPL objetivo = $373.714 × tasa de cierre** → con cierre del 5%,
 **$18.700 por conversación calificada**.
 
-**La variable que decide el margen no la controla TORQUE, la controla el
+**La variable que decide el margen no la controla TORQ, la controla el
 concesionario.** Por eso el SLA de respuesta es una cláusula de contrato, no una
 cortesía: es literalmente el margen.
 

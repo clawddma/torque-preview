@@ -1,4 +1,4 @@
-# TORQUE — Previsualización MAGE HEV
+# TORQ — Previsualización MAGE HEV
 
 Maqueta de showroom digital para la nueva Dongfeng MAGE HEV (Corautos Andino).
 Uso interno para revisión de socios. No indexable.
