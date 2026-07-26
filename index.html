@@ -148,6 +148,14 @@ tbody tr:last-child td{border-bottom:none}
 .rsp .n em{font-style:normal;font-size:14px;font-weight:600;color:var(--mut);margin-left:5px}
 .rsp .k{font-size:12px;color:var(--mut);margin-top:10px;line-height:1.55;font-weight:300}
 
+/* RELOJ DE LA REFORMA */
+.reloj{margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.reloj-t{display:flex;justify-content:space-between;gap:12px;font-size:11.5px;color:var(--mut);margin-bottom:10px;flex-wrap:wrap}
+.reloj-t b{color:var(--paper);font-weight:700;font-variant-numeric:tabular-nums}
+.reloj-track{height:8px;border-radius:2px;background:#161a1f;overflow:hidden}
+.reloj-fill{height:100%;border-radius:0 2px 2px 0;background:#d95926;width:0;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.reloj-n{font-size:11px;color:var(--mut2);line-height:1.65;margin-top:11px}
+
 /* SIMULADOR */
 .sim{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:8px;align-items:start}
 .sim-box{border:1px solid var(--line);border-radius:6px;background:var(--ink2);padding:30px 28px}
@@ -449,6 +457,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
       <h3>El IVA de los híbridos<br>pasaría de 5% a 19%.</h3>
       <div class="big-n">+$14.533.333</div>
       <p>Es lo que costaría esta misma MAGE si el proyecto se aprueba: <span class="strike">$109.000.000</span> → $123.533.333. El precio de hoy es el precio de hoy.</p>
+      <div class="reloj">
+        <div class="reloj-t"><span>Radicada hace <b id="rj-a">—</b></span><span>Quedan <b id="rj-b">—</b> de legislatura</span></div>
+        <div class="reloj-track"><div class="reloj-fill" id="rj-f"></div></div>
+        <div class="reloj-n" id="rj-n">&nbsp;</div>
+      </div>
+
     </div>
     <div class="card">
       <div class="eyebrow">Certificación UPME</div>
@@ -793,6 +807,28 @@ var TQ=(function(){
     if(Math.abs(dx)>42){stop();go(dx<0?i+1:i-1)}
     x0=null;
   },{passive:true});
+})();
+
+/* ═══ RELOJ DE LA REFORMA ══════════════════════════════════════════════
+   Dos fechas y nada más. RADICADA es un hecho verificado (22 jul 2026).
+   HORIZONTE es el cierre de la legislatura ordinaria: CONFIRMAR antes de
+   sacar esta página de noindex. Si el proyecto se hunde o se aprueba,
+   se cambia aquí y la página entera se actualiza sola. */
+(function(){
+  var RADICADA=new Date(2026,6,22), HORIZONTE=new Date(2026,11,16);
+  var f=document.getElementById("rj-f"); if(!f)return;
+  var dia=86400000, hoy=new Date();
+  var total=Math.round((HORIZONTE-RADICADA)/dia);
+  var ido=Math.max(0,Math.round((hoy-RADICADA)/dia));
+  var falta=Math.max(0,total-ido);
+  var pct=Math.min(100,Math.max(2,ido/total*100));
+  var dias=function(n){return n.toLocaleString("es-CO")+(n===1?" día":" días")};
+  document.getElementById("rj-a").textContent=dias(ido);
+  document.getElementById("rj-b").textContent=dias(falta);
+  setTimeout(function(){f.style.width=pct+"%"},120);
+  document.getElementById("rj-n").textContent=
+    falta>0 ? "El proyecto debe debatirse antes del 16 de diciembre de 2026. Mientras no se apruebe, el IVA sigue en 5% y el precio de hoy es el que ves arriba."
+            : "La legislatura cerró. Consulta con el asesor en qué quedó el proyecto.";
 })();
 
 /* ═══ SIMULADOR ════════════════════════════════════════════════════════
