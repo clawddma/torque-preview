@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>TORQUE · Inteligencia de Mercado — Colombia</title>
+<style>
+:root{
+  --ink:#08090a; --surf:#0e1013; --line:#1c1f24; --line2:#2a2e35;
+  --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b; --brand:#c8f24a;
+  /* marcas de datos — paleta validada para superficie oscura */
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+  --neutral:#383835;
+  --ok:#0ca30c; --warn:#fab219;
+  --grid:#1e2126; --axis:#2f343b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1320px;margin:0 auto;padding:0 40px}
+.eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--brand);font-weight:700}
+.num{font-variant-numeric:tabular-nums}
+
+nav{position:sticky;top:0;z-index:60;backdrop-filter:blur(18px);background:rgba(8,9,10,.82);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1320px;margin:0 auto;padding:0 40px;height:70px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{display:flex;align-items:center;gap:1px;font-size:19px;font-weight:800;letter-spacing:.19em}
+.logo svg{width:19px;height:19px;margin:0 1px}
+.nav-links{display:flex;gap:26px;list-style:none}
+.nav-links a{color:var(--mut);text-decoration:none;font-size:12.5px}
+.nav-links a:hover,.nav-links a.on{color:var(--paper)}
+
+header{padding:56px 0 30px}
+h1{font-size:clamp(36px,5vw,58px);font-weight:800;letter-spacing:-.032em;line-height:1;margin-top:14px}
+.lede{color:var(--mut);font-size:14.5px;max-width:620px;margin-top:18px;line-height:1.7;font-weight:300}
+
+/* FILTROS */
+.filters{position:sticky;top:70px;z-index:50;background:rgba(8,9,10,.94);backdrop-filter:blur(14px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0;margin-bottom:34px}
+.filters-in{max-width:1320px;margin:0 auto;padding:0 40px;display:flex;gap:30px;flex-wrap:wrap;align-items:center}
+.fgroup{display:flex;align-items:center;gap:10px}
+.flabel{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut2);font-weight:700}
+.pills{display:flex;gap:5px;background:var(--surf);border:1px solid var(--line);border-radius:100px;padding:3px}
+.pill{border:none;background:transparent;color:var(--mut);font-size:12px;padding:7px 14px;border-radius:100px;cursor:pointer;font-family:inherit;transition:background .2s,color .2s;white-space:nowrap}
+.pill:hover{color:var(--paper)}
+.pill[aria-pressed="true"]{background:var(--brand);color:#0a0c07;font-weight:700}
+.pill:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:44px}
+.kpi{border:1px solid var(--line);border-radius:6px;padding:22px 20px;background:var(--surf)}
+.kpi .k{font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--mut);margin-bottom:12px;line-height:1.4}
+.kpi .v{font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.kpi .d{font-size:11.5px;margin-top:9px;color:var(--mut)}
+.up{color:var(--ok);font-weight:600}.down{color:var(--s2);font-weight:600}
+
+.panel{border:1px solid var(--line);border-radius:6px;background:var(--surf);padding:26px 24px;margin-bottom:8px}
+.ptitle{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.psub{font-size:11.5px;color:var(--mut);margin-top:6px;line-height:1.55}
+.phead{margin-bottom:22px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.mapgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:8px;margin-bottom:8px}
+
+/* leyenda */
+.legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.lg{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--mut)}
+.sw{width:11px;height:11px;border-radius:2px;flex-shrink:0}
+.swr{width:12px;height:12px;border-radius:50%;flex-shrink:0;background:transparent}
+
+svg{display:block;max-width:100%;height:auto}
+.tip{position:fixed;pointer-events:none;background:#14171b;border:1px solid var(--line2);border-radius:5px;padding:10px 12px;font-size:12px;opacity:0;transition:opacity .12s;z-index:200;max-width:230px;box-shadow:0 12px 34px rgba(0,0,0,.55)}
+.tip b{display:block;margin-bottom:5px;font-size:12.5px}
+.tip .r{display:flex;justify-content:space-between;gap:14px;color:var(--mut);line-height:1.75}
+.tip .r span:last-child{color:var(--paper);font-variant-numeric:tabular-nums}
+
+/* ranking */
+.rank{display:flex;flex-direction:column;gap:2px;max-height:560px;overflow-y:auto}
+.row{display:grid;grid-template-columns:130px 1fr 62px 60px;align-items:center;gap:10px;padding:7px 4px;border-radius:3px;cursor:default}
+.row:hover{background:#15181d}
+.row .nm{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .bw{background:#161a1f;border-radius:2px;height:9px;overflow:hidden}
+.row .bf{height:100%;border-radius:0 2px 2px 0}
+.row .vv{font-size:12px;text-align:right;color:var(--paper);font-variant-numeric:tabular-nums}
+.row .gg{font-size:11.5px;text-align:right;font-variant-numeric:tabular-nums}
+.row.dim{opacity:.28}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;vertical-align:middle}
+
+.note{font-size:11px;color:var(--mut2);line-height:1.7;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.note b{color:var(--mut)}
+footer{border-top:1px solid var(--line);margin-top:56px;padding:34px 0 60px;font-size:11px;color:var(--mut2);line-height:1.75}
+
+@media(max-width:1000px){
+  .wrap,.nav-in,.filters-in{padding-left:20px;padding-right:20px}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid2,.mapgrid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .filters{position:static}
+  .row{grid-template-columns:104px 1fr 56px 54px}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<nav><div class="nav-in">
+  <div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="37" fill="none" stroke="#fafafa" stroke-width="13"/><path d="M64 64 L88 88" stroke="#c8f24a" stroke-width="13" stroke-linecap="round"/><path d="M74 92 L92 92 L92 74" fill="none" stroke="#c8f24a" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>UE</div>
+  <ul class="nav-links">
+    <li><a href="index.html">Showroom</a></li>
+    <li><a href="analitica.html" class="on">Inteligencia de mercado</a></li>
+  </ul>
+</div></nav>
+
+<div class="wrap"><header>
+  <div class="eyebrow">Inteligencia de mercado · Colombia</div>
+  <h1>Dónde está<br>la oportunidad.</h1>
+  <p class="lede">157.620 vehículos nuevos matriculados en el primer semestre de 2026, un 50,1% más que el año pasado. Este tablero cruza ese mercado con la cobertura física de Corautos para encontrar dónde vale la pena invertir en captación — y dónde no.</p>
+</header></div>
+
+<div class="filters"><div class="filters-in">
+  <div class="fgroup"><span class="flabel">Período</span>
+    <div class="pills" id="f-per" role="group" aria-label="Período">
+      <button class="pill" data-v="acu" aria-pressed="true">Acumulado ene–jun 2026</button>
+      <button class="pill" data-v="jun" aria-pressed="false">Solo junio 2026</button>
+    </div>
+  </div>
+  <div class="fgroup"><span class="flabel">Colorear por</span>
+    <div class="pills" id="f-met" role="group" aria-label="Métrica">
+      <button class="pill" data-v="uni" aria-pressed="true">Tamaño</button>
+      <button class="pill" data-v="cre" aria-pressed="false">Crecimiento</button>
+    </div>
+  </div>
+  <div class="fgroup"><span class="flabel">Cobertura Corautos</span>
+    <div class="pills" id="f-cob" role="group" aria-label="Cobertura">
+      <button class="pill" data-v="all" aria-pressed="true">Todas</button>
+      <button class="pill" data-v="si" aria-pressed="false">Con sede</button>
+      <button class="pill" data-v="no" aria-pressed="false">Sin sede</button>
+    </div>
+  </div>
+</div></div>
+
+<div class="wrap">
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="mapgrid">
+    <div class="panel">
+      <div class="phead">
+        <div class="ptitle">Mapa de matrículas por departamento</div>
+        <div class="psub">El área de cada círculo es proporcional a las unidades matriculadas. El anillo indica si Corautos tiene presencia física.</div>
+      </div>
+      <div id="map"></div>
+      <div class="legend" id="map-legend"></div>
+    </div>
+
+    <div class="panel">
+      <div class="phead">
+        <div class="ptitle">Ranking de plazas</div>
+        <div class="psub">Ordenado por unidades. El color del punto marca la cobertura; la cifra de la derecha es el crecimiento anual.</div>
+      </div>
+      <div class="rank" id="rank"></div>
+      <div class="note"><b>Cauca (Popayán) y Magdalena (Santa Marta)</b> tienen presencia de Corautos pero quedan agrupados dentro de “Otros” en el boletín de Fenalco-ANDI, así que no aparecen con cifra propia.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="phead">
+      <div class="ptitle">Matriz de oportunidad</div>
+      <div class="psub">Tamaño de mercado contra crecimiento. Arriba a la derecha está lo grande que además acelera. Los círculos sin relleno son plazas donde Corautos no tiene sede — mercado al que hoy no le podemos vender.</div>
+    </div>
+    <div id="scatter"></div>
+    <div class="legend" id="sc-legend"></div>
+  </div>
+
+  <div class="panel">
+    <div class="phead">
+      <div class="ptitle">Evolución mensual del mercado</div>
+      <div class="psub">Matrículas mensuales de enero 2024 a junio 2026. Mismo eje, misma unidad: unidades matriculadas.</div>
+    </div>
+    <div id="lines"></div>
+    <div class="legend" id="ln-legend"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="phead">
+        <div class="ptitle">Segmentos de vehículo</div>
+        <div class="psub">Acumulado ene–jun 2026 y su crecimiento anual.</div>
+      </div>
+      <div class="rank" id="segs"></div>
+    </div>
+    <div class="panel">
+      <div class="phead">
+        <div class="ptitle">Marcas</div>
+        <div class="psub">Top 15 por unidades acumuladas. Dongfeng resaltado.</div>
+      </div>
+      <div class="rank" id="marcas"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="phead">
+      <div class="ptitle">Contexto que cambia el mensaje</div>
+      <div class="psub">Cifras nacionales del primer semestre que afectan cómo hay que comunicar y a quién.</div>
+    </div>
+    <div class="kpis" id="ctx" style="margin-bottom:0"></div>
+  </div>
+
+  <footer>
+    <b style="color:var(--mut)">Fuentes:</b> Boletín de Vehículos Nuevos FENALCO–ANDI, junio 2026 (datos RUNT). Análisis del Mercado de Movilidad, Inteligencia de Negocio Sufi, junio 2026 (datos RUNT). Índice de Desempeño Sectorial Automotriz, Sectorial.co, abril 2025. Cobertura de sedes según material de presencia nacional de Corautos Andino.<br><br>
+    Las cifras de matrículas corresponden a registros del RUNT y no equivalen exactamente a ventas facturadas. Los datos por tecnología (híbridos y eléctricos) sólo existen a nivel nacional en las fuentes disponibles: no se desagregan por departamento y este tablero no los estima. Documento de trabajo interno.
+  </footer>
+</div>
+
+<div class="tip" id="tip" role="tooltip" aria-hidden="true"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- DATOS (Fenalco-ANDI jun 2026 · RUNT) ---------- */
+// acu = acumulado ene-jun; jun = mes de junio. [2026, 2025]
+var D = [
+  {n:"Bogotá D.C.",        lat:4.65, lon:-74.08, acu:[44735,22309], jun:[7454,3910], cob:2, sede:"Bogotá"},
+  {n:"Antioquia",          lat:6.45, lon:-75.55, acu:[30414,19186], jun:[5672,3240], cob:2, sede:"Medellín · Copacabana"},
+  {n:"Cundinamarca",       lat:5.25, lon:-74.62, acu:[22304,21793], jun:[4770,3779], cob:0, sede:"—"},
+  {n:"Valle del Cauca",    lat:3.62, lon:-76.35, acu:[14430,9359],  jun:[2711,1529], cob:2, sede:"Cali"},
+  {n:"Santander",          lat:6.90, lon:-73.30, acu:[6630,4697],   jun:[1215,901],  cob:2, sede:"Bucaramanga"},
+  {n:"Atlántico",          lat:10.75,lon:-74.90, acu:[5953,3962],   jun:[1106,683],  cob:2, sede:"Barranquilla"},
+  {n:"Norte de Santander", lat:8.00, lon:-72.90, acu:[4257,3079],   jun:[857,549],   cob:2, sede:"Cúcuta"},
+  {n:"Meta",               lat:3.80, lon:-73.20, acu:[3466,2154],   jun:[710,348],   cob:2, sede:"Villavicencio"},
+  {n:"Risaralda",          lat:5.10, lon:-75.85, acu:[2885,2031],   jun:[485,326],   cob:2, sede:"Pereira"},
+  {n:"Caldas",             lat:5.30, lon:-75.30, acu:[2709,2791],   jun:[493,470],   cob:2, sede:"Manizales"},
+  {n:"Bolívar",            lat:9.20, lon:-74.60, acu:[2704,1871],   jun:[423,331],   cob:1, sede:"Cartagena (solo taller)"},
+  {n:"Tolima",             lat:4.10, lon:-75.20, acu:[2319,1781],   jun:[417,322],   cob:2, sede:"Ibagué"},
+  {n:"Boyacá",             lat:5.75, lon:-73.10, acu:[2223,1566],   jun:[424,263],   cob:2, sede:"Tunja · Duitama"},
+  {n:"Cesar",              lat:9.60, lon:-73.55, acu:[1809,1069],   jun:[311,198],   cob:2, sede:"Valledupar"},
+  {n:"Nariño",             lat:1.45, lon:-77.70, acu:[1585,1120],   jun:[298,186],   cob:2, sede:"Pasto"},
+  {n:"Córdoba",            lat:8.40, lon:-75.75, acu:[1457,996],    jun:[290,146],   cob:2, sede:"Montería"},
+  {n:"Quindío",            lat:4.45, lon:-75.70, acu:[1439,956],    jun:[261,159],   cob:0, sede:"—"},
+  {n:"Sucre",              lat:9.20, lon:-75.10, acu:[1410,871],    jun:[263,156],   cob:0, sede:"—"},
+  {n:"Huila",              lat:2.60, lon:-75.55, acu:[1208,1137],   jun:[243,174],   cob:2, sede:"Neiva"},
+  {n:"Caquetá",            lat:0.90, lon:-74.50, acu:[1097,598],    jun:[178,103],   cob:0, sede:"—"}
+];
+
+var SEG = [
+  ["SUV",94560,59249],["Automóviles",34075,25920],["Comerciales de carga",9642,5082],
+  ["Pick Ups",8373,7326],["Camionetas",6755,3998],["Taxis",2171,2125],
+  ["Comerciales de pasajeros",1465,912],["Vans",515,326],["Cuadriciclos",64,68]
+];
+
+var MAR = [
+  ["Kia",20437,13839],["Renault",15836,14153],["Toyota",12716,11745],["Chevrolet",12123,8792],
+  ["Mazda",11718,9360],["Tesla",10157,8],["Suzuki",8437,4989],["Nissan",6621,5913],
+  ["Hyundai",6506,4919],["Volkswagen",6249,4176],["BYD",6118,3992],["Foton",4379,2739],
+  ["Ford",4355,3171],["Chery",2412,508],["Dongfeng",2189,690]
+];
+
+var MESES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+var SER = {
+  total:[11581,15597,13346,15291,14807,14543,16497,16498,17117,18521,21824,25331,14396,17103,18347,17415,19707,18038,23872,21285,24862,25254,23791,30135,19969,25548,28142,26787,28136,29038],
+  hib:[1997,3287,3014,3473,2531,2871,3467,3656,4121,3809,4837,5605,3145,3889,4430,4245,5283,4556,7636,6066,7102,6902,6264,8381,5437,6694,7631,7476,8926,8441],
+  ele:[217,395,380,363,392,653,778,664,740,1079,1580,1937,966,1095,1385,1286,1421,1143,1565,1647,1858,2090,2034,3234,1758,2508,5083,5192,5001,4935]
+};
+
+var TOT={acu:[157620,105006], jun:[29038,18038]};
+var C={s1:"#3987e5",s2:"#d95926",s3:"#199e70",neutral:"#383835",ok:"#0ca30c",warn:"#fab219",mut:"#8b9199",mut2:"#5d636b",paper:"#fafafa",grid:"#1e2126",axis:"#2f343b"};
+// rampa secuencial azul validada (clara → oscura)
+var RAMP=["#cde2fb","#9ec5f4","#6da7ec","#3987e5","#256abf","#184f95"];
+var COBC=[C.mut2, C.warn, C.ok];
+var COBL=["Sin sede","Solo taller","Sala y taller"];
+
+var state={per:"acu",met:"uni",cob:"all"};
+
+/* ---------- utilidades ---------- */
+var fmt=function(n){return n.toLocaleString("es-CO")};
+var pct=function(a,b){return b===0?null:(a-b)/b*100};
+var pctTxt=function(v){return v===null?"s/d":(v>0?"+":"")+v.toFixed(1).replace(".",",")+"%"};
+var el=function(id){return document.getElementById(id)};
+var tip=el("tip");
+
+function showTip(e,html){
+  tip.innerHTML=html; tip.style.opacity="1"; tip.setAttribute("aria-hidden","false");
+  var r=tip.getBoundingClientRect();
+  var x=e.clientX+16, y=e.clientY+16;
+  if(x+r.width>window.innerWidth-10) x=e.clientX-r.width-16;
+  if(y+r.height>window.innerHeight-10) y=e.clientY-r.height-16;
+  tip.style.left=x+"px"; tip.style.top=y+"px";
+}
+function hideTip(){tip.style.opacity="0";tip.setAttribute("aria-hidden","true")}
+
+function cur(d){return state.per==="acu"?d.acu:d.jun}
+function visible(d){
+  if(state.cob==="si") return d.cob>0;
+  if(state.cob==="no") return d.cob===0;
+  return true;
+}
+function rows(){return D.map(function(d){
+  var v=cur(d); return {d:d,u:v[0],p:v[1],g:pct(v[0],v[1])};
+})}
+
+/* ---------- KPIs ---------- */
+function kpis(){
+  var t=state.per==="acu"?TOT.acu:TOT.jun;
+  var rs=rows(), shown=rs.filter(function(r){return visible(r.d)});
+  var sumU=shown.reduce(function(a,r){return a+r.u},0);
+  var sumP=shown.reduce(function(a,r){return a+r.p},0);
+  var conSede=rs.filter(function(r){return r.d.cob>0}).reduce(function(a,r){return a+r.u},0);
+  var sinSede=rs.filter(function(r){return r.d.cob===0}).reduce(function(a,r){return a+r.u},0);
+  var best=shown.slice().sort(function(a,b){return b.g-a.g})[0];
+  var lbl=state.per==="acu"?"Ene–jun 2026":"Junio 2026";
+  var cards=[
+    {k:"Mercado nacional · "+lbl, v:fmt(t[0]), d:'<span class="up">'+pctTxt(pct(t[0],t[1]))+'</span> vs. año anterior'},
+    {k:"En la selección actual", v:fmt(sumU), d:pctTxt(pct(sumU,sumP))+" · "+(sumU/t[0]*100).toFixed(1).replace(".",",")+"% del país"},
+    {k:"Alcanzable con sede física", v:(conSede/t[0]*100).toFixed(1).replace(".",",")+"%", d:fmt(conSede)+" unidades"},
+    {k:"Mercado sin cobertura", v:(sinSede/t[0]*100).toFixed(1).replace(".",",")+"%", d:fmt(sinSede)+" unidades sin sala"},
+    {k:"Plaza que más acelera", v:best?best.d.n.split(" ")[0]:"—", d:best?'<span class="up">'+pctTxt(best.g)+'</span> · '+fmt(best.u)+" unidades":""}
+  ];
+  el("kpis").innerHTML=cards.map(function(c){
+    return '<div class="kpi"><div class="k">'+c.k+'</div><div class="v num">'+c.v+'</div><div class="d">'+c.d+'</div></div>';
+  }).join("");
+}
+
+/* ---------- MAPA ---------- */
+var OUTLINE=[[-71.66,12.46],[-71.30,11.75],[-72.05,11.20],[-72.45,10.55],[-72.90,10.00],[-73.05,9.35],[-72.70,9.10],[-72.45,8.35],[-72.35,7.90],[-72.05,7.05],[-71.10,6.98],[-70.10,6.95],[-69.40,6.12],[-67.85,6.20],[-67.45,5.30],[-67.85,4.20],[-67.30,2.85],[-67.10,1.85],[-66.87,1.23],[-69.35,1.05],[-69.85,0.65],[-69.60,-0.70],[-69.45,-1.45],[-69.95,-4.22],[-70.75,-3.80],[-71.75,-2.35],[-72.90,-2.45],[-73.15,-1.80],[-74.80,-0.20],[-75.25,0.10],[-76.40,0.40],[-77.45,0.65],[-78.40,1.45],[-78.90,2.45],[-77.65,3.90],[-77.35,5.50],[-77.45,6.25],[-77.90,7.25],[-77.35,7.95],[-77.30,8.65],[-76.80,8.55],[-76.10,9.35],[-75.65,10.40],[-74.90,10.80],[-74.20,11.30],[-73.40,11.20],[-72.90,11.45],[-71.95,12.20]];
+var MW=470,MH=0,L0=-79.2,L1=-66.4,B0=-4.6,B1=13.3;
+MH=Math.round(MW*(B1-B0)/(L1-L0));
+var px=function(lon){return (lon-L0)/(L1-L0)*MW};
+var py=function(lat){return (B1-lat)/(B1-B0)*MH};
+
+function rampColor(t){ // t 0..1 -> paso de la rampa
+  var i=Math.min(RAMP.length-1, Math.max(0, Math.round(t*(RAMP.length-1))));
+  return RAMP[i];
+}
+function divColor(g,mid){ // divergente: naranja debajo, azul encima, gris al medio
+  if(g===null) return C.neutral;
+  var d=g-mid;
+  if(Math.abs(d)<6) return "#6b7178";
+  return d>0 ? (d>30?"#3987e5":"#6da7ec") : (d<-30?"#d95926":"#e08a63");
+}
+
+function drawMap(){
+  var rs=rows(), maxU=Math.max.apply(null,rs.map(function(r){return r.u}));
+  var natG=pct.apply(null,state.per==="acu"?TOT.acu:TOT.jun);
+  var path=OUTLINE.map(function(p,i){return (i?"L":"M")+px(p[0]).toFixed(1)+" "+py(p[1]).toFixed(1)}).join(" ")+" Z";
+  var s='<svg viewBox="0 0 '+MW+' '+MH+'" role="img" aria-label="Mapa de Colombia con matrículas por departamento">';
+  s+='<title>Matrículas de vehículos nuevos por departamento</title>';
+  s+='<path d="'+path+'" fill="#101317" stroke="'+C.axis+'" stroke-width="1"/>';
+  // orden: grandes primero para que los pequeños queden encima
+  var sorted=rs.slice().sort(function(a,b){return b.u-a.u});
+  sorted.forEach(function(r){
+    var vis=visible(r.d);
+    var rad=6+Math.sqrt(r.u/maxU)*34;
+    var fill=state.met==="uni"?rampColor(Math.sqrt(r.u/maxU)):divColor(r.g,natG);
+    var ring=COBC[r.d.cob];
+    s+='<g class="mk" data-n="'+r.d.n+'" style="opacity:'+(vis?1:.12)+'">'
+      +'<circle cx="'+px(r.d.lon).toFixed(1)+'" cy="'+py(r.d.lat).toFixed(1)+'" r="'+rad.toFixed(1)+'" fill="'+fill+'" fill-opacity="'+(state.met==="uni"?.82:.86)+'" stroke="'+ring+'" stroke-width="2"/>'
+      +'</g>';
+  });
+  s+='</svg>';
+  el("map").innerHTML=s;
+
+  Array.prototype.forEach.call(el("map").querySelectorAll(".mk"),function(g){
+    var r=rs.filter(function(x){return x.d.n===g.dataset.n})[0];
+    g.style.cursor="default";
+    g.addEventListener("mousemove",function(e){
+      showTip(e,'<b>'+r.d.n+'</b>'
+        +'<div class="r"><span>Unidades</span><span>'+fmt(r.u)+'</span></div>'
+        +'<div class="r"><span>Año anterior</span><span>'+fmt(r.p)+'</span></div>'
+        +'<div class="r"><span>Crecimiento</span><span>'+pctTxt(r.g)+'</span></div>'
+        +'<div class="r"><span>Corautos</span><span>'+r.d.sede+'</span></div>');
+    });
+    g.addEventListener("mouseleave",hideTip);
+  });
+
+  var lg='';
+  if(state.met==="uni"){
+    lg+='<span class="lg">Menos unidades</span>';
+    RAMP.forEach(function(c){lg+='<span class="sw" style="background:'+c+'"></span>'});
+    lg+='<span class="lg">Más unidades</span>';
+  }else{
+    lg+='<span class="lg"><span class="sw" style="background:#d95926"></span>Muy por debajo del país</span>'
+      +'<span class="lg"><span class="sw" style="background:#6b7178"></span>En línea ('+pctTxt(natG)+')</span>'
+      +'<span class="lg"><span class="sw" style="background:#3987e5"></span>Muy por encima</span>';
+  }
+  lg+='<span style="flex:1"></span>';
+  COBL.forEach(function(t,i){
+    lg+='<span class="lg"><span class="swr" style="border:2px solid '+COBC[i]+'"></span>'+t+'</span>';
+  });
+  el("map-legend").innerHTML=lg;
+}
+
+/* ---------- RANKING ---------- */
+function drawRank(){
+  var rs=rows().sort(function(a,b){return b.u-a.u});
+  var max=rs[0].u;
+  el("rank").innerHTML=rs.map(function(r){
+    var vis=visible(r.d);
+    return '<div class="row'+(vis?"":" dim")+'">'
+      +'<div class="nm"><span class="dot" style="background:'+COBC[r.d.cob]+'"></span>'+r.d.n+'</div>'
+      +'<div class="bw"><div class="bf" style="width:'+(r.u/max*100).toFixed(1)+'%;background:'+C.s1+'"></div></div>'
+      +'<div class="vv num">'+fmt(r.u)+'</div>'
+      +'<div class="gg num '+(r.g>=0?"up":"down")+'">'+pctTxt(r.g)+'</div>'
+      +'</div>';
+  }).join("");
+}
+
+/* ---------- MATRIZ DE OPORTUNIDAD ---------- */
+function drawScatter(){
+  var W=1180,H=420,P={t:24,r:30,b:52,l:62};
+  var rs=rows();
+  var xs=rs.map(function(r){return Math.log10(r.u)});
+  var x0=Math.min.apply(null,xs)-.08, x1=Math.max.apply(null,xs)+.08;
+  var gs=rs.map(function(r){return r.g});
+  var y0=Math.min(-10,Math.min.apply(null,gs)-6), y1=Math.max.apply(null,gs)+18;
+  var natG=pct.apply(null,state.per==="acu"?TOT.acu:TOT.jun);
+  var X=function(v){return P.l+(Math.log10(v)-x0)/(x1-x0)*(W-P.l-P.r)};
+  var Y=function(v){return P.t+(y1-v)/(y1-y0)*(H-P.t-P.b)};
+  var maxU=Math.max.apply(null,rs.map(function(r){return r.u}));
+
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Matriz de tamaño de mercado contra crecimiento"><title>Tamaño de mercado contra crecimiento por departamento</title>';
+  [1000,2000,5000,10000,20000,50000].forEach(function(v){
+    if(v<Math.pow(10,x0)||v>Math.pow(10,x1))return;
+    s+='<line x1="'+X(v)+'" y1="'+P.t+'" x2="'+X(v)+'" y2="'+(H-P.b)+'" stroke="'+C.grid+'" stroke-width="1"/>'
+      +'<text x="'+X(v)+'" y="'+(H-P.b+20)+'" fill="'+C.mut2+'" font-size="11" text-anchor="middle">'+fmt(v)+'</text>';
+  });
+  for(var g=-20;g<=Math.ceil(y1/20)*20;g+=20){
+    if(g<y0||g>y1)continue;
+    s+='<line x1="'+P.l+'" y1="'+Y(g)+'" x2="'+(W-P.r)+'" y2="'+Y(g)+'" stroke="'+C.grid+'" stroke-width="1"/>'
+      +'<text x="'+(P.l-10)+'" y="'+(Y(g)+4)+'" fill="'+C.mut2+'" font-size="11" text-anchor="end">'+g+'%</text>';
+  }
+  s+='<line x1="'+P.l+'" y1="'+Y(natG)+'" x2="'+(W-P.r)+'" y2="'+Y(natG)+'" stroke="'+C.mut2+'" stroke-width="1.5" stroke-dasharray="5 5"/>'
+    +'<text x="'+(W-P.r-6)+'" y="'+(Y(natG)-8)+'" fill="'+C.mut+'" font-size="11" text-anchor="end">Crecimiento del país '+pctTxt(natG)+'</text>';
+
+  rs.slice().sort(function(a,b){return b.u-a.u}).forEach(function(r){
+    var vis=visible(r.d);
+    var rad=5+Math.sqrt(r.u/maxU)*17;
+    var filled=r.d.cob>0;
+    s+='<g class="sc" data-n="'+r.d.n+'" style="opacity:'+(vis?1:.12)+'">'
+      +'<circle cx="'+X(r.u).toFixed(1)+'" cy="'+Y(r.g).toFixed(1)+'" r="'+rad.toFixed(1)+'" '
+      +'fill="'+(filled?C.s1:"none")+'" fill-opacity="'+(filled?.55:0)+'" stroke="'+(filled?C.s1:C.s2)+'" stroke-width="2"'
+      +(filled?'':' stroke-dasharray="3 3"')+'/></g>';
+  });
+  // etiquetas directas sólo de las plazas relevantes
+  rs.filter(function(r){return r.u>2600||r.g>60||r.g<5}).forEach(function(r){
+    if(!visible(r.d))return;
+    var rad=5+Math.sqrt(r.u/maxU)*17;
+    var cx=X(r.u), cy=Y(r.g);
+    // si la etiqueta se saldría por arriba, va debajo del círculo
+    var above=cy-rad-7, ly=above<P.t+12 ? cy+rad+15 : above;
+    var anchor="middle", lx=cx;
+    if(cx>W-P.r-52){anchor="end";lx=Math.min(cx+rad,W-P.r-2)}
+    else if(cx<P.l+52){anchor="start";lx=Math.max(cx-rad,P.l+2)}
+    s+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" fill="'+C.paper+'" font-size="11.5" font-weight="600" text-anchor="'+anchor+'">'+r.d.n.replace(" del Cauca","").replace(" D.C.","").replace("Norte de Santander","N. Santander")+'</text>';
+  });
+  s+='<text x="'+(P.l+(W-P.l-P.r)/2)+'" y="'+(H-8)+'" fill="'+C.mut+'" font-size="11" text-anchor="middle">Unidades matriculadas (escala logarítmica)</text>';
+  s+='</svg>';
+  el("scatter").innerHTML=s;
+
+  Array.prototype.forEach.call(el("scatter").querySelectorAll(".sc"),function(g){
+    var r=rs.filter(function(x){return x.d.n===g.dataset.n})[0];
+    g.addEventListener("mousemove",function(e){
+      showTip(e,'<b>'+r.d.n+'</b>'
+        +'<div class="r"><span>Unidades</span><span>'+fmt(r.u)+'</span></div>'
+        +'<div class="r"><span>Crecimiento</span><span>'+pctTxt(r.g)+'</span></div>'
+        +'<div class="r"><span>Corautos</span><span>'+r.d.sede+'</span></div>');
+    });
+    g.addEventListener("mouseleave",hideTip);
+  });
+  el("sc-legend").innerHTML='<span class="lg"><span class="swr" style="background:'+C.s1+';opacity:.55;border:2px solid '+C.s1+'"></span>Con sede Corautos</span>'
+    +'<span class="lg"><span class="swr" style="border:2px dashed '+C.s2+'"></span>Sin sede</span>'
+    +'<span class="lg">El área del círculo es proporcional a las unidades.</span>';
+}
+
+/* ---------- LÍNEAS ---------- */
+function drawLines(){
+  var W=1180,H=340,P={t:20,r:24,b:46,l:60};
+  var n=SER.total.length;
+  var max=Math.max.apply(null,SER.total);
+  var X=function(i){return P.l+i/(n-1)*(W-P.l-P.r)};
+  var Y=function(v){return P.t+(1-v/max)*(H-P.t-P.b)};
+  var mk=function(a){return a.map(function(v,i){return (i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)}).join(" ")};
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Evolución mensual de matrículas"><title>Matrículas mensuales, enero 2024 a junio 2026</title>';
+  [0,10000,20000,30000].forEach(function(v){
+    s+='<line x1="'+P.l+'" y1="'+Y(v)+'" x2="'+(W-P.r)+'" y2="'+Y(v)+'" stroke="'+C.grid+'" stroke-width="1"/>'
+      +'<text x="'+(P.l-10)+'" y="'+(Y(v)+4)+'" fill="'+C.mut2+'" font-size="11" text-anchor="end">'+fmt(v)+'</text>';
+  });
+  for(var i=0;i<n;i+=3){
+    var y=2024+Math.floor(i/12), m=MESES[i%12];
+    s+='<text x="'+X(i)+'" y="'+(H-P.b+20)+'" fill="'+C.mut2+'" font-size="10.5" text-anchor="middle">'+m+" "+String(y).slice(2)+'</text>';
+  }
+  s+='<path d="'+mk(SER.total)+'" fill="none" stroke="'+C.s1+'" stroke-width="2"/>';
+  s+='<path d="'+mk(SER.hib)+'" fill="none" stroke="'+C.s2+'" stroke-width="2"/>';
+  s+='<path d="'+mk(SER.ele)+'" fill="none" stroke="'+C.s3+'" stroke-width="2"/>';
+  [["total",C.s1,"Total mercado"],["hib",C.s2,"Híbridos"],["ele",C.s3,"Eléctricos"]].forEach(function(k){
+    var a=SER[k[0]], last=a[a.length-1];
+    s+='<circle cx="'+X(n-1)+'" cy="'+Y(last)+'" r="4.5" fill="'+k[1]+'" stroke="'+C.surf+'" stroke-width="2"/>'
+      +'<text x="'+(X(n-1)-8)+'" y="'+(Y(last)-11)+'" fill="'+C.paper+'" font-size="11.5" font-weight="700" text-anchor="end">'+fmt(last)+'</text>';
+  });
+  s+='<rect id="hz" x="'+P.l+'" y="'+P.t+'" width="'+(W-P.l-P.r)+'" height="'+(H-P.t-P.b)+'" fill="transparent"/>';
+  s+='</svg>';
+  el("lines").innerHTML=s;
+
+  var svg=el("lines").querySelector("svg");
+  svg.addEventListener("mousemove",function(e){
+    var b=svg.getBoundingClientRect();
+    var vx=(e.clientX-b.left)/b.width*W;
+    var i=Math.round((vx-P.l)/(W-P.l-P.r)*(n-1));
+    if(i<0||i>=n){hideTip();return}
+    var y=2024+Math.floor(i/12);
+    showTip(e,'<b>'+MESES[i%12]+" "+y+'</b>'
+      +'<div class="r"><span style="color:'+C.s1+'">Total</span><span>'+fmt(SER.total[i])+'</span></div>'
+      +'<div class="r"><span style="color:'+C.s2+'">Híbridos</span><span>'+fmt(SER.hib[i])+'</span></div>'
+      +'<div class="r"><span style="color:'+C.s3+'">Eléctricos</span><span>'+fmt(SER.ele[i])+'</span></div>');
+  });
+  svg.addEventListener("mouseleave",hideTip);
+  el("ln-legend").innerHTML=[["Total mercado",C.s1],["Híbridos",C.s2],["Eléctricos",C.s3]].map(function(k){
+    return '<span class="lg"><span class="sw" style="background:'+k[1]+'"></span>'+k[0]+'</span>';
+  }).join("");
+}
+
+/* ---------- BARRAS SIMPLES ---------- */
+function drawBars(node,data,hi){
+  var max=Math.max.apply(null,data.map(function(d){return d[1]}));
+  el(node).innerHTML=data.map(function(d){
+    var g=pct(d[1],d[2]);
+    var isHi=hi&&d[0]===hi;
+    return '<div class="row">'
+      +'<div class="nm" style="'+(isHi?"color:"+C.paper+";font-weight:700":"")+'">'+d[0]+'</div>'
+      +'<div class="bw"><div class="bf" style="width:'+(d[1]/max*100).toFixed(1)+'%;background:'+(isHi?C.s2:C.s1)+'"></div></div>'
+      +'<div class="vv num">'+fmt(d[1])+'</div>'
+      +'<div class="gg num '+(g>=0?"up":"down")+'">'+(d[2]<20?"nuevo":pctTxt(g))+'</div>'
+      +'</div>';
+  }).join("");
+}
+
+/* ---------- CONTEXTO ---------- */
+function drawCtx(){
+  var c=[
+    {k:"Sostenibles sobre el total", v:"43,8%", d:"híbridos 28,3% + eléctricos 15,5%"},
+    {k:"Compras a crédito", v:"47,4%", d:"del mercado de vehículos nuevos"},
+    {k:"Usados por cada nuevo", v:"3,2", d:"505.581 traspasos en el semestre"},
+    {k:"Crecimiento de eléctricos", v:"+235,5%", d:"24.477 unidades ene–jun"},
+    {k:"Motos vendidas", v:"670.591", d:"+34,3% · el mejor junio de la historia"}
+  ];
+  el("ctx").innerHTML=c.map(function(x){
+    return '<div class="kpi"><div class="k">'+x.k+'</div><div class="v num">'+x.v+'</div><div class="d">'+x.d+'</div></div>';
+  }).join("");
+}
+
+/* ---------- RENDER ---------- */
+function render(){kpis();drawMap();drawRank();drawScatter();drawLines()}
+
+Array.prototype.forEach.call(document.querySelectorAll(".pills"),function(box){
+  box.addEventListener("click",function(e){
+    var b=e.target.closest(".pill"); if(!b)return;
+    Array.prototype.forEach.call(box.querySelectorAll(".pill"),function(p){p.setAttribute("aria-pressed",String(p===b))});
+    var key=box.id.split("-")[1];
+    state[key]=b.dataset.v;
+    render();
+  });
+});
+
+render();
+drawBars("segs",SEG);
+drawBars("marcas",MAR,"Dongfeng");
+drawCtx();
+window.addEventListener("scroll",hideTip,{passive:true});
+})();
+</script>
+</body>
+</html>
