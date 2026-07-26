@@ -17,6 +17,8 @@ mercado, los hallazgos del tablero y los pendientes legales.
 | `img/` | 9 fotos optimizadas a 1400px |
 | `CONTEXTO.md` | Traspaso completo del proyecto |
 | `PAUTA.md` | Motor de captación: códigos de campaña, malla de calificación, ruta de pauta |
+| `politica-datos.html` | Política Ley 1581 — **borrador**, con campos pendientes marcados en lima |
+| `logo.html` · `logo-escala.html` | Las propuestas de marca y por qué ganó la punteada |
 
 Se publica en GitHub Pages: https://clawddma.github.io/torque-preview/
 

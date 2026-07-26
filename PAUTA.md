@@ -29,8 +29,10 @@ cortesía: es literalmente el margen.
 
 1. **Número de WhatsApp** en `var WA` de `index.html`. Sin él el calificador
    funciona pero no envía (a propósito: permite revisar sin generar leads reales).
-2. **`politica-datos.html`** — el calificador ya enlaza ahí y exige la casilla.
-   La página todavía no existe. Sin ella no se puede capturar un solo dato.
+2. **`politica-datos.html`** — ya existe y está enlazada desde el calificador y los
+   pies. Falta: llenar los campos marcados en verde (documento, domicilio, correo
+   dedicado, razón social y NIT de Corautos, vigencia, fecha) y que un abogado la
+   revise. Hasta entonces no se puede capturar un solo dato.
 3. **Autorización escrita de Corautos** (marcas Dongfeng + fotografías). Meta
    rechaza anuncios de marcas de terceros sin respaldo.
 4. **Contrato**: lead válido, atribución 90 días, dedup, SLA de respuesta,
