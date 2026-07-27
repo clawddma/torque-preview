@@ -1,11 +1,21 @@
 # TORQ — Inteligencia de mercado desde el RUNT
 
-> Análisis de `Analisis AI Runt 2 feb hasta julio 2026.xlsx`: **142.854 matrículas
-> individuales** de vehículo nuevo, del 2 de febrero al 8 de julio de 2026.
-> No es un informe agregado: es el registro uno por uno, con municipio, ciudad
+> Construido sobre **1.073.054 matrículas individuales** de vehículo nuevo,
+> uniendo dos bases del RUNT que se empalman sin solaparse:
+>
+> | Archivo | Cubre | Registros |
+> |---|---|---|
+> | `Base Comercial 2022 hasta febrero 2026.xlsx` | ene 2022 – **ene 2026** | 930.200 |
+> | `Analisis AI Runt 2 feb hasta julio 2026.xlsx` | **feb 2026** – 8 jul 2026 | 142.854 |
+>
+> No son informes agregados: es el registro uno por uno, con municipio, ciudad
 > del propietario, entidad que financió, color y ficha técnica.
 > Procesado el 27 de julio de 2026. **Este documento manda sobre `analitica.html`**,
 > que se construyó con los PDF agregados y tiene menos resolución.
+>
+> **Criterio de conteo:** el tamaño de mercado y las series mensuales usan el
+> universo completo. La geografía usa solo los registros con ciudad del
+> propietario válida (34.147 de 34.441 en SUV híbrida, el 99,1%).
 
 ## Lo primero, porque cambia la estrategia
 
@@ -103,8 +113,8 @@ que ningún rival puede responder: mismo tamaño de motor, el doble de potencia.
 unidades — el 44,5% de todo el mercado eléctrico del país.** Pasó de 296
 matrículas en febrero a 2.462 en marzo, y ahí se estabilizó.
 
-Esto obliga a corregir algo que yo mismo escribí más arriba en una versión
-anterior de este documento («los eléctricos son el segmento que más crece»):
+Esto obliga a corregir algo que yo mismo había escrito en una versión anterior
+de este documento —«los eléctricos son el segmento que más crece del país»—:
 
 | Mes | SUV híbrida | Eléctricos **sin** Tesla | Tesla |
 |---|---|---|---|
@@ -343,6 +353,51 @@ Dos consecuencias prácticas:
 Rojo 3,2% y verde 3,1%. Las piezas de Meta deben mostrar la MAGE en **gris o
 blanco**: es lo que el 55% del mercado está comprando, y ver «su» color reduce
 la fricción. Un carro rojo en la pieza le habla al 3%.
+
+## Cuánto vende de verdad un lanzamiento
+
+Medí **todos los modelos híbridos y eléctricos lanzados en Colombia entre 2023 y
+junio de 2026**, uniendo las dos bases. Un lanzamiento cuenta desde el primer mes
+que supera 20 unidades, no desde la primera importación suelta — sin ese umbral,
+Tesla quedaba descartado porque tenía matrículas de 1 y 2 unidades desde 2022.
+
+| Modelo | Lanzó | Primeros 5 meses |
+|---|---|---|
+| BYD Yuan Up | oct 2024 | 1.700 |
+| **Tesla Model 3** | **feb 2026** | **1.687** |
+| Kia Sportage | jul 2025 | 1.488 |
+| Renault Arkana | sep 2024 | 1.359 |
+| Ford Territory | nov 2025 | 1.308 |
+| Renault Duster E-Tech | jun 2025 | 867 |
+| BYD Seagull | jun 2024 | 847 |
+
+Y aparte, fuera de la tabla porque su quinto mes es julio (incompleto): el
+**Tesla Model Y lanzó en marzo de 2026 y lleva 8.478 unidades en cuatro meses.**
+Es, de lejos, el lanzamiento más grande de toda la serie.
+
+**La distribución, que es lo que importa:** de los **69 lanzamientos** que
+llegaron a vender de verdad, la mitad no pasa de **198 unidades** en cinco meses.
+Un cuarto no llega a **129** y solo el 25% supera **523**.
+
+### La cuenta para la MAGE
+
+| Escenario | Unidades (5 meses) | Comisión total al 1,2% |
+|---|---|---|
+| Cuartil bajo | 129 | $160.696.806 |
+| **Mediana** | **198** | **$246.651.372** |
+| Cuartil alto | 523 | $651.508.422 |
+
+Eso es la comisión **si TORQ generara el 100% de las ventas**, y no va a pasar:
+Corautos vende por sus propias salas, su fuerza comercial y otros canales.
+
+**Suponiendo que TORQ origine el 20%** —hipótesis nuestra, sin validar; el primer
+mes de pauta la reemplaza por el dato real— sobre un lanzamiento en la mediana
+son **40 unidades y $49.828.560** en cinco meses, contra **$5.000.000** de pauta.
+
+**El negocio cierra con holgura si la MAGE llega a la mediana. Si se queda en el
+cuartil bajo, no cierra.** Ese es el riesgo real del proyecto, dicho con número.
+Y es exactamente la razón de que la Ola 1 sea Manizales y no Bogotá: hay que
+encontrar el mensaje que convierte **antes** de pagar el CPM caro.
 
 ## Qué medir desde el primer peso
 
