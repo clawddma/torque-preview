@@ -89,6 +89,25 @@ el obstáculo. TORQ resuelve antes de la visita, no en lugar de la visita.
 Toda afirmación en condicional cuando el hecho lo es (`pasaría`, `podrías`), en
 indicativo cuando está probado. Un condicional mal puesto es una promesa.
 
+## Encuadre del vehículo — regla de oficio
+
+**El carro va siempre completo.** Ni tan lejos que no se lea, ni tan cerca que quede
+cortado. Una llanta o un techo fuera de cuadro en una pieza de automotriz destruye la
+credibilidad antes de que alguien lea el titular.
+
+No se resuelve con CSS: se resuelve asignando a cada formato la foto cuya proporción
+aguanta ese marco. En `piezas.html` cada pieza declara `img` (respaldo) y opcionalmente
+`img45` / `img11` / `img916`, más `pos` para el ajuste fino de `object-position`.
+
+| Formato | Marco de foto | Fuentes que sirven |
+|---|---|---|
+| 4:5 | 1080×700 (1,54:1) | g2, g3 (1,50:1) · g1 vertical también entra |
+| 1:1 | 1080×560 (1,93:1) | hero (2,07:1) — es la única banda ancha |
+| 9:16 | 1080×1010 (1,07:1) | g1, hero-movil, g4, g8 (verticales) |
+
+Antes de dar una pieza por buena, mírala. Un contacto con los tres formatos lado a lado
+delata el recorte en dos segundos; el HTML solo, no.
+
 ## Datos
 
 Todas las cifras salen de fuentes citadas al pie de cada página (Fenalco-ANDI y Sufi,

@@ -16,9 +16,13 @@ body{background:#111;font-family:ui-sans-serif,system-ui,-apple-system,"Helvetic
 .pz.f916{width:1080px;height:1920px}
 
 .ph{position:relative;flex:0 0 auto;overflow:hidden}
-.f45 .ph{height:660px}
-.f11 .ph{height:470px}
+.f45 .ph{height:700px}
+.f11 .ph{height:560px}
 .f916 .ph{height:1010px}
+/* REGLA DE OFICIO: el vehículo va SIEMPRE completo — ni cortado ni lejano.
+   No se resuelve con CSS sino con dirección de arte: a cada formato se le asigna
+   la foto cuya proporción aguanta ese marco. Verticales para 9:16, anchas para
+   las bandas cortas. El encuadre fino se ajusta con `object-position` por pieza. */
 .ph img{width:100%;height:100%;object-fit:cover;display:block}
 /* el velo cierra la foto contra el negro: sin él el texto pelea con la imagen */
 .ph:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,9,10,.34) 0%,rgba(8,9,10,0) 26%,rgba(8,9,10,.62) 74%,var(--ink) 100%)}
@@ -29,11 +33,11 @@ body{background:#111;font-family:ui-sans-serif,system-ui,-apple-system,"Helvetic
 .f11 .body{padding:0 64px 56px}
 
 .hl{font-size:96px;font-weight:800;letter-spacing:-.035em;line-height:.98;margin-top:-70px}
-.f11 .hl{font-size:82px;margin-top:-54px}
+.f11 .hl{font-size:66px;margin-top:-46px}
 .f916 .hl{font-size:104px;margin-top:-84px}
 .hl em{font-style:normal;color:var(--brand)}
 .sub{font-size:33px;font-weight:300;color:#cdd2d8;line-height:1.42;margin-top:34px;max-width:22ch}
-.f11 .sub{font-size:29px;margin-top:26px}
+.f11 .sub{font-size:25px;margin-top:20px;max-width:26ch}
 .f916 .sub{font-size:35px;margin-top:38px}
 
 .foot{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin-top:56px}
@@ -86,17 +90,25 @@ function lock(){
     +'<div class="tag">Tu carro, tu mejor decisión.</div></div>';
 }
 
+/* `img` es el respaldo; img45/img11/img916 mandan cuando existen.
+   La asignación no es capricho: cada foto entra donde su proporción deja el
+   carro entero. g1 y hero-movil son verticales (9:16); hero es muy ancha y
+   sirve para la banda corta de la cuadrada; g2 y g3 son 3:2 y encajan en 4:5. */
 var P = {
-  H1:{img:"img/g1.jpg", hl:'¿Cuántas veces<br>tanqueas<br><em>al mes?</em>',
+  H1:{img:"img/g1.jpg", img11:"img/hero.jpg", pos:"center 42%",
+      hl:'¿Cuántas veces<br>tanqueas<br><em>al mes?</em>',
       sub:"Con 4,9 litros cada 100 km, la mitad. Calcula lo tuyo en un minuto con tus propios números.",
       cta:"Calcular lo mío"},
-  H2:{img:"img/hero.jpg", hl:'Híbrida que<br><em>nunca vas<br>a enchufar.</em>',
+  H2:{img:"img/hero.jpg", img916:"img/hero-movil.jpg", pos:"center 46%",
+      hl:'Híbrida que<br><em>nunca vas<br>a enchufar.</em>',
       sub:"Se recarga sola mientras andas. Sin cargador, sin instalación en la casa, sin buscar estación.",
       cta:"Ver cómo funciona"},
-  H3:{img:"img/g2.jpg", hl:'Bogotá–Medellín,<br>ida y vuelta,<br><em>con un tanque.</em>',
+  H3:{img:"img/g2.jpg", img916:"img/g1.jpg", pos:"center 44%",
+      hl:'Bogotá–Medellín,<br>ida y vuelta,<br><em>con un tanque.</em>',
       sub:"830 km de los más de 1.000 de autonomía. Sin parar a tanquear.",
       cta:"Ver la ficha"},
-  H4:{img:"img/g5.jpg", hl:'«¿Y dónde le hago<br>los mantenimientos?»',
+  H4:{img:"img/g6.jpg", img11:"img/g5.jpg", pos:"center 40%",
+      hl:'«¿Y dónde le hago<br>los mantenimientos?»',
       sub:"Es la primera pregunta que hace todo el mundo. La respuesta son 26 centros de servicio en 19 ciudades del país.",
       cta:"Ver el más cercano"},
   S1:{sim:true, t:'Lo que te estás<br><em>gastando de más.</em>',
@@ -126,7 +138,7 @@ function render(id,fmt){
     +'</div>';
   }
   return '<div class="pz '+f+'" id="canvas">'
-    +'<div class="ph"><img src="'+d.img+'" alt=""></div>'
+    +'<div class="ph"><img src="'+(d["img"+fmt]||d.img)+'" style="object-position:'+(d.pos||"center")+'" alt=""></div>'
     +'<div class="body">'
       +'<div><div class="hl">'+d.hl+'</div><div class="sub">'+d.sub+'</div></div>'
       +'<div class="foot">'+lock()+'<div class="cta">'+d.cta+'</div></div>'

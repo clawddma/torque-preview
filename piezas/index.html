@@ -55,6 +55,29 @@ h1{font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-.032em;line-he
 footer{border-top:1px solid var(--line);margin-top:20px;padding:34px 0 64px;font-size:11.5px;color:var(--mut2);line-height:1.8}
 footer b{color:var(--mut)}
 
+/* ── selección: se guarda en el navegador de Daniel, no sale a ningún lado ── */
+.voto{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.vb{border:1px solid var(--line);background:var(--surf);color:var(--mut);font-family:inherit;font-size:12.5px;font-weight:600;padding:10px 16px;border-radius:100px;cursor:pointer;transition:background .18s,color .18s,border-color .18s;min-height:42px}
+.vb:hover{color:var(--paper);border-color:#39404a}
+.vb:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.vb[aria-pressed="true"].si{background:var(--brand);border-color:var(--brand);color:#0a0c07}
+.vb[aria-pressed="true"].no{background:#d95926;border-color:#d95926;color:#fff}
+.nota{flex:1;min-width:220px;background:#0b0e12;border:1px solid var(--line);border-radius:8px;color:var(--paper);font-family:inherit;font-size:13px;padding:11px 13px;resize:vertical;min-height:42px}
+.nota::placeholder{color:var(--mut2)}
+.nota:focus{outline:none;border-color:#39404a}
+.pieza.si{border-left:3px solid var(--brand);padding-left:18px}
+.pieza.no{border-left:3px solid #d95926;padding-left:18px;opacity:.55}
+
+.barra{position:sticky;bottom:0;z-index:70;background:rgba(8,9,10,.94);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:14px 0;margin-top:10px}
+.barra-in{max-width:1240px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.cuenta{font-size:12.5px;color:var(--mut)}
+.cuenta b{color:var(--paper)}
+.acc{display:flex;gap:8px}
+.ok{background:var(--brand);color:#0a0c07;border:none;font-family:inherit;font-size:12.5px;font-weight:700;padding:12px 20px;border-radius:100px;cursor:pointer;min-height:44px}
+.gh{background:transparent;color:var(--mut);border:1px solid var(--line);font-family:inherit;font-size:12.5px;padding:12px 18px;border-radius:100px;cursor:pointer;min-height:44px}
+.gh:hover{color:var(--paper)}
+@media(max-width:900px){.barra-in{padding-left:20px;padding-right:20px}.acc{width:100%}.ok,.gh{flex:1}}
+
 @media(max-width:900px){
   .wrap,.nav-in{padding-left:calc(20px + env(safe-area-inset-left,0px));padding-right:calc(20px + env(safe-area-inset-right,0px))}
   .cuerpo{grid-template-columns:minmax(0,1fr);gap:22px}
@@ -89,7 +112,17 @@ footer b{color:var(--mut)}
 </div>
 
 <div id="app"></div>
+</div>
 
+<div class="barra"><div class="barra-in">
+  <div class="cuenta" id="cuenta"></div>
+  <div class="acc">
+    <button class="gh" id="limpiar">Empezar de nuevo</button>
+    <button class="ok" id="copiar">Copiar mi selección</button>
+  </div>
+</div></div>
+
+<div class="wrap">
 <footer>
   <b>Formatos:</b> 4:5 es el principal del feed · 1:1 sirve para feed y para Google Display · 9:16 es stories y reels, donde el alcance sale más barato.<br>
   <b>Cómo se cambian:</b> las piezas salen de <code>piezas.html</code>, el generador. Se edita el texto ahí y se vuelven a exportar — no se retocan a mano.<br>
@@ -149,8 +182,75 @@ document.getElementById("app").innerHTML=P.map(function(p){
         +'<div class="k">Destino</div><div class="v"><code>'+p.destino+'</code></div>'
       +'</div>'
     +'</div>'
+    +'<div class="voto">'
+      +'<button class="vb si" data-v="si" aria-pressed="false">Me gusta</button>'
+      +'<button class="vb no" data-v="no" aria-pressed="false">No va</button>'
+      +'<textarea class="nota" rows="1" placeholder="Qué le cambiarías (opcional)"></textarea>'
+    +'</div>'
   +'</div>';
 }).join("");
+
+/* ── selección ───────────────────────────────────────────────────────────
+   Vive en el navegador de quien revisa. No se envía a ningún servidor:
+   el botón de copiar arma un texto para pegarlo en la conversación. */
+var KEY="torq_piezas_v1";
+var sel={};
+try{ sel=JSON.parse(localStorage.getItem(KEY)||"{}") }catch(e){ sel={} }
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(sel)) }catch(e){} }
+
+var cards=document.querySelectorAll(".pieza");
+Array.prototype.forEach.call(cards,function(card,i){
+  var p=P[i], s=sel[p.id]||{};
+  var bs=card.querySelectorAll(".vb"), nota=card.querySelector(".nota");
+  function paint(){
+    Array.prototype.forEach.call(bs,function(b){
+      b.setAttribute("aria-pressed", String(s.v===b.dataset.v));
+    });
+    card.classList.toggle("si", s.v==="si");
+    card.classList.toggle("no", s.v==="no");
+  }
+  Array.prototype.forEach.call(bs,function(b){
+    b.addEventListener("click",function(){
+      s.v = (s.v===b.dataset.v) ? null : b.dataset.v;   // volver a tocar quita el voto
+      sel[p.id]=s; save(); paint(); cuenta();
+    });
+  });
+  nota.value=s.n||"";
+  nota.addEventListener("input",function(){ s.n=nota.value; sel[p.id]=s; save(); cuenta() });
+  paint();
+});
+
+function resumen(){
+  var si=[],no=[],pend=[];
+  P.forEach(function(p){
+    var s=sel[p.id]||{};
+    var linea=p.id+" · "+p.t+(s.n?" — "+s.n:"");
+    if(s.v==="si") si.push(linea); else if(s.v==="no") no.push(linea); else pend.push(p.id+" · "+p.t);
+  });
+  var t="Selección de piezas TORQ\n\n";
+  t+="ME GUSTAN ("+si.length+")\n"+(si.length?si.map(function(x){return "- "+x}).join("\n"):"- ninguna")+"\n\n";
+  t+="NO VAN ("+no.length+")\n"+(no.length?no.map(function(x){return "- "+x}).join("\n"):"- ninguna")+"\n\n";
+  t+="SIN MARCAR ("+pend.length+")\n"+(pend.length?pend.map(function(x){return "- "+x}).join("\n"):"- ninguna");
+  return t;
+}
+function cuenta(){
+  var si=0,no=0;
+  P.forEach(function(p){var v=(sel[p.id]||{}).v; if(v==="si")si++; else if(v==="no")no++});
+  document.getElementById("cuenta").innerHTML="<b>"+si+"</b> me gustan · <b>"+no+"</b> descartadas · <b>"+(P.length-si-no)+"</b> sin marcar";
+}
+
+document.getElementById("copiar").addEventListener("click",function(){
+  var b=this, t=resumen();
+  function fin(){ b.textContent="Copiado ✓"; setTimeout(function(){b.textContent="Copiar mi selección"},1800) }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(fin,function(){ window.prompt("Copia este texto:",t) });
+  }else{ window.prompt("Copia este texto:",t) }
+});
+document.getElementById("limpiar").addEventListener("click",function(){
+  if(!window.confirm("¿Borrar toda la selección?"))return;
+  sel={}; save(); location.reload();
+});
+cuenta();
 })();
 </script>
 </body>
