@@ -357,47 +357,85 @@ la fricción. Un carro rojo en la pieza le habla al 3%.
 ## Cuánto vende de verdad un lanzamiento
 
 Medí **todos los modelos híbridos y eléctricos lanzados en Colombia entre 2023 y
-junio de 2026**, uniendo las dos bases. Un lanzamiento cuenta desde el primer mes
-que supera 20 unidades, no desde la primera importación suelta — sin ese umbral,
-Tesla quedaba descartado porque tenía matrículas de 1 y 2 unidades desde 2022.
+junio de 2026**, uniendo las dos bases. Dos decisiones de método:
 
-| Modelo | Lanzó | Primeros 5 meses |
+- Un lanzamiento cuenta **desde el primer mes que supera 20 unidades**, no desde
+  la primera matrícula. Sin ese umbral Tesla quedaba descartado, porque tenía
+  importaciones sueltas de 1 y 2 unidades desde 2022.
+- La ventana es de **cuatro meses completos**, que es la que permite medir al
+  Model Y (lanzó en marzo de 2026) con la misma vara que a todos los demás.
+
+| Modelo | Lanzó | Primeros 4 meses |
 |---|---|---|
-| BYD Yuan Up | oct 2024 | 1.700 |
-| **Tesla Model 3** | **feb 2026** | **1.687** |
-| Kia Sportage | jul 2025 | 1.488 |
-| Renault Arkana | sep 2024 | 1.359 |
-| Ford Territory | nov 2025 | 1.308 |
-| Renault Duster E-Tech | jun 2025 | 867 |
-| BYD Seagull | jun 2024 | 847 |
+| **Tesla Model Y** | **mar 2026** | **8.478** |
+| **Tesla Model 3** | **feb 2026** | **1.556** |
+| BYD Yuan Up | oct 2024 | 1.456 |
+| Kia Sportage | jul 2025 | 1.415 |
+| Renault Arkana | sep 2024 | 1.067 |
+| Ford Territory | nov 2025 | 962 |
+| Suzuki Dzire | jul 2025 | 694 |
+| BYD Seagull | jun 2024 | 590 |
 
-Y aparte, fuera de la tabla porque su quinto mes es julio (incompleto): el
-**Tesla Model Y lanzó en marzo de 2026 y lleva 8.478 unidades en cuatro meses.**
-Es, de lejos, el lanzamiento más grande de toda la serie.
+### El Model Y es un caso sin precedente
 
-**La distribución, que es lo que importa:** de los **69 lanzamientos** que
-llegaron a vender de verdad, la mitad no pasa de **198 unidades** en cinco meses.
-Un cuarto no llega a **129** y solo el 25% supera **523**.
+No es solo el eléctrico número uno: **es el modelo más vendido de Colombia,
+sobre todos los combustibles.** Verificado contra el RUNT, febrero a julio de 2026:
 
-### La cuenta para la MAGE
+| Modelo | Matrículas |
+|---|---|
+| **Tesla Model Y** | **8.918** |
+| Mazda CX-30 | 4.054 |
+| Kia Picanto | 3.946 |
+| Renault Duster | 3.719 |
+| Toyota Corolla Cross | 3.362 |
 
-| Escenario | Unidades (5 meses) | Comisión total al 1,2% |
+**Más del doble que el segundo, arrancando de cero en marzo.** Y Tesla como
+marca es la quinta del país (10.619) detrás de Kia, Renault, Toyota y Chevrolet
+—habiendo empezado a vender hace cinco meses—.
+
+Vende **42 veces la mediana** de un lanzamiento. Por eso en el tablero su barra
+va con corte de escala: si la escala lo respetara, todo lo demás sería una raya.
+**No es la vara con la que se mide un lanzamiento normal**, y usarlo como
+referencia para la MAGE sería engañarnos.
+
+### La distribución real
+
+De los **63 lanzamientos** que llegaron a vender de verdad, la mitad no pasa de
+**200 unidades** en cuatro meses. Un cuarto no llega a **121** y solo el 25%
+supera **414**.
+
+| Escenario | Unidades (4 meses) | Comisión total al 1,2% |
 |---|---|---|
-| Cuartil bajo | 129 | $160.696.806 |
-| **Mediana** | **198** | **$246.651.372** |
-| Cuartil alto | 523 | $651.508.422 |
+| Cuartil bajo | 121 | $150.731.394 |
+| **Mediana** | **200** | **$249.142.800** |
+| Cuartil alto | 414 | $515.725.596 |
 
 Eso es la comisión **si TORQ generara el 100% de las ventas**, y no va a pasar:
 Corautos vende por sus propias salas, su fuerza comercial y otros canales.
 
 **Suponiendo que TORQ origine el 20%** —hipótesis nuestra, sin validar; el primer
 mes de pauta la reemplaza por el dato real— sobre un lanzamiento en la mediana
-son **40 unidades y $49.828.560** en cinco meses, contra **$5.000.000** de pauta.
+son **40 unidades y $49.828.560** en cuatro meses, contra **$4.000.000** de pauta.
 
 **El negocio cierra con holgura si la MAGE llega a la mediana. Si se queda en el
-cuartil bajo, no cierra.** Ese es el riesgo real del proyecto, dicho con número.
-Y es exactamente la razón de que la Ola 1 sea Manizales y no Bogotá: hay que
-encontrar el mensaje que convierte **antes** de pagar el CPM caro.
+cuartil bajo, no cierra.** Ese es el riesgo real, dicho con número, y es la razón
+de que la Ola 1 sea Manizales y no Bogotá: hay que encontrar el mensaje que
+convierte **antes** de pagar el CPM caro.
+
+### Lo que el Model Y significa para la MAGE
+
+El carro más vendido del país es eléctrico y llegó de cero. Nunca la movilidad
+eléctrica había tenido tanta atención en Colombia. Pero su comprador **paga de
+contado** (solo 33,9% usa crédito, contra 51% en SUV híbrida) y vive en Bogotá
+o Medellín.
+
+> **El ángulo es la gente que quedó mirando y no llega a ese precio.** Quieren
+> lo nuevo, no tienen dónde enchufar y no van a pagar lo que cuesta un Tesla.
+> Eso es exactamente el lead de la MAGE.
+
+**Pendiente para poder usarlo en pauta:** verificar el precio del Model Y en
+Colombia. El RUNT no trae precio de transacción y sin una fuente confirmada no
+se puede publicar la comparación de cifras — solo el argumento cualitativo.
 
 ## Qué medir desde el primer peso
 
