@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>TORQ &mdash; Centro de inteligencia</title>
+<style>
+:root{
+  --ink:#08090a; --surf:#0e1013; --surf2:#141719; --line:#1c1f24; --line2:#2a2e35;
+  --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b; --brand:#c8f24a;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --neutral:#4a4f57;
+  --grid:#1e2126; --axis:#2f343b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--ink);color:var(--paper);font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+.num{font-variant-numeric:tabular-nums}
+
+nav{position:sticky;top:0;z-index:60;backdrop-filter:blur(18px);background:rgba(8,9,10,.86);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:58px;gap:14px}
+.logo{font-weight:800;font-size:17px;letter-spacing:-.02em}
+.logo span{color:var(--brand)}
+.navr{display:flex;gap:14px;align-items:center}
+.navr a{color:var(--mut);text-decoration:none;font-size:12.5px;white-space:nowrap}
+.navr a:hover{color:var(--paper)}
+
+.eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--brand);font-weight:700}
+h1.pg{font-size:30px;font-weight:800;margin:12px 0 0;letter-spacing:-.02em;line-height:1.1}
+.lede{color:var(--mut);font-size:14.5px;max-width:660px;margin-top:16px;line-height:1.7}
+.head{padding:34px 0 0}
+
+.flash{margin:26px 0 0;border:1px solid rgba(217,89,38,.35);background:rgba(217,89,38,.07);border-radius:8px;padding:18px 20px}
+.flash .t{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--s2);font-weight:700;margin-bottom:9px}
+.flash p{margin:0;font-size:14px;line-height:1.7;color:var(--paper)}
+.flash p+p{margin-top:9px;color:var(--mut)}
+.flash b{color:var(--paper)}
+
+.seg{display:flex;gap:5px;background:var(--surf);border:1px solid var(--line);border-radius:100px;padding:3px;margin:28px 0 0;width:max-content;max-width:100%}
+.seg button{border:none;background:transparent;color:var(--mut);font-size:12.5px;padding:8px 17px;border-radius:100px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--brand);color:#0a0c07;font-weight:700}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:20px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:17px 18px;background:var(--surf)}
+.kpi .k{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);margin-bottom:9px;line-height:1.4}
+.kpi .v{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.kpi .d{font-size:11px;color:var(--mut2);margin-top:7px;line-height:1.45}
+
+.panel{border:1px solid var(--line);border-radius:8px;background:var(--surf);padding:24px;margin-top:9px}
+.panel h2{font-size:16px;font-weight:700;margin:0 0 5px;letter-spacing:-.01em}
+.panel .sub{font-size:12.5px;color:var(--mut);margin:0 0 20px;line-height:1.6;max-width:640px}
+.sec{margin-top:34px}
+
+.leg{display:flex;flex-wrap:wrap;gap:7px 16px;margin-bottom:16px}
+.leg i{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--mut);font-style:normal}
+.leg i b{width:9px;height:9px;border-radius:2px;display:block}
+
+svg{display:block;max-width:100%;height:auto;overflow:visible}
+.gl{stroke:var(--grid);stroke-width:1}
+.ax{stroke:var(--axis);stroke-width:1}
+.tk{fill:var(--mut2);font-size:10px}
+.lb{fill:var(--paper);font-size:10.5px;font-weight:600}
+.lbm{fill:var(--mut);font-size:10px}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+.tw{overflow-x:auto}
+th{text-align:left;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut2);font-weight:700;padding:10px 11px;border-bottom:1px solid var(--line2);white-space:nowrap}
+th.r,td.r{text-align:right}
+td{padding:10px 11px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(255,255,255,.02)}
+.pill{display:inline-block;padding:2px 8px;border-radius:100px;font-size:10.5px;font-weight:700}
+.o1{background:rgba(200,242,74,.15);color:var(--brand)}
+.o2{background:rgba(57,135,229,.16);color:#7ab4f2}
+.o3{background:rgba(255,255,255,.06);color:var(--mut)}
+.ox{background:rgba(217,89,38,.15);color:var(--s2)}
+.pos{color:var(--s1);font-weight:700}
+.neg{color:var(--s2);font-weight:700}
+
+.ksp{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.k1{border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:0 8px 8px 0;background:var(--surf);padding:18px 20px}
+.k1 .n{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:9px}
+.k1 h3{font-size:15px;font-weight:700;margin:0 0 8px;letter-spacing:-.01em;line-height:1.35}
+.k1 p{margin:0;font-size:12.5px;color:var(--mut);line-height:1.65}
+.k1 .ev{margin-top:11px;padding-top:11px;border-top:1px solid var(--line);font-size:11px;color:var(--mut2);line-height:1.55}
+.k1 .ev b{color:var(--paper)}
+
+footer{border-top:1px solid var(--line);margin-top:46px;padding:26px 0 44px;color:var(--mut2);font-size:11.5px;line-height:1.8}
+footer b{color:var(--mut)}
+@media(max-width:820px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .ksp{grid-template-columns:1fr}
+  h1.pg{font-size:24px}
+  .wrap{padding:0 16px}
+  .panel{padding:18px 15px}
+}
+</style>
+<script src="nav.js" defer></script>
+</head>
+<body>
+<nav><div class="wrap">
+  <div class="logo">TOR<span>Q</span></div>
+  <div class="navr">
+    <a href="crm.html">Pipeline</a>
+    <a href="analitica.html">Tablero</a>
+    <a href="index.html">Showroom</a>
+  </div>
+</div></nav>
+
+<div class="wrap">
+  <div class="head">
+    <div class="eyebrow">Centro de inteligencia</div>
+    <h1 class="pg">Dónde está el lead más barato de Colombia</h1>
+    <p class="lede">Construido sobre <b>1.073.054 matrículas individuales</b> del RUNT &mdash; enero 2022 a julio 2026. No son informes agregados: es el registro uno por uno, con la ciudad donde vive el comprador, quién financió y qué marca eligió.</p>
+  </div>
+
+  <div class="flash">
+    <div class="t">Lo primero, porque cambia la estrategia</div>
+    <p><b>La MAGE HEV tiene cero matrículas en Colombia.</b> Y las 1.952 unidades de Dongfeng en el país son camiones diésel, furgones GNV y vans de reparto. Ni una SUV híbrida de pasajeros.</p>
+    <p>No estamos peleando participación en un modelo conocido: estamos lanzando un producto invisible de una marca que el mercado ubica en <b>carga</b>. Toda la pauta tiene que resolver eso antes que el precio.</p>
+  </div>
+
+  <div class="seg" role="group">
+    <button id="b-hev" aria-pressed="true">SUV híbrida &middot; MAGE HEV</button>
+    <button id="b-ev" aria-pressed="false">Eléctricos &middot; Box E2 y Vigo E2+</button>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="k">Mercado del mes</div><div class="v num" id="k1">&mdash;</div><div class="d" id="k1d"></div></div>
+    <div class="kpi"><div class="k">Compra a crédito</div><div class="v num" id="k2">&mdash;</div><div class="d" id="k2d"></div></div>
+    <div class="kpi"><div class="k">Barrera de marca</div><div class="v num" id="k3">&mdash;</div><div class="d" id="k3d"></div></div>
+    <div class="kpi"><div class="k">Cobertura Corautos</div><div class="v num" id="k4">&mdash;</div><div class="d" id="k4d"></div></div>
+  </div>
+
+  <div class="sec">
+    <div class="panel">
+      <h2>Mapa de oportunidad</h2>
+      <p class="sub">Cada burbuja es una ciudad, ubicada por el volumen de compradores reales y qué tan rápido crece. <b>Arriba a la izquierda</b> está lo que buscamos: mercados que crecen fuerte y todavía son baratos de pautar. Bogotá manda en volumen, pero es el que menos crece.</p>
+      <div class="leg">
+        <i><b style="background:var(--s1)"></b> Sala Corautos</i>
+        <i><b style="background:var(--s3)"></b> Solo taller</i>
+        <i><b style="background:var(--s2)"></b> Sin presencia</i>
+      </div>
+      <div id="scatter"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="panel">
+      <h2>El termómetro de la objeción «¿Dongfeng qué?»</h2>
+      <p class="sub">Cuánto se aparta cada ciudad de la media nacional comprando marcas chinas. Es el indicador propio de TORQ: <b>donde la barra va a la derecha, la objeción de marca sale más barata de resolver</b> &mdash; y esa objeción es la más cara que tenemos.</p>
+      <div id="diverg"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="panel">
+      <h2>Y la barrera se está cayendo sola</h2>
+      <p class="sub">Participación de marcas chinas en el mercado de pasajeros, país entero. Casi se triplica en tres años. Entrar con una marca china hoy es mucho más fácil que en 2023 &mdash; y más difícil que en 2027.</p>
+      <div id="evo"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="panel">
+      <h2>Ruta de pauta</h2>
+      <p class="sub">Ordenada por dónde rinde más cada peso, no por tamaño. El presupuesto es $1.000.000/mes y el punto de equilibrio 0,8 unidades: no hay margen para aprender a precio de Bogotá.</p>
+      <div class="tw"><table>
+        <thead><tr>
+          <th>Ciudad</th><th class="r">Unid/mes</th><th class="r">Crece</th>
+          <th class="r">Marca china</th><th class="r">Crédito</th><th>Corautos</th><th>Ola</th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="panel">
+      <h2>Cuánto vende de verdad un lanzamiento</h2>
+      <p class="sub">92 modelos híbridos y eléctricos lanzados en Colombia desde 2023. Esto ancla la expectativa de la MAGE en evidencia, no en optimismo &mdash; y define cuánta comisión hay realmente sobre la mesa.</p>
+      <div id="lanz"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="panel">
+      <h2>Cuándo pautar</h2>
+      <p class="sub">Índice de estacionalidad del mercado total, promedio 2022&ndash;2025. 100 = mes promedio. <b>Arrancar en agosto entra directo al mejor trimestre del año</b>; enero es el peor mes y cae 24% bajo el promedio.</p>
+      <div id="est"></div>
+    </div>
+  </div>
+
+  <div class="sec" id="secfin">
+    <div class="panel">
+      <h2>Quién financia este mercado</h2>
+      <p class="sub" id="finsub"></p>
+      <div id="fin"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2 style="font-size:19px;font-weight:800;margin:0 0 6px;letter-spacing:-.015em">Key Sales Points</h2>
+    <p style="color:var(--mut);font-size:13px;margin:0 0 18px;line-height:1.65;max-width:680px">Cada uno sale de un dato verificable de arriba, y cada uno mata una objeción concreta. Son la materia prima de la pauta: el ángulo, contra quién, en qué plaza.</p>
+    <div class="ksp" id="ksp"></div>
+  </div>
+</div>
+
+<footer><div class="wrap">
+  <b>Fuentes:</b> RUNT vía «Base Comercial 2022&ndash;feb 2026» (930.200 registros) y «Análisis AI RUNT feb&ndash;jul 2026» (142.854 registros). Precios y fichas de <b>COMPETENCIA.md</b>, verificados uno a uno.<br>
+  <b>Método:</b> toda la geografía usa <b>ciudad del propietario</b>, nunca municipio de matrícula &mdash; los concesionarios matriculan donde el impuesto es barato y eso desplaza hasta el 59% del volumen de una ciudad a otra. Los crecimientos comparan feb&ndash;mar contra may&ndash;jun, meses completos. Julio 2026 está incompleto (hasta el día 8) y no entra en ninguna tendencia.<br>
+  <b>Límites:</b> el RUNT no trae precio de transacción ni volumen de búsqueda. Matrícula no es venta: hay días de desfase.
+</div></footer>
+
+<script>
+var D={"hev":{"base":8.7,"total":34147,"ciudades":[{"c":"Bogotá","n":13197,"mes":2675,"g":8,"ch":1.3,"cr":51,"cob":"sala"},{"c":"Medellín","n":4457,"mes":967,"g":21,"ch":-1.8,"cr":40,"cob":"sala"},{"c":"Cali","n":2185,"mes":457,"g":15,"ch":0.6,"cr":55,"cob":"sala"},{"c":"Barranquilla","n":901,"mes":200,"g":36,"ch":3.9,"cr":54,"cob":"sala"},{"c":"Bucaramanga","n":725,"mes":160,"g":38,"ch":-2.5,"cr":46,"cob":"sala"},{"c":"Envigado","n":719,"mes":149,"g":11,"ch":-2.9,"cr":47,"cob":"nada"},{"c":"Manizales","n":532,"mes":125,"g":48,"ch":10.3,"cr":47,"cob":"sala"},{"c":"Pereira","n":530,"mes":112,"g":31,"ch":4.3,"cr":47,"cob":"sala"},{"c":"Ibagué","n":490,"mes":116,"g":64,"ch":2.1,"cr":57,"cob":"sala"},{"c":"Cartagena","n":486,"mes":108,"g":34,"ch":3.0,"cr":59,"cob":"taller"},{"c":"Villavicencio","n":463,"mes":110,"g":43,"ch":-2.0,"cr":58,"cob":"sala"},{"c":"Cúcuta","n":453,"mes":100,"g":33,"ch":-5.2,"cr":58,"cob":"sala"},{"c":"Pasto","n":358,"mes":93,"g":72,"ch":-4.2,"cr":30,"cob":"sala"},{"c":"Neiva","n":310,"mes":66,"g":21,"ch":-3.9,"cr":59,"cob":"sala"},{"c":"Armenia","n":293,"mes":68,"g":46,"ch":1.2,"cr":45,"cob":"nada"},{"c":"Bello","n":270,"mes":58,"g":24,"ch":-3.5,"cr":68,"cob":"nada"},{"c":"Floridablanca","n":255,"mes":56,"g":37,"ch":-0.9,"cr":48,"cob":"nada"},{"c":"Itagüí","n":243,"mes":49,"g":4,"ch":2.0,"cr":60,"cob":"nada"},{"c":"Santa Marta","n":220,"mes":51,"g":38,"ch":-2.4,"cr":47,"cob":"taller"},{"c":"Sabaneta","n":209,"mes":48,"g":41,"ch":-0.1,"cr":56,"cob":"nada"},{"c":"Montería","n":209,"mes":54,"g":69,"ch":-2.5,"cr":54,"cob":"sala"},{"c":"Popayán","n":198,"mes":42,"g":20,"ch":-0.6,"cr":53,"cob":"sala"},{"c":"Tunja","n":196,"mes":44,"g":31,"ch":-4.1,"cr":60,"cob":"sala"},{"c":"Chía","n":179,"mes":38,"g":23,"ch":-2.0,"cr":53,"cob":"nada"}],"credito":51.0,"serie":[5765,6300,6294,7370,7263],"rivales":[{"m":"TOYOTA COROLLA CROSS","n":3305},{"m":"MAZDA CX-30","n":3231},{"m":"KIA SPORTAGE","n":2381},{"m":"KIA STONIC","n":2150},{"m":"FORD TERRITORY","n":1853},{"m":"SUZUKI FRONX","n":1471},{"m":"HYUNDAI KONA HIBRIDA","n":1465},{"m":"RENAULT ARKANA","n":1203},{"m":"RENAULT DUSTER E-TECH","n":1191},{"m":"SUZUKI NEW SCROSS","n":1190}],"fin":[{"e":"Banco Santander Colombia.","p":14.7,"cautiva":false},{"e":"Bancolombia.","p":12.8,"cautiva":false},{"e":"Banco Finandina.","p":9.7,"cautiva":false},{"e":"Toyota Financial Services Colombia.","p":9.6,"cautiva":true},{"e":"RCI Colombia.","p":9.3,"cautiva":true},{"e":"Banco De Occidente","p":8.1,"cautiva":false},{"e":"Banco Santander De Negocios Colombia","p":6.7,"cautiva":false}],"cobSala":75},"ev":{"base":36.1,"total":23613,"ciudades":[{"c":"Bogotá","n":11196,"mes":2321,"g":21,"ch":1.2,"cr":40,"cob":"sala"},{"c":"Medellín","n":3796,"mes":820,"g":53,"ch":-8.6,"cr":41,"cob":"sala"},{"c":"Cali","n":1496,"mes":312,"g":31,"ch":9.0,"cr":49,"cob":"sala"},{"c":"Envigado","n":787,"mes":164,"g":53,"ch":0.1,"cr":44,"cob":"nada"},{"c":"Barranquilla","n":467,"mes":110,"g":86,"ch":-3.9,"cr":47,"cob":"sala"},{"c":"Bucaramanga","n":428,"mes":86,"g":16,"ch":-2.7,"cr":35,"cob":"sala"},{"c":"Pereira","n":296,"mes":62,"g":48,"ch":-4.6,"cr":38,"cob":"sala"},{"c":"Chía","n":244,"mes":49,"g":10,"ch":-0.4,"cr":44,"cob":"nada"},{"c":"Manizales","n":242,"mes":46,"g":15,"ch":4.8,"cr":34,"cob":"sala"},{"c":"Sabaneta","n":198,"mes":42,"g":65,"ch":-4.2,"cr":48,"cob":"nada"},{"c":"Villavicencio","n":198,"mes":40,"g":45,"ch":8.9,"cr":48,"cob":"sala"},{"c":"Armenia","n":194,"mes":37,"g":9,"ch":9.8,"cr":36,"cob":"nada"},{"c":"Cúcuta","n":191,"mes":40,"g":35,"ch":11.1,"cr":46,"cob":"sala"},{"c":"Itagüí","n":182,"mes":36,"g":18,"ch":3.5,"cr":49,"cob":"nada"},{"c":"Cartagena","n":175,"mes":36,"g":18,"ch":-0.1,"cr":46,"cob":"taller"},{"c":"Ibagué","n":165,"mes":32,"g":12,"ch":-3.9,"cr":42,"cob":"sala"},{"c":"Rionegro","n":149,"mes":31,"g":19,"ch":2.2,"cr":40,"cob":"nada"},{"c":"Floridablanca","n":133,"mes":28,"g":30,"ch":1.5,"cr":38,"cob":"nada"},{"c":"Bello","n":117,"mes":24,"g":20,"ch":-0.2,"cr":47,"cob":"nada"},{"c":"Cajica","n":107,"mes":24,"g":7,"ch":-1.5,"cr":44,"cob":"nada"},{"c":"Neiva","n":107,"mes":26,"g":62,"ch":-7.1,"cr":41,"cob":"sala"},{"c":"Jamundí","n":93,"mes":21,"g":null,"ch":9.1,"cr":55,"cob":"nada"},{"c":"Pasto","n":88,"mes":15,"g":7,"ch":-11.1,"cr":30,"cob":"sala"},{"c":"Popayán","n":82,"mes":20,"g":null,"ch":-5.6,"cr":48,"cob":"sala"}],"credito":41.7,"serie":[2511,5064,5173,4982,4913],"rivales":[{"m":"TESLA MODELO Y","n":6124},{"m":"TESLA MODEL Y","n":2691},{"m":"BYD BYD YUAN UP","n":2487},{"m":"TESLA MODEL 3","n":1683},{"m":"CHERY ICAR 03","n":1176},{"m":"BYD BYD SEAGULL","n":1050},{"m":"CHEVROLET SPARK","n":633},{"m":"MG MG S5 EV DELUXE","n":584},{"m":"BYD YUAN PLUS EV","n":581},{"m":"BYD IDOLPHIN","n":327}],"fin":[{"e":"Bancolombia.","p":22.9,"cautiva":false},{"e":"Banco Finandina.","p":18.5,"cautiva":false},{"e":"Banco Santander Colombia.","p":14.7,"cautiva":false},{"e":"Gm Financial Colombia","p":6.8,"cautiva":false},{"e":"Banco De Occidente","p":6.8,"cautiva":false},{"e":"Banco Santander De Negocios Colombia","p":5.7,"cautiva":false},{"e":"Banco Davivienda","p":4.9,"cautiva":false}],"cobSala":81},"color":[{"c":"Gris","p":29.4},{"c":"Blanco","p":25.2},{"c":"Plata","p":14.5},{"c":"Negro","p":11.6},{"c":"Otro","p":6.7},{"c":"Azul","p":6.3}],"evo":[{"y":2023,"p":4.2},{"y":2024,"p":5.9},{"y":2025,"p":9.9},{"y":2026,"p":11.6}],"chiCiu":[{"c":"Rionegro","a":3.1,"b":11.8,"d":8.6},{"c":"Sabaneta","a":3.3,"b":11.0,"d":7.7},{"c":"Envigado","a":5.9,"b":13.2,"d":7.4},{"c":"Itagüí","a":4.4,"b":11.6,"d":7.2},{"c":"Cajica","a":12.0,"b":19.0,"d":7.0},{"c":"Zipaquira","a":6.1,"b":12.1,"d":6.0},{"c":"Floridablanca","a":2.7,"b":8.5,"d":5.7},{"c":"Chía","a":10.6,"b":16.0,"d":5.5},{"c":"Cali","a":5.0,"b":10.4,"d":5.4},{"c":"Armenia","a":2.9,"b":8.2,"d":5.3},{"c":"Bogotá","a":8.4,"b":13.5,"d":5.1},{"c":"Tulua","a":2.4,"b":7.4,"d":5.0}],"adopcion":[{"y":2022,"comb":236060,"hev":24576,"ev":3353},{"y":2023,"comb":156547,"hev":27695,"ev":3754},{"y":2024,"comb":150655,"hev":42571,"ev":9212},{"y":2025,"comb":168737,"hev":67019,"ev":19958}],"estacion":[{"m":1,"i":76},{"m":2,"i":90},{"m":3,"i":93},{"m":4,"i":89},{"m":5,"i":96},{"m":6,"i":93},{"m":7,"i":102},{"m":8,"i":102},{"m":9,"i":108},{"m":10,"i":106},{"m":11,"i":115},{"m":12,"i":129}],"lanz":{"top":[{"m":"BYD BYD YUAN UP","t6":2102,"tr":[199,455,514,284,243,407]},{"m":"KIA SPORTAGE","t6":1604,"tr":[620,231,438,126,73,116]},{"m":"RENAULT ARKANA","t6":1371,"tr":[12,153,347,311,256,292]},{"m":"RENAULT DUSTER E-TECH","t6":879,"tr":[12,235,46,51,246,289]},{"m":"SUZUKI DZIRE","t6":844,"tr":[12,218,75,168,233,138]},{"m":"SUZUKI NEW SCROSS","t6":762,"tr":[31,120,87,173,176,175]},{"m":"FORD ESCAPE","t6":711,"tr":[3,69,128,176,172,163]},{"m":"RENAULT KOLEOS E-TECH","t6":684,"tr":[11,120,93,11,301,148]},{"m":"DEEPAL S05","t6":656,"tr":[93,108,133,72,116,134]},{"m":"NISSAN X-TRAIL T33","t6":571,"tr":[22,141,93,125,94,96]}],"mediana":107,"q1":44,"q3":331,"n":92}};
+var MODO="hev";
+var $=function(i){return document.getElementById(i)};
+var mil=function(n){return Math.round(n).toLocaleString("es-CO")};
+function esc(s){return String(s).replace(/[<>&]/g,function(c){return {"<":"&lt;",">":"&gt;","&":"&amp;"}[c]})}
+
+/* olas asignadas por criterio, no por volumen: apertura de marca + crecimiento
+   + que exista sala. Bogota/Medellin/Cali entran de ultimas a proposito. */
+var OLA={"Manizales":1,"Ibagué":1,"Pereira":1,
+  "Barranquilla":2,"Cartagena":2,"Villavicencio":2,"Montería":2,"Valledupar":2,
+  "Bogotá":3,"Medellín":3,"Cali":3,"Bucaramanga":3,"Tunja":3,"Neiva":3,"Popayán":3,
+  "Cúcuta":0,"Pasto":0};
+
+function cob(c){return c==="sala"?"var(--s1)":(c==="taller"?"var(--s3)":"var(--s2)")}
+
+/* ── mapa de oportunidad ─────────────────────────────────── */
+function scatter(){
+  var d=D[MODO].ciudades.filter(function(r){return r.g!==null&&r.mes>0});
+  var W=1100,H=430,ml=58,mr=26,mt=22,mb=46;
+  var xs=d.map(function(r){return Math.log10(r.mes)});
+  var x0=Math.min.apply(null,xs)-0.12, x1=Math.max.apply(null,xs)+0.12;
+  var ys=d.map(function(r){return r.g});
+  var y0=Math.min(0,Math.min.apply(null,ys))-6, y1=Math.max.apply(null,ys)+12;
+  var X=function(v){return ml+(Math.log10(v)-x0)/(x1-x0)*(W-ml-mr)};
+  var Y=function(v){return mt+(1-(v-y0)/(y1-y0))*(H-mt-mb)};
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Mapa de oportunidad por ciudad">';
+  for(var g=y0-(y0%10);g<=y1;g+=20){
+    if(g<y0)continue;
+    s+='<line class="gl" x1="'+ml+'" y1="'+Y(g)+'" x2="'+(W-mr)+'" y2="'+Y(g)+'"/>';
+    s+='<text class="tk" x="'+(ml-9)+'" y="'+(Y(g)+3.5)+'" text-anchor="end">'+g+'%</text>';
+  }
+  [10,50,100,500,1000,3000].forEach(function(v){
+    if(Math.log10(v)<x0||Math.log10(v)>x1)return;
+    s+='<line class="gl" x1="'+X(v)+'" y1="'+mt+'" x2="'+X(v)+'" y2="'+(H-mb)+'"/>';
+    s+='<text class="tk" x="'+X(v)+'" y="'+(H-mb+17)+'" text-anchor="middle">'+mil(v)+'</text>';
+  });
+  s+='<line class="ax" x1="'+ml+'" y1="'+(H-mb)+'" x2="'+(W-mr)+'" y2="'+(H-mb)+'"/>';
+  s+='<text class="tk" x="'+(W-mr)+'" y="'+(H-6)+'" text-anchor="end">unidades por mes (escala logarítmica) &rarr;</text>';
+  s+='<text class="tk" x="'+ml+'" y="'+(mt-8)+'">&uarr; crecimiento feb-mar vs may-jun</text>';
+  d.sort(function(a,b){return b.mes-a.mes});
+  d.forEach(function(r){
+    var cx=X(r.mes), cy=Y(r.g), rad=Math.max(5,Math.min(19,Math.sqrt(r.mes)*0.42));
+    s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+rad+'" fill="'+cob(r.cob)+'" fill-opacity=".62" stroke="var(--surf)" stroke-width="2"/>';
+  });
+  /* Las burbujas se apinan en el extremo barato del eje, asi que las
+     etiquetas hay que colocarlas evitando choques: se intenta arriba,
+     luego abajo, y si aun choca se omite la ciudad mas pequena. */
+  var puestas=[];
+  function libre(x,y,w){
+    for(var i=0;i<puestas.length;i++){
+      var p=puestas[i];
+      if(Math.abs(y-p.y)<12 && Math.abs(x-p.x)<(w+p.w)/2+6) return false;
+    }
+    return true;
+  }
+  d.slice().sort(function(a,b){return b.mes-a.mes}).forEach(function(r){
+    var cx=X(r.mes), cy=Y(r.g), rad=Math.max(5,Math.min(19,Math.sqrt(r.mes)*0.42));
+    var w=r.c.length*5.9;
+    var cand=[cy-rad-7, cy+rad+13, cy-rad-19, cy+rad+25];
+    for(var i=0;i<cand.length;i++){
+      var yy=cand[i];
+      if(yy<mt+10||yy>H-mb-4) continue;
+      if(libre(cx,yy,w)){
+        puestas.push({x:cx,y:yy,w:w});
+        s+='<text class="lb" x="'+cx+'" y="'+yy+'" text-anchor="middle">'+esc(r.c)+'</text>';
+        return;
+      }
+    }
+  });
+  s+='</svg>';
+  $("scatter").innerHTML=s;
+}
+
+/* ── divergente: apertura a marca china ──────────────────── */
+function diverg(){
+  var d=D[MODO].ciudades.filter(function(r){return r.mes>=20}).slice().sort(function(a,b){return b.ch-a.ch});
+  var W=1100,H=Math.max(260,d.length*26+56),ml=150,mr=40,mt=26;
+  var mx=Math.max.apply(null,d.map(function(r){return Math.abs(r.ch)}))*1.1;
+  var cx=ml+(W-ml-mr)/2, half=(W-ml-mr)/2;
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Apertura a marca china por ciudad">';
+  s+='<text class="tk" x="'+(cx-8)+'" y="'+(mt-11)+'" text-anchor="end">&larr; barrera de marca más dura</text>';
+  s+='<text class="tk" x="'+(cx+8)+'" y="'+(mt-11)+'">más abiertos a marca china &rarr;</text>';
+  d.forEach(function(r,i){
+    var y=mt+i*26, w=Math.abs(r.ch)/mx*half;
+    var pos=r.ch>=0;
+    s+='<text class="lbm" x="'+(ml-12)+'" y="'+(y+15)+'" text-anchor="end" fill="var(--paper)">'+esc(r.c)+'</text>';
+    s+='<rect x="'+(pos?cx:cx-w)+'" y="'+(y+4)+'" width="'+Math.max(w,1)+'" height="15" rx="3" fill="'+(pos?'var(--s1)':'var(--s2)')+'"/>';
+    s+='<text class="tk" x="'+(pos?cx+w+7:cx-w-7)+'" y="'+(y+15.5)+'" text-anchor="'+(pos?'start':'end')+'" fill="'+(pos?'var(--s1)':'var(--s2)')+'">'+(r.ch>0?'+':'')+r.ch.toString().replace('.',',')+'</text>';
+  });
+  s+='<line class="ax" x1="'+cx+'" y1="'+(mt-2)+'" x2="'+cx+'" y2="'+(mt+d.length*26)+'" stroke="var(--neutral)"/>';
+  s+='<text class="tk" x="'+cx+'" y="'+(mt+d.length*26+17)+'" text-anchor="middle">media nacional '+D[MODO].base.toString().replace('.',',')+'%</text>';
+  s+='</svg>';
+  $("diverg").innerHTML=s;
+}
+
+/* ── evolución de la apertura ────────────────────────────── */
+function evo(){
+  var d=D.evo, W=1100,H=250,ml=52,mr=110,mt=24,mb=40;
+  var mx=Math.max.apply(null,d.map(function(r){return r.p}))*1.25;
+  var X=function(i){return ml+i/(d.length-1)*(W-ml-mr)};
+  var Y=function(v){return mt+(1-v/mx)*(H-mt-mb)};
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Evolución de marcas chinas">';
+  [0,4,8,12].forEach(function(g){
+    if(g>mx)return;
+    s+='<line class="gl" x1="'+ml+'" y1="'+Y(g)+'" x2="'+(W-mr)+'" y2="'+Y(g)+'"/>';
+    s+='<text class="tk" x="'+(ml-9)+'" y="'+(Y(g)+3.5)+'" text-anchor="end">'+g+'%</text>';
+  });
+  var pts=d.map(function(r,i){return X(i)+','+Y(r.p)}).join(" ");
+  s+='<polyline points="'+pts+'" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round"/>';
+  d.forEach(function(r,i){
+    s+='<circle cx="'+X(i)+'" cy="'+Y(r.p)+'" r="4.5" fill="var(--s1)" stroke="var(--surf)" stroke-width="2"/>';
+    s+='<text class="lb" x="'+X(i)+'" y="'+(Y(r.p)-13)+'" text-anchor="middle">'+r.p.toString().replace('.',',')+'%</text>';
+    s+='<text class="tk" x="'+X(i)+'" y="'+(H-mb+18)+'" text-anchor="middle">'+r.y+(r.y===2026?' *':'')+'</text>';
+  });
+  s+='<text class="tk" x="'+(W-mr+12)+'" y="'+(Y(d[d.length-1].p)+4)+'" fill="var(--mut)">* hasta julio</text>';
+  s+='</svg>';
+  $("evo").innerHTML=s;
+}
+
+/* ── benchmark de lanzamiento ────────────────────────────── */
+function lanz(){
+  var L=D.lanz, d=L.top.slice(0,8);
+  var W=1100,H=d.length*30+92,ml=210,mr=60,mt=44;
+  var mx=Math.max.apply(null,d.map(function(r){return r.t6}));
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Unidades en los primeros seis meses">';
+  s+='<text class="tk" x="'+ml+'" y="18">unidades vendidas en los primeros 6 meses</text>';
+  var Xm=function(v){return ml+v/mx*(W-ml-mr)};
+  [L.q1,L.mediana,L.q3].forEach(function(v,i){
+    var nm=['cuartil 1','mediana','cuartil 3'][i];
+    s+='<line x1="'+Xm(v)+'" y1="'+(mt-12)+'" x2="'+Xm(v)+'" y2="'+(mt+d.length*30-6)+'" stroke="var(--brand)" stroke-width="1" stroke-dasharray="3 4" opacity=".55"/>';
+    s+='<text class="tk" x="'+Xm(v)+'" y="'+(mt-18)+'" text-anchor="middle" fill="var(--brand)">'+nm+' '+v+'</text>';
+  });
+  d.forEach(function(r,i){
+    var y=mt+i*30, w=r.t6/mx*(W-ml-mr);
+    s+='<text class="lbm" x="'+(ml-12)+'" y="'+(y+15)+'" text-anchor="end" fill="var(--paper)">'+esc(r.m)+'</text>';
+    s+='<rect x="'+ml+'" y="'+(y+3)+'" width="'+w+'" height="16" rx="3" fill="var(--s1)" fill-opacity=".8"/>';
+    s+='<text class="tk" x="'+(ml+w+8)+'" y="'+(y+15.5)+'" fill="var(--mut)">'+mil(r.t6)+'</text>';
+  });
+  s+='</svg>';
+  var nota='<p class="sub" style="margin:16px 0 0;max-width:none">De los <b>'+L.n+' lanzamientos</b> medidos, la mitad no pasa de <b>'+L.mediana+' unidades</b> en seis meses y un cuarto no llega a '+L.q1+'. Solo el 25% supera '+L.q3+'.<br>Con la comisión de 1,2% ($1.245.714), una MAGE en la mediana deja <b>$'+mil(L.mediana*1245714)+'</b> en seis meses <em>si TORQ generara el 100% de esas ventas</em> &mdash; que no va a pasar. A un 20% de participación son <b>$'+mil(Math.round(L.mediana*0.2)*1245714)+'</b>, o sea '+Math.round(L.mediana*0.2)+' unidades. Contra $6.000.000 de pauta en el semestre, el negocio cierra &mdash; pero con poco margen de error. Por eso la Ola 1 no es Bogotá.</p>';
+  $("lanz").innerHTML=s+nota;
+}
+
+/* ── estacionalidad ──────────────────────────────────────── */
+function est(){
+  var d=D.estacion, W=1100,H=250,ml=48,mr=24,mt=28,mb=42;
+  var mx=Math.max.apply(null,d.map(function(r){return r.i}))*1.12;
+  var bw=(W-ml-mr)/12;
+  var MES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  var Y=function(v){return mt+(1-v/mx)*(H-mt-mb)};
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Estacionalidad del mercado">';
+  [50,100].forEach(function(g){
+    s+='<line class="gl" x1="'+ml+'" y1="'+Y(g)+'" x2="'+(W-mr)+'" y2="'+Y(g)+'" '+(g===100?'stroke="var(--neutral)"':'')+'/>';
+    s+='<text class="tk" x="'+(ml-9)+'" y="'+(Y(g)+3.5)+'" text-anchor="end">'+g+'</text>';
+  });
+  d.forEach(function(r,i){
+    var x=ml+i*bw+3, w=bw-6, alto=r.i>=100;
+    s+='<rect x="'+x+'" y="'+Y(r.i)+'" width="'+w+'" height="'+(Y(0)-Y(r.i))+'" rx="3" fill="'+(alto?'var(--s1)':'var(--neutral)')+'" fill-opacity="'+(alto?'.85':'.6')+'"/>';
+    s+='<text class="'+(alto?'lb':'tk')+'" x="'+(x+w/2)+'" y="'+(Y(r.i)-7)+'" text-anchor="middle">'+r.i+'</text>';
+    s+='<text class="tk" x="'+(x+w/2)+'" y="'+(H-mb+18)+'" text-anchor="middle">'+MES[i]+'</text>';
+  });
+  s+='</svg>';
+  $("est").innerHTML=s;
+}
+
+/* ── financiadores ───────────────────────────────────────── */
+function fin(){
+  var d=D[MODO].fin, cau=d.filter(function(r){return r.cautiva});
+  var suma=cau.reduce(function(a,b){return a+b.p},0);
+  var W=1100,H=d.length*30+30,ml=250,mr=60,mt=8;
+  var mx=Math.max.apply(null,d.map(function(r){return r.p}));
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Entidades que financian">';
+  d.forEach(function(r,i){
+    var y=mt+i*30, w=r.p/mx*(W-ml-mr);
+    s+='<text class="lbm" x="'+(ml-12)+'" y="'+(y+15)+'" text-anchor="end" fill="var(--paper)">'+esc(r.e)+'</text>';
+    s+='<rect x="'+ml+'" y="'+(y+3)+'" width="'+w+'" height="16" rx="3" fill="'+(r.cautiva?'var(--s2)':'var(--s1)')+'" fill-opacity=".8"/>';
+    s+='<text class="tk" x="'+(ml+w+8)+'" y="'+(y+15.5)+'" fill="var(--mut)">'+r.p.toString().replace('.',',')+'%</text>';
+  });
+  s+='</svg>';
+  var leg='<div class="leg"><i><b style="background:var(--s1)"></b> Banca abierta</i><i><b style="background:var(--s2)"></b> Financiación cautiva de la marca</i></div>';
+  $("fin").innerHTML=leg+s;
+  $("finsub").innerHTML='El <b>'+D[MODO].credito.toString().replace('.',',')+'%</b> de este segmento se compra a crédito. '+
+    (suma>0?'Y <b>'+suma.toFixed(1).replace('.',',')+'% del crédito es financiación cautiva</b> &mdash; Toyota y Renault financiando sus propios carros. Es una ventaja estructural que Dongfeng no tiene, y hay que preguntarle a Corautos con qué aliado y qué tasa responde.':'Aquí no domina la financiación cautiva: el terreno está más parejo.');
+}
+
+/* ── tabla ───────────────────────────────────────────────── */
+function tabla(){
+  var d=D[MODO].ciudades.slice(0,18);
+  $("tb").innerHTML=d.map(function(r){
+    var o=OLA[r.c], p;
+    if(o===1) p='<span class="pill o1">Ola 1</span>';
+    else if(o===2) p='<span class="pill o2">Ola 2</span>';
+    else if(o===0) p='<span class="pill ox">Esperar</span>';
+    else if(o===3) p='<span class="pill o3">Ola 3</span>';
+    else p='<span class="pill o3">&mdash;</span>';
+    var cb=r.cob==='sala'?'Sala':(r.cob==='taller'?'Solo taller':'Sin presencia');
+    return '<tr><td>'+esc(r.c)+'</td><td class="r num">'+mil(r.mes)+'</td>'
+      +'<td class="r num">'+(r.g===null?'&mdash;':(r.g>0?'+':'')+r.g+'%')+'</td>'
+      +'<td class="r num '+(r.ch>=0?'pos':'neg')+'">'+(r.ch>0?'+':'')+r.ch.toString().replace('.',',')+'</td>'
+      +'<td class="r num">'+r.cr+'%</td><td>'+cb+'</td><td>'+p+'</td></tr>';
+  }).join("");
+}
+
+/* ── Key Sales Points ────────────────────────────────────── */
+var KSP={hev:[
+ {t:"El mismo motor, el doble de fuerza",
+  p:"El 47,7% del segmento monta entre 1,4 y 1,6 litros, igual que la MAGE. La diferencia es que ellos entregan 120&ndash;150 hp y ella 288. No es un carro más grande: es el mismo tamaño de motor haciendo el doble.",
+  e:"Contra: <b>todo el set mainstream</b>. Mata la objeción «un 1.5 se me queda en la loma». Plaza: todas."},
+ {t:"$68 millones de diferencia con el Sportage",
+  p:"Kia Sportage híbrida cuesta $176.990.000 y da 231 hp. La MAGE cuesta $109.000.000 y da 288. Más potencia por 62 millones menos. El dato no necesita adjetivos.",
+  e:"Contra: <b>Kia Sportage</b> (2.401 unidades). Plaza: Bogotá, Bucaramanga, Envigado, donde Kia pesa más."},
+ {t:"No se enchufa. Ese es el punto.",
+  p:"Contra los híbridos enchufables chinos (Starray, Yuan Up) el argumento no es potencia ni precio: es que no hay que instalar nada en la casa, ni buscar estación, ni cambiar la rutina. Se tanquea gasolina, solo que mucho menos seguido.",
+  e:"Contra: <b>el set de nueva energía</b>. Mata la objeción «¿y dónde la cargo?». Plaza: ciudades sin infraestructura de carga."},
+ {t:"Más sitios para atenderla que para comprarla",
+  p:"26 centros de servicio en 19 ciudades y más de 100 puntos de repuestos, contra 22 salas. La pregunta que hunde a una marca desconocida &mdash;«¿y quién me lo repara?»&mdash; ya está resuelta y es verificable.",
+  e:"Mata la objeción de <b>marca desconocida</b>, la más cara que tenemos. Plaza: crítica en Cúcuta y Pasto."},
+ {t:"El reloj de la reforma",
+  p:"El proyecto radicado el 22 de julio subiría el IVA de híbridos del 5% al 19%: la misma camioneta pasaría a $123.533.333. Está radicado, no aprobado, y debe debatirse antes del 16 de diciembre.",
+  e:"Urgencia <b>real y verificable</b>, con fecha. No hay que inventar «unidades limitadas». Vence sola."},
+ {t:"La cuota, no el precio",
+  p:"En Cartagena el 59% compra a crédito, en Villavicencio el 58%, en Cúcuta el 58%. Ahí el simulador de cuota vale más que el de gasolina. En Medellín (40%) y Pasto (30%) es al revés: son mercados de contado y el mensaje es precio total.",
+  e:"Segmentación de <b>mensaje por plaza</b>, no de audiencia. Sale directo del RUNT."}
+],ev:[
+ {t:"Aquí la marca china ya no es objeción",
+  p:"En eléctricos las marcas chinas son el 36,1% del mercado, contra 8,7% en híbridos. El comprador de eléctrico ya normalizó la marca china: la barrera que le pesa a la MAGE casi no existe para el Box E2 ni el Vigo.",
+  e:"Cambia el orden del mensaje: <b>arrancar por producto</b>, no por confianza de marca."},
+ {t:"Contra el Seagull: 46% más batería por $7 millones menos",
+  p:"BYD Seagull 310 cuesta $76.990.000 con 30,08 kWh y 4 airbags. El Box E2 cuesta $69.990.000 con 43,89 kWh, 430 km y 6 airbags. Más barato y mejor en lo que importa.",
+  e:"Contra: <b>BYD Seagull</b>, uno de los eléctricos más vendidos. Objeción: «¿alcanza la batería?»"},
+ {t:"Mismo precio que el Kia EV2, con 130 km más",
+  p:"El Vigo E2+ y el Kia EV2 Air cuestan $89.990.000. El Vigo trae 51,87 kWh contra 42,2; 470 km CLTC contra ~370; y 500 litros de baúl contra 362.",
+  e:"Contra: <b>Kia EV2</b>. Ojo: el Kia es de fabricación europea, argumento de percepción que hay que responder."},
+ {t:"El segmento que más crece del país",
+  p:"Los eléctricos pasaron de 3.353 matrículas en 2022 a 19.958 en 2025 &mdash; casi seis veces. Y en lo corrido de 2026 ya van 23.845 en cinco meses: más que todo 2025.",
+  e:"Argumento de <b>oportunidad y momento</b>, útil también para negociar con Corautos."},
+ {t:"Cuidado con el precio con bono",
+  p:"Los $89.990.000 del Vigo son «precio con bono». Un bono tiene fecha. Publicarlo como precio de lista es exactamente lo que expone a un derecho de petición &mdash; hay que saber hasta cuándo va y qué pasa después.",
+  e:"<b>Riesgo, no argumento.</b> Está aquí para que no se nos pase."},
+ {t:"El crédito pesa menos, el precio pesa más",
+  p:"En eléctricos solo el 41,7% compra a crédito, contra 51% en híbridas. Es un comprador con más liquidez y más informado: responde mejor a ficha técnica comparada que a cuota mensual.",
+  e:"Cambia la <b>creatividad</b>: tabla comparativa antes que simulador de cuota."}
+]};
+function ksp(){
+  $("ksp").innerHTML=KSP[MODO].map(function(k,i){
+    return '<div class="k1"><div class="n">Punto '+(i+1)+'</div><h3>'+k.t+'</h3><p>'+k.p+'</p><div class="ev">'+k.e+'</div></div>';
+  }).join("");
+}
+
+/* ── KPIs ────────────────────────────────────────────────── */
+function kpis(){
+  var d=D[MODO], s=d.serie, ult=s[s.length-1];
+
+  $("k1").textContent=mil(Math.round((s[3]+s[4])/2));
+  $("k1d").textContent=MODO==="hev"?"SUV híbridas nuevas al mes":"eléctricos nuevos al mes";
+  $("k2").textContent=d.credito.toString().replace(".",",")+"%";
+  $("k2d").textContent=MODO==="hev"?"por encima del 47,4% del mercado":"por debajo del híbrido: comprador con más liquidez";
+  $("k3").textContent=d.base.toString().replace(".",",")+"%";
+  $("k3d").textContent=MODO==="hev"?"del segmento es marca china — la barrera es alta":"del segmento es marca china — la barrera casi no existe";
+  $("k4").textContent=d.cobSala+"%";
+  $("k4d").textContent="de los compradores del país vive donde hay sala";
+}
+
+function pintar(){ kpis(); scatter(); diverg(); tabla(); fin(); ksp() }
+function modo(m){
+  MODO=m;
+  $("b-hev").setAttribute("aria-pressed",String(m==="hev"));
+  $("b-ev").setAttribute("aria-pressed",String(m==="ev"));
+  pintar();
+}
+$("b-hev").onclick=function(){modo("hev")};
+$("b-ev").onclick=function(){modo("ev")};
+pintar(); evo(); lanz(); est();
+</script>
+</body>
+</html>
