@@ -88,6 +88,27 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 
 footer{border-top:1px solid var(--line);margin-top:46px;padding:26px 0 44px;color:var(--mut2);font-size:11.5px;line-height:1.8}
 footer b{color:var(--mut)}
+
+/* lectura obligada bajo cada grafico: el patron que mejor funciona en los
+   tableros de OET y Qlub — el grafico nunca se deja solo */
+.insight{border-left:3px solid var(--s1);background:rgba(57,135,229,.07);border-radius:0 7px 7px 0;padding:14px 17px;margin-top:18px;font-size:13px;line-height:1.7;color:var(--mut)}
+.insight b{color:var(--paper)}
+.insight.warn{border-left-color:var(--s2);background:rgba(217,89,38,.07)}
+.insight.win{border-left-color:var(--e6);background:rgba(34,201,141,.07)}
+.insight .t{display:block;font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--s1);margin-bottom:7px}
+.insight.warn .t{color:var(--s2)}
+.insight.win .t{color:var(--e6)}
+.leer{font-size:11.5px;color:var(--mut2);line-height:1.6;margin-top:11px;padding-left:15px;border-left:1px solid var(--line2)}
+.panel{position:relative}
+.amp{position:absolute;top:20px;right:20px;background:var(--surf2);border:1px solid var(--line2);color:var(--mut);border-radius:6px;padding:5px 11px;font-size:11px;cursor:pointer;z-index:3}
+.amp:hover{color:var(--paper);border-color:var(--mut2)}
+#modal{position:fixed;inset:0;background:rgba(4,5,6,.93);z-index:400;display:none;padding:26px;overflow:auto}
+#modal.on{display:block}
+#modal .mh{display:flex;align-items:center;justify-content:space-between;max-width:1500px;margin:0 auto 18px;gap:16px}
+#modal .mh h3{font-size:17px;font-weight:700;margin:0}
+#modal .mx{background:none;border:1px solid var(--line2);color:var(--mut);font-size:20px;line-height:1;padding:5px 13px;border-radius:6px;cursor:pointer}
+#modal .mb{max-width:1500px;margin:0 auto}
+@media(max-width:820px){.amp{display:none}}
 @media(max-width:820px){
   .kpis{grid-template-columns:repeat(2,1fr)}
   .ksp{grid-template-columns:1fr}
@@ -131,6 +152,24 @@ footer b{color:var(--mut)}
     <div class="kpi"><div class="k">Compra a crédito</div><div class="v num" id="k2">&mdash;</div><div class="d" id="k2d"></div></div>
     <div class="kpi"><div class="k">Barrera de marca</div><div class="v num" id="k3">&mdash;</div><div class="d" id="k3d"></div></div>
     <div class="kpi"><div class="k">Cobertura Corautos</div><div class="v num" id="k4">&mdash;</div><div class="d" id="k4d"></div></div>
+  </div>
+
+  <div class="sec">
+    <div class="panel" data-amp="anos">
+      <h2>Cuatro años: el mercado se dio vuelta</h2>
+      <p class="sub">Composición del mercado de vehículo nuevo por año, sobre el comprador real. En 2023 los sostenibles eran uno de cada seis; hoy son casi la mitad. <b>Esta es la ola sobre la que va montada la MAGE</b> &mdash; y también la razón de que el margen de error sea corto: quien no entre ahora, entra tarde.</p>
+      <div id="anos"></div>
+      <div class="leer"><b>Cómo leer:</b> cada barra es un año completo, dividida en combustión, híbrido y eléctrico. 2026 va hasta el 8 de julio, así que su altura es menor pero su <b>proporción</b> sí es comparable.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="panel" data-amp="madurez">
+      <h2>Cuánto combustión le queda por convertir a cada ciudad</h2>
+      <p class="sub">Qué porcentaje del mercado de cada ciudad ya es sostenible, en 2023 y hoy. <b>Mientras más abajo termine la línea, más mercado de combustión queda por convertir</b> &mdash; y más recorrido tiene la categoría ahí. Las ciudades que ya pasaron el 50% tienen las conversiones fáciles hechas.</p>
+      <div id="madurez"></div>
+      <div class="leer"><b>Cómo leer:</b> cada línea es una ciudad; el punto izquierdo es 2023 y el derecho 2026. Una línea empinada es una ciudad que se convirtió rápido. Una línea que termina baja es mercado sin explotar.</div>
+    </div>
   </div>
 
   <div class="sec">
@@ -226,8 +265,12 @@ footer b{color:var(--mut)}
   <b>Límites:</b> el RUNT no trae precio de transacción ni volumen de búsqueda. Matrícula no es venta: hay días de desfase.
 </div></footer>
 
+<div id="modal" role="dialog" aria-modal="true" aria-label="Gráfico ampliado">
+  <div class="mh"><h3 id="modalT"></h3><button class="mx" id="modalX" aria-label="Cerrar">&times;</button></div>
+  <div class="mb" id="modalB"></div>
+</div>
 <script>
-var D={"hev":{"base":8.7,"total":34441,"conCiudad":34147,"cobSala":75,"credito":50.9,"serie":[5819,6355,6336,7445,7315],"ciudades":[{"c":"Bogotá","n":13197,"mes":2675,"g":8,"ch":1.3,"cr":51,"cob":"sala"},{"c":"Medellín","n":4457,"mes":967,"g":21,"ch":-1.8,"cr":40,"cob":"sala"},{"c":"Cali","n":2185,"mes":457,"g":15,"ch":0.6,"cr":55,"cob":"sala"},{"c":"Barranquilla","n":901,"mes":200,"g":36,"ch":3.9,"cr":54,"cob":"sala"},{"c":"Bucaramanga","n":725,"mes":160,"g":38,"ch":-2.5,"cr":46,"cob":"sala"},{"c":"Envigado","n":719,"mes":149,"g":11,"ch":-2.9,"cr":47,"cob":"nada"},{"c":"Manizales","n":532,"mes":125,"g":48,"ch":10.3,"cr":47,"cob":"sala"},{"c":"Pereira","n":530,"mes":112,"g":31,"ch":4.3,"cr":47,"cob":"sala"},{"c":"Ibagué","n":490,"mes":116,"g":64,"ch":2.1,"cr":57,"cob":"sala"},{"c":"Cartagena","n":486,"mes":108,"g":34,"ch":3.0,"cr":59,"cob":"taller"},{"c":"Villavicencio","n":463,"mes":110,"g":43,"ch":-2.0,"cr":58,"cob":"sala"},{"c":"Cúcuta","n":453,"mes":100,"g":33,"ch":-5.2,"cr":58,"cob":"sala"},{"c":"Pasto","n":358,"mes":93,"g":72,"ch":-4.2,"cr":30,"cob":"sala"},{"c":"Neiva","n":310,"mes":66,"g":21,"ch":-3.9,"cr":59,"cob":"sala"},{"c":"Armenia","n":293,"mes":68,"g":46,"ch":1.2,"cr":45,"cob":"nada"},{"c":"Bello","n":270,"mes":58,"g":24,"ch":-3.5,"cr":68,"cob":"nada"},{"c":"Floridablanca","n":255,"mes":56,"g":37,"ch":-0.9,"cr":48,"cob":"nada"},{"c":"Itagüí","n":243,"mes":49,"g":4,"ch":2.0,"cr":60,"cob":"nada"},{"c":"Santa Marta","n":220,"mes":51,"g":38,"ch":-2.4,"cr":47,"cob":"taller"},{"c":"Sabaneta","n":209,"mes":48,"g":41,"ch":-0.1,"cr":56,"cob":"nada"},{"c":"Montería","n":209,"mes":54,"g":69,"ch":-2.5,"cr":54,"cob":"sala"},{"c":"Popayán","n":198,"mes":42,"g":20,"ch":-0.6,"cr":53,"cob":"sala"},{"c":"Tunja","n":196,"mes":44,"g":31,"ch":-4.1,"cr":60,"cob":"sala"},{"c":"Chía","n":179,"mes":38,"g":23,"ch":-2.0,"cr":53,"cob":"nada"}],"rivales":[{"m":"TOYOTA COROLLA CROSS","n":3338},{"m":"MAZDA CX-30","n":3255},{"m":"KIA SPORTAGE","n":2401},{"m":"KIA STONIC","n":2153},{"m":"FORD TERRITORY","n":1866},{"m":"SUZUKI FRONX","n":1481},{"m":"HYUNDAI KONA HIBRIDA","n":1475},{"m":"RENAULT ARKANA","n":1216},{"m":"SUZUKI NEW SCROSS","n":1201},{"m":"RENAULT DUSTER E-TECH","n":1197}],"fin":[{"e":"Banco Santander Colombia","p":14.7,"cautiva":false},{"e":"Bancolombia","p":12.8,"cautiva":false},{"e":"Banco Finandina","p":9.7,"cautiva":false},{"e":"Toyota Financial Services Colombia","p":9.6,"cautiva":true},{"e":"RCI Colombia","p":9.2,"cautiva":true},{"e":"Banco De Occidente","p":8.1,"cautiva":false},{"e":"Banco Santander De Negocios Colombia","p":6.7,"cautiva":false}]},"ev":{"base":36.0,"total":23845,"conCiudad":23613,"cobSala":81,"credito":41.5,"serie":[2536,5110,5225,5032,4966],"ciudades":[{"c":"Bogotá","n":11196,"mes":2321,"g":21,"ch":1.3,"cr":40,"cob":"sala"},{"c":"Medellín","n":3796,"mes":820,"g":53,"ch":-8.5,"cr":41,"cob":"sala"},{"c":"Cali","n":1496,"mes":312,"g":31,"ch":9.1,"cr":49,"cob":"sala"},{"c":"Envigado","n":787,"mes":164,"g":53,"ch":0.3,"cr":44,"cob":"nada"},{"c":"Barranquilla","n":467,"mes":110,"g":86,"ch":-3.8,"cr":47,"cob":"sala"},{"c":"Bucaramanga","n":428,"mes":86,"g":16,"ch":-2.5,"cr":35,"cob":"sala"},{"c":"Pereira","n":296,"mes":62,"g":48,"ch":-4.5,"cr":38,"cob":"sala"},{"c":"Chía","n":244,"mes":49,"g":10,"ch":-0.3,"cr":44,"cob":"nada"},{"c":"Manizales","n":242,"mes":46,"g":15,"ch":5.0,"cr":34,"cob":"sala"},{"c":"Sabaneta","n":198,"mes":42,"g":65,"ch":-4.1,"cr":48,"cob":"nada"},{"c":"Villavicencio","n":198,"mes":40,"g":45,"ch":9.0,"cr":48,"cob":"sala"},{"c":"Armenia","n":194,"mes":37,"g":9,"ch":9.9,"cr":36,"cob":"nada"},{"c":"Cúcuta","n":191,"mes":40,"g":35,"ch":11.2,"cr":46,"cob":"sala"},{"c":"Itagüí","n":182,"mes":36,"g":18,"ch":3.6,"cr":49,"cob":"nada"},{"c":"Cartagena","n":175,"mes":36,"g":18,"ch":0.0,"cr":46,"cob":"taller"},{"c":"Ibagué","n":165,"mes":32,"g":12,"ch":-3.8,"cr":42,"cob":"sala"},{"c":"Rionegro","n":149,"mes":31,"g":19,"ch":2.3,"cr":40,"cob":"nada"},{"c":"Floridablanca","n":133,"mes":28,"g":30,"ch":1.6,"cr":38,"cob":"nada"},{"c":"Bello","n":117,"mes":24,"g":20,"ch":-0.1,"cr":47,"cob":"nada"},{"c":"Cajica","n":107,"mes":24,"g":7,"ch":-1.4,"cr":44,"cob":"nada"},{"c":"Neiva","n":107,"mes":26,"g":62,"ch":-7.0,"cr":41,"cob":"sala"},{"c":"Jamundí","n":93,"mes":21,"g":null,"ch":9.2,"cr":55,"cob":"nada"},{"c":"Pasto","n":88,"mes":15,"g":7,"ch":-11.0,"cr":30,"cob":"sala"},{"c":"Popayán","n":82,"mes":20,"g":null,"ch":-5.5,"cr":48,"cob":"sala"}],"rivales":[{"m":"TESLA MODELO Y","n":6185},{"m":"TESLA MODEL Y","n":2733},{"m":"BYD BYD YUAN UP","n":2494},{"m":"TESLA MODEL 3","n":1701},{"m":"CHERY ICAR 03","n":1185},{"m":"BYD BYD SEAGULL","n":1065},{"m":"CHEVROLET SPARK","n":638},{"m":"MG MG S5 EV DELUXE","n":586},{"m":"BYD YUAN PLUS EV","n":584},{"m":"BYD IDOLPHIN","n":331}],"fin":[{"e":"Bancolombia","p":23.0,"cautiva":false},{"e":"Banco Finandina","p":18.4,"cautiva":false},{"e":"Banco Santander Colombia","p":14.7,"cautiva":false},{"e":"Gm Financial Colombia","p":6.8,"cautiva":false},{"e":"Banco De Occidente","p":6.8,"cautiva":false},{"e":"Banco Santander De Negocios Colombia","p":5.7,"cautiva":false},{"e":"Banco Davivienda","p":4.9,"cautiva":false}]},"color":[{"c":"Gris","p":29.4},{"c":"Blanco","p":25.2},{"c":"Plata","p":14.5},{"c":"Negro","p":11.6},{"c":"Otro","p":6.7},{"c":"Azul","p":6.3}],"evo":[{"y":2023,"p":4.2,"n":172115},{"y":2024,"p":5.9,"n":189156},{"y":2025,"p":9.9,"n":236881},{"y":2026,"p":12.0,"n":149585}],"chiCiu":[{"c":"Rionegro","a":3.1,"b":11.8,"d":8.6},{"c":"Sabaneta","a":3.3,"b":11.0,"d":7.7},{"c":"Envigado","a":5.9,"b":13.2,"d":7.4},{"c":"Itagüí","a":4.4,"b":11.6,"d":7.2},{"c":"Cajica","a":12.0,"b":19.0,"d":7.0},{"c":"Zipaquira","a":6.1,"b":12.1,"d":6.0},{"c":"Floridablanca","a":2.7,"b":8.5,"d":5.7},{"c":"Chía","a":10.6,"b":16.0,"d":5.5},{"c":"Cali","a":5.0,"b":10.4,"d":5.4},{"c":"Armenia","a":2.9,"b":8.2,"d":5.3},{"c":"Bogotá","a":8.4,"b":13.5,"d":5.1},{"c":"Tulua","a":2.4,"b":7.4,"d":5.0}],"adopcion":[{"y":2022,"comb":236060,"hev":24576,"ev":3353},{"y":2023,"comb":156547,"hev":27695,"ev":3754},{"y":2024,"comb":150655,"hev":42571,"ev":9212},{"y":2025,"comb":168737,"hev":67019,"ev":19958}],"estacion":[{"m":1,"i":76},{"m":2,"i":90},{"m":3,"i":93},{"m":4,"i":89},{"m":5,"i":96},{"m":6,"i":93},{"m":7,"i":102},{"m":8,"i":102},{"m":9,"i":108},{"m":10,"i":106},{"m":11,"i":115},{"m":12,"i":129}],"lanz":{"top":[{"m":"Tesla Model Y","ini":202603,"t":8478,"tr":[1794,2273,2114,2297]},{"m":"Tesla Model 3","ini":202602,"t":1556,"tr":[296,668,371,221]},{"m":"Byd Yuan Up","ini":202410,"t":1456,"tr":[199,455,518,284]},{"m":"Kia Sportage","ini":202507,"t":1415,"tr":[620,231,438,126]},{"m":"Renault Arkana","ini":202409,"t":1067,"tr":[153,347,311,256]},{"m":"Ford Territory","ini":202511,"t":962,"tr":[21,345,238,358]},{"m":"Suzuki Dzire","ini":202507,"t":694,"tr":[218,75,168,233]},{"m":"Byd Seagull","ini":202406,"t":590,"tr":[153,176,120,141]},{"m":"Renault Duster E-Tech","ini":202506,"t":578,"tr":[235,46,51,246]},{"m":"Ford Escape","ini":202501,"t":545,"tr":[69,128,176,172]},{"m":"Hyundai Tucson Hibrida","ini":202411,"t":536,"tr":[69,172,147,148]},{"m":"Renault Koleos E-Tech","ini":202507,"t":525,"tr":[120,93,11,301]}],"mediana":200,"q1":121,"q3":414,"n":63,"max":8478,"ventana":4},"tesla":{"meses":[2,3,4,5,6],"tesla":[296,2462,2644,2335,2428],"evSinTesla":[2240,2648,2581,2697,2538],"hev":[5819,6355,6336,7445,7315],"teslaPct":44.5,"teslaTotal":10619,"teslaCiudades":[{"c":"Bogota","n":4512},{"c":"Medellin","n":2299},{"c":"Cali","n":477},{"c":"Envigado","n":432},{"c":"Barranquilla","n":254},{"c":"Bucaramanga","n":225}],"teslaCredito":33.9},"topModelos":[{"m":"Tesla Model Y","n":8918},{"m":"Mazda CX-30","n":4054},{"m":"Kia Picanto","n":3946},{"m":"Renault Duster","n":3719},{"m":"Toyota Corolla Cross","n":3362},{"m":"Kia Sportage","n":3030}]};
+var D={"hev":{"base":8.7,"total":34441,"conCiudad":34147,"cobSala":75,"credito":50.9,"serie":[5819,6355,6336,7445,7315],"ciudades":[{"c":"Bogotá","n":13197,"mes":2675,"g":8,"ch":1.3,"cr":51,"cob":"sala"},{"c":"Medellín","n":4457,"mes":967,"g":21,"ch":-1.8,"cr":40,"cob":"sala"},{"c":"Cali","n":2185,"mes":457,"g":15,"ch":0.6,"cr":55,"cob":"sala"},{"c":"Barranquilla","n":901,"mes":200,"g":36,"ch":3.9,"cr":54,"cob":"sala"},{"c":"Bucaramanga","n":725,"mes":160,"g":38,"ch":-2.5,"cr":46,"cob":"sala"},{"c":"Envigado","n":719,"mes":149,"g":11,"ch":-2.9,"cr":47,"cob":"nada"},{"c":"Manizales","n":532,"mes":125,"g":48,"ch":10.3,"cr":47,"cob":"sala"},{"c":"Pereira","n":530,"mes":112,"g":31,"ch":4.3,"cr":47,"cob":"sala"},{"c":"Ibagué","n":490,"mes":116,"g":64,"ch":2.1,"cr":57,"cob":"sala"},{"c":"Cartagena","n":486,"mes":108,"g":34,"ch":3.0,"cr":59,"cob":"taller"},{"c":"Villavicencio","n":463,"mes":110,"g":43,"ch":-2.0,"cr":58,"cob":"sala"},{"c":"Cúcuta","n":453,"mes":100,"g":33,"ch":-5.2,"cr":58,"cob":"sala"},{"c":"Pasto","n":358,"mes":93,"g":72,"ch":-4.2,"cr":30,"cob":"sala"},{"c":"Neiva","n":310,"mes":66,"g":21,"ch":-3.9,"cr":59,"cob":"sala"},{"c":"Armenia","n":293,"mes":68,"g":46,"ch":1.2,"cr":45,"cob":"nada"},{"c":"Bello","n":270,"mes":58,"g":24,"ch":-3.5,"cr":68,"cob":"nada"},{"c":"Floridablanca","n":255,"mes":56,"g":37,"ch":-0.9,"cr":48,"cob":"nada"},{"c":"Itagüí","n":243,"mes":49,"g":4,"ch":2.0,"cr":60,"cob":"nada"},{"c":"Santa Marta","n":220,"mes":51,"g":38,"ch":-2.4,"cr":47,"cob":"taller"},{"c":"Sabaneta","n":209,"mes":48,"g":41,"ch":-0.1,"cr":56,"cob":"nada"},{"c":"Montería","n":209,"mes":54,"g":69,"ch":-2.5,"cr":54,"cob":"sala"},{"c":"Popayán","n":198,"mes":42,"g":20,"ch":-0.6,"cr":53,"cob":"sala"},{"c":"Tunja","n":196,"mes":44,"g":31,"ch":-4.1,"cr":60,"cob":"sala"},{"c":"Chía","n":179,"mes":38,"g":23,"ch":-2.0,"cr":53,"cob":"nada"}],"rivales":[{"m":"TOYOTA COROLLA CROSS","n":3338},{"m":"MAZDA CX-30","n":3255},{"m":"KIA SPORTAGE","n":2401},{"m":"KIA STONIC","n":2153},{"m":"FORD TERRITORY","n":1866},{"m":"SUZUKI FRONX","n":1481},{"m":"HYUNDAI KONA HIBRIDA","n":1475},{"m":"RENAULT ARKANA","n":1216},{"m":"SUZUKI NEW SCROSS","n":1201},{"m":"RENAULT DUSTER E-TECH","n":1197}],"fin":[{"e":"Banco Santander Colombia","p":14.7,"cautiva":false},{"e":"Bancolombia","p":12.8,"cautiva":false},{"e":"Banco Finandina","p":9.7,"cautiva":false},{"e":"Toyota Financial Services Colombia","p":9.6,"cautiva":true},{"e":"RCI Colombia","p":9.2,"cautiva":true},{"e":"Banco De Occidente","p":8.1,"cautiva":false},{"e":"Banco Santander De Negocios Colombia","p":6.7,"cautiva":false}]},"ev":{"base":36.0,"total":23845,"conCiudad":23613,"cobSala":81,"credito":41.5,"serie":[2536,5110,5225,5032,4966],"ciudades":[{"c":"Bogotá","n":11196,"mes":2321,"g":21,"ch":1.3,"cr":40,"cob":"sala"},{"c":"Medellín","n":3796,"mes":820,"g":53,"ch":-8.5,"cr":41,"cob":"sala"},{"c":"Cali","n":1496,"mes":312,"g":31,"ch":9.1,"cr":49,"cob":"sala"},{"c":"Envigado","n":787,"mes":164,"g":53,"ch":0.3,"cr":44,"cob":"nada"},{"c":"Barranquilla","n":467,"mes":110,"g":86,"ch":-3.8,"cr":47,"cob":"sala"},{"c":"Bucaramanga","n":428,"mes":86,"g":16,"ch":-2.5,"cr":35,"cob":"sala"},{"c":"Pereira","n":296,"mes":62,"g":48,"ch":-4.5,"cr":38,"cob":"sala"},{"c":"Chía","n":244,"mes":49,"g":10,"ch":-0.3,"cr":44,"cob":"nada"},{"c":"Manizales","n":242,"mes":46,"g":15,"ch":5.0,"cr":34,"cob":"sala"},{"c":"Sabaneta","n":198,"mes":42,"g":65,"ch":-4.1,"cr":48,"cob":"nada"},{"c":"Villavicencio","n":198,"mes":40,"g":45,"ch":9.0,"cr":48,"cob":"sala"},{"c":"Armenia","n":194,"mes":37,"g":9,"ch":9.9,"cr":36,"cob":"nada"},{"c":"Cúcuta","n":191,"mes":40,"g":35,"ch":11.2,"cr":46,"cob":"sala"},{"c":"Itagüí","n":182,"mes":36,"g":18,"ch":3.6,"cr":49,"cob":"nada"},{"c":"Cartagena","n":175,"mes":36,"g":18,"ch":0.0,"cr":46,"cob":"taller"},{"c":"Ibagué","n":165,"mes":32,"g":12,"ch":-3.8,"cr":42,"cob":"sala"},{"c":"Rionegro","n":149,"mes":31,"g":19,"ch":2.3,"cr":40,"cob":"nada"},{"c":"Floridablanca","n":133,"mes":28,"g":30,"ch":1.6,"cr":38,"cob":"nada"},{"c":"Bello","n":117,"mes":24,"g":20,"ch":-0.1,"cr":47,"cob":"nada"},{"c":"Cajica","n":107,"mes":24,"g":7,"ch":-1.4,"cr":44,"cob":"nada"},{"c":"Neiva","n":107,"mes":26,"g":62,"ch":-7.0,"cr":41,"cob":"sala"},{"c":"Jamundí","n":93,"mes":21,"g":null,"ch":9.2,"cr":55,"cob":"nada"},{"c":"Pasto","n":88,"mes":15,"g":7,"ch":-11.0,"cr":30,"cob":"sala"},{"c":"Popayán","n":82,"mes":20,"g":null,"ch":-5.5,"cr":48,"cob":"sala"}],"rivales":[{"m":"TESLA MODELO Y","n":6185},{"m":"TESLA MODEL Y","n":2733},{"m":"BYD BYD YUAN UP","n":2494},{"m":"TESLA MODEL 3","n":1701},{"m":"CHERY ICAR 03","n":1185},{"m":"BYD BYD SEAGULL","n":1065},{"m":"CHEVROLET SPARK","n":638},{"m":"MG MG S5 EV DELUXE","n":586},{"m":"BYD YUAN PLUS EV","n":584},{"m":"BYD IDOLPHIN","n":331}],"fin":[{"e":"Bancolombia","p":23.0,"cautiva":false},{"e":"Banco Finandina","p":18.4,"cautiva":false},{"e":"Banco Santander Colombia","p":14.7,"cautiva":false},{"e":"Gm Financial Colombia","p":6.8,"cautiva":false},{"e":"Banco De Occidente","p":6.8,"cautiva":false},{"e":"Banco Santander De Negocios Colombia","p":5.7,"cautiva":false},{"e":"Banco Davivienda","p":4.9,"cautiva":false}]},"color":[{"c":"Gris","p":29.4},{"c":"Blanco","p":25.2},{"c":"Plata","p":14.5},{"c":"Negro","p":11.6},{"c":"Otro","p":6.7},{"c":"Azul","p":6.3}],"evo":[{"y":2023,"p":4.2,"n":172115},{"y":2024,"p":5.9,"n":189156},{"y":2025,"p":9.9,"n":236881},{"y":2026,"p":12.0,"n":149585}],"chiCiu":[{"c":"Rionegro","a":3.1,"b":11.8,"d":8.6},{"c":"Sabaneta","a":3.3,"b":11.0,"d":7.7},{"c":"Envigado","a":5.9,"b":13.2,"d":7.4},{"c":"Itagüí","a":4.4,"b":11.6,"d":7.2},{"c":"Cajica","a":12.0,"b":19.0,"d":7.0},{"c":"Zipaquira","a":6.1,"b":12.1,"d":6.0},{"c":"Floridablanca","a":2.7,"b":8.5,"d":5.7},{"c":"Chía","a":10.6,"b":16.0,"d":5.5},{"c":"Cali","a":5.0,"b":10.4,"d":5.4},{"c":"Armenia","a":2.9,"b":8.2,"d":5.3},{"c":"Bogotá","a":8.4,"b":13.5,"d":5.1},{"c":"Tulua","a":2.4,"b":7.4,"d":5.0}],"adopcion":[{"y":2022,"comb":236060,"hev":24576,"ev":3353},{"y":2023,"comb":156547,"hev":27695,"ev":3754},{"y":2024,"comb":150655,"hev":42571,"ev":9212},{"y":2025,"comb":168737,"hev":67019,"ev":19958}],"estacion":[{"m":1,"i":76},{"m":2,"i":90},{"m":3,"i":93},{"m":4,"i":89},{"m":5,"i":96},{"m":6,"i":93},{"m":7,"i":102},{"m":8,"i":102},{"m":9,"i":108},{"m":10,"i":106},{"m":11,"i":115},{"m":12,"i":129}],"lanz":{"top":[{"m":"Tesla Model Y","ini":202603,"t":8478,"tr":[1794,2273,2114,2297]},{"m":"Tesla Model 3","ini":202602,"t":1556,"tr":[296,668,371,221]},{"m":"Byd Yuan Up","ini":202410,"t":1456,"tr":[199,455,518,284]},{"m":"Kia Sportage","ini":202507,"t":1415,"tr":[620,231,438,126]},{"m":"Renault Arkana","ini":202409,"t":1067,"tr":[153,347,311,256]},{"m":"Ford Territory","ini":202511,"t":962,"tr":[21,345,238,358]},{"m":"Suzuki Dzire","ini":202507,"t":694,"tr":[218,75,168,233]},{"m":"Byd Seagull","ini":202406,"t":590,"tr":[153,176,120,141]},{"m":"Renault Duster E-Tech","ini":202506,"t":578,"tr":[235,46,51,246]},{"m":"Ford Escape","ini":202501,"t":545,"tr":[69,128,176,172]},{"m":"Hyundai Tucson Hibrida","ini":202411,"t":536,"tr":[69,172,147,148]},{"m":"Renault Koleos E-Tech","ini":202507,"t":525,"tr":[120,93,11,301]}],"mediana":200,"q1":121,"q3":414,"n":63,"max":8478,"ventana":4},"tesla":{"meses":[2,3,4,5,6],"tesla":[296,2462,2644,2335,2428],"evSinTesla":[2240,2648,2581,2697,2538],"hev":[5819,6355,6336,7445,7315],"teslaPct":44.5,"teslaTotal":10619,"teslaCiudades":[{"c":"Bogota","n":4512},{"c":"Medellin","n":2299},{"c":"Cali","n":477},{"c":"Envigado","n":432},{"c":"Barranquilla","n":254},{"c":"Bucaramanga","n":225}],"teslaCredito":33.9},"topModelos":[{"m":"Tesla Model Y","n":8918},{"m":"Mazda CX-30","n":4054},{"m":"Kia Picanto","n":3946},{"m":"Renault Duster","n":3719},{"m":"Toyota Corolla Cross","n":3362},{"m":"Kia Sportage","n":3030}],"hist4":{"madurez":[{"c":"Bogotá","p23":24.9,"p26":54.8,"vol":53377,"d":29.9},{"c":"Medellín","p23":17.5,"p26":45.9,"vol":21871,"d":28.3},{"c":"Cali","p23":15.3,"p26":50.6,"vol":9119,"d":35.3},{"c":"Barranquilla","p23":11.0,"p26":34.7,"vol":5059,"d":23.7},{"c":"Cartagena","p23":6.7,"p26":22.2,"vol":3709,"d":15.6},{"c":"Bucaramanga","p23":12.8,"p26":39.5,"vol":3532,"d":26.7},{"c":"Envigado","p23":23.2,"p26":62.6,"vol":2874,"d":39.4},{"c":"Cúcuta","p23":13.9,"p26":36.1,"vol":2544,"d":22.2},{"c":"Villavicencio","p23":13.3,"p26":36.6,"vol":2312,"d":23.3},{"c":"Pereira","p23":16.2,"p26":43.8,"vol":2281,"d":27.6},{"c":"Ibagué","p23":12.4,"p26":37.8,"vol":2175,"d":25.4},{"c":"Manizales","p23":13.7,"p26":43.8,"vol":2129,"d":30.1},{"c":"Neiva","p23":9.5,"p26":35.3,"vol":1440,"d":25.8},{"c":"Armenia","p23":15.4,"p26":41.4,"vol":1420,"d":26.0},{"c":"Pasto","p23":13.4,"p26":37.0,"vol":1372,"d":23.6},{"c":"Itagüí","p23":16.8,"p26":37.0,"vol":1361,"d":20.2},{"c":"Santa Marta","p23":9.5,"p26":28.9,"vol":1292,"d":19.5},{"c":"Bello","p23":8.6,"p26":37.2,"vol":1283,"d":28.5},{"c":"Floridablanca","p23":11.6,"p26":39.0,"vol":1225,"d":27.4},{"c":"Montería","p23":9.9,"p26":30.6,"vol":1148,"d":20.6}],"nacional":[{"y":2023,"hev":27419,"ev":3705,"comb":153605},{"y":2024,"hev":42192,"ev":9138,"comb":148466},{"y":2025,"hev":66053,"ev":19608,"comb":164131},{"y":2026,"hev":45011,"ev":25358,"comb":89195}]}};
 var MODO="hev";
 var $=function(i){return document.getElementById(i)};
 var mil=function(n){return Math.round(n).toLocaleString("es-CO")};
@@ -241,6 +284,89 @@ var OLA={"Manizales":1,"Ibagué":1,"Pereira":1,
   "Cúcuta":0,"Pasto":0};
 
 function cob(c){return c==="sala"?"var(--s1)":(c==="taller"?"var(--s3)":"var(--s2)")}
+
+
+/* ── cuatro años: composición del mercado ───────────────── */
+function anos(){
+  var d=D.hist4.nacional, W=1100,H=320,ml=58,mr=130,mt=26,mb=44;
+  var mx=Math.max.apply(null,d.map(function(r){return r.comb+r.hev+r.ev}))*1.08;
+  var bw=(W-ml-mr)/d.length;
+  var Y=function(v){return mt+(1-v/mx)*(H-mt-mb)};
+  var caps=[{k:'comb',n:'Combustión',c:'var(--neutral)'},
+            {k:'hev', n:'Híbrido',   c:'var(--s1)'},
+            {k:'ev',  n:'Eléctrico', c:'var(--s3)'}];
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Composición del mercado por año">';
+  [0,50000,100000,150000,200000].forEach(function(g){
+    if(g>mx)return;
+    s+='<line class="gl" x1="'+ml+'" y1="'+Y(g)+'" x2="'+(W-mr)+'" y2="'+Y(g)+'"/>';
+    s+='<text class="tk" x="'+(ml-9)+'" y="'+(Y(g)+3.5)+'" text-anchor="end">'+(g/1000)+'k</text>';
+  });
+  d.forEach(function(r,i){
+    var x=ml+i*bw+bw*0.18, w=bw*0.64, acc=0, tot=r.comb+r.hev+r.ev;
+    caps.forEach(function(c){
+      var v=r[c.k], y0=Y(acc+v), h=Y(acc)-Y(acc+v);
+      if(h>0.5) s+='<rect x="'+x+'" y="'+y0+'" width="'+w+'" height="'+Math.max(h-2,1)+'" rx="2" fill="'+c.c+'" fill-opacity=".88"/>';
+      acc+=v;
+    });
+    var pct=(r.hev+r.ev)/tot*100;
+    s+='<text class="lb" x="'+(x+w/2)+'" y="'+(Y(tot)-9)+'" text-anchor="middle" fill="var(--brand)">'+pct.toFixed(0)+'% sost.</text>';
+    s+='<text class="tk" x="'+(x+w/2)+'" y="'+(H-mb+18)+'" text-anchor="middle">'+r.y+(r.y===2026?' *':'')+'</text>';
+  });
+  var yl=mt+8;
+  caps.slice().reverse().forEach(function(c){
+    s+='<rect x="'+(W-mr+14)+'" y="'+yl+'" width="9" height="9" rx="2" fill="'+c.c+'"/>';
+    s+='<text class="tk" x="'+(W-mr+28)+'" y="'+(yl+8.5)+'" fill="var(--mut)">'+c.n+'</text>';
+    yl+=19;
+  });
+  s+='<text class="tk" x="'+(W-mr+14)+'" y="'+(H-mb+18)+'" fill="var(--mut2)">* a jul 8</text>';
+  s+='</svg>';
+  var a=d[0], z=d[d.length-1];
+  var p0=(a.hev+a.ev)/(a.comb+a.hev+a.ev)*100, p1=(z.hev+z.ev)/(z.comb+z.hev+z.ev)*100;
+  $("anos").innerHTML=s+'<div class="insight"><span class="t">Lectura</span>'
+    +'En <b>'+a.y+'</b> los sostenibles eran el <b>'+p0.toFixed(1).replace(".",",")+'%</b> del mercado; en <b>'+z.y+'</b> van en <b>'+p1.toFixed(1).replace(".",",")+'%</b>. '
+    +'La combustión pasó de '+mil(a.comb)+' a '+mil(z.comb)+' matrículas al tiempo que el híbrido se multiplicó por '+(z.hev/a.hev).toFixed(1).replace(".",",")+' y el eléctrico por '+(z.ev/a.ev).toFixed(1).replace(".",",")+'. '
+    +'<b>El híbrido es el que mueve el volumen</b> ('+mil(z.hev)+' contra '+mil(z.ev)+' eléctricas), y es exactamente donde juega la MAGE.</div>';
+}
+
+/* ── madurez por ciudad ─────────────────────────────────── */
+function madurez(){
+  var d=D.hist4.madurez.slice(0,16).slice().sort(function(a,b){return a.p26-b.p26});
+  var W=1100,H=d.length*24+78,ml=132,mr=132,mt=40;
+  var mx=Math.max.apply(null,d.map(function(r){return Math.max(r.p23,r.p26)}))*1.06;
+  var X=function(v){return ml+v/mx*(W-ml-mr)};
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Madurez sostenible por ciudad">';
+  [0,20,40,60].forEach(function(g){
+    if(g>mx)return;
+    s+='<line class="gl" x1="'+X(g)+'" y1="'+(mt-10)+'" x2="'+X(g)+'" y2="'+(mt+d.length*24-8)+'"/>';
+    s+='<text class="tk" x="'+X(g)+'" y="'+(mt-17)+'" text-anchor="middle">'+g+'%</text>';
+  });
+  s+='<line x1="'+X(50)+'" y1="'+(mt-10)+'" x2="'+X(50)+'" y2="'+(mt+d.length*24-8)+'" stroke="var(--brand)" stroke-width="1" stroke-dasharray="3 4" opacity=".5"/>';
+  s+='<text class="tk" x="'+X(50)+'" y="'+(mt+d.length*24+9)+'" text-anchor="middle" fill="var(--brand)">mitad del mercado</text>';
+  var OLA={"Manizales":1,"Ibagué":1,"Pereira":1};
+  d.forEach(function(r,i){
+    var y=mt+i*24, x0=X(r.p23), x1=X(r.p26);
+    var col = OLA[r.c] ? 'var(--brand)' : (r.p26<35 ? 'var(--s3)' : 'var(--s1)');
+    s+='<text class="lbm" x="'+(ml-14)+'" y="'+(y+4)+'" text-anchor="end" fill="'+(OLA[r.c]?'var(--brand)':'var(--paper)')+'">'+esc(r.c)+'</text>';
+    s+='<line x1="'+x0+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="'+col+'" stroke-width="2.2" opacity=".55"/>';
+    s+='<circle cx="'+x0+'" cy="'+y+'" r="3.4" fill="var(--mut2)"/>';
+    s+='<circle cx="'+x1+'" cy="'+y+'" r="4.6" fill="'+col+'"/>';
+    s+='<text class="tk" x="'+(x1+11)+'" y="'+(y+4)+'" fill="'+col+'">'+r.p26.toString().replace(".",",")+'%</text>';
+  });
+  s+='<text class="tk" x="'+ml+'" y="'+(mt+d.length*24+9)+'">&larr; menos maduro: más combustión por convertir</text>';
+  s+='</svg>';
+  var baja=d.filter(function(r){return r.p26<35});
+  var ola1=D.hist4.madurez.filter(function(r){return OLA[r.c]});
+  var prom=ola1.length? ola1.reduce(function(a,b){return a+b.p26},0)/ola1.length : 0;
+  var fmt=function(r){return r.c+' ('+r.p26.toString().replace(".",",")+'%)'};
+  var bajos=d.slice(0,3).map(fmt).join(", ");
+  var altos=d.slice(-3).reverse().map(fmt).join(", ");
+  var salto=d.slice().sort(function(a,b){return b.d-a.d})[0];
+  $("madurez").innerHTML=s+'<div class="insight"><span class="t">Lectura</span>'
+    +'<b>'+bajos+' son los mercados menos convertidos</b> del tablero: ahí queda la mayor bolsa de compradores de combustión por migrar, y la categoría todavía tiene recorrido largo.<br><br>'
+    +'En el otro extremo, <b>'+altos+' ya pasaron la mitad</b>: las conversiones fáciles están hechas y cada punto adicional cuesta más.<br><br>'
+    +'El salto más grande en tres años lo dio <b>'+salto.c+'</b>, de '+salto.p23.toString().replace(".",",")+'% a '+salto.p26.toString().replace(".",",")+'%. '
+    +'Las tres plazas de la <b>Ola 1</b> promedian '+prom.toFixed(1).replace(".",",")+'% &mdash; suficientemente maduras para que el híbrido no haya que explicarlo desde cero, y suficientemente lejos del techo para que quede a quién venderle.</div>';
+}
 
 /* ── mapa de oportunidad ─────────────────────────────────── */
 function scatter(){
@@ -297,7 +423,26 @@ function scatter(){
     }
   });
   s+='</svg>';
-  $("scatter").innerHTML=s;
+  /* El texto se recalcula con el segmento activo: si el numero cambia, la
+     conclusion tiene que cambiar con el. Es el patron de los tableros de Qlub. */
+  var conSala=d.filter(function(r){return r.cob==="sala"});
+  var creceMas=d.slice().sort(function(a,b){return b.g-a.g}).filter(function(r){return r.mes>=40});
+  var mejores=d.filter(function(r){return r.cob==="sala"&&r.g>=30&&r.ch>0})
+               .sort(function(a,b){return b.ch-a.ch});
+  var grande=d.slice().sort(function(a,b){return b.mes-a.mes})[0];
+  var txt='<b>'+grande.c+' es '+Math.round(grande.mes/d.reduce(function(a,b){return a+b.mes},0)*100)+'% del volumen pero crece '+grande.g+'%</b>, el más lento del tablero: es el mercado que hay que ganar, no donde hay que aprender.';
+  if(mejores.length){
+    txt+=' Las plazas que combinan <b>sala de Corautos, crecimiento sobre 30% y apertura a marca china por encima de la media</b> son '
+      +mejores.slice(0,3).map(function(r){return '<b>'+r.c+'</b> ('+r.g+'%, '+(r.ch>0?'+':'')+r.ch.toString().replace(".",",")+')'}).join(", ")
+      +'. Ahí rinde más cada peso.';
+  }
+  if(creceMas.length) txt+=' El que más crece de todos es <b>'+creceMas[0].c+'</b> con '+creceMas[0].g+'%.';
+  var sinNada=d.filter(function(r){return r.cob==="nada"&&r.mes>=50});
+  if(sinNada.length) txt+='<br><br><b>Sin presencia de Corautos</b> y con volumen relevante: '
+    +sinNada.slice(0,4).map(function(r){return r.c+' ('+mil(r.mes)+'/mes)'}).join(", ")
+    +'. Casi todas son área metropolitana &mdash; a media hora de una sala &mdash;, no huecos reales de cobertura.';
+  $("scatter").innerHTML=s+'<div class="insight"><span class="t">Lectura</span>'+txt+'</div>'
+   +'<div class="leer"><b>Cómo leer:</b> el eje horizontal es logarítmico porque Bogotá vende 60 veces más que Valledupar; sin eso, 20 ciudades quedarían amontonadas en el borde. El tamaño de la burbuja es el volumen y el color la cobertura de Corautos.</div>';
 }
 
 /* ── divergente: apertura a marca china ──────────────────── */
@@ -319,7 +464,15 @@ function diverg(){
   s+='<line class="ax" x1="'+cx+'" y1="'+(mt-2)+'" x2="'+cx+'" y2="'+(mt+d.length*26)+'" stroke="var(--neutral)"/>';
   s+='<text class="tk" x="'+cx+'" y="'+(mt+d.length*26+17)+'" text-anchor="middle">media nacional '+D[MODO].base.toString().replace('.',',')+'%</text>';
   s+='</svg>';
-  $("diverg").innerHTML=s;
+  var arriba=d.filter(function(r){return r.ch>0}), abajo=d.filter(function(r){return r.ch<-3});
+  var top=d[0], last=d[d.length-1];
+  $("diverg").innerHTML=s+'<div class="insight"><span class="t">Lectura</span>'
+    +'<b>'+top.c+' lidera con '+(top.ch>0?'+':'')+top.ch.toString().replace(".",",")+' puntos sobre la media nacional</b> de '+D[MODO].base.toString().replace(".",",")+'%: es donde la objeción «no conozco Dongfeng» sale más barata de resolver. '
+    +arriba.length+' de '+d.length+' ciudades están por encima de la media.<br><br>'
+    +'En el extremo opuesto, <b>'+last.c+' ('+last.ch.toString().replace(".",",")+')</b>'
+    +(abajo.length>1?' junto a '+abajo.slice(-3,-1).map(function(r){return r.c}).join(" y "):'')
+    +' son las plazas donde una marca china desconocida encuentra más resistencia. '
+    +'<b>No significa no pautar nunca ahí</b>: significa que ahí el mensaje tiene que arrancar por respaldo y servicio, no por producto ni por precio.</div>';
 }
 
 /* ── evolución de la apertura ────────────────────────────── */
@@ -578,7 +731,33 @@ function modo(m){
 }
 $("b-hev").onclick=function(){modo("hev")};
 $("b-ev").onclick=function(){modo("ev")};
-pintar(); evo(); lanz(); est(); tesla();
+pintar(); evo(); lanz(); est(); tesla(); anos(); madurez();
+
+/* ── ampliar gráfico ────────────────────────────────────────
+   En un teléfono el tablero se lee, pero el mapa de 24 ciudades y la
+   tabla de 18 filas piden pantalla. El boton clona el SVG a pantalla
+   completa; en movil se oculta porque ahi no hay a donde ampliar. */
+(function(){
+  var M=$("modal"), MT=$("modalT"), MB=$("modalB");
+  function cerrar(){ M.classList.remove("on"); MB.innerHTML=""; document.body.style.overflow="" }
+  $("modalX").onclick=cerrar;
+  M.onclick=function(e){ if(e.target===M) cerrar() };
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&M.classList.contains("on")) cerrar() });
+  Array.prototype.forEach.call(document.querySelectorAll(".panel"),function(pnl){
+    var svgHost=pnl.querySelector("svg") ? pnl : null;
+    var b=document.createElement("button");
+    b.className="amp"; b.textContent="Ampliar";
+    b.onclick=function(){
+      var svg=pnl.querySelector("svg"); if(!svg) return;
+      MT.textContent=(pnl.querySelector("h2")||{}).textContent||"Gráfico";
+      MB.innerHTML=svg.outerHTML;
+      var c=MB.querySelector("svg"); if(c){ c.style.width="100%"; c.style.height="auto" }
+      M.classList.add("on"); document.body.style.overflow="hidden";
+    };
+    pnl.appendChild(b);
+  });
+})();
+
 </script>
 </body>
 </html>
