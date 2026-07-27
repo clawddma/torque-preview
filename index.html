@@ -207,11 +207,18 @@ body.menu-open .dock{transform:translateY(115%)}
 .qz-field{width:100%;min-height:52px;padding:14px 16px;border:1px solid var(--line2);border-radius:6px;background:#0a0c0e;color:var(--paper);font-size:16px;font-family:inherit}
 .qz-field:focus{outline:none;border-color:var(--acc)}
 select.qz-field{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--mut) 50%),linear-gradient(135deg,var(--mut) 50%,transparent 50%);background-position:calc(100% - 20px) 23px,calc(100% - 14px) 23px;background-size:6px 6px;background-repeat:no-repeat}
-.qz-consent{display:flex;gap:11px;align-items:flex-start;margin-top:18px;font-size:11.5px;color:var(--mut);line-height:1.6;text-align:left}
-.qz-consent input{width:22px;height:22px;flex-shrink:0;accent-color:var(--acc);margin-top:1px}
+.qz-consent{display:flex;gap:12px;align-items:flex-start;margin-top:18px;padding:14px;border:1px solid var(--line);border-radius:10px;font-size:11.5px;color:var(--mut);line-height:1.6;text-align:left;cursor:pointer;transition:border-color .25s,background .25s}
+.qz-consent input{width:24px;height:24px;flex-shrink:0;accent-color:var(--acc);margin-top:0}
 .qz-consent a{color:var(--mut);text-decoration:underline}
+/* cuando el botón está bloqueado, la casilla se señala sola: sin esto el usuario
+   ve un botón oscuro y no tiene forma de saber qué le falta */
+.qz-consent.pide{border-color:var(--acc);background:rgba(200,242,74,.07)}
+.qz-consent.pide span{color:var(--paper)}
 .qz-send{width:100%;margin-top:18px}
-.qz-send[aria-disabled="true"]{opacity:.34;pointer-events:none}
+/* NO se usa pointer-events:none — un botón que no responde al toque se lee como
+   roto. Responde, y al tocarlo señala la casilla que falta. */
+.qz-send[aria-disabled="true"]{opacity:.38;cursor:default}
+.qz-hint{font-size:11.5px;color:var(--acc);margin-top:10px;text-align:center;min-height:16px}
 .qz-back{background:none;border:none;color:var(--mut2);font-size:12px;font-family:inherit;cursor:pointer;padding:12px 2px;margin-top:14px;min-height:44px;touch-action:manipulation}
 .qz-back:hover{color:var(--paper)}
 .qz-sum{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
@@ -728,19 +735,35 @@ var TQ=(function(){
       +'<a href="politica-datos.html">Política de Tratamiento de Datos Personales</a> '
       +'y su transferencia al concesionario aliado para ser contactado con una oferta comercial.</span></label>';
     h+='<a class="btn qz-send" id="qz-wa" aria-disabled="true" role="button">Abrir WhatsApp</a>';
+    h+='<div class="qz-hint" id="qz-hint">Marca la autorización para continuar</div>';
     h+='<button class="qz-back" id="qz-back">Volver</button>';
     box.innerHTML=h;
 
     var chk=document.getElementById("qz-ok-datos"), wa=document.getElementById("qz-wa");
-    chk.onchange=function(){
+    var cons=box.querySelector(".qz-consent"), hint=document.getElementById("qz-hint");
+    function estado(){
       if(chk.checked && WA){
         wa.setAttribute("aria-disabled","false");
         wa.href=TQ.link(resumen); wa.target="_blank"; wa.rel="noopener";
+        cons.classList.remove("pide"); hint.textContent="";
       }else{
         wa.setAttribute("aria-disabled","true");
         wa.removeAttribute("href");
+        hint.textContent = WA ? "Marca la autorización para continuar"
+                              : "Falta configurar la línea de WhatsApp";
       }
-    };
+    }
+    chk.onchange=estado;
+    /* el botón bloqueado sí responde: señala la casilla en vez de no hacer nada */
+    wa.addEventListener("click",function(e){
+      if(wa.getAttribute("aria-disabled")==="true"){
+        e.preventDefault();
+        cons.classList.add("pide");
+        cons.scrollIntoView({block:"center",behavior:"smooth"});
+        try{ chk.focus() }catch(err){}
+      }
+    });
+    estado();
     document.getElementById("qz-back").onclick=function(){ i--; pintar() };
   }
 
