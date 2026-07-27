@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#08090a">
+<meta name="color-scheme" content="dark">
+<title>TORQ · Simulador del bot de WhatsApp</title>
+<style>
+:root{--ink:#08090a;--surf:#0e1013;--line:#1c1f24;--line2:#2a2e35;--paper:#fafafa;--mut:#8b9199;--mut2:#5d636b;--brand:#c8f24a;--warn:#fab219;--esc:#d95926}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 40px}
+.eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--brand);font-weight:700}
+
+nav{position:sticky;top:0;z-index:60;backdrop-filter:blur(18px);background:rgba(8,9,10,.84);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1180px;margin:0 auto;padding:0 40px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.logo{display:flex;align-items:center;gap:1px;font-size:19px;font-weight:800;letter-spacing:.19em}
+.logo svg{width:21px;height:21px;margin-left:2px;display:block}
+.nav-links{display:flex;gap:20px;list-style:none}
+.nav-links a{color:var(--mut);text-decoration:none;font-size:12.5px}
+.nav-links a:hover,.nav-links a.on{color:var(--paper)}
+
+header{padding:48px 0 22px}
+h1{font-size:clamp(30px,4.6vw,46px);font-weight:800;letter-spacing:-.032em;line-height:1.02;margin-top:12px}
+.lede{color:var(--mut);font-size:14px;max-width:620px;margin-top:15px;line-height:1.7;font-weight:300}
+
+.aviso{border:1px solid rgba(250,178,25,.30);background:rgba(250,178,25,.05);border-radius:6px;padding:17px 19px;margin:24px 0 32px;font-size:12.5px;line-height:1.7;color:#d8d3c4}
+.aviso b{color:var(--warn)}
+
+.tablero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.82fr);gap:10px;align-items:start;padding-bottom:60px}
+
+/* ── chat ── */
+.chat{border:1px solid var(--line);border-radius:10px;background:var(--surf);display:flex;flex-direction:column;height:640px;overflow:hidden}
+.chat-top{display:flex;align-items:center;gap:11px;padding:14px 17px;border-bottom:1px solid var(--line);background:#0b0e12;flex-shrink:0}
+.av{width:36px;height:36px;border-radius:50%;background:var(--brand);color:#0a0c07;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;letter-spacing:.06em;flex-shrink:0}
+.chat-top .nm{font-size:13.5px;font-weight:700}
+.chat-top .st{font-size:11px;color:var(--brand)}
+.hilo{flex:1;overflow-y:auto;padding:18px 17px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:82%;padding:11px 14px;border-radius:14px;font-size:13.5px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
+.msg.bot{background:#171b21;border-bottom-left-radius:4px;align-self:flex-start}
+.msg.yo{background:var(--brand);color:#0a0c07;border-bottom-right-radius:4px;align-self:flex-end;font-weight:500}
+.msg.sis{align-self:center;background:rgba(217,89,38,.13);border:1px solid rgba(217,89,38,.34);color:#e79470;font-size:11.5px;text-align:center;max-width:92%;border-radius:8px}
+.msg.sis b{display:block;color:var(--esc);font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px}
+.esc-btn{display:inline-block;margin-top:9px;background:var(--esc);color:#fff;font-size:12px;font-weight:700;padding:9px 15px;border-radius:100px;text-decoration:none}
+.sug{display:flex;gap:7px;padding:0 17px 12px;flex-wrap:wrap;flex-shrink:0}
+.sug button{background:transparent;border:1px solid var(--line2);color:var(--mut);font-family:inherit;font-size:11.5px;padding:8px 12px;border-radius:100px;cursor:pointer;transition:color .2s,border-color .2s}
+.sug button:hover{color:var(--paper);border-color:var(--mut2)}
+.barra{display:flex;gap:9px;padding:13px 15px;border-top:1px solid var(--line);background:#0b0e12;flex-shrink:0}
+.barra input{flex:1;background:#141920;border:1px solid var(--line2);border-radius:100px;color:var(--paper);font-family:inherit;font-size:13.5px;padding:12px 16px;min-height:44px}
+.barra input:focus{outline:none;border-color:var(--mut2)}
+.barra button{background:var(--brand);color:#0a0c07;border:none;border-radius:50%;width:44px;height:44px;flex-shrink:0;cursor:pointer;font-size:17px;font-weight:700}
+
+/* ── panel de diagnóstico ── */
+.panel{border:1px solid var(--line);border-radius:10px;background:var(--surf);padding:20px 19px}
+.ptit{font-size:13.5px;font-weight:700;margin-bottom:4px}
+.psub{font-size:11.5px;color:var(--mut);line-height:1.55;margin-bottom:16px}
+.diag{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;line-height:1.8;color:var(--mut);max-height:250px;overflow-y:auto;border-top:1px solid var(--line);padding-top:13px}
+.diag .l{display:flex;justify-content:space-between;gap:12px}
+.diag b{color:var(--brand);font-weight:600}
+.diag .no{color:var(--esc)}
+.ficha{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.ficha .r{display:flex;justify-content:space-between;gap:12px;font-size:12px;padding:5px 0;color:var(--mut)}
+.ficha .r b{color:var(--paper);font-weight:600;text-align:right}
+.limpiar{width:100%;margin-top:16px;background:transparent;border:1px solid var(--line);color:var(--mut);font-family:inherit;font-size:12px;padding:10px;border-radius:100px;cursor:pointer;min-height:42px}
+.limpiar:hover{color:var(--paper)}
+
+@media(max-width:900px){
+  .wrap,.nav-in{padding-left:calc(20px + env(safe-area-inset-left,0px));padding-right:calc(20px + env(safe-area-inset-right,0px))}
+  .tablero{grid-template-columns:minmax(0,1fr)}
+  .chat{height:min(72vh,560px)}
+  .nav-links{gap:14px}.nav-links a{font-size:12px}
+  header{padding:30px 0 16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<nav><div class="nav-in">
+  <div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div>
+  <ul class="nav-links">
+    <li><a href="index.html">Showroom</a></li>
+    <li><a href="analitica.html">Inteligencia</a></li>
+    <li><a href="piezas/">Piezas</a></li>
+    <li><a href="bot.html" class="on">Bot</a></li>
+  </ul>
+</div></nav>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Motor de interacción · Simulador</div>
+  <h1>El bot de WhatsApp,<br>antes de construirlo.</h1>
+  <p class="lede">Conversa con él como lo haría un cliente. Responde con hechos verificados, sabe qué no puede prometer, y escala a un asesor humano cuando la pregunta lo exige. A la derecha ves por qué respondió cada cosa.</p>
+</header>
+
+<div class="aviso">
+  <b>Qué es y qué no es.</b> Esto simula la <strong>lógica</strong> del bot: su base de conocimiento, sus guardarraíles y sus reglas de escalamiento. En producción esa misma lógica va dentro de un modelo de lenguaje sobre la Cloud API de WhatsApp, que entiende la pregunta escrita de cualquier forma. Aquí el reconocimiento es por palabras clave, así que puede fallar donde el bot real acertaría. Lo que sí es idéntico es <strong>qué contesta y qué se niega a contestar</strong>.
+</div>
+
+<div class="tablero">
+  <div class="chat">
+    <div class="chat-top">
+      <div class="av">TQ</div>
+      <div><div class="nm">TORQ · Asesor digital</div><div class="st">en línea</div></div>
+    </div>
+    <div class="hilo" id="hilo"></div>
+    <div class="sug" id="sug"></div>
+    <div class="barra">
+      <input id="txt" placeholder="Escribe como lo haría un cliente…" autocomplete="off">
+      <button id="enviar" aria-label="Enviar">↑</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="ptit">Por qué respondió eso</div>
+    <div class="psub">Cada turno muestra el tema que reconoció y su puntaje. Si algo se responde mal, aquí se ve dónde falló.</div>
+    <div class="diag" id="diag"><div class="l"><span>esperando…</span></div></div>
+    <div class="ficha">
+      <div class="ptit" style="margin-bottom:10px">Lo que sabe del lead</div>
+      <div id="ficha"></div>
+    </div>
+    <button class="limpiar" id="limpiar">Reiniciar conversación</button>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BASE DE CONOCIMIENTO
+   Cada tema: palabras que lo disparan, la respuesta, y si obliga a escalar.
+   Toda cifra aquí sale de la ficha técnica o de fuentes ya verificadas.
+   Si un dato no está, el bot lo dice — no lo inventa.
+   ═══════════════════════════════════════════════════════════════════════ */
+var KB=[
+ {id:"precio", k:["precio","cuesta","vale","valor","costo","cuanto vale","cuanto cuesta","que precio"],
+  r:"El precio de lanzamiento es de $109.000.000, con IVA incluido.\n\nEse valor está sujeto a confirmación con la sala de ventas, porque depende de disponibilidad y de la versión exacta. ¿Quieres que un asesor te confirme el precio vigente para tu ciudad?"},
+
+ {id:"enchufe", k:["enchuf","cargar","cargador","carga","electrica","eléctrica","electrico","estacion","estación","poste","enchufa"],
+  r:"No se enchufa. La MAGE es híbrida autorecargable: el sistema recupera energía sola mientras andas.\n\nNo necesitas cargador, ni instalación en la casa, ni buscar estación. Tanqueas gasolina como siempre, solo que mucho menos seguido."},
+
+ {id:"consumo", k:["consumo","gasolina","litros","rinde","tanque","tanquear","galon","galón","km/l","economico","económico"],
+  r:"4,9 litros cada 100 kilómetros en ciclo WLTC, y más de 1.000 km de autonomía total.\n\nEn la página hay un simulador donde pones tu consumo actual y los kilómetros que haces al mes, y te dice cuánto cambiaría tu gasto. ¿Te lo comparto?"},
+
+ {id:"ficha", k:["potencia","caballos","hp","torque","motor","especificac","ficha","tecnica","técnica","velocidad","transmision","transmisión"],
+  r:"288 caballos de potencia combinada y 565 Nm de torque, con motor 1.5T turbo de inyección directa más motor eléctrico y transmisión híbrida dedicada de 4 velocidades.\n\nTracción delantera, modos Deportivo, Eco y Confort. ¿Quieres la ficha completa?"},
+
+ {id:"garantia", k:["garantia","garantía","respaldo","bateria","batería","dura","años","duracion","duración"],
+  r:"La batería y el motor eléctrico tienen 8 años o 200.000 kilómetros de garantía. El vehículo completo, 5 años o 150.000 kilómetros.\n\nEs de las garantías más largas del segmento en Colombia."},
+
+ {id:"servicio", k:["servicio","mantenimiento","taller","repuesto","posventa","atienden","arreglan","revision","revisión","centro de servicio"],
+  r:"Hay 26 centros de servicio en 19 ciudades del país y más de 100 puntos de repuestos.\n\nSon más sitios para atenderla que para comprarla. Dime tu ciudad y te digo cuál te queda más cerca."},
+
+ {id:"colores", k:["color","colores","blanco","negro","azul","plata","gris"],
+  r:"Viene en Plata, Azul, Blanco y Negro, y en dos combinaciones bicolor: Blanco/Negro y Plata/Negro.\n\nLa disponibilidad por color cambia según el lote. ¿Cuál te interesa? Lo confirmo con la sala."},
+
+ {id:"seguridad", k:["seguridad","airbag","frenos","abs","asistencia","adas","camara","cámara","punto ciego","carril"],
+  r:"Seis airbags, control electrónico de estabilidad, ABS, control de tracción y asistente de arranque en pendiente.\n\nSuma conducción asistida nivel 2: frenado automático de emergencia, control crucero adaptativo con Stop & Go, mantenimiento de carril, monitoreo de punto ciego y visión panorámica 360°."},
+
+ {id:"espacio", k:["espacio","tamaño","grande","baul","baúl","maleta","familia","asientos","techo","panoramico","panorámico","dimension","dimensión"],
+  r:"Mide 4.650 mm de largo, 1.905 de ancho y 1.630 de alto, con 2.775 mm entre ejes.\n\nTecho panorámico de 1,08 m² de serie, asientos en cuero sintético con calefacción y ventilación adelante, y banca trasera abatible 4/6."},
+
+ {id:"reforma", k:["reforma","iva","impuesto","tributaria","sube","subir","aumenta"],
+  r:"Hoy los híbridos pagan 5% de IVA. El gobierno radicó el 22 de julio un proyecto que lo subiría a 19%.\n\nSi ese proyecto se aprueba, esta misma camioneta pasaría de $109.000.000 a unos $123.500.000. Ojo: está radicado, no aprobado — todavía puede cambiar o no pasar."},
+
+ {id:"devolucion", k:["devolucion","devolución","devuelven","recuperar","upme","dian","beneficio"],
+  r:"La DIAN fijó un procedimiento para devolver el IVA de vehículos certificados por la UPME, dentro de los 5 años siguientes a la factura.\n\nNo te lo puedo dar por hecho: depende de tu caso particular y el criterio ha cambiado. Lo que sí puedo es ponerte con alguien que lo revise contigo con tus documentos.", esc:"tributario"},
+
+ {id:"prueba", k:["prueba","probar","manejar","test drive","ruta","ver el carro","conocer","visitar","cita","agendar"],
+  r:"Claro que sí. La prueba de ruta se agenda directamente con la sala de tu ciudad.\n\nTe paso con un asesor para que cuadren día y hora.", esc:"agenda"},
+
+ {id:"credito", k:["credito","crédito","cuota","financia","banco","tasa","plazo","inicial","aprobar","aprobacion","aprobación"],
+  r:"El crédito lo estudia y aprueba la sala de ventas con sus aliados financieros; yo no puedo aprobarlo ni darte una tasa.\n\nLo que sí tenemos es un simulador de costo en la página, pero es ilustrativo y no constituye una oferta. Te paso con un asesor para que te dé condiciones reales.", esc:"credito"},
+
+ {id:"retoma", k:["retoma","parte de pago","entregar mi","mi carro","cambio","permuta","usado"],
+  r:"Sí se recibe vehículo en parte de pago. El avalúo lo hace la sala directamente, porque depende del estado, el modelo y el kilometraje.\n\n¿Qué carro tienes? Se lo paso al asesor para que vaya adelantando.", esc:"retoma"},
+
+ {id:"renting", k:["renting","arriendo","alquiler","leasing","suscripcion","suscripción","empresa","flota","varias unidades"],
+  r:"El renting y los planes para empresa los manejamos caso por caso, porque cambian según el plazo, el kilometraje y el número de unidades.\n\nTe paso con un asesor para armarte una propuesta concreta.", esc:"renting"},
+
+ {id:"disponible", k:["disponible","inventario","entrega","entregan","stock","unidades","llega","cuando llega","hay disponible"],
+  r:"Hay unidades disponibles y viene más inventario en camino, pero la existencia por color y ciudad cambia de un día a otro.\n\nNo te quiero dar una fecha que no pueda sostener: eso lo confirma la sala en el momento. ¿En qué ciudad estás?"},
+
+ {id:"marca", k:["dongfeng","china","chino","marca","confiable","confianza","corautos","ustedes","quienes son"],
+  r:"Dongfeng es uno de los fabricantes más grandes de China y en Colombia lo representa Corautos Andino.\n\nEn el primer semestre de 2026 la marca creció 217% en matrículas en el país. Y el respaldo se mide en cosas concretas: 26 centros de servicio en 19 ciudades y 8 años de garantía de batería."},
+
+ {id:"comparar", k:["comparar","versus","vs","mejor que","corolla","sportage","territory","mazda","toyota","kia","competencia","diferencia"],
+  r:"Contra las híbridas que más se venden en su rango, la MAGE queda así: 288 hp contra 122 de la Corolla Cross, 180 del Sportage y 238 del Territory. Y cuesta $109.000.000 frente a $136, $126 y $121 millones.\n\nEn la página está el comparador completo. Los datos de la competencia son de referencia de mercado y conviene validarlos con cada marca."},
+
+ {id:"humano", k:["asesor","persona","humano","hablar con","llamar","telefono","teléfono","alguien","atienda"],
+  r:"Con gusto. Te paso con un asesor especializado.", esc:"pedido"},
+
+ {id:"saludo", k:["hola","buenas","buenos dias","buenas tardes","que tal","qué tal","hey","saludos"],
+  r:"¡Hola! Soy el asesor digital de TORQ. Puedo resolverte dudas de la MAGE HEV: precio, ficha, garantía, servicio o beneficios tributarios.\n\n¿Qué te gustaría saber?"},
+
+ {id:"gracias", k:["gracias","muchas gracias","listo","perfecto","ok","dale","vale"],
+  r:"Con gusto. Si te queda cualquier otra duda, aquí estoy. Y cuando quieras, te paso con un asesor para agendar la prueba de ruta."}
+];
+
+/* Temas que el bot NO responde nunca, por decisión. Se escalan de una. */
+var VETO=[
+ {k:["descuento","rebaja","negociar","ultimo precio","último precio","promocion","promoción","oferta especial","me lo deja"],
+  r:"Los descuentos y las condiciones especiales las define la sala de ventas, no yo.\n\nTe paso con un asesor para que negocien directamente.", esc:"descuento"},
+ {k:["reclamo","queja","demanda","estafa","problema con","mal servicio","denuncia"],
+  r:"Lamento que estés pasando por eso. Un reclamo lo tiene que atender una persona, no un chat.\n\nTe paso de inmediato con alguien del equipo.", esc:"reclamo"}
+];
+
+var ESC={
+  pedido:"El cliente pidió hablar con una persona.",
+  agenda:"Quiere agendar prueba de ruta — se cierra con humano.",
+  credito:"Pregunta por crédito, tasa o cuota. El bot no aprueba ni cotiza financiación.",
+  retoma:"Tiene vehículo para parte de pago. El avalúo es presencial.",
+  renting:"Renting o flota: propuesta caso por caso, todavía no modelada.",
+  tributario:"Devolución de IVA: depende del caso y el criterio DIAN ha cambiado.",
+  descuento:"Pide descuento. Negociación es de la sala, nunca del bot.",
+  reclamo:"Reclamo o queja. Va a humano de inmediato.",
+  nose:"Tres intentos sin entender. Antes de frustrar al cliente, pasa a humano."
+};
+
+/* ═══ estado del lead: lo que el bot va aprendiendo en la conversación ═══ */
+var CIUDADES=["bogotá","bogota","medellín","medellin","cali","barranquilla","bucaramanga","cúcuta","cucuta","villavicencio","montería","monteria","valledupar","pasto","pereira","manizales","ibagué","ibague","neiva","popayán","popayan","duitama","tunja","cartagena","santa marta","copacabana"];
+var lead={ciudad:null,interes:[],escalado:null,turnos:0};
+var fallos=0;
+
+var hilo=document.getElementById("hilo"), diag=document.getElementById("diag"),
+    sug=document.getElementById("sug"), txt=document.getElementById("txt");
+
+var norm=function(s){
+  return (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^\w\s]/g," ");
+};
+
+/* Coincidencia por palabra completa, no por subcadena. Buscar "cuanto" dentro de
+   la frase hacía que casi toda pregunta cayera en "precio". Una palabra suelta
+   solo cuenta si es el token exacto o si el token empieza por ella (para que
+   "enchuf" atrape "enchufarla"). Una frase de dos palabras pesa mucho más. */
+function puntuar(q){
+  var n=norm(q).replace(/\s+/g," ").trim();
+  var toks=n.split(" ").filter(Boolean), res=[];
+  VETO.concat(KB).forEach(function(t){
+    var p=0, hits=[];
+    t.k.forEach(function(w){
+      var wn=norm(w).replace(/\s+/g," ").trim(), hit=false;
+      if(wn.indexOf(" ")>-1){
+        if(n.indexOf(wn)>-1){ p+=5; hit=true }            // frase exacta: señal fuerte
+      }else{
+        for(var i=0;i<toks.length;i++){
+          if(toks[i]===wn || (wn.length>=5 && toks[i].indexOf(wn)===0)){ hit=true; break }
+        }
+        if(hit) p += (wn.length>=7?3:2);                  // palabra larga discrimina más
+      }
+      if(hit) hits.push(wn);
+    });
+    if(p>0) res.push({t:t,p:p,hits:hits});
+  });
+  return res.sort(function(a,b){return b.p-a.p});
+}
+
+function detectarCiudad(q){
+  var n=norm(q);
+  for(var i=0;i<CIUDADES.length;i++){
+    if(n.indexOf(norm(CIUDADES[i]))>-1){
+      lead.ciudad=CIUDADES[i].charAt(0).toUpperCase()+CIUDADES[i].slice(1);
+      return true;
+    }
+  }
+  return false;
+}
+
+function burbuja(clase,texto){
+  var d=document.createElement("div");
+  d.className="msg "+clase; d.textContent=texto;
+  hilo.appendChild(d); hilo.scrollTop=hilo.scrollHeight;
+  return d;
+}
+function escalar(motivo){
+  lead.escalado=motivo;
+  var d=document.createElement("div");
+  d.className="msg sis";
+  d.innerHTML='<b>Escala a humano</b>'+ESC[motivo]
+    +'<br><a class="esc-btn" id="ir-wa" href="#">Pasar la conversación a Daniel</a>';
+  hilo.appendChild(d); hilo.scrollTop=hilo.scrollHeight;
+  d.querySelector("#ir-wa").onclick=function(e){
+    e.preventDefault();
+    burbuja("bot","Listo. Te acabo de pasar con un asesor especializado; te escribe en las próximas horas.\n\nMientras tanto, si quieres adelantar algo, cuéntame por aquí.");
+    pintarFicha();
+  };
+  pintarFicha();
+}
+
+function pintarDiag(items,elegido){
+  var h="";
+  if(!items.length){ h='<div class="l"><span class="no">ningún tema reconocido</span><b>'+fallos+'/3</b></div>'; }
+  else{
+    items.slice(0,5).forEach(function(x,i){
+      h+='<div class="l"><span>'+(i===0?"→ ":"&nbsp;&nbsp;&nbsp;")+(x.t.id||"veto")+'</span><b>'+x.p+'</b></div>';
+    });
+    if(elegido&&elegido.hits.length) h+='<div class="l" style="margin-top:8px"><span>coincide en</span><b>'+elegido.hits.join(", ")+'</b></div>';
+  }
+  diag.innerHTML=h;
+}
+function pintarFicha(){
+  var f=document.getElementById("ficha");
+  f.innerHTML=
+     '<div class="r"><span>Ciudad</span><b>'+(lead.ciudad||"—")+'</b></div>'
+    +'<div class="r"><span>Temas consultados</span><b>'+(lead.interes.length?lead.interes.join(", "):"—")+'</b></div>'
+    +'<div class="r"><span>Turnos</span><b>'+lead.turnos+'</b></div>'
+    +'<div class="r"><span>Estado</span><b style="color:'+(lead.escalado?"#d95926":"#c8f24a")+'">'
+      +(lead.escalado?"Escalado":"En conversación")+'</b></div>';
+}
+
+function responder(q){
+  lead.turnos++;
+  detectarCiudad(q);
+  var items=puntuar(q);
+
+  if(!items.length){
+    fallos++;
+    pintarDiag([],null);
+    if(fallos>=3){ burbuja("bot","Prefiero no adivinar. Te paso con un asesor para que te responda bien."); escalar("nose"); fallos=0; }
+    else{
+      burbuja("bot","No estoy seguro de haber entendido. Te puedo ayudar con precio, ficha técnica, consumo, garantía, servicio, retoma o beneficios tributarios.\n\n¿Cuál de esos te sirve?");
+    }
+    pintarFicha(); return;
+  }
+
+  fallos=0;
+  var top=items[0], t=top.t;
+  pintarDiag(items,top);
+  if(t.id && lead.interes.indexOf(t.id)<0 && t.id!=="saludo" && t.id!=="gracias") lead.interes.push(t.id);
+
+  var r=t.r;
+  /* si ya sabe la ciudad, la usa: deja de preguntar lo que ya le dijeron */
+  if(lead.ciudad && t.id==="servicio") r="En "+lead.ciudad+" hay centro de servicio de la red. En total son 26 en 19 ciudades del país, más de 100 puntos de repuestos.\n\n¿Quieres que un asesor te dé la dirección exacta?";
+  burbuja("bot",r);
+  if(t.esc) setTimeout(function(){ escalar(t.esc) },420);
+  pintarFicha();
+}
+
+var SUG=["¿Cuánto cuesta?","¿Se enchufa?","¿Dónde le hago mantenimiento?","¿Me dejas un descuento?","Quiero probarla","¿Qué pasa con el IVA?"];
+function pintarSug(){
+  sug.innerHTML="";
+  SUG.forEach(function(s){
+    var b=document.createElement("button"); b.textContent=s;
+    b.onclick=function(){ enviar(s) };
+    sug.appendChild(b);
+  });
+}
+function enviar(v){
+  var q=(v!==undefined?v:txt.value).trim();
+  if(!q)return;
+  burbuja("yo",q); txt.value="";
+  setTimeout(function(){ responder(q) },260);
+}
+
+document.getElementById("enviar").onclick=function(){ enviar() };
+txt.addEventListener("keydown",function(e){ if(e.key==="Enter") enviar() });
+document.getElementById("limpiar").onclick=function(){
+  hilo.innerHTML=""; lead={ciudad:null,interes:[],escalado:null,turnos:0}; fallos=0;
+  arrancar();
+};
+function arrancar(){
+  burbuja("bot","¡Hola! Soy el asesor digital de TORQ.\n\nVeo que vienes por la MAGE HEV. Puedo resolverte dudas de precio, ficha, consumo, garantía o servicio — y si necesitas algo que solo resuelve una persona, te paso con un asesor.\n\n¿Qué quieres saber?");
+  pintarSug(); pintarFicha(); pintarDiag([],null);
+}
+arrancar();
+})();
+</script>
+</body>
+</html>
