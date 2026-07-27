@@ -656,9 +656,11 @@ var TQ=(function(){
       /* El mensaje lo escribe el CLIENTE, así que tiene que sonar a persona.
          Un volcado de campos ("Ciudad: X / Pago: Y") lo escribe un formulario,
          no alguien interesado — y el asesor lo recibe como ficha, no como
-         conversación. El código de campaña va al final, discreto. */
-      var t=(texto||"Hola, vi la MAGE HEV en TORQ y quisiera más información.")
-            +"\n\n— ref "+c;
+         conversación. El código de campaña va al final, discreto — pero solo
+         si de verdad vino de un anuncio: sin eso, "— ref directo" es jerga
+         interna sin destinatario y el cliente no debería verla. */
+      var t=(texto||"Hola, vi la MAGE HEV en TORQ y quisiera más información.");
+      if(c!=="directo") t+="\n\n— ref "+c;
       return WA ? "https://wa.me/"+WA+"?text="+encodeURIComponent(t) : "";
     }
   };
