@@ -103,6 +103,10 @@ footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--mut2);fo
       Falta conectar la hoja de cálculo: pega la URL publicada como CSV en la
       constante <code>CSV_URL</code>, al inicio del script de esta página. La
       guía completa está en <code>LEADS.md</code>.
+      <div style="margin-top:12px">
+        <button id="demoBtn" style="background:var(--brand);color:#0a0c07;border:none;padding:9px 16px;border-radius:6px;font-weight:700;font-size:12.5px;cursor:pointer">Cargar 10 leads de ejemplo</button>
+        <span style="margin-left:8px;color:var(--mut2)">Solo en esta pantalla, no toca ninguna hoja real.</span>
+      </div>
     </div>
   </div>
 
@@ -303,6 +307,30 @@ function cargar(){
       document.getElementById("tb").innerHTML="";
     });
 }
+
+/* Datos de ejemplo — solo para probar filtros y descarga en esta pantalla.
+   No tocan ninguna hoja real; desaparecen apenas conectes CSV_URL. */
+var DEMO=[
+  {Fecha:"2026-07-14",Nombre:"Camila Restrepo",Ciudad:"Bogotá",Compra:"Este mes",Pago:"Con crédito",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"A-BOG-REFORMA",Estado:"Facturado"},
+  {Fecha:"2026-07-15",Nombre:"Andrés Villa",Ciudad:"Medellín",Compra:"En 1 a 3 meses",Pago:"De contado",Retoma:"Sí",Vehículo:"MAGE HEV",Campaña:"directo",Estado:"Agendado"},
+  {Fecha:"2026-07-16",Nombre:"Laura Gómez",Ciudad:"Cali",Compra:"Todavía estoy mirando",Pago:"Aún no lo sé",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"A-CAL-IVA",Estado:"Nuevo"},
+  {Fecha:"2026-07-17",Nombre:"Julián Ortiz",Ciudad:"Barranquilla",Compra:"Este mes",Pago:"Con crédito",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"directo",Estado:"Contactado"},
+  {Fecha:"2026-07-18",Nombre:"María Fernanda Ríos",Ciudad:"Bogotá",Compra:"En 1 a 3 meses",Pago:"De contado",Retoma:"Sí",Vehículo:"MAGE HEV",Campaña:"A-BOG-REFORMA",Estado:"Calificado"},
+  {Fecha:"2026-07-19",Nombre:"Santiago Peña",Ciudad:"Bucaramanga",Compra:"Más adelante",Pago:"Aún no lo sé",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"directo",Estado:"No califica"},
+  {Fecha:"2026-07-21",Nombre:"Valentina Cruz",Ciudad:"Cartagena",Compra:"Este mes",Pago:"Con crédito",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"A-CTG-DIGITAL",Estado:"Nuevo"},
+  {Fecha:"2026-07-22",Nombre:"Felipe Duarte",Ciudad:"Medellín",Compra:"Este mes",Pago:"De contado",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"directo",Estado:"Agendado"},
+  {Fecha:"2026-07-24",Nombre:"Daniela Sánchez",Ciudad:"Pereira",Compra:"En 1 a 3 meses",Pago:"Con crédito",Retoma:"Sí",Vehículo:"MAGE HEV",Campaña:"A-PER-REFORMA",Estado:"Calificado"},
+  {Fecha:"2026-07-26",Nombre:"Tomás Iregui",Ciudad:"Cali",Compra:"Este mes",Pago:"De contado",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"directo",Estado:"Facturado"}
+];
+var demoBtn=document.getElementById("demoBtn");
+if(demoBtn) demoBtn.onclick=function(){
+  DATA=DEMO;
+  llenarSelect(document.getElementById("f-estado"),unico("Estado"),"Todos");
+  llenarSelect(document.getElementById("f-ciudad"),unico("Ciudad"),"Todas");
+  llenarSelect(document.getElementById("f-vehiculo"),unico("Vehículo"),"Todos");
+  document.getElementById("setupMsg").innerHTML="Mostrando 10 leads de ejemplo — no son datos reales, ninguno está en una hoja de cálculo. Conecta <code>CSV_URL</code> (ver <code>LEADS.md</code>) cuando quieras ver los de verdad.";
+  pintar();
+};
 
 ["f-desde","f-hasta","f-estado","f-ciudad","f-vehiculo"].forEach(function(id){
   document.getElementById(id).addEventListener("change",pintar);
