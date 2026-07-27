@@ -639,6 +639,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
    funciona pero no envía (útil para revisar sin generar leads reales). */
 var WA="573054310851";
 
+/* ÚNICO punto a tocar para la base de leads: la URL del "Web App" de Apps
+   Script (ver LEADS.md). Vacío = el calificador funciona igual, pero no
+   queda registro de los leads en ningún lado. */
+var LEADS_URL="";
+
 var TQ=(function(){
   /* El código de campaña viaja en la URL del anuncio (?c=A-BOG-REFORMA)
      y sobrevive a la navegación entre páginas. Sin esto no hay forma de
@@ -662,6 +667,20 @@ var TQ=(function(){
       var t=(texto||"Hola, vi la MAGE HEV en TORQ y quisiera más información.");
       if(c!=="directo") t+="\n\n— ref "+c;
       return WA ? "https://wa.me/"+WA+"?text="+encodeURIComponent(t) : "";
+    },
+    /* Manda el lead a la hoja de cálculo justo cuando sale hacia WhatsApp.
+       No bloquea ni espera respuesta: si falla, el cliente igual llega al
+       asesor por WhatsApp — el registro es un extra, no un requisito. */
+    registrar:function(datos){
+      if(!LEADS_URL) return;
+      try{
+        fetch(LEADS_URL,{
+          method:"POST",
+          mode:"no-cors",
+          headers:{"Content-Type":"text/plain"},
+          body:JSON.stringify(datos)
+        });
+      }catch(e){}
     }
   };
 })();
@@ -816,6 +835,11 @@ var TQ=(function(){
         try{ chk.focus() }catch(err){}
         return;
       }
+      TQ.registrar({
+        ciudad:r.Ciudad||"", compra:r.Compra||"", pago:r.Pago||"",
+        retoma:r.Retoma||"", nombre:r.Nombre||"", campana:TQ.code,
+        vehiculo:"MAGE HEV"
+      });
       /* Sale hacia WhatsApp: la página no puede quedarse en el mismo estado,
          porque el cliente vuelve y no sabe si quedó registrado o no. */
       setTimeout(function(){ confirmado(wa.href) }, 400);
@@ -829,6 +853,7 @@ var TQ=(function(){
   if(d) d.addEventListener("click",function(e){
     var u=TQ.link(""); if(!u){e.preventDefault();return}
     d.href=u; d.target="_blank"; d.rel="noopener";
+    TQ.registrar({ciudad:"",compra:"",pago:"",retoma:"",nombre:"",campana:TQ.code,vehiculo:"MAGE HEV"});
   });
 
   pintar();

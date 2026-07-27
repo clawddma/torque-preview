@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>TORQ &mdash; Leads</title>
+<style>
+:root{
+  --ink:#08090a; --surf:#0e1013; --line:#1c1f24; --line2:#2a2e35;
+  --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b; --brand:#c8f24a;
+  --ok:#0ca30c; --warn:#fab219; --bad:#d95926;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--paper);font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* ── compuerta ─────────────────────────────────────────────────────── */
+#gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:99;padding:20px}
+#gate .box{width:100%;max-width:320px;text-align:center}
+#gate .eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:10px}
+#gate h1{font-size:22px;margin:0 0 18px;font-weight:800}
+#gate input{width:100%;background:var(--surf);border:1px solid var(--line2);color:var(--paper);padding:13px 14px;border-radius:6px;font-size:15px;text-align:center;letter-spacing:.06em}
+#gate input:focus{outline:2px solid var(--brand);outline-offset:1px}
+#gate button{width:100%;margin-top:10px;background:var(--brand);color:#0a0c07;border:none;padding:13px;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer}
+#gate .err{color:var(--bad);font-size:12.5px;margin-top:10px;min-height:16px}
+#app{display:none}
+#app.on{display:block}
+
+/* ── layout ────────────────────────────────────────────────────────── */
+nav{position:sticky;top:0;z-index:60;backdrop-filter:blur(18px);background:rgba(8,9,10,.86);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-weight:800;font-size:17px;letter-spacing:-.02em}
+.logo span{color:var(--brand)}
+.nav-tag{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut2);font-weight:700}
+h1.pg{font-size:26px;font-weight:800;margin:30px 0 4px;letter-spacing:-.01em}
+.lede{color:var(--mut);font-size:14px;margin-bottom:24px;max-width:640px;line-height:1.6}
+
+.filters{position:sticky;top:60px;z-index:50;background:rgba(8,9,10,.94);backdrop-filter:blur(14px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:22px}
+.frow{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}
+.fgroup{display:flex;flex-direction:column;gap:5px}
+.flabel{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);font-weight:700}
+.fgroup select,.fgroup input[type=date]{background:var(--surf);border:1px solid var(--line2);color:var(--paper);padding:8px 10px;border-radius:6px;font-size:13px;font-family:inherit}
+.fgroup select{min-width:150px}
+.frow .sp{flex:1}
+#dl{background:var(--brand);color:#0a0c07;border:none;padding:10px 18px;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+#dl:disabled{opacity:.4;cursor:default}
+#clear{background:transparent;color:var(--mut);border:1px solid var(--line2);padding:10px 14px;border-radius:6px;font-size:13px;cursor:pointer}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+.kpi{border:1px solid var(--line);border-radius:6px;padding:16px;background:var(--surf)}
+.kpi .k{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.kpi .v{font-size:22px;font-weight:800}
+
+.tblwrap{border:1px solid var(--line);border-radius:6px;overflow:auto;margin-bottom:40px;background:var(--surf)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:820px}
+th{text-align:left;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut2);font-weight:700;padding:12px 14px;border-bottom:1px solid var(--line2);white-space:nowrap;position:sticky;top:0;background:var(--surf)}
+td{padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--paper)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.tag{display:inline-block;padding:3px 9px;border-radius:100px;font-size:11px;font-weight:700}
+.tag.n{background:rgba(56,140,229,.15);color:#7ab4f2}
+.tag.c{background:rgba(200,242,74,.14);color:var(--brand)}
+.tag.e{background:rgba(250,178,25,.15);color:var(--warn)}
+.tag.o{background:rgba(12,163,12,.15);color:#3fd23f}
+.tag.x{background:rgba(217,89,38,.15);color:var(--bad)}
+.empty{padding:60px 20px;text-align:center;color:var(--mut)}
+.empty b{color:var(--paper)}
+.setup{border:1px solid var(--line2);border-radius:6px;padding:18px 20px;background:var(--surf);color:var(--mut);font-size:13px;line-height:1.7;margin-bottom:30px}
+.setup code{background:var(--ink);border:1px solid var(--line2);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--brand)}
+footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--mut2);font-size:12px}
+
+@media(max-width:720px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .frow{gap:10px}
+  .fgroup select,.fgroup input[type=date]{min-width:0;flex:1}
+}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="box">
+    <div class="eyebrow">Torq · Uso interno</div>
+    <h1>Acceso a leads</h1>
+    <input type="password" id="gk" placeholder="Clave" autocomplete="off" inputmode="text">
+    <button id="gb">Entrar</button>
+    <div class="err" id="ge"></div>
+  </div>
+</div>
+
+<div id="app">
+  <nav><div class="wrap">
+    <div><div class="logo">TOR<span>Q</span></div></div>
+    <div class="nav-tag">Base de leads · uso interno</div>
+  </div></nav>
+
+  <div class="wrap">
+    <h1 class="pg">Leads</h1>
+    <p class="lede">Cada persona que completa el calificador o abre WhatsApp desde la página cae aquí. Filtra por fecha, estado, ciudad o vehículo, y descarga el resultado para enviarlo a Corautos o a la casa matriz.</p>
+
+    <div id="setupMsg" class="setup" style="display:none">
+      Falta conectar la hoja de cálculo: pega la URL publicada como CSV en la
+      constante <code>CSV_URL</code>, al inicio del script de esta página. La
+      guía completa está en <code>LEADS.md</code>.
+    </div>
+  </div>
+
+  <div class="filters"><div class="wrap frow">
+    <div class="fgroup"><span class="flabel">Desde</span><input type="date" id="f-desde"></div>
+    <div class="fgroup"><span class="flabel">Hasta</span><input type="date" id="f-hasta"></div>
+    <div class="fgroup"><span class="flabel">Estado</span><select id="f-estado"><option value="">Todos</option></select></div>
+    <div class="fgroup"><span class="flabel">Ciudad</span><select id="f-ciudad"><option value="">Todas</option></select></div>
+    <div class="fgroup"><span class="flabel">Vehículo</span><select id="f-vehiculo"><option value="">Todos</option></select></div>
+    <div class="sp"></div>
+    <button id="clear">Limpiar filtros</button>
+    <button id="dl" disabled>Descargar CSV</button>
+  </div></div>
+
+  <div class="wrap">
+    <div class="kpis">
+      <div class="kpi"><div class="k">Leads en el filtro</div><div class="v" id="k-total">0</div></div>
+      <div class="kpi"><div class="k">Nuevos</div><div class="v" id="k-nuevo">0</div></div>
+      <div class="kpi"><div class="k">Calificados</div><div class="v" id="k-cal">0</div></div>
+      <div class="kpi"><div class="k">Facturados</div><div class="v" id="k-fact">0</div></div>
+    </div>
+
+    <div class="tblwrap">
+      <table>
+        <thead><tr>
+          <th>Fecha</th><th>Nombre</th><th>Ciudad</th><th>Compra</th>
+          <th>Pago</th><th>Retoma</th><th>Vehículo</th><th>Campaña</th><th>Estado</th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+      <div class="empty" id="empty" style="display:none"></div>
+    </div>
+  </div>
+
+  <footer><div class="wrap">
+    Para cambiar el estado de un lead (Contactado, Agendado, Facturado…), edítalo
+    directo en la hoja de cálculo — esta pantalla es de lectura y descarga.
+  </div></footer>
+</div>
+
+<script>
+/* ÚNICO punto a tocar: la URL de la hoja publicada como CSV.
+   Archivo → Compartir → Publicar en la web → la pestaña "Leads" → formato CSV.
+   Guía completa en LEADS.md. */
+var CSV_URL="";
+
+/* Clave de acceso — cámbiala aquí. Esto NO es seguridad real (cualquiera que
+   vea el código fuente la encuentra), es solo una barrera contra quien entra
+   por accidente o por curiosidad. Los datos son personales (Ley 1581): no
+   dejes este archivo como el único resguardo. */
+var CLAVE="torq2026";
+
+(function(){
+  var gate=document.getElementById("gate"), app=document.getElementById("app");
+  var gk=document.getElementById("gk"), gb=document.getElementById("gb"), ge=document.getElementById("ge");
+  function abrir(){
+    gate.style.display="none"; app.classList.add("on");
+    try{ sessionStorage.setItem("torq_leads_ok","1") }catch(e){}
+    cargar();
+  }
+  function intentar(){
+    if(gk.value===CLAVE) abrir();
+    else{ ge.textContent="Clave incorrecta"; gk.value=""; gk.focus(); }
+  }
+  gb.onclick=intentar;
+  gk.onkeydown=function(e){ if(e.key==="Enter") intentar() };
+  try{
+    if(sessionStorage.getItem("torq_leads_ok")==="1"){ abrir(); return }
+  }catch(e){}
+  gk.focus();
+})();
+
+/* ── CSV → filas ───────────────────────────────────────────────────── */
+function parseCSV(txt){
+  var rows=[], row=[], field="", inQ=false;
+  for(var i=0;i<txt.length;i++){
+    var c=txt[i], n=txt[i+1];
+    if(inQ){
+      if(c==='"' && n==='"'){ field+='"'; i++; }
+      else if(c==='"'){ inQ=false; }
+      else field+=c;
+    }else{
+      if(c==='"') inQ=true;
+      else if(c===','){ row.push(field); field=""; }
+      else if(c==='\r'){ /* skip */ }
+      else if(c==='\n'){ row.push(field); rows.push(row); row=[]; field=""; }
+      else field+=c;
+    }
+  }
+  if(field.length||row.length){ row.push(field); rows.push(row); }
+  if(!rows.length) return [];
+  var head=rows.shift().map(function(h){return h.trim()});
+  return rows.filter(function(r){return r.length>1 || (r[0]||"").trim()!==""}).map(function(r){
+    var o={}; head.forEach(function(h,i){ o[h]=(r[i]||"").trim() }); return o;
+  });
+}
+
+var DATA=[];
+
+function tagClass(estado){
+  var e=(estado||"").toLowerCase();
+  if(e.indexOf("nuevo")>-1) return "n";
+  if(e.indexOf("calific")>-1) return "c";
+  if(e.indexOf("no califica")>-1) return "x";
+  if(e.indexOf("factur")>-1) return "o";
+  return "e";
+}
+
+function llenarSelect(sel,valores,actual){
+  var cur=sel.value;
+  sel.innerHTML='<option value="">'+(actual)+'</option>'
+    +valores.map(function(v){return '<option>'+v+'</option>'}).join("");
+  sel.value=cur;
+}
+
+function unico(campo){
+  var s={};
+  DATA.forEach(function(r){ if(r[campo]) s[r[campo]]=1 });
+  return Object.keys(s).sort();
+}
+
+function filtrar(){
+  var desde=document.getElementById("f-desde").value;
+  var hasta=document.getElementById("f-hasta").value;
+  var estado=document.getElementById("f-estado").value;
+  var ciudad=document.getElementById("f-ciudad").value;
+  var vehiculo=document.getElementById("f-vehiculo").value;
+  return DATA.filter(function(r){
+    var f=(r.Fecha||"").slice(0,10);
+    if(desde && f && f<desde) return false;
+    if(hasta && f && f>hasta) return false;
+    if(estado && r.Estado!==estado) return false;
+    if(ciudad && r.Ciudad!==ciudad) return false;
+    if(vehiculo && r.Vehículo!==vehiculo) return false;
+    return true;
+  });
+}
+
+function pintar(){
+  var filas=filtrar();
+  var tb=document.getElementById("tb"), empty=document.getElementById("empty");
+  document.getElementById("k-total").textContent=filas.length;
+  document.getElementById("k-nuevo").textContent=filas.filter(function(r){return (r.Estado||"").toLowerCase().indexOf("nuevo")>-1}).length;
+  document.getElementById("k-cal").textContent=filas.filter(function(r){return (r.Estado||"").toLowerCase().indexOf("calific")>-1}).length;
+  document.getElementById("k-fact").textContent=filas.filter(function(r){return (r.Estado||"").toLowerCase().indexOf("factur")>-1}).length;
+
+  if(!filas.length){
+    tb.innerHTML=""; empty.style.display="block";
+    empty.innerHTML = DATA.length ? "No hay leads con ese filtro." : "<b>Todavía no hay leads registrados.</b><br>Aparecen aquí apenas alguien complete el calificador de la página.";
+    document.getElementById("dl").disabled=true;
+    return;
+  }
+  empty.style.display="none";
+  document.getElementById("dl").disabled=false;
+  tb.innerHTML=filas.map(function(r){
+    return "<tr><td>"+(r.Fecha||"—")+"</td><td>"+(r.Nombre||"—")+"</td><td>"+(r.Ciudad||"—")
+      +"</td><td>"+(r.Compra||"—")+"</td><td>"+(r.Pago||"—")+"</td><td>"+(r.Retoma||"—")
+      +"</td><td>"+(r["Vehículo"]||"—")+"</td><td>"+(r["Campaña"]||"directo")
+      +"</td><td><span class='tag "+tagClass(r.Estado)+"'>"+(r.Estado||"Nuevo")+"</span></td></tr>";
+  }).join("");
+}
+
+function descargar(){
+  var filas=filtrar();
+  if(!filas.length) return;
+  var cols=["Fecha","Nombre","Ciudad","Compra","Pago","Retoma","Vehículo","Campaña","Estado"];
+  var out=[cols.join(",")].concat(filas.map(function(r){
+    return cols.map(function(c){
+      var v=String(r[c]||"").replace(/"/g,'""');
+      return /[,"\n]/.test(v) ? '"'+v+'"' : v;
+    }).join(",");
+  })).join("\n");
+  var blob=new Blob([out],{type:"text/csv;charset=utf-8"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="torq-leads-"+(new Date().toISOString().slice(0,10))+".csv";
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+function cargar(){
+  if(!CSV_URL){
+    document.getElementById("setupMsg").style.display="block";
+    pintar();
+    return;
+  }
+  fetch(CSV_URL+(CSV_URL.indexOf("?")>-1?"&":"?")+"_="+Date.now())
+    .then(function(r){return r.text()})
+    .then(function(txt){
+      DATA=parseCSV(txt);
+      llenarSelect(document.getElementById("f-estado"),unico("Estado"),"Todos");
+      llenarSelect(document.getElementById("f-ciudad"),unico("Ciudad"),"Todas");
+      llenarSelect(document.getElementById("f-vehiculo"),unico("Vehículo"),"Todos");
+      pintar();
+    })
+    .catch(function(){
+      document.getElementById("empty").style.display="block";
+      document.getElementById("empty").innerHTML="No se pudo cargar la hoja. Revisa que <code>CSV_URL</code> esté publicada como CSV.";
+      document.getElementById("tb").innerHTML="";
+    });
+}
+
+["f-desde","f-hasta","f-estado","f-ciudad","f-vehiculo"].forEach(function(id){
+  document.getElementById(id).addEventListener("change",pintar);
+});
+document.getElementById("clear").onclick=function(){
+  ["f-desde","f-hasta","f-estado","f-ciudad","f-vehiculo"].forEach(function(id){
+    document.getElementById(id).value="";
+  });
+  pintar();
+};
+document.getElementById("dl").onclick=descargar;
+</script>
+</body>
+</html>
