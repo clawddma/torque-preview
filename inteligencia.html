@@ -499,20 +499,23 @@ function tesla(){
   s+='<line class="ax" x1="'+X(1)+'" y1="'+mt+'" x2="'+X(1)+'" y2="'+(H-mb)+'" stroke="var(--s2)" stroke-dasharray="3 4" opacity=".5"/>';
   s+='<text class="tk" x="'+(X(1)+7)+'" y="'+(mt+10)+'" fill="var(--s2)">llega Tesla</text>';
   s+='</svg>';
-  var n='<p class="sub" style="margin:16px 0 0;max-width:none">Tesla pasó de 296 unidades en febrero a <b>2.462 en marzo</b> y ahí se quedó. Se concentra en Bogotá (42%) y Medellín (22%), y solo el <b>'+T.teslaCredito.toString().replace(".",",")+'% compra a crédito</b>: es un comprador de contado y de alto poder adquisitivo, que no es el nuestro.<br><br><b>Lo que esto significa para el timing:</b> la llegada de Tesla no frenó a la SUV híbrida &mdash; siguió subiendo de 6.355 en marzo a 7.445 en mayo. Tesla elevó la conversación sobre movilidad eléctrica sin quitarle demanda al híbrido. Es el mejor momento para lanzar la MAGE: <b>hay atención en la categoría y el rival que la generó juega en otra liga de precio</b>.</p>';
+  var n='<p class="sub" style="margin:16px 0 0;max-width:none">Tesla pasó de 296 unidades en febrero a <b>2.462 en marzo</b> y ahí se quedó. Se concentra en Bogotá (42%) y Medellín (22%), y solo el <b>'+T.teslaCredito.toString().replace(".",",")+'% compra a crédito</b> &mdash; vende directo, sin la red de aliados financieros de un concesionario.<br><br><b>Y cuesta menos de lo que uno supondría:</b> el Model Y arranca en <b>$119.990.000</b>, apenas 10% por encima de la MAGE. Contra Tesla el argumento no puede ser el precio: es que <b>no hay que enchufarla</b> y que Corautos tiene 26 centros de servicio en 19 ciudades contra dos salas de Tesla en todo el país.<br><br><b>Lo que esto significa para el timing:</b> la llegada de Tesla no frenó a la SUV híbrida &mdash; siguió subiendo de 6.355 en marzo a 7.445 en mayo. Tesla elevó la conversación sobre movilidad eléctrica sin quitarle demanda al híbrido. Es el mejor momento para lanzar la MAGE: <b>hay atención en la categoría y el rival que la generó juega en otra liga de precio</b>.</p>';
   $("tesla").innerHTML=s+n;
 }
 
 /* ── Key Sales Points ────────────────────────────────────── */
 var KSP={hev:[
- {t:"El carro más vendido de Colombia hoy es eléctrico",
-  p:"El Tesla Model Y es el modelo número uno del país &mdash; 8.918 matrículas en cinco meses, más del doble que el segundo &mdash; y llegó de cero en marzo. Nunca en la historia del mercado colombiano la movilidad eléctrica había tenido tanta atención. Pero su comprador paga de contado (solo 33,9% usa crédito) y vive en Bogotá o Medellín.",
-  e:"El ángulo: <b>toda esa gente que quedó mirando y no llega a ese precio</b>. La MAGE ofrece ese mundo sin el precio y sin el enchufe. <b>Falta verificar el precio del Model Y</b> antes de usar la comparación de cifras."},
+ {t:"Contra el Model Y el argumento no es el precio",
+  p:"El Model Y arranca en $119.990.000 y la MAGE cuesta $109.000.000: <b>10% de diferencia</b>. No es otra liga de precio, y conviene saberlo antes de construir una campaña encima. Lo que sí es distinto: el Model Y hay que enchufarlo, y Tesla tiene <b>dos salas en todo el país</b> (Bogotá y Medellín) contra 26 centros de servicio de Corautos en 19 ciudades.",
+  e:"Contra: <b>el modelo más vendido de Colombia</b>. El argumento es <b>autonomía sin enchufe y respaldo donde vives</b>, nunca precio. Plaza: crítica fuera de Bogotá y Medellín."},
+ {t:"Donde Tesla no llega, que es casi todo el país",
+  p:"El 65% de las ventas de Tesla está en Bogotá y Medellín. En Ibagué representa el 15% del mercado híbrido, en Manizales el 20%, en Pasto el 8%. Vende directo, sin concesionarios: fuera de esas dos ciudades, comprar y mantener un Tesla es un problema práctico real.",
+  e:"Refuerza la <b>Ola 1</b>: Manizales, Ibagué y Pereira son justo donde Tesla pesa menos y Corautos tiene sala y taller. Y confirma <b>no arrancar por Medellín</b>, donde Tesla vale el 52% del híbrido."},
  {t:"El mismo motor, el doble de fuerza",
   p:"El 47,7% del segmento monta entre 1,4 y 1,6 litros, igual que la MAGE. La diferencia es que ellos entregan 120&ndash;150 hp y ella 288. No es un carro más grande: es el mismo tamaño de motor haciendo el doble.",
   e:"Contra: <b>todo el set mainstream</b>. Mata la objeción «un 1.5 se me queda en la loma». Plaza: todas."},
  {t:"$68 millones de diferencia con el Sportage",
-  p:"Kia Sportage híbrida cuesta $176.990.000 y da 231 hp. La MAGE cuesta $109.000.000 y da 288. Más potencia por 62 millones menos. El dato no necesita adjetivos.",
+  p:"Kia Sportage híbrida cuesta $176.990.000 y da 231 hp. La MAGE cuesta $109.000.000 y da 288. Más potencia por 68 millones menos. Contra el set tradicional el precio sí es el argumento: Corolla Cross +25%, Territory +37%, Sportage +62%.",
   e:"Contra: <b>Kia Sportage</b> (2.401 unidades). Plaza: Bogotá, Bucaramanga, Envigado, donde Kia pesa más."},
  {t:"No se enchufa. Ese es el punto.",
   p:"Contra los híbridos enchufables chinos (Starray, Yuan Up) el argumento no es potencia ni precio: es que no hay que instalar nada en la casa, ni buscar estación, ni cambiar la rutina. Se tanquea gasolina, solo que mucho menos seguido.",

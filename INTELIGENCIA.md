@@ -134,9 +134,10 @@ propio y es un mercado más grande (34.441 contra 23.845).
 1. **Tesla no le quitó demanda al híbrido.** La SUV híbrida siguió subiendo
    durante todo el aterrizaje de Tesla: 6.355 en marzo → 7.445 en mayo. Los dos
    mercados crecieron a la vez.
-2. **Tesla juega en otra liga de precio** y con otro comprador: solo el **33,9%**
-   compra a crédito (contra 51% en híbrida) y se concentra en Bogotá (42%) y
-   Medellín (22%). No es nuestro cliente.
+2. **Tesla vende a otro comprador, aunque no a otro precio** (ver más abajo:
+   el Model Y arranca en $119.990.000, solo 10% sobre la MAGE): solo el **33,9%**
+   financia, contra 51% en híbrida, y el 65% de sus ventas está en Bogotá y
+   Medellín.
 3. **Elevó la conversación.** Medio país está hablando de movilidad eléctrica
    por una marca que casi nadie puede pagar. Ese interés desplazado —gente que
    quiere «lo nuevo» pero no tiene $200 millones ni dónde enchufar— es
@@ -422,20 +423,61 @@ cuartil bajo, no cierra.** Ese es el riesgo real, dicho con número, y es la raz
 de que la Ola 1 sea Manizales y no Bogotá: hay que encontrar el mensaje que
 convierte **antes** de pagar el CPM caro.
 
-### Lo que el Model Y significa para la MAGE
+### Lo que el Model Y significa para la MAGE — corregido
 
-El carro más vendido del país es eléctrico y llegó de cero. Nunca la movilidad
-eléctrica había tenido tanta atención en Colombia. Pero su comprador **paga de
-contado** (solo 33,9% usa crédito, contra 51% en SUV híbrida) y vive en Bogotá
-o Medellín.
+Ya está verificado el precio, y **obliga a corregir lo que yo mismo escribí aquí
+antes de comprobarlo.** Había dicho que Tesla «juega en otra liga de precio» y
+que el ángulo era «la gente que no llega a ese precio». **Es falso:**
 
-> **El ángulo es la gente que quedó mirando y no llega a ese precio.** Quieren
-> lo nuevo, no tienen dónde enchufar y no van a pagar lo que cuesta un Tesla.
-> Eso es exactamente el lead de la MAGE.
+| | Precio |
+|---|---|
+| **MAGE HEV** | **$109.000.000** |
+| **Tesla Model Y RWD** | **$119.990.000** |
+| Tesla Model Y Long Range AWD | $144.990.000 |
 
-**Pendiente para poder usarlo en pauta:** verificar el precio del Model Y en
-Colombia. El RUNT no trae precio de transacción y sin una fuente confirmada no
-se puede publicar la comparación de cifras — solo el argumento cualitativo.
+**Son $10.990.000 de diferencia: 10%.** Con pintura ($4–6M), rines ($6M) e
+interior ($4M) un Model Y configurado queda entre $124 y $132 millones, pero la
+versión de entrada compite de frente con la MAGE. Detalle y fuentes en
+`COMPETENCIA.md`.
+
+**Contra el Model Y, el precio no es nuestro argumento. Son estos tres:**
+
+1. **No se enchufa.** El Model Y necesita infraestructura de carga; la MAGE no.
+   Es el diferenciador más fuerte y es independiente del precio.
+2. **Respaldo donde vives.** Corautos tiene 26 centros de servicio en 19
+   ciudades. **Tesla tiene dos salas en todo el país** —Centro Andino en Bogotá
+   y El Tesoro en Medellín— y vende directo, sin concesionarios.
+3. **Crédito.** Solo el 33,9% de los compradores de Tesla financia, contra el
+   51% del segmento híbrido: Tesla no trae la red de aliados financieros que sí
+   tiene un concesionario. Para la mitad del mercado, eso decide.
+
+### Dónde Tesla sí pesa y dónde no
+
+| Ciudad | Tesla | SUV híbrida | Tesla / híbrida |
+|---|---|---|---|
+| Envigado | 432 | 719 | **60%** |
+| Medellín | 2.299 | 4.457 | **52%** |
+| Bogotá | 4.512 | 13.197 | 34% |
+| Bucaramanga | 225 | 725 | 31% |
+| Pereira | 147 | 530 | 28% |
+| **Manizales** | 109 | 532 | **20%** |
+| **Ibagué** | 73 | 490 | **15%** |
+| Cúcuta | 58 | 453 | 13% |
+| Pasto | 30 | 358 | 8% |
+
+**El 65% de las ventas de Tesla está en Bogotá y Medellín** (contra 52% de la
+SUV híbrida). Esto **refuerza la Ola 1**: Manizales, Ibagué y Pereira son justo
+donde Tesla pesa menos y donde Corautos sí tiene sala y taller. Y confirma **no
+arrancar por Medellín**, donde Tesla ya vale la mitad del mercado híbrido y
+además solo el 40% compra a crédito.
+
+### El riesgo nuevo: guerra de precios
+
+La llegada de Tesla desató recortes de precio en eléctricos de hasta $80
+millones en algunos modelos. Si los rivales siguen bajando, la posición de valor
+de la MAGE a $109.000.000 se erosiona. **Hay que revisar precios de la
+competencia cada mes, no cada trimestre** (regla actualizada en
+`COMPETENCIA.md`).
 
 ## Qué medir desde el primer peso
 

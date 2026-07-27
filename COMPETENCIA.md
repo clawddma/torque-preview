@@ -43,6 +43,66 @@ justa de comparación tramposa.
 ³ Kia publica 7 años / 150.000 km de garantía de vehículo. No encontré una garantía de
 batería separada y publicada; **no la afirmamos**.
 
+## Tesla Model Y — el rival que no estaba en la tabla
+
+> Verificado el 27 de julio de 2026. **Es el modelo más vendido de Colombia**
+> (8.918 matrículas feb–jul según RUNT, más del doble que el segundo).
+
+| Versión | Precio |
+|---|---|
+| **Model Y RWD** | **$119.990.000** |
+| Model Y Long Range AWD | $144.990.000 |
+| Model 3 (referencia) | desde ~$115.000.000 |
+
+**Costos que no están en el precio de lista:**
+
+| Concepto | Costo |
+|---|---|
+| Separación del vehículo | $1.000.000 |
+| Pintura Blanco Perlado, Azul Glaciar, Negro Diamante | $4.000.000 |
+| Pintura Rojo Ultra, Plata Metálico | $6.000.000 |
+| Rines Helix 2.0 de 20" bicolor | $6.000.000 |
+| Interior blanco | $4.000.000 |
+
+Un Model Y configurado de forma realista queda entre **$124 y $132 millones**.
+
+### Lo que esto obliga a corregir
+
+**La MAGE cuesta $109.000.000. El Model Y arranca en $119.990.000: son
+$10.990.000, un 10%.** Eso **no** es «otra liga de precio», y yo lo había
+escrito así en `INTELIGENCIA.md` antes de verificarlo. Contra el Model Y,
+**el precio no es nuestro argumento.**
+
+Contra el set mainstream sí lo sigue siendo, y con holgura:
+
+| | Precio | vs MAGE |
+|---|---|---|
+| **MAGE HEV** | **$109.000.000** | — |
+| Tesla Model Y RWD | $119.990.000 | +$10.990.000 (+10%) |
+| Toyota Corolla Cross HEV | $136.200.000 | +$27.200.000 (+25%) |
+| Ford Territory Trend HEV | $148.990.000 | +$39.990.000 (+37%) |
+| Kia Sportage Zenith HEV | $176.990.000 | +$67.990.000 (+62%) |
+
+### Contra el Model Y, los argumentos reales son tres
+
+1. **No se enchufa.** El Model Y necesita infraestructura de carga; la MAGE no.
+   Es el diferenciador más fuerte y no depende del precio.
+2. **Red de servicio.** Corautos tiene 26 centros en 19 ciudades. Tesla tiene
+   **dos salas** (Centro Andino en Bogotá y El Tesoro en Medellín) y vende
+   directo, sin concesionarios. Fuera de esas dos ciudades, atender un Tesla
+   es un problema real.
+3. **Crédito.** Solo el 33,9% de los compradores de Tesla usa crédito, contra
+   el 51% del segmento híbrido. Tesla vende directo, sin la red de aliados
+   financieros que sí tiene un concesionario. Para la mitad del mercado que
+   compra financiado, eso pesa.
+
+### El riesgo que hay que vigilar
+
+La llegada de Tesla desató una **guerra de precios** en eléctricos en Colombia,
+con caídas reportadas de hasta $80 millones en algunos modelos. Si los rivales
+siguen recortando, la posición de valor de la MAGE a $109.000.000 se erosiona.
+**Revisar precios de la competencia cada mes, no cada trimestre.**
+
 ## Fuentes
 
 | Marca | Fuente |
