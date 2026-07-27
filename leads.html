@@ -342,6 +342,11 @@ document.getElementById("dl").onclick=descargar;
   }
   gb.onclick=intentar;
   gk.onkeydown=function(e){ if(e.key==="Enter") intentar() };
+  /* Enlace directo: leads.html?k=torq2026 entra sin escribir nada. La clave
+     ya está en el código fuente, así que esto no baja la seguridad — quita
+     el teclado del celular de la ecuación, que es donde se atasca. */
+  var m=location.search.match(/[?&]k=([^&]+)/);
+  if(m && decodeURIComponent(m[1]).trim().toLowerCase()===CLAVE.toLowerCase()){ abrir(); return }
   try{
     if(sessionStorage.getItem("torq_leads_ok")==="1"){ abrir(); return }
   }catch(e){}
