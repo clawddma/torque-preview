@@ -6,34 +6,28 @@
 > sí hice con `COMPETENCIA.md`. Antes de publicar cualquier cifra de aquí,
 > confirmarla con Corautos.
 
-## ⚠️ Discrepancia de precio — resolver antes de pautar
+## Precio — resuelto
 
-| Fuente | Precio MAGE HEV |
-|---|---|
-| Nuestro sitio, `index.html` y todo el material | **$109.000.000** |
-| Cuadro comparativo del 27 de julio | **$116.990.000** («versión de entrada») |
+**$109.000.000, precio de lanzamiento.** Confirmado por Daniel el 27 de julio de
+2026. Es el precio que opera en todo el material y con el que se calcula la
+comisión ($1.245.714 al 1,2% sobre base de $103.809.524).
 
-Son **$7.990.000 de diferencia**. Puede ser un alza, una versión distinta, o que
-los $109.000.000 fueran un precio de lanzamiento ya vencido. **No lo puedo
-resolver yo.**
+El cuadro comparativo del 27 de julio muestra $116.990.000 como «versión de
+entrada». **No es el precio operativo.** Se deja anotado por si más adelante hay
+que explicar la diferencia: probablemente sea el precio de lista sin el
+descuento de lanzamiento. Lo que importa para vender hoy son los $109.000.000.
 
-Lo que se cae si el precio real es $116.990.000:
+## El alcance de hoy: solo la MAGE
 
-- El **comparador** de `index.html` y toda la tabla de `COMPETENCIA.md`.
-- El **simulador de costo** y el ahorro que calcula.
-- La **comisión**: base antes de IVA pasa de $103.809.524 a $111.419.048 →
-  1,2% sube de **$1.245.714 a $1.337.029** por unidad.
-- El cálculo de la **reforma tributaria** (+$14.533.333 pasa a +$15.598.667).
-- El **punto de equilibrio** de la pauta.
+Corautos tiene tres vehículos y Dongfeng tiene más eléctricos en el país. Pero
+la decisión de Daniel (27 de julio) es concentrarse **solo en la MAGE** hasta
+comprobar que TORQ es capaz de generar leads que produzcan ingresos.
 
-Hasta que Corautos confirme, todo el material sigue con $109.000.000, que es lo
-que estaba verificado. Esta es la prioridad número uno de la lista de pendientes.
+El catálogo multimarca y multiproducto —con filtros por marca y categoría— viene
+después, y esa es la razón de que este documento exista: cuando llegue el
+momento, la información ya está levantada y no hay que volver a empezar.
 
-## Corautos no vende un carro: vende tres
-
-Esto cambia el alcance. La decisión del 27 de julio («solo Corautos, un vehículo»)
-sigue en pie en cuanto al **aliado**, pero el **catálogo** ya no es deuda futura:
-son tres productos en tres franjas de precio muy distintas.
+Lo de abajo es **inventario de conocimiento, no lista de tareas.**
 
 ### 1 · Dongfeng Box E2 — $69.990.000 · eléctrico urbano
 

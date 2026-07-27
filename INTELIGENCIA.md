@@ -12,6 +12,12 @@
 **La MAGE tiene cero matrículas en Colombia en estos cinco meses.** Cero.
 Busqué la línea completa: no existe en el archivo.
 
+**Eso es exactamente la oportunidad, y por eso vale la pena pautar ya.** El
+vehículo apenas se está lanzando: no hay un solo competidor peleando por su
+nombre de modelo, no hay pujas encarecidas por «Dongfeng MAGE», y quien capture
+esa demanda desde el primer día se queda con ella. La otra cara de la moneda
+—que hay que trabajar en paralelo, no en vez de— es la siguiente.
+
 Y Dongfeng sí está — 1.952 unidades — pero mira **qué** vende:
 
 | Línea | Combustible | Unidades |
@@ -90,6 +96,51 @@ Comparar contra ellos no es arbitrario: es un tercio del mercado.
 1,6 litros. La MAGE es 1.5T — está en el corazón del segmento por cilindraje,
 pero con **288 hp combinados** contra los 120–150 típicos. Ese es el argumento
 que ningún rival puede responder: mismo tamaño de motor, el doble de potencia.
+
+## Tesla llegó en marzo, y hay que leerlo bien
+
+**Tesla entró a Colombia en marzo de 2026** y en cinco meses se llevó **10.619
+unidades — el 44,5% de todo el mercado eléctrico del país.** Pasó de 296
+matrículas en febrero a 2.462 en marzo, y ahí se estabilizó.
+
+Esto obliga a corregir algo que yo mismo escribí más arriba en una versión
+anterior de este documento («los eléctricos son el segmento que más crece»):
+
+| Mes | SUV híbrida | Eléctricos **sin** Tesla | Tesla |
+|---|---|---|---|
+| Febrero | 5.819 | 2.240 | 296 |
+| Marzo | 6.355 | 2.648 | 2.462 |
+| Abril | 6.336 | 2.581 | 2.644 |
+| Mayo | **7.445** | 2.697 | 2.335 |
+| Junio | 7.315 | 2.538 | 2.428 |
+| **Variación** | **+25,7%** | **+13,3%** | — |
+
+**Descontando a Tesla, el mercado eléctrico está prácticamente plano.** Todo el
+«boom» es una sola marca. La SUV híbrida, en cambio, crece +25,7% por mérito
+propio y es un mercado más grande (34.441 contra 23.845).
+
+**Qué significa para el timing de la MAGE — y es bueno:**
+
+1. **Tesla no le quitó demanda al híbrido.** La SUV híbrida siguió subiendo
+   durante todo el aterrizaje de Tesla: 6.355 en marzo → 7.445 en mayo. Los dos
+   mercados crecieron a la vez.
+2. **Tesla juega en otra liga de precio** y con otro comprador: solo el **33,9%**
+   compra a crédito (contra 51% en híbrida) y se concentra en Bogotá (42%) y
+   Medellín (22%). No es nuestro cliente.
+3. **Elevó la conversación.** Medio país está hablando de movilidad eléctrica
+   por una marca que casi nadie puede pagar. Ese interés desplazado —gente que
+   quiere «lo nuevo» pero no tiene $200 millones ni dónde enchufar— es
+   exactamente el lead de la MAGE.
+
+> **El timing es el argumento:** hay atención máxima en la categoría, el rival
+> que la generó no compite por precio, y la MAGE llega sin un solo competidor
+> directo en su nombre de modelo. No hay que crear la conversación: hay que
+> capturarla.
+
+**Para los eléctricos de Corautos (Box E2 y Vigo E2+) el mismo dato es una
+advertencia:** entrarían a un segmento donde uno solo se lleva la mitad y el
+resto se mueve al +13,3%. Sus rivales reales no son Tesla sino **BYD Yuan Up
+(2.494), Chery iCAR 03 (1.185) y BYD Seagull (1.065)**.
 
 ## La tabla que define dónde pautar
 
