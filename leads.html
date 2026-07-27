@@ -83,7 +83,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--mut2);fo
   <div class="box">
     <div class="eyebrow">Torq · Uso interno</div>
     <h1>Acceso a leads</h1>
-    <input type="password" id="gk" placeholder="Clave" autocomplete="off" inputmode="text">
+    <input type="text" id="gk" placeholder="Clave" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text">
     <button id="gb">Entrar</button>
     <div class="err" id="ge"></div>
   </div>
@@ -164,7 +164,7 @@ var CLAVE="torq2026";
     cargar();
   }
   function intentar(){
-    if(gk.value===CLAVE) abrir();
+    if(gk.value.trim().toLowerCase()===CLAVE.toLowerCase()) abrir();
     else{ ge.textContent="Clave incorrecta"; gk.value=""; gk.focus(); }
   }
   gb.onclick=intentar;
