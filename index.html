@@ -751,7 +751,6 @@ var TQ=(function(){
     if(pago) t+=" "+pago;
     /* la retoma solo se menciona si la tiene: un "no" no aporta nada al asesor */
     if(r.Retoma==="Sí") t+=" Tengo un vehículo para entregar en parte de pago.";
-    if(window.TQ_SIM) t+="\n\n"+window.TQ_SIM+".";
     t+="\n\nQuedo atento.";
     return t;
   }

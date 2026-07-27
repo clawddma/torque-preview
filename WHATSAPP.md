@@ -4,6 +4,13 @@
 > el acuerdo con Corautos. Línea: **+57 305 431 0851**.
 > Actualizado: 27 de julio de 2026.
 
+**Nota de versión (27 de julio de 2026):** WhatsApp Business movió "Herramientas
+para la empresa" fuera de Ajustes. Ahora vive en una **pestaña propia llamada
+"Herramientas"**, en la barra inferior de la app (junto a Chats, Estados,
+Llamadas) — no dentro de Ajustes → Cuenta ni de Ajustes → Editar perfil. Todos
+los pasos de abajo siguen siendo válidos en contenido; solo cambia la ruta para
+llegar: entra por esa pestaña, no por Ajustes.
+
 ## Antes de empezar — dos advertencias
 
 1. **La migración no tiene devolución.** Una vez el número pasa a WhatsApp Business,
@@ -74,6 +81,13 @@ para cuándo estás pensando la compra, y llegamos con todo listo.
 *Herramientas para empresas → Respuestas rápidas*. Son la versión manual del bot:
 escribes `/precio` y se despliega el texto. **Mismas cifras que `bot.html`.**
 
+**Regla antes de enviar cualquiera que pregunte la ciudad** (`/precio`,
+`/servicio`, `/prueba`): mira si el mensaje con el que te escribió ya la trae.
+Si vino del calificador de la página, empieza con "Estoy en [ciudad]" — en ese
+caso **borra la pregunta de la ciudad antes de enviar** la respuesta rápida,
+no tiene sentido repetirla. Solo pregúntala si el mensaje llegó sin ese dato
+(por ejemplo, alguien que solo escribió "Hola" o borró el texto prellenado).
+
 ### `/precio`
 ```
 El precio de lanzamiento de la MAGE HEV es de $109.000.000, con IVA incluido.
@@ -81,6 +95,7 @@ El precio de lanzamiento de la MAGE HEV es de $109.000.000, con IVA incluido.
 Está sujeto a confirmación con la sala, porque depende de disponibilidad y
 versión. ¿En qué ciudad estás? Te confirmo el precio vigente allá.
 ```
+*(quita la pregunta de la ciudad si el mensaje ya la trae — ver regla arriba)*
 
 ### `/enchufe`
 ```
@@ -123,6 +138,7 @@ Es de las garantías más largas del segmento en Colombia.
 Son más sitios para atenderla que para comprarla. Dime tu ciudad y te digo
 cuál te queda más cerca.
 ```
+*(quita la pregunta de la ciudad si el mensaje ya la trae — ver regla del Paso 5)*
 
 ### `/reforma`
 ```
@@ -149,6 +165,7 @@ Con gusto agendamos prueba de ruta.
 ¿En qué ciudad estás y qué día te queda mejor? Lo cuadro con la sala y te
 confirmo.
 ```
+*(si ya tienes la ciudad, pregunta solo el día: "¿Qué día te queda mejor? Lo cuadro con la sala y te confirmo.")*
 
 ### `/cierre`
 ```
@@ -160,6 +177,39 @@ Cualquier cosa que se te ocurra mientras tanto, escríbeme por aquí.
 
 **Nunca por WhatsApp:** descuentos, tasas de crédito, fechas de entrega, ni la
 devolución de IVA como un hecho. Eso lo define la sala. Las razones están en `BOT.md`.
+
+## Paso 5.5 · Catálogo
+
+*Herramientas para empresas → Catálogo → Añadir artículo o servicio.*
+
+Un solo artículo por ahora — el piloto:
+
+| Campo | Qué poner |
+|---|---|
+| Foto | Una de `img/hero.jpg` o `img/g1.jpg` a `g8.jpg` (súbela desde el teléfono) |
+| Nombre | Dongfeng MAGE HEV E3 |
+| Precio | $109.000.000 |
+| Descripción | Híbrida autorecargable, 288 hp combinados, 565 Nm, 4,9 L/100 km. Garantía de batería 8 años/200.000 km. Compra y renting. |
+| Enlace/sitio web | `https://clawddma.github.io/torque-preview/` |
+
+No agregues más artículos todavía — un solo vehículo, un solo aliado. Cuando entre
+una segunda marca, el catálogo pasa a ser prioridad de construcción (ver
+`CONTEXTO.md` → Alcance de esta fase).
+
+## Paso 5.6 · Anuncios (el botón "Anuncios" o "Promocionar" dentro de la app)
+
+**No lo uses todavía.** Ese botón crea campañas simplificadas desde el celular,
+sin pasar por Meta Ads Manager. Dos problemas si lo usas ahora:
+
+1. **Pierde el código de campaña.** Todo el mensaje que llega por `?c=` hasta
+   WhatsApp (ver `index.html`) depende de que el anuncio venga de una campaña
+   armada en Ads Manager con la estructura de `PAUTA.md`. Un anuncio creado desde
+   la app no lleva ese código: no sabrías qué ángulo ni qué plaza generó el lead.
+2. **Es plata sin atribución.** Sin código de campaña no puedes medir costo por
+   lead calificado, que es el número que sostiene todo el negocio.
+
+Cuando llegue el momento de pautar (después de los 4 bloqueantes de más abajo),
+la pauta se monta desde Meta Ads Manager, no desde este botón.
 
 ## Paso 6 · Etiquetas
 
