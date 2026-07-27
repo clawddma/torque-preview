@@ -159,26 +159,6 @@ var CSV_URL="";
    dejes este archivo como el único resguardo. */
 var CLAVE="torq2026";
 
-(function(){
-  var gate=document.getElementById("gate"), app=document.getElementById("app");
-  var gk=document.getElementById("gk"), gb=document.getElementById("gb"), ge=document.getElementById("ge");
-  function abrir(){
-    gate.style.display="none"; app.classList.add("on");
-    try{ sessionStorage.setItem("torq_leads_ok","1") }catch(e){}
-    cargar();
-  }
-  function intentar(){
-    if(gk.value.trim().toLowerCase()===CLAVE.toLowerCase()) abrir();
-    else{ ge.textContent="Clave incorrecta"; gk.value=""; gk.focus(); }
-  }
-  gb.onclick=intentar;
-  gk.onkeydown=function(e){ if(e.key==="Enter") intentar() };
-  try{
-    if(sessionStorage.getItem("torq_leads_ok")==="1"){ abrir(); return }
-  }catch(e){}
-  gk.focus();
-})();
-
 /* ── CSV → filas ───────────────────────────────────────────────────── */
 function parseCSV(txt){
   var rows=[], row=[], field="", inQ=false;
@@ -342,6 +322,31 @@ document.getElementById("clear").onclick=function(){
   pintar();
 };
 document.getElementById("dl").onclick=descargar;
+
+/* ── compuerta ──────────────────────────────────────────────────────
+   Va al FINAL a propósito: abrir() llama a cargar(), que pinta la tabla.
+   Si esto corriera antes, DATA (declarada más abajo) todavía valdría
+   undefined y la página reventaba — justo en la recarga, cuando la
+   sesión ya estaba guardada y la compuerta se saltaba sola. */
+(function(){
+  var gate=document.getElementById("gate"), app=document.getElementById("app");
+  var gk=document.getElementById("gk"), gb=document.getElementById("gb"), ge=document.getElementById("ge");
+  function abrir(){
+    gate.style.display="none"; app.classList.add("on");
+    try{ sessionStorage.setItem("torq_leads_ok","1") }catch(e){}
+    cargar();
+  }
+  function intentar(){
+    if(gk.value.trim().toLowerCase()===CLAVE.toLowerCase()) abrir();
+    else{ ge.textContent="Clave incorrecta"; gk.value=""; gk.focus(); }
+  }
+  gb.onclick=intentar;
+  gk.onkeydown=function(e){ if(e.key==="Enter") intentar() };
+  try{
+    if(sessionStorage.getItem("torq_leads_ok")==="1"){ abrir(); return }
+  }catch(e){}
+  gk.focus();
+})();
 </script>
 </body>
 </html>

@@ -1,108 +1,168 @@
-# TORQ — Base de leads en Google Sheets
+# TORQ — Base de leads y CRM
 
-> Cómo conectar `index.html` y `leads.html` a una hoja de cálculo real, sin
-> backend propio. Actualizado: 27 de julio de 2026.
+> Cómo conectar `index.html`, `crm.html` y `leads.html` a una hoja de cálculo
+> real, sin servidor propio. Actualizado: 27 de julio de 2026.
 
 ## Qué hace esto
 
-Cada vez que alguien completa el calificador (o toca "Solo quiero preguntar
-algo") y sale hacia WhatsApp, la página manda esos datos a una hoja de
-Google Sheets. `leads.html` lee esa misma hoja, la deja filtrar por fecha,
-estado, ciudad o vehículo, y descargar el resultado en CSV para enviarlo a
-Corautos o a la casa matriz.
+| Pieza | Papel |
+|---|---|
+| `index.html` | **Escribe.** Cada lead que sale hacia WhatsApp cae en la hoja |
+| `crm.html` | **Trabaja.** Pipeline, seguimiento, notas, teléfono, SLA. Lee y escribe |
+| `leads.html` | **Reporta.** Tabla plana y descarga para enviar a Corautos. Solo lee |
+| Google Sheets | La base de datos. Editable a mano cuando haga falta |
 
-No hay servidor propio: Apps Script (gratis, de Google) recibe el dato y lo
-escribe en la hoja; la hoja publicada como CSV es lo que `leads.html` lee.
+Un solo Apps Script (gratis, de Google) atiende las tres: recibe leads nuevos,
+devuelve la lista y guarda los cambios del CRM.
 
 ## Paso 1 · Crear la hoja
 
-1. Crea una hoja de cálculo nueva en Google Sheets. Nómbrala **TORQ — Leads**.
-2. Renombra la primera pestaña a **Leads** (el nombre importa, el script lo busca así).
-3. En la fila 1, estas nueve columnas exactas, en este orden:
+1. Hoja nueva en Google Sheets, llamada **TORQ — Leads**.
+2. Renombra la primera pestaña a **Leads** (el nombre importa).
+3. En la fila 1, estas columnas exactas, en este orden:
 
    ```
-   Fecha | Nombre | Ciudad | Compra | Pago | Retoma | Vehículo | Campaña | Estado
+   ID | Fecha | Nombre | Teléfono | Ciudad | Compra | Pago | Retoma | Vehículo | Campaña | Estado | Entregado | Contactado | Próximo paso | Seguimiento | Notas | Actualizado
    ```
 
-## Paso 2 · El script que recibe los leads
+   `Entregado` y `Contactado` son sellos de tiempo: la distancia entre los dos
+   **es el SLA de la sala**, el dato con el que vas a negociar esa cláusula del
+   contrato. No los llenes a mano; el CRM los pone solo al mover la tarjeta.
+
+## Paso 2 · El script
 
 1. En la hoja: *Extensiones → Apps Script*.
-2. Borra el contenido de `Código.gs` y pega esto:
+2. Borra todo y pega esto tal cual:
 
    ```javascript
    var HOJA = "Leads";
 
+   function abrir_() {
+     return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(HOJA);
+   }
+
+   /* Lee: devuelve todos los leads como JSON. Se llama por JSONP desde
+      crm.html, así que responde envuelto en el callback que le pidan. */
+   function doGet(e) {
+     var sheet = abrir_();
+     var datos = sheet.getDataRange().getValues();
+     var head = datos.shift();
+     var leads = datos.filter(function (f) { return f[0] !== ""; })
+       .map(function (f) {
+         var o = {};
+         head.forEach(function (h, i) {
+           var v = f[i];
+           o[h] = (v instanceof Date) ? v.toISOString() : String(v);
+         });
+         return o;
+       });
+     var salida = JSON.stringify({ ok: true, leads: leads });
+     var cb = e && e.parameter && e.parameter.callback;
+     if (cb) {
+       return ContentService.createTextOutput(cb + "(" + salida + ")")
+         .setMimeType(ContentService.MimeType.JAVASCRIPT);
+     }
+     return ContentService.createTextOutput(salida)
+       .setMimeType(ContentService.MimeType.JSON);
+   }
+
+   /* Escribe: crea un lead nuevo (desde la página) o actualiza campos
+      de uno existente (desde el CRM). */
    function doPost(e) {
-     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(HOJA);
+     var sheet = abrir_();
      var d = JSON.parse(e.postData.contents);
-     sheet.appendRow([
-       new Date(),
-       d.nombre || "",
-       d.ciudad || "",
-       d.compra || "",
-       d.pago || "",
-       d.retoma || "",
-       d.vehiculo || "MAGE HEV",
-       d.campana || "directo",
-       "Nuevo"
-     ]);
-     return ContentService.createTextOutput(JSON.stringify({ok:true}))
+     var head = sheet.getDataRange().getValues()[0];
+
+     if (d.accion === "actualizar") {
+       var datos = sheet.getDataRange().getValues();
+       for (var i = 1; i < datos.length; i++) {
+         if (String(datos[i][0]) === String(d.id)) {
+           for (var campo in d.campos) {
+             var col = head.indexOf(campo);
+             if (col > -1) sheet.getRange(i + 1, col + 1).setValue(d.campos[campo]);
+           }
+           break;
+         }
+       }
+     } else {
+       var id = "L" + Utilities.formatDate(new Date(), "GMT-5", "yyMMddHHmmss");
+       var fila = {
+         ID: id, Fecha: new Date(), Nombre: d.nombre || "", "Teléfono": "",
+         Ciudad: d.ciudad || "", Compra: d.compra || "", Pago: d.pago || "",
+         Retoma: d.retoma || "", "Vehículo": d.vehiculo || "MAGE HEV",
+         "Campaña": d.campana || "directo", Estado: "Nuevo",
+         Entregado: "", Contactado: "", "Próximo paso": "",
+         Seguimiento: "", Notas: "", Actualizado: new Date()
+       };
+       sheet.appendRow(head.map(function (h) { return fila[h] !== undefined ? fila[h] : ""; }));
+     }
+     return ContentService.createTextOutput(JSON.stringify({ ok: true }))
        .setMimeType(ContentService.MimeType.JSON);
    }
    ```
 
-3. Guarda (ícono de disquete, o `Cmd/Ctrl+S`). Nombra el proyecto **TORQ Leads**.
+3. Guarda. Nombra el proyecto **TORQ Leads**.
 
-## Paso 3 · Publicarlo como Web App
+## Paso 3 · Publicarlo
 
-1. Arriba a la derecha: **Implementar → Nueva implementación**.
+1. **Implementar → Nueva implementación**.
 2. Tipo: **Aplicación web**.
-3. **Ejecutar como:** tu cuenta (Daniel).
-4. **Quién tiene acceso:** **Cualquier usuario** — sin esto, la página no
-   puede escribir en la hoja desde el navegador del cliente.
-5. **Implementar**. Google va a pedir autorizar el script — es tu propia
-   cuenta accediendo a tu propia hoja, acepta.
-6. Copia la **URL de la aplicación web** que te da (termina en `/exec`).
+3. **Ejecutar como:** tu cuenta.
+4. **Quién tiene acceso:** **Cualquier usuario** — sin esto la página no puede
+   escribir desde el navegador del cliente.
+5. **Implementar** y autoriza (es tu cuenta entrando a tu propia hoja).
+6. Copia la **URL de la aplicación web**. Termina en `/exec`.
 
-## Paso 4 · Publicar la hoja como CSV (para leerla)
+> Cada vez que edites el script hay que **volver a implementar** (*Implementar →
+> Administrar implementaciones → editar → Nueva versión*), si no sigue corriendo
+> el código viejo.
 
-1. En la hoja: **Archivo → Compartir → Publicar en la Web**.
-2. En el primer selector, elige la pestaña **Leads** (no "Todo el documento").
-3. En el segundo selector, elige **Valores separados por comas (.csv)**.
-4. **Publicar** → confirma.
-5. Copia el enlace que te da (algo como
-   `https://docs.google.com/spreadsheets/d/e/2PACX.../pub?output=csv`).
+## Paso 4 · Pegar la URL
 
-## Paso 5 · Pegar las dos URLs en el código
+Es la **misma URL** en los tres archivos:
 
-| Dónde | Qué pegar |
+| Archivo | Constante |
 |---|---|
-| `index.html`, constante `LEADS_URL` (cerca de `var WA=`) | La URL del Paso 3 (`.../exec`) |
-| `leads.html`, constante `CSV_URL` (dentro del `<script>`, al principio) | La URL del Paso 4 (`.../pub?output=csv`) |
+| `index.html` | `LEADS_URL` (junto a `var WA=`) |
+| `crm.html` | `API_URL` (al inicio del `<script>`) |
+| `leads.html` | `CSV_URL` — *ver nota abajo* |
 
-Envíame las dos URLs cuando las tengas y las dejo puestas — o edítalas tú
-mismo, son las dos únicas líneas a tocar en cada archivo.
+`leads.html` todavía lee por CSV publicado. Si prefieres no publicar la hoja,
+usa solo `crm.html`: hace lo mismo y además descarga CSV. Para dejar `leads.html`
+funcionando: *Archivo → Compartir → Publicar en la Web → pestaña Leads → CSV*,
+y pega ese enlace en `CSV_URL`.
 
-## Paso 6 · La clave de `leads.html`
+Mándame las URLs y las dejo puestas, o edítalas tú: es una línea en cada archivo.
 
-`leads.html` pide una clave antes de mostrar nada (`var CLAVE="torq2026"`,
-al inicio del script). **Cámbiala** antes de dejar esto corriendo en serio —
-la de fábrica es solo para que puedas probar. No es seguridad real (está en
-el código fuente, cualquiera que lo revise la puede leer), es una barrera
-contra quien entra por accidente. Los datos que hay ahí son personales
-(nombre, ciudad, intención de compra) y caen bajo la Ley 1581 — tú eres el
-Responsable del Tratamiento (ver `CONTEXTO.md`), así que no lo dejes como
-único resguardo si esto crece.
+## Paso 5 · La clave
+
+`crm.html` y `leads.html` piden una clave (`var CLAVE="torq2026"`). **Cámbiala.**
+No es seguridad real —está en el código fuente—, es una barrera contra quien
+entra por accidente. Adentro hay datos personales: nombre, ciudad, teléfono,
+intención de compra. Aplica la Ley 1581 y tú eres el Responsable del
+Tratamiento (ver `CONTEXTO.md`). Si esto crece, esta compuerta no alcanza.
+
+## Cómo se usa el CRM
+
+- **Mover de etapa:** arrastra la tarjeta (computador) o abre la ficha y toca la
+  etapa (celular). Al pasar a *Entregado* y a *Contactado* se sellan las horas
+  automáticamente; ese par es el SLA.
+- **Teléfono:** no lo pide el calificador —sería fricción justo antes del
+  handoff, y de todas formas la persona te escribe desde su número. Lo pegas en
+  la ficha cuando escriba, y desde ahí el botón de WhatsApp queda activo.
+- **Seguimiento:** fecha + qué toca hacer. Lo vencido se marca en naranja en la
+  tarjeta y sube como alerta arriba.
+- **Alertas:** leads entregados que llevan más de 24 h sin que la sala los
+  contacte, y seguimientos vencidos. Ese primer número es el argumento del
+  contrato, medido, no opinado.
 
 ## Qué NO hace todavía
 
-- **No se puede cambiar el estado de un lead desde `leads.html`.** Es de
-  lectura y descarga. Para pasar un lead de `Nuevo` a `Contactado`,
-  `Facturado`, etc., edita la celda directo en la hoja de Google — igual la
-  vas a tener abierta para revisar.
-- **Si el navegador del cliente bloquea el `fetch` de registro** (algún
-  bloqueador de rastreadores agresivo), el lead igual llega por WhatsApp,
-  simplemente no queda en la hoja. El WhatsApp nunca depende de esto.
-- Un solo vehículo hoy (columna Vehículo siempre "MAGE HEV"). Cuando entre
-  una segunda marca, ese campo ya existe y el filtro de `leads.html` ya lo
-  soporta — no hay que tocar nada ahí.
+- **Sin historial de cambios.** Se ve el estado actual, no quién lo movió ni
+  cuándo (salvo los dos sellos del SLA). Para dos personas alcanza.
+- **Escritura a ciegas.** El navegador no puede leer la respuesta de Apps
+  Script, así que la pantalla se actualiza de una vez y el guardado va detrás.
+  Si falla, el refresco del minuto siguiente lo revela. El lead nunca se pierde:
+  llega por WhatsApp pase lo que pase.
+- **Un solo vehículo.** La columna existe y el filtro ya la soporta; cuando
+  entre la segunda marca no hay que tocar nada aquí.

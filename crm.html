@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>TORQ &mdash; Pipeline</title>
+<style>
+:root{
+  --ink:#08090a; --surf:#0e1013; --surf2:#141719; --line:#1c1f24; --line2:#2a2e35;
+  --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b; --brand:#c8f24a;
+  --alert:#d95926; --win:#22c98d;
+  --e1:#2b4a6f; --e2:#2f6bb0; --e3:#3987e5; --e4:#5ba3f0; --e5:#8ec5f7;
+  --e6:#22c98d; --ex:#4a4f57;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--ink);color:var(--paper);font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:1400px;margin:0 auto;padding:0 22px}
+button,input,select,textarea{font-family:inherit}
+.num{font-variant-numeric:tabular-nums}
+
+/* ── compuerta ─────────────────────────────────────────────── */
+#gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
+#gate .box{width:100%;max-width:300px;text-align:center}
+#gate .eyebrow{font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:12px}
+#gate h1{font-size:21px;margin:0 0 20px;font-weight:800;letter-spacing:-.01em}
+#gate input{width:100%;background:var(--surf);border:1px solid var(--line2);color:var(--paper);padding:13px;border-radius:7px;font-size:15px;text-align:center;letter-spacing:.05em}
+#gate input:focus{outline:2px solid var(--brand);outline-offset:1px}
+#gate button{width:100%;margin-top:9px;background:var(--brand);color:#0a0c07;border:none;padding:13px;border-radius:7px;font-weight:700;font-size:14px;cursor:pointer}
+#gate .err{color:var(--alert);font-size:12.5px;margin-top:10px;min-height:16px}
+#app{display:none}#app.on{display:block}
+
+/* ── nav ───────────────────────────────────────────────────── */
+nav{position:sticky;top:0;z-index:90;backdrop-filter:blur(20px);background:rgba(8,9,10,.88);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:58px;gap:16px}
+.logo{font-weight:800;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
+.logo span{color:var(--brand)}
+.navr{display:flex;align-items:center;gap:14px}
+.navr a{color:var(--mut);text-decoration:none;font-size:12.5px;white-space:nowrap}
+.navr a:hover{color:var(--paper)}
+#sync{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut2);font-weight:700;white-space:nowrap}
+#sync.ok{color:var(--win)}#sync.go{color:var(--brand)}
+
+/* ── encabezado ────────────────────────────────────────────── */
+.head{padding:30px 0 4px}
+.head h1{font-size:27px;font-weight:800;margin:0;letter-spacing:-.015em}
+.head p{color:var(--mut);font-size:13.5px;margin:7px 0 0;line-height:1.6;max-width:600px}
+
+/* ── métricas ──────────────────────────────────────────────── */
+.mets{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:22px 0 0}
+.met{border:1px solid var(--line);border-radius:8px;padding:16px 17px;background:var(--surf)}
+.met .k{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);margin-bottom:9px;line-height:1.4}
+.met .v{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.met .d{font-size:11px;color:var(--mut2);margin-top:7px;line-height:1.4}
+.met .v.w{color:var(--win)}.met .v.a{color:var(--alert)}
+
+/* ── alertas ───────────────────────────────────────────────── */
+.alerts{margin-top:18px;display:flex;flex-direction:column;gap:7px}
+.alert{display:flex;align-items:center;gap:11px;border:1px solid rgba(217,89,38,.3);background:rgba(217,89,38,.07);border-radius:7px;padding:11px 14px;font-size:12.5px;cursor:pointer}
+.alert:hover{background:rgba(217,89,38,.11)}
+.alert .dot{width:6px;height:6px;border-radius:50%;background:var(--alert);flex:none}
+.alert b{color:var(--paper)}
+.alert span{color:var(--mut)}
+.alert .go{margin-left:auto;color:var(--alert);font-weight:700;font-size:11.5px;white-space:nowrap}
+
+/* ── filtros ───────────────────────────────────────────────── */
+.filters{position:sticky;top:58px;z-index:80;background:rgba(8,9,10,.95);backdrop-filter:blur(14px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:13px 0;margin-top:24px}
+.frow{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fl{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);font-weight:700}
+.fg select,.fg input{background:var(--surf);border:1px solid var(--line2);color:var(--paper);padding:8px 10px;border-radius:6px;font-size:12.5px}
+.fg select{min-width:132px}
+.sp{flex:1}
+.bt{border:1px solid var(--line2);background:transparent;color:var(--mut);padding:9px 14px;border-radius:6px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.bt:hover{color:var(--paper);border-color:var(--mut2)}
+.bt.p{background:var(--brand);color:#0a0c07;border-color:var(--brand);font-weight:700}
+.bt.p:hover{color:#0a0c07;opacity:.9}
+
+/* ── selector de etapa (solo móvil) ────────────────────────── */
+.etapas{display:none}
+.etapas .row{display:flex;gap:6px;overflow-x:auto;padding:14px 16px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.etapas .row::-webkit-scrollbar{display:none}
+.ep{display:flex;align-items:center;gap:7px;flex:none;border:1px solid var(--line2);background:var(--surf);color:var(--mut);border-radius:100px;padding:8px 13px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.ep .bar{width:3px;height:12px;border-radius:2px;flex:none}
+.ep .ct{font-weight:700;font-size:11px;color:var(--mut2)}
+.ep[aria-pressed="true"]{background:var(--surf2);border-color:var(--paper);color:var(--paper)}
+.ep[aria-pressed="true"] .ct{color:var(--paper)}
+
+/* ── tablero ───────────────────────────────────────────────── */
+.boardwrap{overflow-x:auto;padding:22px 0 40px;-webkit-overflow-scrolling:touch}
+.board{display:flex;gap:11px;min-width:min-content;padding:0 22px}
+.col{width:252px;flex:none;display:flex;flex-direction:column}
+.colh{display:flex;align-items:center;gap:8px;padding:0 3px 11px}
+.colh .bar{width:3px;height:15px;border-radius:2px;flex:none}
+.colh .nm{font-size:11.5px;font-weight:700;letter-spacing:.02em}
+.colh .ct{margin-left:auto;font-size:11px;color:var(--mut2);font-weight:700;background:var(--surf);border:1px solid var(--line);border-radius:100px;padding:2px 8px}
+.colb{display:flex;flex-direction:column;gap:7px;min-height:56px;border-radius:8px;padding:3px;transition:background .15s}
+.colb.over{background:rgba(200,242,74,.06);outline:1px dashed rgba(200,242,74,.35)}
+.card{border:1px solid var(--line);background:var(--surf);border-radius:8px;padding:12px 13px;cursor:pointer;transition:border-color .15s,transform .1s}
+.card:hover{border-color:var(--line2)}
+.card:active{transform:scale(.99)}
+.card.drag{opacity:.4}
+.card.late{border-color:rgba(217,89,38,.45)}
+.card .nm{font-size:13.5px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.card .mt{display:flex;flex-wrap:wrap;gap:5px 9px;font-size:11px;color:var(--mut)}
+.card .mt .cy{color:var(--paper)}
+.card .fo{margin-top:9px;padding-top:9px;border-top:1px solid var(--line);font-size:10.5px;color:var(--mut2);line-height:1.55}
+.card .fo span{white-space:nowrap}
+.card .fo .w{color:var(--alert);font-weight:700}
+.card .fo .g{color:var(--mut)}
+.colempty{border:1px dashed var(--line2);border-radius:8px;padding:16px 12px;text-align:center;color:var(--mut2);font-size:11.5px}
+
+/* ── cajón de detalle ──────────────────────────────────────── */
+#scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:110;opacity:0;pointer-events:none;transition:opacity .2s}
+#scrim.on{opacity:1;pointer-events:auto}
+#draw{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100%;background:var(--surf);border-left:1px solid var(--line2);z-index:120;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+#draw.on{transform:none}
+.dh{position:sticky;top:0;background:var(--surf);border-bottom:1px solid var(--line);padding:18px 22px 15px;z-index:2}
+.dh .x{position:absolute;top:15px;right:18px;background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;line-height:1;padding:4px}
+.dh .x:hover{color:var(--paper)}
+.dh h2{font-size:19px;font-weight:800;margin:0 0 8px;letter-spacing:-.015em;padding-right:32px}
+.dh .sub{font-size:11.5px;color:var(--mut);display:flex;flex-wrap:wrap;gap:4px 10px}
+.db{padding:20px 22px 34px;flex:1}
+.sec{margin-bottom:24px}
+.sec>.t{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--mut2);font-weight:700;margin-bottom:11px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fld{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}
+.fld label{font-size:10.5px;color:var(--mut);letter-spacing:.03em}
+.fld input,.fld textarea,.fld select{background:var(--ink);border:1px solid var(--line2);color:var(--paper);padding:9px 11px;border-radius:6px;font-size:13px;width:100%}
+.fld textarea{resize:vertical;min-height:74px;line-height:1.55}
+.fld input:focus,.fld textarea:focus,.fld select:focus{outline:1px solid var(--brand);outline-offset:0;border-color:var(--brand)}
+.steps{display:flex;flex-direction:column;gap:5px}
+.step{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--ink);border-radius:7px;padding:10px 12px;cursor:pointer;text-align:left;width:100%;color:var(--paper);font-size:12.5px;transition:border-color .15s}
+.step:hover{border-color:var(--mut2)}
+.step.on{border-color:var(--brand);background:rgba(200,242,74,.06)}
+.step .bar{width:3px;height:16px;border-radius:2px;flex:none}
+.step .d{margin-left:auto;font-size:10.5px;color:var(--mut2);text-align:right}
+.step.on .d{color:var(--brand)}
+.wa{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--brand);color:#0a0c07;border:none;padding:13px;border-radius:7px;font-weight:700;font-size:13.5px;cursor:pointer;text-decoration:none;margin-bottom:9px}
+.wa.off{background:var(--surf2);color:var(--mut2);border:1px solid var(--line2);cursor:default}
+.hist{font-size:11.5px;color:var(--mut);line-height:1.8}
+.hist b{color:var(--paper);font-weight:600}
+
+.setup{border:1px solid var(--line2);border-radius:8px;padding:18px 20px;background:var(--surf);color:var(--mut);font-size:13px;line-height:1.7;margin-top:22px}
+.setup code{background:var(--ink);border:1px solid var(--line2);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--brand)}
+.setup a{color:var(--brand)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,80px);background:var(--surf2);border:1px solid var(--line2);color:var(--paper);padding:11px 20px;border-radius:100px;font-size:12.5px;z-index:190;transition:transform .25s;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.toast.on{transform:translate(-50%,0)}
+
+@media(max-width:900px){
+  .wrap{padding:0 16px}
+  .mets{grid-template-columns:repeat(2,1fr)}
+  .head h1{font-size:23px}
+  #draw{width:100%;top:auto;height:88vh;border-left:none;border-top:1px solid var(--line2);border-radius:16px 16px 0 0;transform:translateY(100%)}
+  #draw.on{transform:none}
+  .filters{top:58px}
+  /* Una etapa a la vez: arrastrar por siete columnas en un teléfono es
+     peor que elegir la etapa y ver esa lista completa. */
+  .etapas{display:block}
+  .boardwrap{overflow-x:visible;padding:14px 0 40px}
+  .board{display:block;min-width:0;padding:0 16px}
+  .col{width:auto}
+  .colh{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="box">
+    <div class="eyebrow">Torq &middot; Uso interno</div>
+    <h1>Pipeline de leads</h1>
+    <input type="text" id="gk" placeholder="Clave" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <button id="gb">Entrar</button>
+    <div class="err" id="ge"></div>
+  </div>
+</div>
+
+<div id="app">
+  <nav><div class="wrap">
+    <div class="logo">TOR<span>Q</span></div>
+    <div class="navr">
+      <span id="sync">&mdash;</span>
+      <a href="leads.html">Tabla y descarga</a>
+      <a href="analitica.html">Mercado</a>
+    </div>
+  </div></nav>
+
+  <div class="wrap">
+    <div class="head">
+      <h1>Pipeline</h1>
+      <p>Cada lead que entra por la p&aacute;gina, desde que escribe hasta que factura. Mueve la tarjeta para cambiar de etapa; el tiempo entre <b>Entregado</b> y <b>Contactado</b> es el SLA que le vas a exigir a Corautos en el contrato.</p>
+    </div>
+
+    <div class="mets">
+      <div class="met"><div class="k">En pipeline</div><div class="v num" id="m-act">0</div><div class="d" id="m-act-d">leads activos</div></div>
+      <div class="met"><div class="k">Comisi&oacute;n facturada</div><div class="v num w" id="m-com">$0</div><div class="d" id="m-com-d">sin ventas cerradas</div></div>
+      <div class="met"><div class="k">SLA de la sala</div><div class="v num" id="m-sla">&mdash;</div><div class="d" id="m-sla-d">de Entregado a Contactado</div></div>
+      <div class="met"><div class="k">Tasa de cierre</div><div class="v num" id="m-cie">&mdash;</div><div class="d" id="m-cie-d">facturados sobre entregados</div></div>
+    </div>
+
+    <div class="alerts" id="alerts"></div>
+
+    <div id="setupMsg" class="setup" style="display:none">
+      Falta conectar la hoja de c&aacute;lculo: pega la URL del Apps Script en la constante
+      <code>API_URL</code>, al inicio del script de esta p&aacute;gina. La gu&iacute;a completa
+      est&aacute; en <code>LEADS.md</code>.
+      <div style="margin-top:13px">
+        <button class="bt p" id="demoBtn">Cargar 12 leads de ejemplo</button>
+        <span style="margin-left:9px;color:var(--mut2);font-size:12px">Solo en esta pantalla, no toca ninguna hoja real.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters"><div class="wrap frow">
+    <div class="fg"><span class="fl">Desde</span><input type="date" id="f-desde"></div>
+    <div class="fg"><span class="fl">Hasta</span><input type="date" id="f-hasta"></div>
+    <div class="fg"><span class="fl">Ciudad</span><select id="f-ciudad"><option value="">Todas</option></select></div>
+    <div class="fg"><span class="fl">Campa&ntilde;a</span><select id="f-camp"><option value="">Todas</option></select></div>
+    <div class="fg"><span class="fl">Buscar</span><input type="text" id="f-q" placeholder="Nombre o tel&eacute;fono" style="min-width:150px"></div>
+    <div class="sp"></div>
+    <button class="bt" id="clear">Limpiar</button>
+    <button class="bt" id="dl">Descargar CSV</button>
+  </div></div>
+
+  <div class="etapas" id="etapas"></div>
+  <div class="boardwrap"><div class="board" id="board"></div></div>
+</div>
+
+<div id="scrim"></div>
+<aside id="draw"></aside>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   ÚNICO punto a tocar: la URL del Apps Script publicado como aplicación
+   web (termina en /exec). La misma URL sirve para leer y para escribir.
+   Guía paso a paso en LEADS.md. */
+var API_URL="";
+
+/* Clave de acceso. NO es seguridad real (está en el código fuente): es una
+   barrera contra quien entra por accidente. Aquí hay datos personales —
+   Ley 1581, y tú eres el Responsable del Tratamiento. */
+var CLAVE="torq2026";
+
+/* Comisión por unidad: 1,2% sobre la base antes de IVA del 5%.
+   $109.000.000 / 1,05 = $103.809.524 → 1,2% = $1.245.714. Ver CONTEXTO.md. */
+var COMISION=1245714;
+
+/* SLA objetivo en horas: cuánto puede tardar la sala en contactar un lead
+   ya entregado. Es la cláusula que se va a negociar con este dato en mano. */
+var SLA_H=24;
+
+var ETAPAS=[
+  {id:"Nuevo",       c:"var(--e1)", d:"Escribi&oacute;, sin calificar"},
+  {id:"Calificado",  c:"var(--e2)", d:"Ciudad, plazo, pago y retoma"},
+  {id:"Entregado",   c:"var(--e3)", d:"Ya pas&oacute; a la sala"},
+  {id:"Contactado",  c:"var(--e4)", d:"La sala confirm&oacute; contacto"},
+  {id:"Agendado",    c:"var(--e5)", d:"Con prueba de ruta o cita"},
+  {id:"Facturado",   c:"var(--e6)", d:"Venta cerrada &rarr; comisi&oacute;n"},
+  {id:"No califica", c:"var(--ex)", d:"Fuera de alcance"}
+];
+var MUERTAS={"Facturado":1,"No califica":1};
+
+var DATA=[], SEL=null, DEMO_ON=false;
+
+/* ── utilidades ─────────────────────────────────────────────── */
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s==null?"":s).replace(/[<>&"]/g,function(x){
+  return {"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[x]})}
+function pesos(n){return "$"+Math.round(n).toLocaleString("es-CO")}
+function hoyISO(){var d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+function fecha(s){return s?String(s).slice(0,10):""}
+function etapaDe(id){for(var i=0;i<ETAPAS.length;i++) if(ETAPAS[i].id===id) return ETAPAS[i]; return ETAPAS[0]}
+function horas(a,b){
+  if(!a||!b) return null;
+  var t1=new Date(a).getTime(), t2=new Date(b).getTime();
+  if(!isFinite(t1)||!isFinite(t2)) return null;
+  return (t2-t1)/36e5;
+}
+function dur(h){
+  if(h==null) return "—";
+  if(h<1) return Math.round(h*60)+" min";
+  if(h<48) return (Math.round(h*10)/10).toString().replace(".",",")+" h";
+  return Math.round(h/24)+" d";
+}
+function toast(msg){
+  var t=$("toast"); t.textContent=msg; t.classList.add("on");
+  clearTimeout(t._z); t._z=setTimeout(function(){t.classList.remove("on")},2200);
+}
+function sync(txt,cls){
+  var s=$("sync"); s.textContent=txt; s.className=cls||"";
+}
+
+/* ── transporte ─────────────────────────────────────────────── */
+/* Lectura por JSONP: Apps Script no manda cabeceras CORS de forma
+   confiable, y una etiqueta <script> nunca las necesita. */
+var _n=0;
+function leer(cb){
+  if(!API_URL){ cb(null); return }
+  var fn="tqcb"+(++_n);
+  var s=document.createElement("script");
+  var listo=false;
+  window[fn]=function(d){ listo=true; try{delete window[fn]}catch(e){window[fn]=void 0} s.remove(); cb(d) };
+  s.onerror=function(){ if(!listo){ try{delete window[fn]}catch(e){} s.remove(); cb(null) } };
+  s.src=API_URL+"?callback="+fn+"&t="+new Date().getTime();
+  document.body.appendChild(s);
+}
+/* Escritura en no-cors: no podemos leer la respuesta, así que la pantalla
+   se actualiza de una vez y el guardado va detrás. Si falla, el próximo
+   refresco lo revela — nunca se pierde el lead, solo el último cambio. */
+function escribir(payload){
+  if(!API_URL){ return Promise.resolve() }
+  sync("Guardando…","go");
+  return fetch(API_URL,{method:"POST",mode:"no-cors",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(payload)})
+    .then(function(){ sync("Guardado","ok") })
+    .catch(function(){ sync("Sin conexión","") });
+}
+
+/* ── filtros ────────────────────────────────────────────────── */
+function filtrar(){
+  var d=$("f-desde").value, h=$("f-hasta").value,
+      c=$("f-ciudad").value, k=$("f-camp").value,
+      q=$("f-q").value.trim().toLowerCase();
+  return DATA.filter(function(r){
+    var f=fecha(r.Fecha);
+    if(d&&f&&f<d) return false;
+    if(h&&f&&f>h) return false;
+    if(c&&r.Ciudad!==c) return false;
+    if(k&&(r["Campaña"]||"directo")!==k) return false;
+    if(q){
+      var s=((r.Nombre||"")+" "+(r["Teléfono"]||"")).toLowerCase();
+      if(s.indexOf(q)<0) return false;
+    }
+    return true;
+  });
+}
+function unico(campo,def){
+  var s={};
+  DATA.forEach(function(r){ var v=r[campo]||def; if(v) s[v]=1 });
+  return Object.keys(s).sort();
+}
+function llenar(sel,vals,todos){
+  var cur=sel.value;
+  sel.innerHTML='<option value="">'+todos+'</option>'
+    +vals.map(function(v){return '<option>'+esc(v)+'</option>'}).join("");
+  sel.value=cur;
+}
+
+/* ── métricas ───────────────────────────────────────────────── */
+function metricas(filas){
+  var act=filas.filter(function(r){return !MUERTAS[r.Estado]}).length;
+  var fact=filas.filter(function(r){return r.Estado==="Facturado"});
+  var entregados=filas.filter(function(r){return r.Entregado});
+
+  $("m-act").textContent=act;
+  $("m-act-d").textContent = act===1 ? "lead activo" : "leads activos";
+
+  $("m-com").textContent=pesos(fact.length*COMISION);
+  $("m-com-d").textContent = fact.length
+    ? fact.length+(fact.length===1?" unidad facturada":" unidades facturadas")
+    : "sin ventas cerradas";
+
+  var sla=entregados.map(function(r){return horas(r.Entregado,r.Contactado)})
+                    .filter(function(v){return v!=null});
+  var el=$("m-sla");
+  if(sla.length){
+    var prom=sla.reduce(function(a,b){return a+b},0)/sla.length;
+    el.textContent=dur(prom);
+    el.className="v num"+(prom>SLA_H?" a":" w");
+    $("m-sla-d").textContent = prom>SLA_H
+      ? "por encima de las "+SLA_H+" h — argumento para el contrato"
+      : "dentro de las "+SLA_H+" h objetivo";
+  }else{
+    el.textContent="—"; el.className="v num";
+    $("m-sla-d").textContent="aún sin leads contactados";
+  }
+
+  var cel=$("m-cie");
+  if(entregados.length){
+    var pct=fact.length/entregados.length*100;
+    cel.textContent=(Math.round(pct*10)/10).toString().replace(".",",")+"%";
+    cel.className="v num"+(fact.length?" w":"");
+    $("m-cie-d").textContent=fact.length+" de "+entregados.length+" entregados";
+  }else{
+    cel.textContent="—"; cel.className="v num";
+    $("m-cie-d").textContent="aún sin leads entregados";
+  }
+}
+
+/* ── alertas ────────────────────────────────────────────────── */
+function vencido(r){
+  var f=fecha(r.Seguimiento);
+  return f && !MUERTAS[r.Estado] && f<hoyISO();
+}
+function slaRoto(r){
+  if(r.Estado!=="Entregado"||!r.Entregado) return false;
+  var h=horas(r.Entregado,new Date().toISOString());
+  return h!=null && h>SLA_H;
+}
+function alertas(filas){
+  var box=$("alerts"), out=[];
+  var rotos=filas.filter(slaRoto);
+  var venc=filas.filter(vencido);
+  if(rotos.length) out.push({n:rotos.length,
+    t:rotos.length===1?"lead entregado sin contactar":"leads entregados sin contactar",
+    s:"llevan más de "+SLA_H+" h en la sala",g:"Ver",f:"sla"});
+  if(venc.length) out.push({n:venc.length,
+    t:venc.length===1?"seguimiento vencido":"seguimientos vencidos",
+    s:"la fecha que pusiste ya pasó",g:"Ver",f:"venc"});
+  box.innerHTML=out.map(function(a){
+    return '<div class="alert" data-f="'+a.f+'"><span class="dot"></span>'
+      +'<b>'+a.n+' '+a.t+'</b><span>&middot; '+a.s+'</span>'
+      +'<span class="go">'+a.g+' &rsaquo;</span></div>';
+  }).join("");
+  Array.prototype.forEach.call(box.querySelectorAll(".alert"),function(el){
+    el.onclick=function(){
+      var f=el.dataset.f;
+      var lista=filas.filter(f==="sla"?slaRoto:vencido);
+      if(lista.length) abrirLead(lista[0].ID);
+    };
+  });
+}
+
+/* ── tablero ────────────────────────────────────────────────── */
+function tarjeta(r){
+  var late=slaRoto(r)||vencido(r);
+  var h='<div class="card'+(late?" late":"")+'" draggable="true" data-id="'+esc(r.ID)+'">';
+  h+='<div class="nm">'+esc(r.Nombre||"Sin nombre")+'</div>';
+  h+='<div class="mt"><span class="cy">'+esc(r.Ciudad||"—")+'</span>';
+  if(r.Compra) h+='<span>'+esc(r.Compra)+'</span>';
+  if(r.Pago) h+='<span>'+esc(r.Pago)+'</span>';
+  h+='</div>';
+  var pie=[];
+  if(slaRoto(r)) pie.push('<span class="w">'+dur(horas(r.Entregado,new Date().toISOString()))+' sin contactar</span>');
+  else if(vencido(r)) pie.push('<span class="w">Seguimiento vencido</span>');
+  else if(r.Seguimiento) pie.push('<span class="g">Seguimiento '+esc(fecha(r.Seguimiento))+'</span>');
+  else if(r.Fecha) pie.push('<span class="g">'+esc(fecha(r.Fecha))+'</span>');
+  if(r["Campaña"]&&r["Campaña"]!=="directo") pie.push('<span class="g">'+esc(r["Campaña"])+'</span>');
+  if(pie.length) h+='<div class="fo">'+pie.join(" &middot; ")+'</div>';
+  return h+'</div>';
+}
+
+var ETSEL="Nuevo";
+function esMovil(){ return window.innerWidth<=900 }
+
+function pintar(){
+  var filas=filtrar();
+  metricas(filas); alertas(filas);
+  var movil=esMovil();
+  var porEtapa=ETAPAS.map(function(e){
+    return {e:e, en:filas.filter(function(r){return (r.Estado||"Nuevo")===e.id})};
+  });
+
+  /* pastillas de etapa — solo se ven en móvil, pero se pintan siempre para
+     que el conteo esté listo si el usuario gira el teléfono */
+  $("etapas").innerHTML='<div class="row">'+porEtapa.map(function(g){
+    return '<button class="ep" data-et="'+esc(g.e.id)+'" aria-pressed="'+(ETSEL===g.e.id)+'">'
+      +'<span class="bar" style="background:'+g.e.c+'"></span>'
+      +'<span>'+g.e.id+'</span><span class="ct num">'+g.en.length+'</span></button>';
+  }).join("")+'</div>';
+  Array.prototype.forEach.call($("etapas").querySelectorAll(".ep"),function(b){
+    b.onclick=function(){ ETSEL=b.dataset.et; pintar() };
+  });
+
+  var visibles = movil ? porEtapa.filter(function(g){return g.e.id===ETSEL}) : porEtapa;
+  $("board").innerHTML=visibles.map(function(g){
+    return '<div class="col"><div class="colh">'
+      +'<span class="bar" style="background:'+g.e.c+'"></span>'
+      +'<span class="nm">'+g.e.id+'</span>'
+      +'<span class="ct num">'+g.en.length+'</span></div>'
+      +'<div class="colb" data-et="'+esc(g.e.id)+'">'
+      +(g.en.length?g.en.map(tarjeta).join("")
+                   :'<div class="colempty">'+g.e.d+'</div>')
+      +'</div></div>';
+  }).join("");
+  conectarTablero();
+}
+
+/* si cambia el ancho (girar el teléfono), el tablero cambia de forma */
+var _mv=esMovil();
+window.addEventListener("resize",function(){
+  if(esMovil()!==_mv){ _mv=esMovil(); pintar() }
+});
+
+function conectarTablero(){
+  Array.prototype.forEach.call(document.querySelectorAll(".card"),function(c){
+    c.onclick=function(){ abrirLead(c.dataset.id) };
+    c.ondragstart=function(ev){
+      c.classList.add("drag");
+      ev.dataTransfer.setData("text/plain",c.dataset.id);
+      ev.dataTransfer.effectAllowed="move";
+    };
+    c.ondragend=function(){ c.classList.remove("drag") };
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".colb"),function(z){
+    z.ondragover=function(ev){ ev.preventDefault(); z.classList.add("over") };
+    z.ondragleave=function(){ z.classList.remove("over") };
+    z.ondrop=function(ev){
+      ev.preventDefault(); z.classList.remove("over");
+      var id=ev.dataTransfer.getData("text/plain");
+      if(id) mover(id,z.dataset.et);
+    };
+  });
+}
+
+/* ── mover de etapa ─────────────────────────────────────────── */
+function mover(id,etapa){
+  var r=DATA.filter(function(x){return String(x.ID)===String(id)})[0];
+  if(!r||r.Estado===etapa) return;
+  var ahora=new Date().toISOString();
+  r.Estado=etapa;
+  /* Los sellos de tiempo son lo que hace medible el SLA. Solo se ponen la
+     primera vez que el lead toca esa etapa: si vuelve atrás y avanza otra
+     vez, el reloj original es el que vale. */
+  if(etapa==="Entregado"&&!r.Entregado) r.Entregado=ahora;
+  if(etapa==="Contactado"&&!r.Contactado) r.Contactado=ahora;
+  r.Actualizado=ahora;
+  pintar();
+  if(SEL===String(id)) abrirLead(id);
+  escribir({accion:"actualizar",id:r.ID,campos:{
+    Estado:r.Estado, Entregado:r.Entregado||"", Contactado:r.Contactado||"", Actualizado:ahora
+  }});
+  toast(esc(r.Nombre||"Lead")+" → "+etapa);
+}
+
+/* ── cajón de detalle ───────────────────────────────────────── */
+function cerrarLead(){
+  SEL=null;
+  $("draw").classList.remove("on");
+  $("scrim").classList.remove("on");
+}
+function abrirLead(id){
+  var r=DATA.filter(function(x){return String(x.ID)===String(id)})[0];
+  if(!r) return;
+  SEL=String(id);
+  var tel=(r["Teléfono"]||"").replace(/[^0-9]/g,"");
+  var h='<div class="dh"><button class="x" id="dx">&times;</button>';
+  h+='<h2>'+esc(r.Nombre||"Sin nombre")+'</h2>';
+  h+='<div class="sub"><span>'+esc(r.Ciudad||"Sin ciudad")+'</span>';
+  if(r.Fecha) h+='<span>Entró el '+esc(fecha(r.Fecha))+'</span>';
+  h+='<span>'+esc(r["Campaña"]||"directo")+'</span></div></div>';
+
+  h+='<div class="db">';
+
+  /* contacto */
+  h+='<div class="sec">';
+  if(tel){
+    var msg=seguimientoTexto(r);
+    h+='<a class="wa" href="https://wa.me/'+tel+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener">Escribir por WhatsApp</a>';
+  }else{
+    h+='<div class="wa off">Agrega el tel&eacute;fono para escribirle</div>';
+  }
+  h+='<div class="fld"><label>Tel&eacute;fono (como aparece en WhatsApp)</label>'
+    +'<input type="tel" id="d-tel" value="'+esc(r["Teléfono"]||"")+'" placeholder="573001234567"></div>';
+  h+='</div>';
+
+  /* etapa */
+  h+='<div class="sec"><div class="t">Etapa</div><div class="steps">';
+  ETAPAS.forEach(function(e){
+    var on=(r.Estado||"Nuevo")===e.id;
+    h+='<button class="step'+(on?" on":"")+'" data-et="'+esc(e.id)+'">'
+      +'<span class="bar" style="background:'+e.c+'"></span>'
+      +'<span>'+e.id+'</span><span class="d">'+(on?"actual":e.d)+'</span></button>';
+  });
+  h+='</div></div>';
+
+  /* seguimiento */
+  h+='<div class="sec"><div class="t">Seguimiento</div>';
+  h+='<div class="fld"><label>Pr&oacute;xima acci&oacute;n &mdash; qu&eacute; toca hacer</label>'
+    +'<input type="text" id="d-paso" value="'+esc(r["Próximo paso"]||"")+'" placeholder="Confirmar disponibilidad y llamar"></div>';
+  h+='<div class="fld"><label>Fecha del seguimiento</label>'
+    +'<input type="date" id="d-seg" value="'+esc(fecha(r.Seguimiento))+'"></div>';
+  h+='<div class="fld"><label>Notas</label>'
+    +'<textarea id="d-notas" placeholder="Lo que dijo, objeciones, con quién compara…">'+esc(r.Notas||"")+'</textarea></div>';
+  h+='<button class="bt p" id="d-save" style="width:100%;padding:12px">Guardar</button>';
+  h+='</div>';
+
+  /* ficha */
+  h+='<div class="sec"><div class="t">Lo que dijo en el calificador</div><div class="hist">';
+  h+='Compra: <b>'+esc(r.Compra||"—")+'</b><br>';
+  h+='Pago: <b>'+esc(r.Pago||"—")+'</b><br>';
+  h+='Retoma: <b>'+esc(r.Retoma||"—")+'</b><br>';
+  h+='Vehículo: <b>'+esc(r["Vehículo"]||"MAGE HEV")+'</b>';
+  h+='</div></div>';
+
+  /* reloj */
+  var hs=horas(r.Entregado,r.Contactado);
+  if(r.Entregado||r.Contactado){
+    h+='<div class="sec"><div class="t">Reloj del SLA</div><div class="hist">';
+    if(r.Entregado)  h+='Entregado a la sala: <b>'+esc(fecha(r.Entregado))+'</b><br>';
+    if(r.Contactado) h+='La sala contactó: <b>'+esc(fecha(r.Contactado))+'</b><br>';
+    if(hs!=null) h+='Tard&oacute;: <b>'+dur(hs)+'</b>'+(hs>SLA_H?' &mdash; por encima del objetivo':'');
+    else if(r.Entregado) h+='Lleva <b>'+dur(horas(r.Entregado,new Date().toISOString()))+'</b> esperando';
+    h+='</div></div>';
+  }
+
+  h+='</div>';
+
+  var d=$("draw");
+  d.innerHTML=h;
+  d.classList.add("on");
+  $("scrim").classList.add("on");
+  d.scrollTop=0;
+
+  $("dx").onclick=cerrarLead;
+  Array.prototype.forEach.call(d.querySelectorAll(".step"),function(b){
+    b.onclick=function(){ mover(r.ID,b.dataset.et) };
+  });
+  $("d-save").onclick=function(){
+    r["Teléfono"]=$("d-tel").value.trim();
+    r["Próximo paso"]=$("d-paso").value.trim();
+    r.Seguimiento=$("d-seg").value;
+    r.Notas=$("d-notas").value;
+    r.Actualizado=new Date().toISOString();
+    /* se repinta el tablero, pero NO el cajón: reabrirlo borraría el scroll
+       y el cursor de quien acaba de escribir una nota larga */
+    pintar(); toast("Guardado");
+    escribir({accion:"actualizar",id:r.ID,campos:{
+      "Teléfono":r["Teléfono"], "Próximo paso":r["Próximo paso"],
+      Seguimiento:r.Seguimiento, Notas:r.Notas, Actualizado:r.Actualizado
+    }});
+  };
+}
+$("scrim").onclick=cerrarLead;
+document.addEventListener("keydown",function(e){ if(e.key==="Escape") cerrarLead() });
+
+/* El mensaje de seguimiento lo escribe un asesor, no un formulario: sin
+   emojis, sin presión y con el nombre por delante. Las reglas de lenguaje
+   están en CLAUDE.md — nunca nombrar el miedo, nunca "unidades limitadas". */
+function seguimientoTexto(r){
+  var n=(r.Nombre||"").trim().split(" ")[0];
+  var t="Hola"+(n?" "+n:"")+", te escribo de TORQ por la MAGE HEV.";
+  if(r.Estado==="Agendado") t+=" Quería confirmarte la cita y ver si te queda bien la hora.";
+  else if(r.Ciudad) t+=" Ya tengo la información de disponibilidad para "+r.Ciudad+".";
+  else t+=" Quería saber si sigues interesado.";
+  t+=" ¿Te queda bien que hablemos hoy?";
+  return t;
+}
+
+/* ── descarga ───────────────────────────────────────────────── */
+var COLS=["Fecha","Nombre","Teléfono","Ciudad","Compra","Pago","Retoma",
+          "Vehículo","Campaña","Estado","Próximo paso","Seguimiento","Notas"];
+$("dl").onclick=function(){
+  var filas=filtrar();
+  if(!filas.length){ toast("No hay leads con ese filtro"); return }
+  var out=[COLS.join(",")].concat(filas.map(function(r){
+    return COLS.map(function(c){
+      var v=String(r[c]==null?"":r[c]).replace(/"/g,'""');
+      return /[,"\n]/.test(v) ? '"'+v+'"' : v;
+    }).join(",");
+  })).join("\n");
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["﻿"+out],{type:"text/csv;charset=utf-8"}));
+  a.download="torq-leads-"+hoyISO()+".csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  toast(filas.length+" leads descargados");
+};
+
+/* ── filtros conectados ─────────────────────────────────────── */
+["f-desde","f-hasta","f-ciudad","f-camp"].forEach(function(id){
+  $(id).addEventListener("change",pintar);
+});
+$("f-q").addEventListener("input",pintar);
+$("clear").onclick=function(){
+  ["f-desde","f-hasta","f-ciudad","f-camp","f-q"].forEach(function(id){ $(id).value="" });
+  pintar();
+};
+
+/* ── datos de ejemplo ───────────────────────────────────────── */
+function demo(){
+  var d=new Date(), iso=function(dias,hs){
+    return new Date(d.getTime()-dias*864e5+(hs||0)*36e5).toISOString();
+  };
+  return [
+    {ID:"L001",Fecha:iso(13),Nombre:"Camila Restrepo",Teléfono:"573001112233",Ciudad:"Bogotá",Compra:"Este mes",Pago:"Con crédito",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"A-BOG-REFORMA",Estado:"Facturado",Entregado:iso(12),Contactado:iso(12,4),Seguimiento:"",Notas:"Cerró con crédito a 60 meses.","Próximo paso":""},
+    {ID:"L002",Fecha:iso(11),Nombre:"Andrés Villa",Teléfono:"573014445566",Ciudad:"Medellín",Compra:"En 1 a 3 meses",Pago:"De contado",Retoma:"Sí",Vehículo:"MAGE HEV",Campaña:"directo",Estado:"Agendado",Entregado:iso(10),Contactado:iso(10,6),Seguimiento:hoyISO(),Notas:"Tiene un Tucson 2019 para retoma.","Próximo paso":"Confirmar avaluo de la retoma"},
+    {ID:"L003",Fecha:iso(9),Nombre:"Laura Gómez",Teléfono:"",Ciudad:"Cali",Compra:"Todavía estoy mirando",Pago:"Aún no lo sé",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"A-CAL-IVA",Estado:"Nuevo",Entregado:"",Contactado:"",Seguimiento:"",Notas:"","Próximo paso":""},
+    {ID:"L004",Fecha:iso(8),Nombre:"Julián Ortiz",Teléfono:"573027778899",Ciudad:"Barranquilla",Compra:"Este mes",Pago:"Con crédito",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"directo",Estado:"Entregado",Entregado:iso(3),Contactado:"",Seguimiento:"",Notas:"Preguntó por la devolución de IVA.","Próximo paso":""},
+    {ID:"L005",Fecha:iso(7),Nombre:"María Fernanda Ríos",Teléfono:"573039990011",Ciudad:"Bogotá",Compra:"En 1 a 3 meses",Pago:"De contado",Retoma:"Sí",Vehículo:"MAGE HEV",Campaña:"A-BOG-REFORMA",Estado:"Contactado",Entregado:iso(6),Contactado:iso(6,3),Seguimiento:iso(2).slice(0,10),Notas:"Compara contra Corolla Cross.","Próximo paso":"Mandar comparativo de garantía"},
+    {ID:"L006",Fecha:iso(6),Nombre:"Santiago Peña",Teléfono:"",Ciudad:"Bucaramanga",Compra:"Más adelante",Pago:"Aún no lo sé",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"directo",Estado:"No califica",Entregado:"",Contactado:"",Seguimiento:"",Notas:"Buscaba moto, no carro.","Próximo paso":""},
+    {ID:"L007",Fecha:iso(5),Nombre:"Valentina Cruz",Teléfono:"573042223344",Ciudad:"Cartagena",Compra:"Este mes",Pago:"Con crédito",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"A-CTG-DIGITAL",Estado:"Calificado",Entregado:"",Contactado:"",Seguimiento:hoyISO(),Notas:"Ciudad sin sala, solo taller.","Próximo paso":"Explicar entrega desde Barranquilla"},
+    {ID:"L008",Fecha:iso(4),Nombre:"Felipe Duarte",Teléfono:"573055556677",Ciudad:"Medellín",Compra:"Este mes",Pago:"De contado",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"directo",Estado:"Agendado",Entregado:iso(4),Contactado:iso(3,20),Seguimiento:"",Notas:"Prueba de ruta el sábado.","Próximo paso":"Recordar la cita el viernes"},
+    {ID:"L009",Fecha:iso(3),Nombre:"Daniela Sánchez",Teléfono:"573068889900",Ciudad:"Pereira",Compra:"En 1 a 3 meses",Pago:"Con crédito",Retoma:"Sí",Vehículo:"MAGE HEV",Campaña:"A-PER-REFORMA",Estado:"Contactado",Entregado:iso(3),Contactado:iso(2,18),Seguimiento:"",Notas:"","Próximo paso":"Pasar estudio de crédito"},
+    {ID:"L010",Fecha:iso(2),Nombre:"Tomás Iregui",Teléfono:"573071112233",Ciudad:"Cali",Compra:"Este mes",Pago:"De contado",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"directo",Estado:"Facturado",Entregado:iso(2),Contactado:iso(2,2),Seguimiento:"",Notas:"Se llevó la blanca.","Próximo paso":""},
+    {ID:"L011",Fecha:iso(1),Nombre:"Paola Guerrero",Teléfono:"573084445566",Ciudad:"Villavicencio",Compra:"Este mes",Pago:"Con crédito",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"A-VVC-CONSUMO",Estado:"Entregado",Entregado:iso(1,-8),Contactado:"",Seguimiento:"",Notas:"","Próximo paso":""},
+    {ID:"L012",Fecha:iso(0,-3),Nombre:"Ricardo Niño",Teléfono:"",Ciudad:"Bogotá",Compra:"En 1 a 3 meses",Pago:"Aún no lo sé",Retoma:"No",Vehículo:"MAGE HEV",Campaña:"A-BOG-REFORMA",Estado:"Nuevo",Entregado:"",Contactado:"",Seguimiento:"",Notas:"","Próximo paso":""}
+  ];
+}
+
+/* ── arranque ───────────────────────────────────────────────── */
+function refrescarFiltros(){
+  llenar($("f-ciudad"),unico("Ciudad",""),"Todas");
+  llenar($("f-camp"),unico("Campaña","directo"),"Todas");
+}
+function arrancar(){
+  if(!API_URL){
+    $("setupMsg").style.display="block";
+    sync("Sin conectar","");
+    pintar();
+    $("demoBtn").onclick=function(){
+      DEMO_ON=true; DATA=demo(); refrescarFiltros(); pintar();
+      $("setupMsg").innerHTML='Mostrando 12 leads de ejemplo &mdash; no son reales y no se guardan en ninguna parte. Mueve las tarjetas, abre una ficha y descarga el CSV para probarlo todo. Conecta <code>API_URL</code> (ver <code>LEADS.md</code>) cuando quieras los de verdad.';
+      sync("Ejemplo","go");
+      toast("12 leads de ejemplo cargados");
+    };
+    return;
+  }
+  sync("Cargando…","go");
+  leer(function(d){
+    if(!d||!d.leads){ sync("Sin conexión",""); toast("No se pudo leer la hoja"); pintar(); return }
+    DATA=d.leads;
+    refrescarFiltros(); pintar();
+    sync("Al día","ok");
+  });
+  /* refresco silencioso: la sala puede estar moviendo estados en paralelo */
+  setInterval(function(){
+    if(DEMO_ON) return;
+    leer(function(d){
+      if(d&&d.leads&&!SEL){ DATA=d.leads; refrescarFiltros(); pintar() }
+    });
+  },60000);
+}
+
+/* ── compuerta ──────────────────────────────────────────────────────
+   Va al FINAL a propósito: abrir() llama a arrancar(), que pinta el
+   tablero. Si esto corriera antes, las variables de estado declaradas
+   más abajo (ETSEL) todavía valdrían undefined y el tablero saldría
+   vacío — y con la sesión ya guardada eso pasaba en cada recarga. */
+(function(){
+  var gate=$("gate"), app=$("app"), gk=$("gk"), gb=$("gb"), ge=$("ge");
+  function abrir(){
+    gate.style.display="none"; app.classList.add("on");
+    try{ sessionStorage.setItem("torq_crm_ok","1") }catch(e){}
+    arrancar();
+  }
+  function intentar(){
+    if(gk.value.trim().toLowerCase()===CLAVE.toLowerCase()) abrir();
+    else{ ge.textContent="Clave incorrecta"; gk.value=""; gk.focus() }
+  }
+  gb.onclick=intentar;
+  gk.onkeydown=function(e){ if(e.key==="Enter") intentar() };
+  try{ if(sessionStorage.getItem("torq_crm_ok")==="1"){ abrir(); return } }catch(e){}
+  gk.focus();
+})();
+</script>
+</body>
+</html>
