@@ -219,6 +219,7 @@ select.qz-field{appearance:none;-webkit-appearance:none;background-image:linear-
    roto. Responde, y al tocarlo señala la casilla que falta. */
 .qz-send[aria-disabled="true"]{opacity:.38;cursor:default}
 .qz-hint{font-size:11.5px;color:var(--acc);margin-top:10px;text-align:center;min-height:16px}
+.qz-conf{font-size:13px;color:var(--mut);line-height:1.7;margin:16px 0 20px;text-align:left}
 .qz-back{background:none;border:none;color:var(--mut2);font-size:12px;font-family:inherit;cursor:pointer;padding:12px 2px;margin-top:14px;min-height:44px;touch-action:manipulation}
 .qz-back:hover{color:var(--paper)}
 .qz-sum{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
@@ -650,8 +651,13 @@ var TQ=(function(){
   c=(c||"directo").slice(0,40);
   return {
     code:c,
-    link:function(extra){
-      var t="Hola, vengo de TORQ.\nCódigo: "+c+(extra?"\n"+extra:"");
+    link:function(texto){
+      /* El mensaje lo escribe el CLIENTE, así que tiene que sonar a persona.
+         Un volcado de campos ("Ciudad: X / Pago: Y") lo escribe un formulario,
+         no alguien interesado — y el asesor lo recibe como ficha, no como
+         conversación. El código de campaña va al final, discreto. */
+      var t=(texto||"Hola, vi la MAGE HEV en TORQ y quisiera más información.")
+            +"\n\n— ref "+c;
       return WA ? "https://wa.me/"+WA+"?text="+encodeURIComponent(t) : "";
     }
   };
@@ -720,10 +726,55 @@ var TQ=(function(){
     if(back) back.onclick=function(){ i--; pintar() };
   }
 
+  /* Arma el mensaje como lo escribiría una persona. Lleva los mismos datos que
+     antes, pero en prosa: el asesor abre una conversación, no una ficha. */
+  function redactar(){
+    var nom=(r.Nombre||"").trim().split(" ")[0];
+    var cuando={
+      "Este mes":"la estoy pensando para este mes",
+      "En 1 a 3 meses":"la estoy pensando para los próximos meses",
+      "Más adelante":"todavía no tengo fecha definida",
+      "Todavía estoy mirando":"por ahora estoy comparando opciones"
+    }[r.Compra]||"";
+    var pago={
+      "Con crédito":"La compraría con crédito.",
+      "De contado":"La compraría de contado.",
+      "Aún no lo sé":"Todavía no defino la forma de pago."
+    }[r.Pago]||"";
+
+    var t="Hola"+(nom?", soy "+nom:"")+". Vi la MAGE HEV en TORQ y me interesa.";
+    var l2=[];
+    if(r.Ciudad) l2.push("Estoy en "+r.Ciudad);
+    if(cuando)   l2.push(cuando);
+    if(l2.length) t+="\n\n"+l2.join(" y ")+".";
+    if(pago) t+=" "+pago;
+    /* la retoma solo se menciona si la tiene: un "no" no aporta nada al asesor */
+    if(r.Retoma==="Sí") t+=" Tengo un vehículo para entregar en parte de pago.";
+    if(window.TQ_SIM) t+="\n\n"+window.TQ_SIM+".";
+    t+="\n\nQuedo atento.";
+    return t;
+  }
+
+  /* Pantalla de confirmación. Sin esto el cliente sale a WhatsApp, vuelve, y
+     encuentra la misma pantalla de antes: no sabe si quedó registrado ni qué
+     sigue. Aquí se fija la expectativa de tiempo, que es lo que sostiene la
+     confianza mientras un humano responde. */
+  function confirmado(href){
+    var nom=(r.Nombre||"").trim().split(" ")[0];
+    var h='<div class="qz-n">Recibido</div>';
+    h+='<div class="qz-q">Gracias'+(nom?", "+esc(nom):"")+'. Un asesor especializado te contacta en las próximas 24 horas.</div>';
+    h+='<div class="qz-sum">'+PASOS.slice(0,4).map(function(p){
+        return '<span>'+esc(r[p.k]||"—")+'</span>'}).join("")+'</div>';
+    h+='<p class="qz-conf">Te va a acompañar en todo el proceso: disponibilidad real, prueba de ruta y las condiciones de compra o renting. Si prefieres adelantar algo, escríbenos por el mismo chat.</p>';
+    h+='<a class="btn qz-send" href="'+href+'" target="_blank" rel="noopener">¿No se abrió WhatsApp? Ábrelo aquí</a>';
+    h+='<a class="qz-back" href="#simulador" style="display:block;text-align:center;margin-top:14px">Volver al simulador</a>';
+    box.innerHTML=h;
+    try{ box.scrollIntoView({block:"center",behavior:"smooth"}) }catch(e){}
+  }
+
   function cerrar(){
     bar.style.width="100%";
-    var resumen=PASOS.map(function(p){return p.k+": "+(r[p.k]||"—")}).join("\n")
-      +(window.TQ_SIM?"\n"+window.TQ_SIM:"");
+    var resumen=redactar();
     var h='<div class="qz-n">Último paso</div>';
     h+='<div class="qz-q">Listo, '+esc(r.Nombre.split(" ")[0])+'. Te escribimos por WhatsApp.</div>';
     h+='<div class="qz-sum">'+PASOS.slice(0,4).map(function(p){
@@ -761,7 +812,11 @@ var TQ=(function(){
         cons.classList.add("pide");
         cons.scrollIntoView({block:"center",behavior:"smooth"});
         try{ chk.focus() }catch(err){}
+        return;
       }
+      /* Sale hacia WhatsApp: la página no puede quedarse en el mismo estado,
+         porque el cliente vuelve y no sabe si quedó registrado o no. */
+      setTimeout(function(){ confirmado(wa.href) }, 400);
     });
     estado();
     document.getElementById("qz-back").onclick=function(){ i--; pintar() };
@@ -883,13 +938,13 @@ var TQ=(function(){
       $("s-mes").textContent=pesos(dif);
       $("s-mes").style.color="var(--acc)";
       $("s-cinco").innerHTML="Son <b>"+pesos(dif*12)+"</b> al año y <b>"+pesos(dif*60)+"</b> en cinco años, solo en gasolina.";
-      window.TQ_SIM="Ahorro estimado: "+pesos(dif)+"/mes en gasolina";
+      window.TQ_SIM="Con el simulador me dio un ahorro de "+pesos(dif)+" al mes en gasolina";
     }else{
       /* honestidad: si tu carro ya gasta menos, el simulador lo dice */
       $("s-mes").textContent=pesos(0);
       $("s-mes").style.color="var(--mut)";
       $("s-cinco").innerHTML="Con ese consumo tu carro ya gasta lo mismo o menos que la MAGE. La diferencia no estaría en la gasolina, sino en los <b>288 hp</b>, la <b>garantía de 8 años</b> de batería y el precio de entrada.";
-      window.TQ_SIM="Simulación: sin ahorro de gasolina frente a su carro actual";
+      window.TQ_SIM="Hice el simulador y en mi caso no da ahorro de gasolina";
     }
 
     var autoMio=t/(c/100);
