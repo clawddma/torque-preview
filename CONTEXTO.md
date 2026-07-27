@@ -82,20 +82,50 @@ empaquetado) viven **solo en el Mac de Daniel**, en
 - 157.620 vehículos nuevos, **+50,1%**
 - Híbridos 44.605 (+74,6%, 28,3% del mercado) · Eléctricos 24.477 (+235,5%, 15,5%)
 - Sostenibles = **43,8%** del mercado
-- Dongfeng: puesto 16, 2.189 unidades, **+217,2%** — marca en crecimiento pero
-  desconocida. El trabajo es de confianza, no de precio.
-- **47,4%** del mercado nuevo se compra a crédito
+- Dongfeng: puesto 16, 2.189 unidades, **+217,2%** — pero ese crecimiento es en
+  **camiones diésel y GNV**, no en SUV de pasajeros. Ver abajo.
+- **47,4%** del mercado nuevo se compra a crédito (**50,9%** en SUV híbrida)
 - Diciembre es el pico del año; enero cae ~34%
 
-**Hallazgos del tablero:**
-- Cundinamarca: 22.304 unidades sin sede Corautos, pero solo +2,3% — es matrícula
-  de flotas y leasing, no comprador de mostrador.
-- 16,7% del mercado (26.250 unidades) está en plazas sin sala de ventas.
-- Sucre (+61,9%) y Caquetá (+83,4%) crecen fuerte y no tienen sede: candidatos al
-  experimento de venta 100% digital.
-- Cartagena tiene taller pero no sala — laboratorio ideal: la objeción de servicio
-  ya está resuelta.
-- Manizales es el único mercado en rojo (−2,9%) y sí tiene sede. No pautar ahí.
+## Inteligencia desde la microdata del RUNT — 27 de julio de 2026
+
+Llegaron las **142.854 matrículas individuales** de feb 2 a jul 8 de 2026
+(`Analisis AI Runt 2 feb hasta julio 2026.xlsx`, en el Mac de Daniel). El
+análisis completo está en **`INTELIGENCIA.md`** y **manda sobre `analitica.html`**,
+que se hizo con los PDF agregados. Lo esencial:
+
+- **La MAGE tiene CERO matrículas en Colombia.** Es un lanzamiento real, no una
+  pelea por participación. Y las 1.952 unidades de Dongfeng son camiones y vans:
+  la marca está posicionada en **carga**, no en familia. Eso juega en contra de
+  una camioneta de $109.000.000 y es lo primero que la pauta debe resolver.
+- **Mercado direccionable:** SUV híbrida = 34.441 unidades en 5,2 meses
+  (≈6.600/mes), 24,1% del mercado nuevo, creciendo +26% de febrero a junio.
+- Los 4 rivales del comparador son el **31,5%** del segmento: la comparación no
+  es arbitraria, es un tercio del mercado.
+- **Se pauta sobre `CIUDAD_PROPIETARIO`, nunca sobre municipio de matrícula.**
+
+**Corrección a un hallazgo anterior:** lo de «Cundinamarca es matrícula de flotas
+y leasing» era la conclusión correcta por el motivo equivocado. No son flotas —el
+mercado es 99,5% Particular—: son Funza, Mosquera y Chía matriculando carros de
+compradores de Bogotá y **Medellín** por impuesto más barato. El 59% de lo
+matriculado en Funza lo compró alguien de Medellín; el 53% de Envigado, alguien
+de Medellín.
+
+**Corrección a otro:** Manizales NO está en rojo. Con comprador real crece **+48%**
+y es la ciudad con **mayor apertura a marca china del país** (19% contra 8,7%
+nacional) — o sea, donde la objeción «no conozco Dongfeng» sale más barata.
+Pasó de «no pautar ahí» a **primera plaza de la Ola 1**.
+
+**Primera ruta de pauta:** Ola 1 Manizales + Ibagué + Pereira ($600.000); Ola 2 la
+costa y las plazas de crédito alto; Ola 3 Bogotá/Medellín/Cali solo con el ángulo
+ya validado. **No pautar todavía en Cúcuta ni Pasto**: peor apertura a marca china
+del país, y Pasto además es mercado de contado (30%). Detalle y palabras clave en
+`INTELIGENCIA.md`.
+
+**Otros hallazgos del tablero (PDF agregados, menor resolución):**
+- Cartagena tiene taller pero no sala — laboratorio ideal de venta 100% digital:
+  la objeción de servicio ya está resuelta. **Confirmado con microdata**: 108
+  unidades/mes, +34%, y 59% a crédito.
 
 ## Alcance de esta fase — decidido el 27 de julio de 2026
 
