@@ -97,6 +97,24 @@ empaquetado) viven **solo en el Mac de Daniel**, en
   ya está resuelta.
 - Manizales es el único mercado en rojo (−2,9%) y sí tiene sede. No pautar ahí.
 
+## Alcance de esta fase — decidido el 27 de julio de 2026
+
+**Los primeros meses son solo con Corautos**, para validar si la propuesta de valor
+funciona antes de seguir desarrollando la compañía. Todo lo que se construya debe
+servir a esa validación; lo demás espera.
+
+**No construir todavía** (son deuda futura, no pendientes):
+
+- **Comparador interactivo multimarca.** El visitante elegiría contra cuál rival medir.
+  Hoy la tabla de `#comparar` es fija y escrita a mano, y para un solo vehículo alcanza.
+  Cuando entre la segunda marca, esto pasa a ser lo primero: la tabla a mano no escala
+  y la estructura de datos del comparador es la misma que necesita un catálogo.
+- **Catálogo de vehículos.** El sitio es hoy «una página con un carro». Con más de un
+  modelo hay que pasar a fichas sobre una estructura común. No replicar el `index.html`
+  a mano por cada vehículo: ese es el error que haría inmanejable el proyecto.
+- **Fila de consumo en el comparador.** Se retiró porque cada marca publica bajo ciclo
+  distinto. Si se devuelve, cada cifra va con su ciclo declarado al lado.
+
 ## Pendientes — bloqueantes antes de pautar
 
 1. **Número de WhatsApp** — va en `var WA` de `index.html`, un solo lugar. Sin él el
