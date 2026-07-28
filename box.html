@@ -18,13 +18,6 @@
 <script src="nav.js" defer></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Car","name":"Dongfeng Box","brand":{"@type":"Brand","name":"Dongfeng"},"bodyType":"Hatchback","fuelType":"Electrico","vehicleSeatingCapacity":5,"numberOfDoors":5,"offers":[{"@type":"Offer","name":"Box E2","price":"69990000","priceCurrency":"COP","availability":"https://schema.org/InStock"},{"@type":"Offer","name":"Box E3","price":"74990000","priceCurrency":"COP","availability":"https://schema.org/InStock"}]}</script>
 <style>
-.vhero{position:relative;min-height:min(92vh,900px);display:flex;align-items:flex-end;padding-top:var(--nav);overflow:hidden}
-.vhero .bg{position:absolute;inset:0;z-index:0}
-.vhero .bg img{width:100%;height:100%;object-fit:cover;object-position:center 50%}
-.vhero .veil{position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(8,9,10,.97) 5%,rgba(8,9,10,.6) 40%,rgba(8,9,10,.2) 72%,rgba(8,9,10,.45))}
-.vhero .wrap{position:relative;z-index:2;padding-bottom:70px;width:100%}
-.vhero h1{font-size:clamp(58px,12vw,150px);font-weight:800;letter-spacing:-.05em;line-height:.9;margin-top:12px}
-.vhero .sub{color:#dfe3e7;font-size:clamp(18px,2vw,25px);line-height:1.55;max-width:40ch;margin-top:24px;font-weight:400}
 .vers{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:48px;max-width:900px}
 .ver-c{border:1px solid var(--line2);border-radius:15px;padding:32px 30px 34px;background:var(--ink2)}
 .ver-c.top{border-color:var(--acc);background:rgba(200,242,74,.05)}
@@ -39,10 +32,9 @@
 .col-sw{width:42px;height:42px;border-radius:50%;border:1px solid var(--line2);position:relative;margin-bottom:20px}
 .col-sw span{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);font-size:12px;color:var(--mut2);white-space:nowrap}
 @media(max-width:960px){
-  .vhero{min-height:auto;display:block}
-  .vhero .bg{position:relative;height:62vw;max-height:400px}
-  .vhero .veil{background:linear-gradient(to top,var(--ink) 3%,transparent 58%)}
-  .vhero .wrap{padding:22px 22px 36px}
+
+
+
   .vers{grid-template-columns:1fr}
 }
 </style>
@@ -62,13 +54,36 @@
   </ul>
   <a class="cta" href="#contacto">Cotizar</a>
 </div></nav>
-<header class="vhero">
-  <div class="bg"><img src="img/box/hero.jpg" alt="Dongfeng Box el&eacute;ctrico blanco perla, vista tres cuartos frontal" width="1280" height="959" fetchpriority="high"></div>
-  <div class="veil"></div>
+<div class="respaldo-top"><div class="wrap in">
+  <span class="et">Respaldan</span>
+  <img class="l-dongfeng" src="img/marcas/dongfeng.png" alt="Dongfeng El&eacute;ctricos" width="614" height="91">
+  <img class="l-corautos" src="img/marcas/corautos-oficial.png" alt="Corautos Andino" width="600" height="200">
+  <img class="l-foton" src="img/marcas/foton-oficial.png" alt="Foton" width="1361" height="427">
+  <span class="l-corbeta">Corbeta</span>
+</div></div>
+
+<header class="hx">
+  <div class="halo"></div>
   <div class="wrap">
-    <p class="eyebrow">Dongfeng Box &middot; 100% el&eacute;ctrico</p>
-    <h1>Box</h1>
-    <p class="sub">430 km de autonom&iacute;a en el el&eacute;ctrico m&aacute;s accesible de la marca. Para la ciudad todos los d&iacute;as, y se carga en casa mientras duermes.</p>
+    <div class="titular">
+      <p class="eyebrow">Dongfeng Box &middot; 100% el&eacute;ctrico</p>
+      <h1>Box</h1>
+      <p class="sub">Entra donde nada m&aacute;s entra y se carga en casa mientras duermes.</p>
+      <div class="acciones">
+        <span class="desde">Desde<b>$69.990.000</b></span>
+        <a class="cta" href="#contacto">Cotizar</a>
+        <a class="ghost" href="#ficha">Ver la ficha</a>
+      </div>
+    </div>
+    <div class="plano">
+      <img src="img/box/hero-ancho.jpg" srcset="img/box/hero-ancho.jpg 2400w, img/box/hero-ancho@2x.jpg 3600w" sizes="(max-width:960px) 100vw, 1180px" alt="Dongfeng Box el&eacute;ctrico blanco perla, vista tres cuartos frontal" width="2400" height="1021" fetchpriority="high">
+    </div>
+    <div class="franja">
+      <div><b>430 km</b>de autonom&iacute;a con una carga</div>
+      <div><b>30 min</b>de carga r&aacute;pida</div>
+      <div><b>4,04 m</b>para moverse en la ciudad</div>
+      <div><b>8 a&ntilde;os</b>de garant&iacute;a en la bater&iacute;a</div>
+    </div>
   </div>
 </header>
 <main>
