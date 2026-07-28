@@ -5,102 +5,128 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>TORQ &mdash; Mercado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 <script src="nav.js" defer></script>
 <style>
 :root{
   --ink:#08090a; --surf:#0e1013; --surf2:#141719; --line:#1c1f24; --line2:#2a2e35;
   --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b; --brand:#c8f24a;
   --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#8b5cf6; --s5:#e0a112;
-  --neutral:#4a4f57; --win:#22c98d;
-  --grid:#1e2126; --axis:#2f343b;
+  --neutral:#4a4f57; --win:#22c98d; --grid:#1a1d22;
+  /* años: viejo apagado → reciente intenso (patrón de OET/Qlub) */
+  --a22:#2a3f55; --a23:#33567f; --a24:#3a6fae; --a25:#4189dd; --a26:#6ab4ff;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--ink);color:var(--paper);font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1360px;margin:0 auto;padding:0 20px}
+body{background:var(--ink);color:var(--paper);font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1420px;margin:0 auto;padding:0 20px}
 .num{font-variant-numeric:tabular-nums}
 button,select,input{font-family:inherit}
+h1,h2,.serif{font-family:"DM Serif Display",Georgia,serif;font-weight:400}
 
 .head{padding:30px 0 0}
-.eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--brand);font-weight:700}
-h1.pg{font-size:28px;font-weight:800;margin:11px 0 0;letter-spacing:-.02em}
-.lede{color:var(--mut);font-size:13.5px;max-width:680px;margin-top:13px;line-height:1.7}
+.eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--brand);font-weight:700;font-family:Inter,sans-serif}
+h1.pg{font-size:34px;margin:12px 0 0;letter-spacing:-.01em;line-height:1.1}
+.lede{color:var(--mut);font-size:13.5px;max-width:700px;margin-top:13px;line-height:1.7}
+
+/* ── métrica ─────────────────────────────────────────────── */
+.mets{display:flex;gap:6px;flex-wrap:wrap;margin-top:22px}
+.met{display:flex;align-items:center;gap:7px;background:var(--surf);border:1px solid var(--line2);
+     color:var(--mut);border-radius:100px;padding:8px 15px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.met:hover{color:var(--paper);border-color:var(--mut2)}
+.met.on{background:var(--brand);border-color:var(--brand);color:#0a0c07;font-weight:700}
 
 /* ── filtros ─────────────────────────────────────────────── */
-.bar{position:sticky;top:0;z-index:70;background:rgba(8,9,10,.96);backdrop-filter:blur(14px);
-     border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:13px 0;margin-top:22px}
-.frow{display:flex;flex-wrap:wrap;gap:9px;align-items:flex-end}
+.bar{position:sticky;top:0;z-index:70;background:rgba(8,9,10,.97);backdrop-filter:blur(14px);
+     border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:13px 0;margin-top:18px}
+.frow{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
 .fg{display:flex;flex-direction:column;gap:5px;position:relative}
 .fl{font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--mut2);font-weight:700}
-.ms{background:var(--surf);border:1px solid var(--line2);color:var(--mut);border-radius:6px;
-    padding:8px 12px;font-size:12.5px;cursor:pointer;min-width:126px;text-align:left;white-space:nowrap;
-    display:flex;align-items:center;gap:7px}
+.ms{background:var(--surf);border:1px solid var(--line2);color:var(--mut);border-radius:7px;
+    padding:9px 13px;font-size:12.5px;cursor:pointer;min-width:118px;text-align:left;white-space:nowrap;
+    display:flex;align-items:center;gap:8px}
 .ms:hover{border-color:var(--mut2);color:var(--paper)}
 .ms.has{border-color:var(--brand);color:var(--paper)}
-.ms .n{margin-left:auto;background:var(--brand);color:#0a0c07;border-radius:100px;padding:0 6px;font-size:10px;font-weight:700}
-.ms .ar{color:var(--mut2);font-size:9px}
-.dd{position:absolute;top:100%;left:0;margin-top:5px;background:var(--surf2);border:1px solid var(--line2);
-    border-radius:8px;padding:7px;z-index:90;min-width:210px;max-height:320px;overflow:auto;display:none;
-    box-shadow:0 14px 40px rgba(0,0,0,.6)}
+.ms .n{margin-left:auto;background:var(--brand);color:#0a0c07;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700}
+.ms .ar{color:var(--mut2);font-size:9px;margin-left:auto}
+.ms.has .ar{display:none}
+.dd{position:absolute;top:100%;left:0;margin-top:6px;background:var(--surf2);border:1px solid var(--line2);
+    border-radius:9px;padding:7px;z-index:95;min-width:225px;max-height:330px;overflow:auto;display:none;
+    box-shadow:0 16px 44px rgba(0,0,0,.7)}
 .dd.on{display:block}
-.dd label{display:flex;align-items:center;gap:9px;padding:6px 9px;border-radius:5px;font-size:12.5px;cursor:pointer;color:var(--mut)}
-.dd label:hover{background:rgba(255,255,255,.04);color:var(--paper)}
-.dd input{accent-color:var(--brand)}
+.dd label{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:6px;font-size:12.5px;cursor:pointer;color:var(--mut)}
+.dd label:hover{background:rgba(255,255,255,.05);color:var(--paper)}
+.dd input{accent-color:var(--brand);width:14px;height:14px}
 .dd .tot{margin-left:auto;font-size:10.5px;color:var(--mut2)}
-.dd .acc{display:flex;gap:6px;padding:5px 6px 8px;border-bottom:1px solid var(--line);margin-bottom:5px}
+.dd .acc{display:flex;gap:6px;padding:4px 5px 8px;border-bottom:1px solid var(--line);margin-bottom:5px}
 .dd .acc button{flex:1;background:transparent;border:1px solid var(--line2);color:var(--mut);border-radius:5px;padding:5px;font-size:11px;cursor:pointer}
-.dd .acc button:hover{color:var(--paper)}
+.dd .acc button:hover{color:var(--paper);border-color:var(--mut2)}
 .sp{flex:1}
-.bt{border:1px solid var(--line2);background:transparent;color:var(--mut);padding:9px 14px;border-radius:6px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.bt{border:1px solid var(--line2);background:transparent;color:var(--mut);padding:9px 15px;border-radius:7px;font-size:12.5px;cursor:pointer;white-space:nowrap}
 .bt:hover{color:var(--paper);border-color:var(--mut2)}
-.bt.p{background:var(--brand);color:#0a0c07;border-color:var(--brand);font-weight:700}
+.bt.on{background:var(--brand);color:#0a0c07;border-color:var(--brand);font-weight:700}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
-.chip{display:flex;align-items:center;gap:7px;background:rgba(200,242,74,.1);border:1px solid rgba(200,242,74,.3);
-      color:var(--brand);border-radius:100px;padding:4px 10px;font-size:11.5px}
-.chip button{background:none;border:none;color:var(--brand);cursor:pointer;font-size:14px;line-height:1;padding:0}
+.chip{display:flex;align-items:center;gap:8px;background:rgba(200,242,74,.1);border:1px solid rgba(200,242,74,.3);
+      color:var(--brand);border-radius:100px;padding:4px 11px;font-size:11.5px}
+.chip button{background:none;border:none;color:var(--brand);cursor:pointer;font-size:15px;line-height:1;padding:0}
 
 /* ── kpis ────────────────────────────────────────────────── */
 .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:24px}
-.kpi{border:1px solid var(--line);border-radius:8px;padding:16px 17px;background:var(--surf)}
+.kpi{border:1px solid var(--line);border-radius:9px;padding:17px 18px;background:var(--surf)}
 .kpi .k{font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);margin-bottom:9px;line-height:1.4}
-.kpi .v{font-size:23px;font-weight:800;letter-spacing:-.02em;line-height:1}
-.kpi .d{font-size:10.5px;color:var(--mut2);margin-top:6px;line-height:1.45}
+.kpi .v{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.kpi .d{font-size:10.5px;color:var(--mut2);margin-top:7px;line-height:1.45}
 .kpi .v.w{color:var(--win)}.kpi .v.a{color:var(--s2)}
 
 /* ── paneles ─────────────────────────────────────────────── */
 .sec{margin-top:9px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.panel{border:1px solid var(--line);border-radius:8px;background:var(--surf);padding:22px;position:relative}
-.panel h2{font-size:15.5px;font-weight:700;margin:0 0 4px;letter-spacing:-.01em}
-.panel .sub{font-size:12px;color:var(--mut);margin:0 0 17px;line-height:1.6}
-.insight{border-left:3px solid var(--s1);background:rgba(57,135,229,.07);border-radius:0 7px 7px 0;
+.g64{display:grid;grid-template-columns:1.6fr 1fr;gap:9px}
+.panel{border:1px solid var(--line);border-radius:9px;background:var(--surf);padding:22px;position:relative}
+.panel h2{font-size:19px;margin:0 0 4px;letter-spacing:-.01em}
+.panel .sub{font-size:12px;color:var(--mut);margin:0 0 16px;line-height:1.6}
+.amp{position:absolute;top:18px;right:18px;background:var(--surf2);border:1px solid var(--line2);
+     color:var(--mut);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;z-index:3}
+.amp:hover{color:var(--paper);border-color:var(--mut2)}
+.cbox{position:relative;height:320px;width:100%;min-width:0}
+.cbox.sm{height:250px}
+/* Chart.js conserva el tamano con que se dibujo, y un hijo de grid no
+   encoge por debajo de su contenido (min-width:auto). Sin estas dos
+   reglas el canvas empuja el panel y la pagina desborda al angostar. */
+.g2>*,.g64>*{min-width:0}
+.cbox canvas{max-width:100%!important}
+.insight{border-left:3px solid var(--s1);background:rgba(57,135,229,.07);border-radius:0 8px 8px 0;
          padding:13px 16px;margin-top:16px;font-size:12.5px;line-height:1.7;color:var(--mut)}
 .insight b{color:var(--paper)}
 .insight .t{display:block;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--s1);margin-bottom:6px}
-svg{display:block;max-width:100%;height:auto;overflow:visible}
-.gl{stroke:var(--grid);stroke-width:1}
-.ax{stroke:var(--axis);stroke-width:1}
-.tk{fill:var(--mut2);font-size:10px}
-.lb{fill:var(--paper);font-size:10.5px;font-weight:600}
-.lbm{fill:var(--mut);font-size:10.5px}
-.leg{display:flex;flex-wrap:wrap;gap:6px 15px;margin-bottom:14px}
-.leg i{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mut);font-style:normal}
-.leg i b{width:9px;height:9px;border-radius:2px;display:block}
 
-.tw{overflow-x:auto;max-height:430px}
+.tw{overflow-x:auto;max-height:400px}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 th{text-align:left;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut2);font-weight:700;
-   padding:9px 10px;border-bottom:1px solid var(--line2);white-space:nowrap;position:sticky;top:0;background:var(--surf);cursor:pointer}
+   padding:9px 10px;border-bottom:1px solid var(--line2);white-space:nowrap;position:sticky;top:0;background:var(--surf);cursor:pointer;user-select:none}
 th:hover{color:var(--paper)}
 th.r,td.r{text-align:right}
 td{padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
-tbody tr:hover td{background:rgba(255,255,255,.025)}
+tbody tr:hover td{background:rgba(255,255,255,.03)}
 .pos{color:var(--win);font-weight:600}.neg{color:var(--s2);font-weight:600}
 .bar-in{height:5px;border-radius:3px;background:var(--s1);display:block;margin-top:4px}
 .vacio{padding:50px 20px;text-align:center;color:var(--mut)}
-footer{border-top:1px solid var(--line);margin-top:40px;padding:24px 0 40px;color:var(--mut2);font-size:11.5px;line-height:1.8}
-@media(max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}}
-@media(max-width:640px){.wrap{padding:0 14px}h1.pg{font-size:22px}.panel{padding:16px 14px}}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:24px 0 44px;color:var(--mut2);font-size:11.5px;line-height:1.8}
+footer b{color:var(--mut)}
+
+#modal{position:fixed;inset:0;background:rgba(4,5,6,.94);z-index:400;display:none;padding:26px;overflow:auto}
+#modal.on{display:block}
+#modal .mh{display:flex;align-items:center;justify-content:space-between;max-width:1500px;margin:0 auto 16px;gap:16px}
+#modal .mh h3{font-size:21px;margin:0;font-family:"DM Serif Display",Georgia,serif;font-weight:400}
+#modal .mx{background:none;border:1px solid var(--line2);color:var(--mut);font-size:20px;line-height:1;padding:6px 14px;border-radius:7px;cursor:pointer}
+#modal .mb{max-width:1500px;margin:0 auto;height:72vh;position:relative}
+
+@media(max-width:1050px){.kpis{grid-template-columns:repeat(2,1fr)}.g2,.g64{grid-template-columns:1fr}}
+@media(max-width:640px){.wrap{padding:0 14px}h1.pg{font-size:25px}.panel{padding:16px 14px}.amp{display:none}
+  .ms{min-width:0;font-size:12px;padding:9px 11px}}
 </style>
 </head>
 <body>
@@ -109,19 +135,22 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:24px 0 40px;colo
   <div class="head">
     <div class="eyebrow">Torq &middot; Uso interno</div>
     <h1 class="pg">Mercado automotor colombiano</h1>
-    <p class="lede">Toda la base comercial del RUNT, de enero de 2022 a julio de 2026, para explorar a mano. Cruza período, combustible, categoría, región y marca; todo lo de abajo responde a los mismos filtros. Pensado para revisarlo entre socios y alimentarlo mes a mes.</p>
+    <p class="lede">1.073.054 matrículas del RUNT, de enero de 2022 a julio de 2026. Elige la métrica, acumula los años y meses que quieras comparar, y cruza combustible, categoría, región y marca: todo el tablero responde a los mismos filtros.</p>
   </div>
+
+  <div class="mets" id="mets"></div>
 </div>
 
 <div class="bar"><div class="wrap">
   <div class="frow">
-    <div class="fg"><span class="fl">Desde</span><select class="ms" id="f-d1"></select></div>
-    <div class="fg"><span class="fl">Hasta</span><select class="ms" id="f-d2"></select></div>
+    <div class="fg"><span class="fl">Año</span><button class="ms" data-dim="anio">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="anio"></div></div>
+    <div class="fg"><span class="fl">Mes</span><button class="ms" data-dim="mes">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="mes"></div></div>
     <div class="fg"><span class="fl">Combustible</span><button class="ms" data-dim="g">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="g"></div></div>
     <div class="fg"><span class="fl">Categoría</span><button class="ms" data-dim="clase">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="clase"></div></div>
     <div class="fg"><span class="fl">Región</span><button class="ms" data-dim="depto">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="depto"></div></div>
     <div class="fg"><span class="fl">Marca</span><button class="ms" data-dim="marca">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="marca"></div></div>
     <div class="sp"></div>
+    <button class="bt" id="ytd" title="Acumulado hasta el último mes cerrado, contra el mismo acumulado de los años anteriores">YTD</button>
     <button class="bt" id="limpiar">Limpiar</button>
     <button class="bt" id="csv">Descargar</button>
   </div>
@@ -130,25 +159,37 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:24px 0 40px;colo
 
 <div class="wrap">
   <div class="kpis">
-    <div class="kpi"><div class="k">Matrículas</div><div class="v num" id="k1">&mdash;</div><div class="d" id="k1d"></div></div>
+    <div class="kpi"><div class="k" id="k1k">Matrículas</div><div class="v num" id="k1">&mdash;</div><div class="d" id="k1d"></div></div>
     <div class="kpi"><div class="k">Promedio mensual</div><div class="v num" id="k2">&mdash;</div><div class="d" id="k2d"></div></div>
-    <div class="kpi"><div class="k">Crecimiento</div><div class="v num" id="k3">&mdash;</div><div class="d" id="k3d"></div></div>
+    <div class="kpi"><div class="k">Contra año anterior</div><div class="v num" id="k3">&mdash;</div><div class="d" id="k3d"></div></div>
     <div class="kpi"><div class="k">Sostenibles</div><div class="v num" id="k4">&mdash;</div><div class="d" id="k4d"></div></div>
     <div class="kpi"><div class="k">Compra a crédito</div><div class="v num" id="k5">&mdash;</div><div class="d" id="k5d"></div></div>
   </div>
 
-  <div class="sec"><div class="panel">
+  <div class="sec"><div class="panel" data-amp="c-evo">
     <h2>Evolución mes a mes</h2>
-    <p class="sub">Matrículas por mes en el período y los filtros activos, separadas por tipo de combustible.</p>
-    <div class="leg" id="leg-evo"></div>
-    <div id="evo"></div>
+    <p class="sub">Cada año es una barra de su propio color dentro del mes, para compararlos de frente. Selecciona varios años arriba y aparecen lado a lado.</p>
+    <div class="cbox"><canvas id="c-evo"></canvas></div>
     <div class="insight" id="ins-evo"></div>
   </div></div>
+
+  <div class="sec g64">
+    <div class="panel" data-amp="c-anio">
+      <h2>Año contra año</h2>
+      <p class="sub">Total por año en el filtro activo. La barra del año en curso está incompleta hasta que cierre.</p>
+      <div class="cbox sm"><canvas id="c-anio"></canvas></div>
+    </div>
+    <div class="panel" data-amp="c-mix">
+      <h2>Mezcla de combustible</h2>
+      <p class="sub">Composición del mercado filtrado.</p>
+      <div class="cbox sm"><canvas id="c-mix"></canvas></div>
+    </div>
+  </div>
 
   <div class="sec g2">
     <div class="panel">
       <h2>Marcas</h2>
-      <p class="sub">Las 14 primeras del filtro activo, con su participación y el cambio contra el período anterior de igual duración.</p>
+      <p class="sub">Las 14 primeras del filtro. Toca un encabezado para reordenar.</p>
       <div class="tw"><table>
         <thead><tr><th data-s="n">Marca</th><th class="r" data-s="v">Unidades</th><th class="r" data-s="p">Part.</th><th class="r" data-s="d">vs ant.</th><th class="r" data-s="c">Crédito</th></tr></thead>
         <tbody id="tb-marca"></tbody>
@@ -156,9 +197,13 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:24px 0 40px;colo
     </div>
     <div class="panel">
       <h2>Regiones</h2>
-      <p class="sub">Departamento <b>donde vive el comprador</b>, no donde se matriculó la placa: los concesionarios registran donde el impuesto es barato y eso desplaza volúmenes enteros de una región a otra. El crédito por región es dato de negociación con los aliados financieros.</p>
+      <p class="sub" id="sub-region"></p>
+      <div style="display:flex;gap:6px;margin-bottom:13px">
+        <button class="bt on" id="rg-dep" style="font-size:11.5px;padding:6px 12px">Departamento</button>
+        <button class="bt" id="rg-com" style="font-size:11.5px;padding:6px 12px">Región comercial</button>
+      </div>
       <div class="tw"><table>
-        <thead><tr><th data-s="n">Departamento</th><th class="r" data-s="v">Unidades</th><th class="r" data-s="p">Part.</th><th class="r" data-s="d">vs ant.</th><th class="r" data-s="c">Crédito</th></tr></thead>
+        <thead><tr><th data-s="n">Región</th><th class="r" data-s="v">Unidades</th><th class="r" data-s="p">Part.</th><th class="r" data-s="d">vs ant.</th><th class="r" data-s="c">Crédito</th></tr></thead>
         <tbody id="tb-depto"></tbody>
       </table></div>
     </div>
@@ -167,32 +212,38 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:24px 0 40px;colo
   <div class="sec g2">
     <div class="panel">
       <h2>Referencias</h2>
-      <p class="sub">Modelos concretos dentro del filtro. Es la vista para encontrar contra qué se compite de verdad.</p>
+      <p class="sub">Modelos concretos dentro del filtro: la vista para saber contra qué se compite de verdad.</p>
       <div class="tw"><table>
         <thead><tr><th data-s="n">Referencia</th><th class="r" data-s="v">Unidades</th><th class="r" data-s="d">vs ant.</th></tr></thead>
         <tbody id="tb-linea"></tbody>
       </table></div>
     </div>
-    <div class="panel">
+    <div class="panel" data-amp="c-clase">
       <h2>Categorías</h2>
       <p class="sub">Cómo se reparte el mercado filtrado por tipo de vehículo.</p>
-      <div id="clases"></div>
+      <div class="cbox sm"><canvas id="c-clase"></canvas></div>
       <div class="insight" id="ins-clase"></div>
     </div>
   </div>
 
-  <div class="sec"><div class="panel">
+  <div class="sec"><div class="panel" data-amp="c-fin">
     <h2>Financiación</h2>
-    <p class="sub">Entidades que ponen la prenda. Las de marca (Toyota, RCI de Renault, GM Financial) financian sus propios carros: es la ventaja estructural que un distribuidor sin banco propio no tiene.</p>
-    <div id="fin"></div>
+    <p class="sub">Entidades que ponen la prenda. Las de marca financian sus propios carros: es la ventaja estructural que un distribuidor sin banco propio no puede igualar.</p>
+    <div class="cbox"><canvas id="c-fin"></canvas></div>
     <div class="insight" id="ins-fin"></div>
   </div></div>
 </div>
 
+<div id="modal" role="dialog" aria-modal="true" aria-label="Gráfico ampliado">
+  <div class="mh"><h3 id="modalT"></h3><button class="mx" id="modalX" aria-label="Cerrar">&times;</button></div>
+  <div class="mb"><canvas id="modalC"></canvas></div>
+</div>
+
 <footer><div class="wrap">
-  <b>Fuente:</b> RUNT — «Base Comercial 2022 hasta febrero 2026» (930.200 registros, ene 2022 a ene 2026) y «Análisis AI RUNT feb–jul 2026» (142.854 registros). Empalman sin solaparse.<br>
-  <b>Región = comprador.</b> Se reasigna cada matrícula al departamento de la ciudad del propietario, no al de la placa. Sin ese ajuste Cundinamarca aparecía primera con 19,8% del país, cuando en realidad son Funza y Mosquera matriculando carros de bogotanos y medellinenses. El mapa cubre el 94,2% de los registros; el resto conserva el departamento de matrícula.<br><b>Cómo leerlo:</b> «vs ant.» compara contra el período inmediatamente anterior de la misma duración. Julio de 2026 va hasta el día 8, así que el último mes siempre se ve corto. Las marcas fuera de las 34 principales se agrupan en «Otras», y las referencias son las 120 más matriculadas del país.<br>
-  <b>Para alimentarlo:</b> cuando llegue el RUNT del mes, se vuelve a correr el agregador y se reemplaza <code>cubo.json</code>. Nada más cambia.
+  <b>Fuente:</b> RUNT — «Base Comercial 2022 hasta febrero 2026» (930.200 registros, ene 2022 a ene 2026) y «Análisis AI RUNT feb–jul 2026» (142.854). Empalman sin solaparse.<br>
+  <b>Región = comprador.</b> Cada matrícula se reasigna al departamento de la ciudad del propietario, no al de la placa. Sin ese ajuste Cundinamarca aparecía primera con 19,8% del país, cuando en realidad son Funza y Mosquera registrando carros de bogotanos y medellinenses. El mapa cubre el 94,2%; el resto conserva el departamento de matrícula. La vista <b>Región comercial</b> junta Bogotá con Cundinamarca, que es como se lee el mercado en la práctica.<br>
+  <b>Advertencias:</b> «vs ant.» compara contra el año anterior con los mismos meses seleccionados. <b>Julio de 2026 va hasta el día 8</b>, así que el último mes y el año en curso siempre se ven cortos. Las marcas fuera de las 34 principales van en «Otras» y las referencias son las 120 más matriculadas del país.<br>
+  <b>Para alimentarlo:</b> cuando llegue el RUNT del mes se vuelve a correr el agregador y se reemplaza <code>cubo.js</code>. Ni el HTML ni el JS cambian.
 </div></footer>
 
 <script src="cubo.js"></script>
