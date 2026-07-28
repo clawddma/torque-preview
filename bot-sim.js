@@ -203,6 +203,15 @@ var PERSONAS = [
     {q:"me puedes comunicar con un asesor de verdad?", espera:"escala:pedido"}
   ]},
 
+ {nombre:"Sofía · el seguro y el mantenimiento",
+  perfil:"Daniel marcó en negativo que al preguntar por el seguro le contestaban el precio del carro. Era estructural: preguntar cuánto cuesta ALGO es preguntar por ese algo, no por el vehículo. Estas frases lo blindan.",
+  veh:"mage",
+  turnos:[
+    {q:"cuanto cuesta aproximadamente un seguro para este vehiculo?", espera:"escala:seguro"},
+    {q:"y cuanto cuesta el mantenimiento", espera:"escala:costoservicio"},
+    {q:"cuanto vale el carro entonces", espera:"precio", contiene:"$109.000.000"}
+  ]},
+
  {nombre:"Esteban · el de las dos versiones del Vigo",
   perfil:"Camilo encontró que anunciábamos los 470 km de la E2+ junto al precio de la E2, que hace 401. Eso es publicidad engañosa y además le daña la venta al asesor: el cliente llega esperando otra cosa. Esta conversación existe para que no vuelva a pasar.",
   veh:"vigo",

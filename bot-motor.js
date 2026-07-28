@@ -628,7 +628,16 @@ function crearSesion(vehiculoInicial){
 }
 
 /* ═══ SALIDA ═══════════════════════════════════════════════════════════════ */
+/* La versión del motor viaja en cada reporte de la sala de pruebas.
+   Nació de un caso real: Daniel marcó tres respuestas malas que YA estaban
+   corregidas — su teléfono tenía guardada la copia anterior de este archivo.
+   Sin este número, un reporte no dice si describe el bot de hoy o el de
+   ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
+   cualquier cifra. */
+var VERSION = "2026-07-28.4";
+
 var API = {
+  VERSION:VERSION,
   VEH:VEH, ORDEN:ORDEN, KB:KB, VETO:VETO, ESC:ESC, COMUN:COMUN,
   crearSesion:crearSesion, puntuar:puntuar, norm:norm,
   temas: function(){ return KB.map(function(t){return t.id}) },

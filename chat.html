@@ -145,7 +145,7 @@ body{background:var(--fondo);color:var(--texto);
   <div class="pcuerpo" id="pcuerpo"></div>
 </div>
 
-<script src="bot-motor.js"></script>
+<script src="bot-motor.js?v=2026-07-28.4"></script>
 <script>
 (function(){
 "use strict";
@@ -327,11 +327,14 @@ function pintarPanel(){
   });
   h+='<div class="acciones">'
     +'<button class="acc1" id="copiar">Copiar el reporte</button>'
-    +'<a class="acc2" id="mandar" href="#">Enviarlo por WhatsApp</a>'
+    +'<a class="acc2" id="mandar" href="#">Mandárselo a Daniel por WhatsApp</a>'
     +'<button class="acc2" id="limpiar">Borrar todo lo marcado</button></div>'
-    +'<p class="pintro" style="margin-top:16px">Copia el reporte y pégamelo en el chat de trabajo: '
-    +'trae el diagnóstico de por qué el bot entendió lo que entendió, así lo corrijo de una '
-    +'sin tener que adivinar. El botón de WhatsApp es para que Camilo te lo mande a ti.</p>';
+    +'<p class="pintro" style="margin-top:16px"><b style="color:#e9edef">Daniel:</b> usa <b style="color:#e9edef">Copiar</b> '
+    +'y pégamelo en el chat de trabajo. El reporte trae el diagnóstico de por qué el bot entendió lo que '
+    +'entendió, así lo corrijo sin adivinar.<br><br>'
+    +'<b style="color:#e9edef">Camilo:</b> usa el botón de WhatsApp — le llega el mismo reporte a Daniel, '
+    +'que lo consolida.<br><br>'
+    +'<span style="color:#5a6b74">Motor v'+B.VERSION+'</span></p>';
   c.innerHTML=h;
 
   c.querySelectorAll(".n").forEach(function(t){
@@ -362,7 +365,8 @@ function pintarPanel(){
    el motor y con qué puntaje quedaron los candidatos. Con eso la causa está
    servida; sin eso, "esto suena mal" obliga a reproducirlo a ciegas. */
 function reporte(){
-  var t="REPORTE · SALA DE PRUEBAS TORQ\n"+marcados.length+" respuesta(s) marcadas como malas\n";
+  var t="REPORTE · SALA DE PRUEBAS TORQ\n"+marcados.length+" respuesta(s) marcadas como malas\n"+
+        "motor v"+B.VERSION+"\n";
   marcados.forEach(function(m,i){
     t+="\n──────────────\n"+(i+1)+") El cliente escribió: \""+m.q+"\"\n";
     t+="El bot respondió: \""+m.r.replace(/\n+/g," ").slice(0,300)+"\"\n";
