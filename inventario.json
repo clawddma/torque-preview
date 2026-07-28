@@ -1,0 +1,36 @@
+{
+  "fuente": "Inventario Gerencia · Corautos BI",
+  "fecha": "2026-07-28",
+  "nota": "Reemplazar este archivo cada vez que llegue el reporte del distribuidor. El sitio y las campanas leen de aqui.",
+  "umbrales": { "inmediata": 1, "pocas": 5 },
+  "modelos": [
+    { "id": "mage", "nombre": "MAGE HEV E3", "pagina": "mage.html",
+      "colores": [
+        {"color":"Plata",         "disponible":10,"puerto":6,"transito":11,"despacho":6,"total":33},
+        {"color":"Blanco",        "disponible":7, "puerto":0,"transito":0, "despacho":3,"total":10},
+        {"color":"Blanco/Negro",  "disponible":2, "puerto":5,"transito":5, "despacho":6,"total":18},
+        {"color":"Plata/Negro",   "disponible":2, "puerto":4,"transito":6, "despacho":6,"total":18},
+        {"color":"Azul",          "disponible":1, "puerto":3,"transito":5, "despacho":6,"total":15}
+      ]},
+    { "id": "box-e3", "nombre": "BOX E3", "pagina": "box.html",
+      "colores": [
+        {"color":"Plata",              "disponible":56,"puerto":0,"transito":24,"despacho":48,"total":128},
+        {"color":"Azul/Blanco",        "disponible":28,"puerto":0,"transito":11,"despacho":24,"total":63},
+        {"color":"Blanco",             "disponible":8, "puerto":0,"transito":10,"despacho":23,"total":42},
+        {"color":"Azul",               "disponible":7, "puerto":0,"transito":6, "despacho":12,"total":25},
+        {"color":"Rosa perlado/Blanco","disponible":2, "puerto":0,"transito":0, "despacho":0, "total":2},
+        {"color":"Verde/Blanco",       "disponible":0, "puerto":0,"transito":0, "despacho":18,"total":18},
+        {"color":"Rojo/Blanco",        "disponible":0, "puerto":0,"transito":0, "despacho":15,"total":15}
+      ]},
+    { "id": "box-e2", "nombre": "BOX E2", "pagina": "box.html",
+      "colores": [
+        {"color":"Blanco",                "disponible":23,"puerto":0,"transito":0,"despacho":0,"total":24},
+        {"color":"Rosa perlado/Blanco",   "disponible":3, "puerto":0,"transito":0,"despacho":0,"total":3},
+        {"color":"Azul",                  "disponible":2, "puerto":0,"transito":3,"despacho":0,"total":5},
+        {"color":"Violeta perlado/Blanco","disponible":1, "puerto":0,"transito":0,"despacho":0,"total":1},
+        {"color":"Azul/Blanco",           "disponible":0, "puerto":0,"transito":6,"despacho":0,"total":6},
+        {"color":"Plata",                 "disponible":0, "puerto":0,"transito":0,"despacho":6,"total":6}
+      ]},
+    { "id": "vigo", "nombre": "VIGO", "pagina": "vigo.html", "colores": [] }
+  ]
+}

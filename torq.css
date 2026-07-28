@@ -236,3 +236,6 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 .marcas .txt small{display:block;font-size:10px;letter-spacing:.16em;
   text-transform:uppercase;color:var(--mut2);font-weight:600;margin-top:4px}
 .marcas .pie{text-align:center;color:var(--mut2);font-size:13px;margin-top:30px;line-height:1.7}
+.antes em{font-style:normal;text-decoration:none;display:inline-block;
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);
+  font-weight:700;margin-right:6px;vertical-align:1px}

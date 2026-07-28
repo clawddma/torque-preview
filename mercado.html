@@ -104,6 +104,9 @@ h1.pg{font-size:34px;margin:12px 0 0;letter-spacing:-.01em;line-height:1.1}
 .insight .t{display:block;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--s1);margin-bottom:6px}
 
 .tw{overflow-x:auto;max-height:400px}
+/* El encabezado pegajoso solo tiene sentido si la tabla hace scroll.
+   En una tabla corta se monta encima de las filas. */
+.tw.simple th{position:static}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 th{text-align:left;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut2);font-weight:700;
    padding:9px 10px;border-bottom:1px solid var(--line2);white-space:nowrap;position:sticky;top:0;background:var(--surf);cursor:pointer;user-select:none}
@@ -141,7 +144,7 @@ footer b{color:var(--mut)}
   <div class="sec" style="margin-top:22px"><div class="panel" style="border-color:var(--line2)">
     <h2>Qué es esta base, exactamente</h2>
     <p class="sub" style="margin-bottom:14px">Es el <b>mercado nacional completo de vehículo nuevo</b> según el RUNT. Contrastado contra las cifras oficiales de Fenalco y la ANDI, cuadra con menos de 1% de diferencia:</p>
-    <div class="tw" style="max-height:none;margin-bottom:16px"><table style="max-width:560px">
+    <div class="tw simple" style="max-height:none;margin-bottom:16px"><table style="max-width:560px">
       <thead><tr><th>Año</th><th class="r">Esta base</th><th class="r">Fenalco / ANDI</th><th class="r">Dif.</th></tr></thead>
       <tbody>
         <tr><td>2024</td><td class="r num">202.438</td><td class="r num">200.953</td><td class="r num pos">+0,7%</td></tr>
