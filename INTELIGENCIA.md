@@ -17,6 +17,29 @@
 > universo completo. La geografía usa solo los registros con ciudad del
 > propietario válida (34.147 de 34.441 en SUV híbrida, el 99,1%).
 
+## Qué cubre la base y qué no
+
+**Es el mercado nacional completo de vehículo nuevo.** Contrastado contra las
+cifras oficiales de Fenalco y la ANDI, cuadra con menos de 1% de diferencia:
+
+| Año | Esta base | Fenalco / ANDI | Dif. |
+|---|---|---|---|
+| 2024 | 202.438 | 200.953 | +0,7% |
+| 2025 | 255.714 | 254.205 | +0,6% |
+| Diciembre 2025 | 30.248 | 30.135 | +113 |
+
+**Sí incluye:** livianos (93,5% — automóvil, camioneta, campero, microbús) y
+pesados (6,3% — camión, tractocamión, bus, volqueta), con combustible, región
+del comprador, marca, referencia y entidad financiadora.
+
+**No incluye:** **motos** (solo 484 registros en toda la base, que es ruido:
+Colombia matricula cerca de un millón al año), **maquinaria amarilla** (se
+registra por otra vía) ni **usados**.
+
+> Dos de las especialidades de Camilo —motos y maquinaria amarilla— **no se
+> pueden analizar con este archivo**. Si se necesitan, hay que pedirle al RUNT
+> esos otros dos universos.
+
 ## Lo primero, porque cambia la estrategia
 
 **La MAGE tiene cero matrículas en Colombia en estos cinco meses.** Cero.

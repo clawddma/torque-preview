@@ -56,13 +56,20 @@ var REGION = {
   "Santander":"Santanderes","Norte de Santander":"Santanderes"
 };
 
+/* Segmento comercial, derivado de la clase. El RUNT no lo trae: se
+   agrupa aquí para poder mirar el mercado como se habla de él. */
+var SEGS=["Livianos","Pesados","Otros"];
+var SEG_CLASE={"Automóvil":0,"Camioneta":0,"Campero":0,"Microbús":0,
+               "Camión":1,"Tractocamión":1,"Bus":1,"Volqueta":1};
+var SEG_DE=C.clase.map(function(nom){ var v=SEG_CLASE[nom]; return v===undefined?2:v });
+
 var METRICAS = {
   unid: {lbl:"Unidades",    f:function(a){return a.n},                fmt:mil,  eje:"unidades"},
   cred: {lbl:"% a crédito", f:function(a){return pct(a.cred,a.n)},    fmt:function(v){return fpct(v,1)}, eje:"% con prenda", max:100},
   sost: {lbl:"% sostenible",f:function(a){return pct(a.sost,a.n)},    fmt:function(v){return fpct(v,1)}, eje:"% híbrido + eléctrico", max:100}
 };
 
-var F = { anio:new Set(), mes:new Set(), g:new Set(), clase:new Set(),
+var F = { anio:new Set(), mes:new Set(), seg:new Set(), g:new Set(), clase:new Set(),
           depto:new Set(), marca:new Set(), ytd:false, metrica:"unid", region:"dep" };
 var ORD = { marca:{k:"v",d:-1}, depto:{k:"v",d:-1}, linea:{k:"v",d:-1} };
 var CH = {};
@@ -72,6 +79,7 @@ function pasa(i, saltar, anios, meses){
   var ym=C.cubo[i];
   if(anios && !anios.has(YMY[ym])) return false;
   if(meses && !meses.has(YMM[ym])) return false;
+  if(saltar!=="seg"   && F.seg.size   && !F.seg.has(SEG_DE[C.cubo[i+2]])) return false;
   if(saltar!=="g"     && F.g.size     && !F.g.has(C.cubo[i+1]))     return false;
   if(saltar!=="clase" && F.clase.size && !F.clase.has(C.cubo[i+2])) return false;
   if(saltar!=="depto" && F.depto.size && !F.depto.has(C.cubo[i+3])) return false;
@@ -116,6 +124,7 @@ function agregarMeses(meses, desplazar){
     var ym=n[i];
     if(!anios.has(YMY[ym])) continue;
     if(meses && meses.size && !meses.has(YMM[ym])) continue;
+    if(F.seg.size && !F.seg.has(SEG_DE[n[i+2]])) continue;
     if(F.g.size && !F.g.has(n[i+1])) continue;
     if(F.clase.size && !F.clase.has(n[i+2])) continue;
     if(F.depto.size && !F.depto.has(n[i+3])) continue;
@@ -227,6 +236,7 @@ function pintarMetricas(){
 var DIMS = {
   anio:  {lbl:"Todos", vals:function(){return ANIOS.map(function(a){return{i:a,n:String(a)}})}},
   mes:   {lbl:"Todos", vals:function(){return MESES.map(function(m,i){return{i:i+1,n:m}})}},
+  seg:   {lbl:"Todos", vals:function(){return SEGS.map(function(s,i){return{i:i,n:s}})}},
   g:     {lbl:"Todos", arr:"g"},
   clase: {lbl:"Todas", arr:"clase"},
   depto: {lbl:"Todas", arr:"depto"},
@@ -240,13 +250,15 @@ function pintarMenu(dim){
     var meses=(dim==="mes")?null:setMeses();
     for(var i=0;i<C.cubo.length;i+=7){
       var ym=C.cubo[i];
-      if(dim!=="anio" && !anios.has(YMY[ym])) continue;
+      if(!anios.has(YMY[ym]) && dim!=="anio") continue;
       if(dim!=="mes" && meses && !meses.has(YMM[ym])) continue;
+      if(dim!=="seg" && F.seg.size && !F.seg.has(SEG_DE[C.cubo[i+2]])) continue;
+      if(F.seg.size && !F.seg.has(SEG_DE[C.cubo[i+2]])) continue;
       if(F.g.size && !F.g.has(C.cubo[i+1])) continue;
       if(F.clase.size && !F.clase.has(C.cubo[i+2])) continue;
       if(F.depto.size && !F.depto.has(C.cubo[i+3])) continue;
       if(F.marca.size && !F.marca.has(C.cubo[i+4])) continue;
-      var k=(dim==="anio")?YMY[ym]:YMM[ym];
+      var k=(dim==="anio")?YMY[ym]:(dim==="mes"?YMM[ym]:SEG_DE[C.cubo[i+2]]);
       tot[k]=(tot[k]||0)+C.cubo[i+5];
     }
     items=DIMS[dim].vals().map(function(x){ return {i:x.i,n:x.n,v:tot[x.i]||0} });
@@ -271,7 +283,7 @@ function pintarMenu(dim){
     }
   }
   items=items.filter(function(x){ return x.v>0 || F[dim].has(x.i) })
-             .sort(function(a,b){ return dim==="mes"||dim==="anio" ? a.i-b.i : b.v-a.v });
+             .sort(function(a,b){ return (dim==="mes"||dim==="anio") ? a.i-b.i : b.v-a.v });
   var h='<div class="acc"><button data-acc="todo">Todos</button><button data-acc="nada">Ninguno</button></div>';
   h+=items.map(function(x){
     return '<label><input type="checkbox" value="'+x.i+'"'+(F[dim].has(x.i)?" checked":"")+'>'

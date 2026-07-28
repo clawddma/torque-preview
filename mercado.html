@@ -138,6 +138,34 @@ footer b{color:var(--mut)}
     <p class="lede">1.073.054 matrículas del RUNT, de enero de 2022 a julio de 2026. Elige la métrica, acumula los años y meses que quieras comparar, y cruza combustible, categoría, región y marca: todo el tablero responde a los mismos filtros.</p>
   </div>
 
+  <div class="sec" style="margin-top:22px"><div class="panel" style="border-color:var(--line2)">
+    <h2>Qué es esta base, exactamente</h2>
+    <p class="sub" style="margin-bottom:14px">Es el <b>mercado nacional completo de vehículo nuevo</b> según el RUNT. Contrastado contra las cifras oficiales de Fenalco y la ANDI, cuadra con menos de 1% de diferencia:</p>
+    <div class="tw" style="max-height:none;margin-bottom:16px"><table style="max-width:560px">
+      <thead><tr><th>Año</th><th class="r">Esta base</th><th class="r">Fenalco / ANDI</th><th class="r">Dif.</th></tr></thead>
+      <tbody>
+        <tr><td>2024</td><td class="r num">202.438</td><td class="r num">200.953</td><td class="r num pos">+0,7%</td></tr>
+        <tr><td>2025</td><td class="r num">255.714</td><td class="r num">254.205</td><td class="r num pos">+0,6%</td></tr>
+        <tr><td>Diciembre 2025</td><td class="r num">30.248</td><td class="r num">30.135</td><td class="r num pos">+113</td></tr>
+      </tbody>
+    </table></div>
+    <div class="g2" style="gap:9px">
+      <div class="insight win" style="border-left-color:var(--win);background:rgba(34,201,141,.07)">
+        <span class="t" style="color:var(--win)">Sí incluye</span>
+        <b>Livianos (93,5%):</b> automóvil, camioneta, campero, microbús.<br>
+        <b>Pesados (6,3%):</b> camión, tractocamión, bus, volqueta.<br>
+        Todo vehículo <b>nuevo</b> matriculado en el país, con su combustible, región del comprador, marca, referencia y entidad que lo financió.
+      </div>
+      <div class="insight warn" style="border-left-color:var(--s2);background:rgba(217,89,38,.07)">
+        <span class="t" style="color:var(--s2)">No incluye</span>
+        <b>Motos.</b> Solo hay 484 registros en toda la base, que es ruido. Colombia matricula cerca de un millón de motos al año y no están aquí.<br>
+        <b>Maquinaria amarilla.</b> No aparece como categoría: retroexcavadoras y similares se registran por otra vía.<br>
+        <b>Usados.</b> Es solo matrícula nueva.
+      </div>
+    </div>
+    <p class="sub" style="margin:15px 0 0">Dos de las especialidades de Camilo &mdash;<b>motos y maquinaria amarilla</b>&mdash; no se pueden analizar con este archivo. Si las quieres, hay que pedirle al RUNT esos otros dos universos.</p>
+  </div></div>
+
   <div class="mets" id="mets"></div>
 </div>
 
@@ -145,6 +173,7 @@ footer b{color:var(--mut)}
   <div class="frow">
     <div class="fg"><span class="fl">Año</span><button class="ms" data-dim="anio">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="anio"></div></div>
     <div class="fg"><span class="fl">Mes</span><button class="ms" data-dim="mes">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="mes"></div></div>
+    <div class="fg"><span class="fl">Segmento</span><button class="ms" data-dim="seg">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="seg"></div></div>
     <div class="fg"><span class="fl">Combustible</span><button class="ms" data-dim="g">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="g"></div></div>
     <div class="fg"><span class="fl">Categoría</span><button class="ms" data-dim="clase">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="clase"></div></div>
     <div class="fg"><span class="fl">Región</span><button class="ms" data-dim="depto">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="depto"></div></div>
