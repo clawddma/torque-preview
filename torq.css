@@ -9,7 +9,7 @@
   --line:#1c1f24; --line2:#2a2e35;
   --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b; --acc:#c8f24a;
   --ok:#22c98d; --warn:#d95926;
-  --nav:76px; --pad:44px;
+  --nav:98px; --pad:44px;
   --safe-l:env(safe-area-inset-left,0px); --safe-r:env(safe-area-inset-right,0px);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -29,12 +29,17 @@ a{color:inherit}
 /* ── nav ─────────────────────────────────────────────────────── */
 .nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);
   backdrop-filter:blur(20px);background:rgba(8,9,10,.78);border-bottom:1px solid var(--line)}
-.nav .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.logo{display:flex;align-items:center;font-weight:800;font-size:23px;letter-spacing:-.03em;
-  text-decoration:none;line-height:1}
-.logo svg{width:1.02em;height:1.02em;margin-left:1px}
-.logo .sub{display:block;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--mut2);font-weight:700;margin-top:3px}
+.nav .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:26px}
+/* El logo es la marca, no un adorno del nav: manda en la barra y lleva
+   siempre el descriptor debajo. Una marca que nadie conoce necesita
+   decir a qué se dedica en el mismo bloque (regla fijada en CONTEXTO.md). */
+.marca{display:flex;flex-direction:column;justify-content:center;text-decoration:none;
+  color:inherit;flex:none;gap:4px}
+.logo{display:flex;align-items:center;font-weight:800;
+  font-size:clamp(30px,3vw,40px);letter-spacing:-.035em;line-height:.9}
+.logo svg{width:1.04em;height:1.04em;margin-left:2px;flex:none}
+.marca .sub{font-size:clamp(9px,.72vw,10.5px);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--mut2);font-weight:700;white-space:nowrap;line-height:1}
 .navl{display:flex;gap:32px;align-items:center;list-style:none}
 .navl a{color:var(--mut);text-decoration:none;font-size:15px;transition:color .2s}
 .navl a:hover,.navl a[aria-current]{color:var(--paper)}
@@ -126,7 +131,8 @@ footer a{color:var(--mut)}
 footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 
 @media(max-width:960px){
-  :root{--pad:22px}
+  :root{--pad:22px; --nav:82px}
+  .marca .sub{font-size:8.5px;letter-spacing:.16em}
   .flota,.cards{grid-template-columns:1fr}
   .specs-strip{grid-template-columns:repeat(2,1fr)}
   section{padding:62px 0}

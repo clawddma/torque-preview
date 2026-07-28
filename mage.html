@@ -17,7 +17,7 @@
 :root{
   --ink:#08090a; --ink2:#0e1013; --line:#1c1f24; --line2:#2a2e35;
   --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b; --acc:#c8f24a;
-  --nav:74px; --pad:40px;
+  --nav:98px; --pad:40px;
   --safe-l:env(safe-area-inset-left,0px); --safe-r:env(safe-area-inset-right,0px);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -32,10 +32,10 @@ h1,h2,h3{overflow-wrap:break-word}
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(18px);background:rgba(8,9,10,.72);border-bottom:1px solid var(--line)}
 .nav-in{max-width:1320px;margin:0 auto;padding:0 calc(var(--pad) + var(--safe-r)) 0 calc(var(--pad) + var(--safe-l));height:var(--nav);display:flex;align-items:center;justify-content:space-between;gap:14px}
-.logo{display:flex;align-items:center;gap:1px;font-size:21px;font-weight:800;letter-spacing:.19em;line-height:1;flex-shrink:0}
-.logo svg{width:24px;height:24px;display:block;margin:0 1px}
+.logo{display:flex;align-items:center;gap:1px;font-size:clamp(30px,3vw,40px);font-weight:800;letter-spacing:-.035em;line-height:1;flex-shrink:0}
+.logo svg{width:1.04em;height:1.04em;display:block;margin:0 1px}
 .logo-lock{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
-.nav-tag{font-size:8.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--mut2);font-weight:700;white-space:nowrap}
+.nav-tag{font-size:clamp(9px,.72vw,10.5px);letter-spacing:.2em;text-transform:uppercase;color:var(--mut2);font-weight:700;white-space:nowrap}
 .nav-links{display:flex;gap:38px;list-style:none}
 .nav-links a{color:var(--mut);text-decoration:none;font-size:12.5px;letter-spacing:.06em;transition:color .25s}
 .nav-links a:hover{color:var(--paper)}
@@ -237,7 +237,7 @@ select.qz-field{appearance:none;-webkit-appearance:none;background-image:linear-
 /* CLOSER */
 .closer{border-top:1px solid var(--line);padding:106px 0 0;text-align:center}
 .firma{margin:0 auto 40px;padding-bottom:34px;border-bottom:1px solid var(--line);max-width:560px;display:flex;flex-direction:column;align-items:center}
-.firma .logo{font-size:26px}
+.firma .logo{font-size:clamp(30px,3vw,40px)}
 .firma .logo svg{width:29px;height:29px}
 .firma .tag{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--paper);font-weight:600;margin-top:18px}
 .firma .desc{font-size:13px;color:var(--mut);margin-top:10px;font-weight:300}
@@ -315,7 +315,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
 }
 @media(max-width:400px){
   :root{--pad:18px}
-  .nav-tag{font-size:8px;letter-spacing:.13em}
+  .nav-tag{font-size:clamp(9px,.72vw,10.5px);letter-spacing:.13em}
   h1{font-size:clamp(44px,14.5vw,60px)}
   .hero-sub{font-size:15px}
   .hero-price .val{font-size:34px}
@@ -343,7 +343,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
 
 <nav>
   <div class="nav-in">
-    <a href="index.html" class="logo-lock" style="text-decoration:none;color:inherit"><div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45" shape-rendering="geometricPrecision"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div><div class="nav-tag">Tu carro, tu mejor decisión.</div></a>
+    <a href="index.html" class="logo-lock" style="text-decoration:none;color:inherit"><div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45" shape-rendering="geometricPrecision"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div><div class="nav-tag">Compra y renting de carros</div></a>
     <ul class="nav-links">
       <li><a href="vigo.html">Vigo</a></li>
       <li><a href="box.html">Box</a></li>
