@@ -270,51 +270,58 @@
 
 <script>
 /* ── carrusel de apertura ───────────────────────────────────────
-   Rota solo. 5 segundos: menos no alcanza para leer titular, cifras y
-   precio y decidir el clic; mas se siente estatico. La barra del punto
-   activo muestra cuanto falta, para que el cambio no sorprenda.
-   Se detiene al pasar el mouse y al tocar, y no rota para quien pidio
-   menos movimiento en su sistema. */
+   El hero ocupa casi toda la pantalla, asi que el cursor esta encima
+   practicamente siempre: pausar por hover equivalia a no rotar nunca.
+   Se elimina esa pausa. El reloj es por timestamp y no se reinicia con
+   eventos incidentales -scroll, movimiento del mouse, reflow-; solo lo
+   reinicia una accion deliberada: tocar un punto o deslizar. */
 (function(){
   var c=document.getElementById("carr"); if(!c) return;
   var sl=[].slice.call(c.querySelectorAll(".slide"));
   var dots=[].slice.call(c.querySelectorAll(".dots button"));
-  var DUR=5000, i=0, t=null;
+  var DUR=5000, i=0, t0=0, raf=null, visible=true;
   var quieto=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   c.style.setProperty("--dur", DUR+"ms");
 
-  function ir(n){
+  function pinta(n){
     i=(n+sl.length)%sl.length;
     sl.forEach(function(s,k){ s.classList.toggle("on",k===i) });
     dots.forEach(function(d,k){
       var on=k===i, barra=d.querySelector("i");
-      /* reiniciar la barra sin animacion antes de relanzarla */
       barra.style.transition="none"; barra.style.width="0";
       d.setAttribute("aria-current", on?"true":"false");
-      if(on && !quieto){ barra.offsetWidth; barra.style.transition=""; }
+      if(on && !quieto){ barra.offsetWidth; barra.style.transition="width "+DUR+"ms linear"; barra.style.width="100%"; }
     });
   }
-  function arranca(){ if(quieto) return; clearInterval(t); t=setInterval(function(){ir(i+1)},DUR) }
-  function para(){ clearInterval(t); dots.forEach(function(d){
-    var b=d.querySelector("i"); b.style.transition="none"; b.style.width=getComputedStyle(b).width; }) }
+  function reloj(){
+    if(quieto) return;
+    t0=performance.now();
+    cancelAnimationFrame(raf);
+    (function tick(){
+      raf=requestAnimationFrame(tick);
+      if(!visible) { t0=performance.now(); return }   /* fuera de pantalla: congela, no adelanta */
+      if(performance.now()-t0>=DUR){ pinta(i+1); t0=performance.now() }
+    })();
+  }
+  function va(n){ pinta(n); t0=performance.now() }   /* accion del usuario: reinicia el conteo */
 
-  dots.forEach(function(d){ d.onclick=function(){ ir(+d.dataset.go); arranca() } });
-  c.addEventListener("mouseenter",para);
-  c.addEventListener("mouseleave",function(){ ir(i); arranca() });
+  dots.forEach(function(d){ d.onclick=function(){ va(+d.dataset.go) } });
   var x0=null;
-  c.addEventListener("touchstart",function(e){ x0=e.touches[0].clientX; para() },{passive:true});
+  c.addEventListener("touchstart",function(e){ x0=e.touches[0].clientX },{passive:true});
   c.addEventListener("touchend",function(e){
     if(x0===null) return;
     var dx=e.changedTouches[0].clientX-x0;
-    if(Math.abs(dx)>44) ir(i+(dx<0?1:-1)); else ir(i);
-    x0=null; arranca();
+    if(Math.abs(dx)>44) va(i+(dx<0?1:-1));
+    x0=null;
   },{passive:true});
-  /* no gastar ciclos ni datos si el carrusel no esta a la vista */
+
+  /* pausar de verdad solo cuando la pestana no se ve */
+  document.addEventListener("visibilitychange",function(){ visible=!document.hidden });
   if("IntersectionObserver" in window){
-    new IntersectionObserver(function(es){ es[0].isIntersecting?arranca():clearInterval(t) },
-      {threshold:.15}).observe(c);
+    new IntersectionObserver(function(es){ visible=es[0].isIntersecting && !document.hidden },
+      {threshold:.12}).observe(c);
   }
-  ir(0); arranca();
+  pinta(0); reloj();
 })();
 </script>
 <script src="contacto.js"></script>
