@@ -115,6 +115,14 @@ body{background:var(--fondo);color:var(--texto);
   cursor:pointer;border:none;min-height:48px}
 .acc1{background:var(--verde);color:#0b141a}
 .acc2{background:transparent;border:1px solid var(--linea)!important;color:var(--sec)}
+
+/* lo que ya se corrigi&oacute;: se muestra una vez y desaparece de la lista */
+.hecho{border:1px solid rgba(0,168,132,.4);background:rgba(0,168,132,.07);border-radius:8px;
+  padding:14px 15px;margin-bottom:20px}
+.ht{font-size:13px;font-weight:700;color:#4fd1a5;margin-bottom:11px}
+.hi{font-size:12.5px;color:var(--sec);line-height:1.6;padding:8px 0;border-top:1px solid rgba(0,168,132,.18)}
+.hi span{display:block;color:var(--texto);margin-bottom:3px}
+.hn{font-size:11.5px;color:#5a6b74;margin-top:10px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -145,7 +153,7 @@ body{background:var(--fondo);color:var(--texto);
   <div class="pcuerpo" id="pcuerpo"></div>
 </div>
 
-<script src="bot-motor.js?v=2026-07-28.4"></script>
+<script src="bot-motor.js?v=2026-07-28.5"></script>
 <script>
 (function(){
 "use strict";
@@ -165,6 +173,18 @@ var ultimaPregunta="";
 var ultimoDiag={};            /* qué entendió el motor en el último turno */
 
 try{ var g=JSON.parse(localStorage.getItem(LLAVE)||"{}"); if(g.marcados) marcados=g.marcados }catch(e){}
+
+/* Al abrir, se descartan las marcas cuyo defecto YA quedó corregido en el
+   motor. Sin esto la lista solo crece, se llena de quejas viejas y deja de
+   leerse — y ahí se muere el ciclo de mejora. Se avisa cuáles salieron y
+   por qué, para que la corrección sea visible y no un borrado silencioso. */
+var resueltas=[];
+marcados = marcados.filter(function(m){
+  var r = B.yaResuelto(m.q);
+  if(r){ resueltas.push({q:m.q, arreglo:r.arreglo}); return false }
+  return true;
+});
+if(resueltas.length) guardar();
 function guardar(){ try{ localStorage.setItem(LLAVE,JSON.stringify({marcados:marcados})) }catch(e){} }
 
 function hora(){
@@ -307,8 +327,18 @@ async function reiniciar(vid){
 /* ── reporte ── */
 function pintarPanel(){
   var c=document.getElementById("pcuerpo");
+
+  var yaHecho="";
+  if(resueltas.length){
+    yaHecho='<div class="hecho"><div class="ht">✓ '+resueltas.length+' que marcaste ya quedaron corregidas</div>';
+    resueltas.forEach(function(r){
+      yaHecho+='<div class="hi"><span>"'+r.q.replace(/</g,"&lt;")+'"</span>'+r.arreglo+'</div>';
+    });
+    yaHecho+='<p class="hn">Se quitaron solas de la lista. Vuelve a probarlas si quieres confirmar.</p></div>';
+  }
+
   if(!marcados.length){
-    c.innerHTML='<div class="vacio">Todavía no has marcado ninguna respuesta.<br><br>'
+    c.innerHTML=yaHecho+'<div class="vacio">Todavía no has marcado ninguna respuesta.<br><br>'
       +'Cuando algo suene mal —falso, frío, confuso o simplemente no como hablaría un asesor de verdad— '
       +'tócale <b>👎 esto suena mal</b> debajo. Aquí se van juntando y me las mandas de una.'
       +'<br><br><span style="color:#cfe08a">Una advertencia honesta:</span> esta sala reconoce las preguntas '
@@ -317,7 +347,7 @@ function pintarPanel(){
       +'niega a contestar</b>: eso es lo que hay que juzgar.</div>';
     return;
   }
-  var h='<p class="pintro">'+marcados.length+' respuesta'+(marcados.length>1?"s":"")
+  var h=yaHecho+'<p class="pintro">'+marcados.length+' respuesta'+(marcados.length>1?"s":"")
     +' marcada'+(marcados.length>1?"s":"")+'. Escribe al lado qué le falta o qué sobra: '
     +'con esa nota corrijo el motor, y cada corrección queda blindada con su propia prueba para que no se dañe otra vez.</p>';
   marcados.forEach(function(m,i){

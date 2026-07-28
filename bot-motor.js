@@ -175,7 +175,10 @@ var KB = [
   r:function(v){
     if(v.tec==="hibrido") return "Con la "+v.nombre+" no aplica: no se enchufa, así que no hay cargador que instalar ni permiso que pedir en el conjunto.\n\nEse es justamente su argumento.";
     return "La instalación del cargador en casa depende de tu acometida eléctrica y, si vives en conjunto, del permiso de la copropiedad.\n\n"+
-      "No te puedo dar un costo por aquí porque cambia caso por caso. Te paso con un asesor para que te lo coticen con un técnico.";
+      /* Mismo criterio que el seguro: instalar el cargador no es asunto del
+         distribuidor, es una necesidad del cliente que nosotros resolvemos.
+         Ese contacto se captura, no se regala. */
+      "El costo cambia caso por caso, así que no te doy una cifra al aire.\n\nTe pongo en contacto con uno de nuestros aliados para que vayan a mirarlo y te coticen la instalación con tu acometida real. ¿Te lo agendo?";
   }, esc:"instalacion"},
 
  {id:"consumo", k:["consumo","gasolina","litros","rinde","tanque","tanquear","galon","galón","km/l","economico","económico","gasto","cuanto gasta","ahorro","autonomia","autonomía","cuanto recorre","kilometros","kilómetros"],
@@ -242,7 +245,13 @@ var KB = [
   r:"Esa es de las preguntas donde no te quiero dar un dato bonito y equivocado: **el pico y placa y el impuesto vehicular los define cada ciudad y cada departamento, y las reglas para eléctricos e híbridos han cambiado varias veces.**\n\nHay beneficios reales, pero dependen de dónde vives y del año. Te paso con un asesor para que te confirme exactamente qué aplica en tu ciudad hoy.", esc:"normativo"},
 
  {id:"seguro", k:["seguro","poliza","póliza","aseguradora","cuanto vale el seguro","asegurar"],
-  r:"El costo del seguro lo cotiza la aseguradora según tu edad, tu historial y tu ciudad — yo no tengo esa tarifa y no te la voy a estimar.\n\nLa sala trabaja con aliados que te lo cotizan junto con el vehículo. Te paso con un asesor.", esc:"seguro"},
+  /* Dos correcciones de Daniel, y la segunda es de negocio, no de estilo:
+     1. "no te la voy a estimar" sonaba tosco. Se dice lo mismo sin regañar.
+     2. Decía que "la sala trabaja con aliados" — eso le regala el contacto a
+        Corautos. El seguro no es del distribuidor: es una necesidad del
+        cliente que TORQ puede atender con sus propios aliados. Ahí hay un
+        lead, y se captura. */
+  r:"El valor del seguro lo define la aseguradora, y cambia según tu edad, tu historial de conducción y la ciudad donde lo matricules. Por eso prefiero no darte una cifra que después no se cumpla.\n\nLo que sí puedo hacer es ponerte en contacto con uno de nuestros aliados para que te lo coticen con tus datos reales, junto con el vehículo. ¿Te lo agendo?", esc:"seguro"},
 
  {id:"prueba", k:["prueba","probar","manejar","test drive","ruta","ver el carro","conocer","visitar","cita","agendar","donde queda","dónde queda","vitrina","sala","direccion","dirección","horario","verla","verlo","quiero verla","quiero verlo","quiero conocerla","me gustaria verla","me gustaría verla","ir a mirarla"],
   r:"Claro que sí. La prueba de ruta y la visita a sala se agendan directamente con la sala de tu ciudad.\n\nTe paso con un asesor para que cuadren día y hora.", esc:"agenda"},
@@ -634,10 +643,53 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.4";
+var VERSION = "2026-07-28.5";
+
+/* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
+   Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
+   cliente queda anotada aquí. La sala de pruebas compara sus marcas contra
+   esta lista y borra sola las que ya quedaron resueltas, avisando cuáles y
+   por qué.
+
+   Existe para que la lista de "esto suena mal" sea siempre trabajo PENDIENTE
+   y no un archivo de quejas viejas. Una lista que solo crece deja de leerse,
+   y ahí se muere el ciclo.
+
+   La comparación es por parecido, no exacta: nadie vuelve a escribir la
+   misma frase con las mismas tildes. */
+var RESUELTOS = [
+  {q:"cuanto cuesta un seguro para este vehiculo",
+   arreglo:"Preguntar cuánto cuesta ALGO ya no cae en el precio del carro. Y la respuesta del seguro se reescribió: menos tosca, y ahora el contacto con el aliado lo ofrecemos nosotros, no la sala.",
+   ver:"2026-07-28.5"},
+  {q:"cuanto cuesta aproximadamente un seguro para este vehiculo",
+   arreglo:"Igual que la anterior: es el mismo defecto con otra redacción.",
+   ver:"2026-07-28.5"},
+  {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
+   arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
+   ver:"2026-07-28.5"},
+  {q:"cuanto cuesta el mantenimiento",
+   arreglo:"Antes contestaba cuántos talleres hay. Ahora es tema propio: explica que no tenemos tarifas, que un eléctrico se mantiene más barato, y pasa a un asesor.",
+   ver:"2026-07-28.5"}
+];
+
+/* ¿Esta marca corresponde a algo que ya se corrigió? Compara por palabras
+   compartidas, para que aguante tildes, signos y variaciones de redacción. */
+function yaResuelto(pregunta){
+  var a = norm(pregunta).split(" ").filter(function(w){ return w.length>3 });
+  if(a.length<2) return null;
+  for(var i=0;i<RESUELTOS.length;i++){
+    var b = norm(RESUELTOS[i].q).split(" ").filter(function(w){ return w.length>3 });
+    var comunes = a.filter(function(w){ return b.indexOf(w)>-1 }).length;
+    /* al menos 3 palabras de fondo en común, y que cubran la mayoría de la
+       frase corregida: así "seguro" suelto no dispara, pero "cuánto cuesta un
+       seguro para este vehículo" sí */
+    if(comunes>=3 && comunes/b.length>=.6) return RESUELTOS[i];
+  }
+  return null;
+}
 
 var API = {
-  VERSION:VERSION,
+  VERSION:VERSION, RESUELTOS:RESUELTOS, yaResuelto:yaResuelto,
   VEH:VEH, ORDEN:ORDEN, KB:KB, VETO:VETO, ESC:ESC, COMUN:COMUN,
   crearSesion:crearSesion, puntuar:puntuar, norm:norm,
   temas: function(){ return KB.map(function(t){return t.id}) },
