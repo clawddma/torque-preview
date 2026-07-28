@@ -239,3 +239,53 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 .antes em{font-style:normal;text-decoration:none;display:inline-block;
   font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);
   font-weight:700;margin-right:6px;vertical-align:1px}
+
+/* ── comparador ──────────────────────────────────────────────── */
+.comp{overflow-x:auto;margin-top:44px;-webkit-overflow-scrolling:touch}
+.comp table{width:100%;border-collapse:collapse;font-size:15px;min-width:820px}
+.comp th,.comp td{padding:18px 16px;border-bottom:1px solid var(--line);text-align:center;
+  font-variant-numeric:tabular-nums}
+.comp th:first-child,.comp td:first-child{text-align:left;color:var(--mut);font-weight:500}
+.comp thead th{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut2);
+  font-weight:700;border-bottom:1px solid var(--line2);vertical-align:bottom;padding-bottom:14px}
+.comp .yo{background:rgba(200,242,74,.05)}
+.comp thead .yo{color:var(--acc);font-size:14px;letter-spacing:.02em;text-transform:none}
+.comp .yo td,.comp td.yo{color:var(--paper);font-weight:700}
+.comp tbody tr:hover td{background:rgba(255,255,255,.02)}
+.comp tbody tr:hover td.yo{background:rgba(200,242,74,.08)}
+
+/* ── reloj de la reforma ─────────────────────────────────────── */
+.reloj{border:1px solid var(--line2);border-radius:15px;padding:34px 32px;background:var(--ink2);margin-top:40px}
+.reloj .cab{display:flex;align-items:baseline;justify-content:space-between;gap:22px;flex-wrap:wrap}
+.reloj .n{font-size:clamp(30px,4vw,44px);font-weight:800;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;color:var(--acc)}
+.reloj .via{height:6px;border-radius:4px;background:var(--ink);margin:24px 0 12px;overflow:hidden}
+.reloj .via i{display:block;height:100%;background:var(--acc);border-radius:4px;transition:width 1s}
+.reloj .pies{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mut2)}
+.reloj p{color:var(--mut);font-size:15px;line-height:1.75;margin-top:20px}
+.reloj p b{color:var(--paper)}
+
+/* ── simulador de ahorro ─────────────────────────────────────── */
+.sim{display:grid;grid-template-columns:1fr 1.2fr;gap:16px;margin-top:44px;align-items:start}
+.sim-in{border:1px solid var(--line);border-radius:15px;padding:30px 28px;background:var(--ink2)}
+.sim-out{border:1px solid var(--line2);border-radius:15px;padding:34px 30px;
+  background:linear-gradient(165deg,rgba(200,242,74,.08),var(--ink2) 60%)}
+.sim .campo{margin-bottom:20px}
+.sim .campo:last-child{margin-bottom:0}
+.sim .campo label{display:block;font-size:13px;color:var(--mut);margin-bottom:8px}
+.sim .campo input{width:100%;background:var(--ink);border:1px solid var(--line2);color:var(--paper);
+  padding:14px 16px;border-radius:10px;font-size:17px;font-family:inherit;font-variant-numeric:tabular-nums}
+.sim .campo input:focus{outline:none;border-color:var(--acc)}
+.sim .k{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.sim .big{font-size:clamp(40px,6.5vw,62px);font-weight:800;letter-spacing:-.04em;line-height:1;
+  margin:14px 0 8px;font-variant-numeric:tabular-nums}
+.sim .sm{font-size:15px;color:var(--mut);line-height:1.7}
+.sim .sm b{color:var(--paper)}
+.sim .barras{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
+.sim .barra{margin-bottom:18px}
+.sim .barra .t{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:8px}
+.sim .barra .t b{font-variant-numeric:tabular-nums}
+.sim .barra .p{height:11px;border-radius:6px;background:var(--ink);overflow:hidden}
+.sim .barra .p i{display:block;height:100%;border-radius:6px;transition:width .55s cubic-bezier(.4,0,.2,1)}
+.sim .ayuda{font-size:12.5px;color:var(--mut2);margin-top:18px;line-height:1.6}
+@media(max-width:960px){ .sim{grid-template-columns:1fr} }
