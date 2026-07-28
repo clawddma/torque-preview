@@ -27,6 +27,7 @@
     ["Pipeline",     "crm.html?k=torq2026"],
     ["Leads",        "leads.html?k=torq2026"],
     ["Bot",          "bot.html"],
+    ["Respuestas",   "respuestas.html"],
     ["Piezas",       "piezas/index.html"],
     ["Marca",        "logo-escala.html"]
   ];

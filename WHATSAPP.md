@@ -2,7 +2,11 @@
 
 > Todo lo que se puede dejar funcionando **sin contrato y sin costo**, mientras llega
 > el acuerdo con Corautos. Línea: **+57 305 431 0851**.
-> Actualizado: 27 de julio de 2026.
+> Actualizado: 28 de julio de 2026.
+
+**Estado (28 de julio de 2026):** la línea **305 431 0851 está confirmada como
+dedicada** y con **WhatsApp Business ya instalado y configurado**. Los pasos 1 y 2
+están hechos. El sitio ya sale a ese número: `contacto.js`, variable `WA`.
 
 **Nota de versión (27 de julio de 2026):** WhatsApp Business movió "Herramientas
 para la empresa" fuera de Ajustes. Ahora vive en una **pestaña propia llamada
@@ -11,18 +15,31 @@ Llamadas) — no dentro de Ajustes → Cuenta ni de Ajustes → Editar perfil. T
 los pasos de abajo siguen siendo válidos en contenido; solo cambia la ruta para
 llegar: entra por esa pestaña, no por Ajustes.
 
-## Antes de empezar — dos advertencias
+## La decisión que sigue: hasta dónde llega la app, y qué cuesta pasarse
 
-1. **La migración no tiene devolución.** Una vez el número pasa a WhatsApp Business,
-   WhatsApp no ofrece un camino de vuelta a la app personal. Si ese número es también
-   tu WhatsApp personal, piénsalo: quizá convenga una línea aparte para TORQ.
-2. **Haz copia de seguridad antes.** En la app personal:
-   *Ajustes → Chats → Copia de seguridad → Guardar ahora*. Con eso los chats, fotos y
-   audios pasan a Business.
+Con la app de Business instalada, la línea llega hasta el **nivel 2**: saludo
+automático, mensaje de ausencia, respuestas rápidas, etiquetas y catálogo. Todo
+manual: el bot no contesta solo, lo contestas tú con un atajo.
 
-WhatsApp Business es una **app distinta**, no una actualización. Se descarga aparte y
-puede convivir en el mismo teléfono con la app personal, siempre que usen números
-diferentes.
+**El bot real (nivel 3) exige la Cloud API, y la Cloud API saca el número del
+teléfono.** No es reversible en la práctica: una vez migrado, la app de Business
+deja de funcionar en esa línea y toda la atención pasa a vivir en un servidor y en
+una bandeja web que hay que construir. No se puede tener las dos cosas.
+
+Por eso el orden correcto es:
+
+| | Qué se gana | Qué se pierde |
+|---|---|---|
+| **Quedarse en la app** *(hoy)* | Atención desde el celular, cero costo, cero infraestructura | Alguien tiene que responder. De noche solo contesta el mensaje de ausencia |
+| **Migrar a Cloud API** | Responde solo, 24/7, con la lógica de `bot-motor.js` | El número sale del teléfono. Hay que construir bandeja, servidor y hosting |
+
+**Recomendación: no migrar todavía.** Primero hay que ver volumen real de leads con
+pauta corriendo. Migrar antes es montar infraestructura para atender un tráfico que
+todavía no existe, y perder el celular como herramienta de trabajo a cambio de nada.
+El día que las respuestas rápidas no den abasto —ese es el síntoma— se migra.
+
+Si algún día se migra, **haz copia de seguridad antes**: *Ajustes → Chats → Copia de
+seguridad → Guardar ahora*.
 
 ---
 
@@ -78,123 +95,41 @@ para cuándo estás pensando la compra, y llegamos con todo listo.
 
 ## Paso 5 · Respuestas rápidas
 
-*Herramientas para empresas → Respuestas rápidas*. Son la versión manual del bot:
-escribes `/precio` y se despliega el texto. **Mismas cifras que `bot.html`.**
+**Ya no se escriben a mano aquí.** Se generan del motor del bot y se copian desde
+`respuestas.html` — ábrela en el celular mientras configuras la app:
 
-**Regla antes de enviar cualquiera que pregunte la ciudad** (`/precio`,
-`/servicio`, `/prueba`): mira si el mensaje con el que te escribió ya la trae.
-Si vino del calificador de la página, empieza con "Estoy en [ciudad]" — en ese
-caso **borra la pregunta de la ciudad antes de enviar** la respuesta rápida,
-no tiene sentido repetirla. Solo pregúntala si el mensaje llegó sin ese dato
-(por ejemplo, alguien que solo escribió "Hola" o borró el texto prellenado).
+<https://clawddma.github.io/torque-preview/respuestas.html>
 
-### `/precio`
-```
-El precio de lanzamiento de la MAGE HEV es de $109.000.000, con IVA incluido.
+Son **43 respuestas** para los tres vehículos, con botón de copiar en cada una,
+filtro por vehículo y separadas entre informativas y las que pasan a un asesor.
+Caben en el límite de WhatsApp Business.
 
-Está sujeto a confirmación con la sala, porque depende de disponibilidad y
-versión. ¿En qué ciudad estás? Te confirmo el precio vigente allá.
-```
-*(quita la pregunta de la ciudad si el mensaje ya la trae — ver regla arriba)*
+**Por qué se generan y no se escriben:** mientras existieron dos listas —una en
+`bot.html` y otra aquí— la única garantía de que dijeran lo mismo era la memoria.
+Ahora hay una sola fuente (`bot-motor.js`): si cambia un precio, cambian el chat,
+el simulador y las respuestas rápidas al mismo tiempo. **Nunca vas a tener una
+cifra en WhatsApp distinta a la del sitio.**
 
-### `/enchufe`
-```
-No se enchufa. Es híbrida autorecargable: recupera energía sola mientras andas.
+Los atajos siguen el patrón `/tema` o `/tema-vehiculo`: `/precio-vigo`,
+`/enchufe-mage`, `/garantia` (igual para los tres), `/picoyplaca`.
 
-Sin cargador, sin instalación en la casa y sin buscar estación. Tanqueas
-gasolina como siempre, solo que mucho menos seguido.
-```
+### Regla antes de enviar cualquiera que pregunte la ciudad
 
-### `/consumo`
-```
-4,9 litros cada 100 km y más de 1.000 km de autonomía total.
+Mira si el mensaje con el que te escribió ya la trae. Si vino del calificador de
+la página, empieza con "Estoy en [ciudad]" — en ese caso **borra la pregunta de la
+ciudad antes de enviar**. Solo pregúntala si el mensaje llegó sin ese dato.
 
-En la página hay un simulador donde pones tu consumo actual y los kilómetros
-que haces al mes, y te dice cuánto cambiaría tu gasto:
-https://clawddma.github.io/torque-preview/#simulador
-```
-
-### `/ficha`
-```
-288 hp de potencia combinada y 565 Nm de torque. Motor 1.5T turbo de inyección
-directa más motor eléctrico, transmisión híbrida dedicada de 4 velocidades.
-
-Techo panorámico de 1,08 m², 6 airbags y conducción asistida nivel 2.
-Ficha completa: https://clawddma.github.io/torque-preview/#ficha
-```
-
-### `/garantia`
-```
-Batería y motor eléctrico: 8 años o 200.000 km.
-Vehículo completo: 5 años o 150.000 km.
-
-Es de las garantías más largas del segmento en Colombia.
-```
-
-### `/servicio`
-```
-26 centros de servicio en 19 ciudades del país y más de 100 puntos de repuestos.
-
-Son más sitios para atenderla que para comprarla. Dime tu ciudad y te digo
-cuál te queda más cerca.
-```
-*(quita la pregunta de la ciudad si el mensaje ya la trae — ver regla del Paso 5)*
-
-### `/reforma`
-```
-Hoy los híbridos pagan 5% de IVA. El 22 de julio se radicó un proyecto que
-lo subiría a 19%.
-
-Si se aprueba, esta misma camioneta pasaría de $109.000.000 a unos
-$123.500.000. Está radicado, no aprobado: todavía puede cambiar.
-```
-
-### `/credito`
-```
-El crédito lo estudia y aprueba la sala con sus aliados financieros, así que
-no puedo darte una tasa por aquí.
-
-Lo que sí puedo es ponerte con un asesor que te dé condiciones reales hoy
-mismo. ¿Te sirve?
-```
-
-### `/prueba`
-```
-Con gusto agendamos prueba de ruta.
-
-¿En qué ciudad estás y qué día te queda mejor? Lo cuadro con la sala y te
-confirmo.
-```
-*(si ya tienes la ciudad, pregunta solo el día: "¿Qué día te queda mejor? Lo cuadro con la sala y te confirmo.")*
-
-### `/cierre`
-```
-Listo. Ya le paso tus datos al asesor de tu ciudad; te contacta en las
-próximas horas.
-
-Cualquier cosa que se te ocurra mientras tanto, escríbeme por aquí.
-```
-
-**Nunca por WhatsApp:** descuentos, tasas de crédito, fechas de entrega, ni la
-devolución de IVA como un hecho. Eso lo define la sala. Las razones están en `BOT.md`.
+**Nunca por WhatsApp:** descuentos, tasas de crédito, fechas de entrega, la
+devolución de IVA como un hecho, ni si un vehículo tiene o no pico y placa en una
+ciudad. Eso lo define la sala. Las razones están en `BOT.md`.
 
 ## Paso 5.5 · Catálogo
 
 *Herramientas para empresas → Catálogo → Añadir artículo o servicio.*
 
-Un solo artículo por ahora — el piloto:
-
-| Campo | Qué poner |
-|---|---|
-| Foto | Una de `img/hero.jpg` o `img/g1.jpg` a `g8.jpg` (súbela desde el teléfono) |
-| Nombre | Dongfeng MAGE HEV E3 |
-| Precio | $109.000.000 |
-| Descripción | Híbrida autorecargable, 288 hp combinados, 565 Nm, 4,9 L/100 km. Garantía de batería 8 años/200.000 km. Compra y renting. |
-| Enlace/sitio web | `https://clawddma.github.io/torque-preview/` |
-
-No agregues más artículos todavía — un solo vehículo, un solo aliado. Cuando entre
-una segunda marca, el catálogo pasa a ser prioridad de construcción (ver
-`CONTEXTO.md` → Alcance de esta fase).
+**Tres artículos, uno por vehículo.** Los datos exactos (nombre, precio,
+descripción y enlace) están al final de `respuestas.html`, generados del mismo
+motor. Las fotos se suben desde el teléfono: `img/vigo/`, `img/box/` e `img/g1.jpg`.
 
 ## Paso 5.6 · Anuncios (el botón "Anuncios" o "Promocionar" dentro de la app)
 
