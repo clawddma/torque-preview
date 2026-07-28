@@ -1,0 +1,135 @@
+/* ═══════════════════════════════════════════════════════════════════
+   TORQ — sistema de diseño compartido
+   Lo usan index.html, vigo.html y box.html. Cambiar un color o un
+   espaciado aquí lo cambia en las tres. (mage.html conserva su CSS
+   embebido original y no depende de este archivo.)
+   ═══════════════════════════════════════════════════════════════════ */
+:root{
+  --ink:#08090a; --ink2:#0e1013; --ink3:#141719;
+  --line:#1c1f24; --line2:#2a2e35;
+  --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b; --acc:#c8f24a;
+  --ok:#22c98d; --warn:#d95926;
+  --nav:66px; --pad:40px;
+  --safe-l:env(safe-area-inset-left,0px); --safe-r:env(safe-area-inset-right,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--ink);color:var(--paper);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+[id]{scroll-margin-top:calc(var(--nav) + 16px)}
+.wrap{max-width:1320px;margin:0 auto;
+  padding:0 calc(var(--pad) + var(--safe-r)) 0 calc(var(--pad) + var(--safe-l))}
+.eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.mut{color:var(--mut)}
+.num{font-variant-numeric:tabular-nums}
+
+/* ── nav ─────────────────────────────────────────────────────── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);
+  backdrop-filter:blur(20px);background:rgba(8,9,10,.78);border-bottom:1px solid var(--line)}
+.nav .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{display:flex;align-items:center;font-weight:800;font-size:19px;letter-spacing:-.03em;
+  text-decoration:none;line-height:1}
+.logo svg{width:1.02em;height:1.02em;margin-left:1px}
+.logo .sub{display:block;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--mut2);font-weight:700;margin-top:3px}
+.navl{display:flex;gap:26px;align-items:center;list-style:none}
+.navl a{color:var(--mut);text-decoration:none;font-size:13px;transition:color .2s}
+.navl a:hover,.navl a[aria-current]{color:var(--paper)}
+.cta{background:var(--acc);color:#0a0c07;padding:10px 19px;border-radius:100px;
+  font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;display:inline-block}
+.cta:hover{opacity:.9}
+.burger{display:none;background:none;border:none;color:var(--paper);cursor:pointer;padding:8px}
+
+/* ── secciones ───────────────────────────────────────────────── */
+section{padding:88px 0}
+.tit{font-size:clamp(27px,4.4vw,44px);font-weight:800;letter-spacing:-.03em;line-height:1.06}
+.lede{color:var(--mut);font-size:15px;line-height:1.75;max-width:620px;margin-top:16px}
+
+/* ── tarjetas de vehículo ────────────────────────────────────── */
+.flota{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
+.veh{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  background:var(--ink2);text-decoration:none;display:flex;flex-direction:column;
+  transition:border-color .3s,transform .3s}
+.veh:hover{border-color:var(--line2);transform:translateY(-3px)}
+.veh .ph{position:relative;aspect-ratio:4/3;overflow:hidden;background:#000}
+.veh .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
+.veh:hover .ph img{transform:scale(1.04)}
+.veh .tag{position:absolute;top:13px;left:13px;background:var(--acc);color:#0a0c07;
+  font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;
+  padding:5px 11px;border-radius:100px}
+.veh .tag.alt{background:rgba(8,9,10,.82);color:var(--paper);border:1px solid var(--line2);
+  backdrop-filter:blur(8px)}
+.veh .body{padding:22px 22px 24px;display:flex;flex-direction:column;flex:1}
+.veh .k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut2);font-weight:700}
+.veh h3{font-size:25px;font-weight:800;letter-spacing:-.025em;margin:9px 0 0;line-height:1.1}
+.veh .desc{color:var(--mut);font-size:13px;line-height:1.65;margin-top:10px;flex:1}
+.veh .specs{display:flex;gap:18px;flex-wrap:wrap;margin-top:17px;padding-top:16px;
+  border-top:1px solid var(--line)}
+.veh .specs div{font-size:11px;color:var(--mut2);line-height:1.35}
+.veh .specs b{display:block;color:var(--paper);font-size:16px;font-weight:800;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.veh .pie{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:19px}
+.veh .precio{font-size:21px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.veh .precio small{display:block;font-size:10px;font-weight:600;color:var(--mut2);
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+.veh .ver{font-size:12.5px;color:var(--acc);font-weight:700;white-space:nowrap}
+
+/* ── ficha ───────────────────────────────────────────────────── */
+.specs-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:38px}
+.specs-strip div{background:var(--ink);padding:24px 20px}
+.specs-strip b{display:block;font-size:clamp(24px,3.4vw,34px);font-weight:800;
+  letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.specs-strip span{display:block;font-size:11px;color:var(--mut);margin-top:8px;line-height:1.4}
+
+.tabla{width:100%;border-collapse:collapse;font-size:14px;margin-top:26px}
+.tabla th,.tabla td{padding:14px 16px;border-bottom:1px solid var(--line);text-align:left}
+.tabla th{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);font-weight:700}
+.tabla td.r,.tabla th.r{text-align:right;font-variant-numeric:tabular-nums}
+.tabla tbody tr:hover td{background:rgba(255,255,255,.02)}
+.tabla .destaca{color:var(--acc);font-weight:700}
+.tw{overflow-x:auto}
+
+/* ── galería ─────────────────────────────────────────────────── */
+.gal{margin-top:34px}
+.gal .marco{position:relative;border-radius:14px;overflow:hidden;background:#000;
+  aspect-ratio:3/2;border:1px solid var(--line)}
+.gal .marco img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .45s}
+.gal .marco img.on{opacity:1}
+.gal .pie{position:absolute;left:0;right:0;bottom:0;padding:44px 24px 20px;
+  background:linear-gradient(transparent,rgba(8,9,10,.86));font-size:13px;color:var(--paper)}
+.gal .minis{display:flex;gap:9px;margin-top:12px;overflow-x:auto;padding-bottom:4px;
+  scrollbar-width:none}
+.gal .minis::-webkit-scrollbar{display:none}
+.gal .mini{flex:none;width:104px;aspect-ratio:4/3;border-radius:8px;overflow:hidden;
+  border:1px solid var(--line);cursor:pointer;opacity:.5;transition:opacity .25s,border-color .25s}
+.gal .mini.on{opacity:1;border-color:var(--acc)}
+.gal .mini img{width:100%;height:100%;object-fit:cover}
+
+/* ── bloques ─────────────────────────────────────────────────── */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:36px}
+.card{border:1px solid var(--line);border-radius:12px;padding:26px 24px;background:var(--ink2)}
+.card h3{font-size:17px;font-weight:700;letter-spacing:-.015em;margin-bottom:10px}
+.card p{color:var(--mut);font-size:13.5px;line-height:1.7}
+.nota{border-left:3px solid var(--acc);background:rgba(200,242,74,.06);
+  border-radius:0 10px 10px 0;padding:18px 22px;margin-top:26px;font-size:13.5px;
+  line-height:1.75;color:var(--mut)}
+.nota b{color:var(--paper)}
+
+footer{border-top:1px solid var(--line);padding:44px 0 60px;color:var(--mut2);
+  font-size:12px;line-height:1.9}
+footer a{color:var(--mut)}
+footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
+
+@media(max-width:960px){
+  :root{--pad:22px}
+  .flota,.cards{grid-template-columns:1fr}
+  .specs-strip{grid-template-columns:repeat(2,1fr)}
+  section{padding:62px 0}
+  .navl{display:none}
+  .burger{display:block}
+}
