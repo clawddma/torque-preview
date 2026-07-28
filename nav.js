@@ -22,6 +22,7 @@
   ];
   var INTERNO = [
     ["Inteligencia", "inteligencia.html"],
+    ["Mercado",      "mercado.html"],
     ["Tablero",      "analitica.html"],
     ["Pipeline",     "crm.html?k=torq2026"],
     ["Leads",        "leads.html?k=torq2026"],

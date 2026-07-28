@@ -74,6 +74,11 @@ municipio de 90.000 habitantes— aparecía como el quinto mercado del país.
 > **Regla para todo lo que venga: se pauta sobre `CIUDAD_PROPIETARIO`.**
 > Segmentar Meta por municipio de matrícula es pagarle avisos a una notaría.
 
+Esta regla también gobierna el tablero `mercado.html`: ahí cada matrícula se
+reasigna al departamento **de la ciudad del propietario**. Sin ese ajuste,
+Cundinamarca aparecía como la primera región del país con el 19,8% — que es
+puro arbitraje de impuesto, no demanda.
+
 Esto además **corrige nuestra propia conclusión anterior**. En `CONTEXTO.md`
 decía que Cundinamarca (22.304 unidades) era «matrícula de flotas y leasing».
 La intuición de descartarla era correcta; el motivo no. No son flotas: son Funza,
