@@ -40,15 +40,25 @@ var VEH = {
     id:"vigo", nombre:"Vigo", art:"el", Art:"El", largo:"Dongfeng Vigo", url:"vigo.html",
     clase:"SUV 100% eléctrica", tec:"electrico",
     precio:"$84.990.000", precioNum:84990000,
-    autonomia:"470 km CLTC (340 km en ciclo WLTP, que es el exigente)",
+    /* OJO — el Vigo tiene dos versiones y las cifras NO son las mismas.
+       El error que hubo aquí: se anunciaban los 470 km y los 18 minutos de la
+       E2+ junto al precio de entrada, que es el de la E2 de 401 km. Eso es
+       exactamente lo que la Ley 1480 llama publicidad engañosa, y además le
+       daña la venta al asesor: el cliente llega esperando otra cosa.
+       Toda cifra de aquí es de la E2. La E2+ va aparte, con su precio. */
+    versiones:[
+      {n:"E2",  precio:"$84.990.000", bateria:"44,94 kWh LFP", autonomia:"401 km CLTC", carga:"30 minutos del 30 al 80%"},
+      {n:"E2+", precio:"$89.990.000", bateria:"51,87 kWh LFP", autonomia:"470 km CLTC", carga:"18 minutos del 30 al 80%"}
+    ],
+    autonomia:"401 km CLTC en la E2, y 470 km en la E2+ de $89.990.000",
     consumo:"no consume gasolina: se carga con electricidad",
-    motor:"161 caballos y 230 Nm",
-    bateria:"51,87 kWh",
-    carga:"del 30% al 80% en 18 minutos",
+    motor:"161 caballos y 230 Nm en las dos versiones",
+    bateria:"44,94 kWh en la E2 y 51,87 kWh en la E2+",
+    carga:"30 minutos del 30% al 80% en la E2, y 18 minutos en la E2+",
     baul:"500 litros — el más grande de su trío de competencia",
     medidas:null,
     colores:null,
-    gancho:"Cinco puestos, 470 km, cero gasolina",
+    gancho:"Cinco puestos, hasta 470 km, cero gasolina",
     llaves:["vigo","bigo","suv electrica","suv eléctrica","la grande","la de 470"]
   },
   box: {
@@ -97,6 +107,18 @@ var KB = [
     var otros = ORDEN.filter(function(x){return x!==v.id}).map(function(x){
       return VEH[x].nombre+" "+VEH[x].precio;
     }).join(" · ");
+    /* Si el vehículo tiene dos versiones, se dicen las DOS con su precio. Dar
+       solo el "desde" y dejar que el cliente asuma que trae las cifras de la
+       de arriba es cómo se pierde una venta en la sala — y cómo se incumple
+       la Ley 1480. */
+    if(v.versiones){
+      var t = v.Art+" "+v.nombre+" tiene dos versiones:\n\n";
+      v.versiones.forEach(function(x){
+        t += "· "+v.nombre+" "+x.n+" — "+x.precio+": "+x.autonomia+", batería de "+x.bateria+", carga en "+x.carga+".\n";
+      });
+      return t+"\nLos dos con IVA incluido y sujetos a confirmación con la sala.\n\n"+
+        "Para que compares: "+otros+". ¿Quieres que un asesor te confirme el precio vigente para tu ciudad?";
+    }
     return v.Art+" "+v.nombre+" está en "+v.precio+", con IVA incluido.\n\n"+
       "Ese valor está sujeto a confirmación con la sala, porque depende de la versión exacta y de disponibilidad.\n\n"+
       "Para que compares: "+otros+". ¿Quieres que un asesor te confirme el precio vigente para tu ciudad?";
@@ -140,9 +162,12 @@ var KB = [
       "Pero me dijiste que parqueas en la calle, y ahí te voy a ser honesto: un eléctrico sin dónde cargar de noche es un dolor de cabeza. Cargar solo en estaciones públicas se vuelve una vuelta cada semana.\n\n"+
       "Para tu caso miraría la MAGE: es híbrida y NUNCA se enchufa. Tanqueas gasolina normal y hace 4,9 litros a los 100 km. ¿Te la muestro?";
 
+    var detalle = v.versiones
+      ? v.versiones.map(function(x){ return "· "+x.n+": carga rápida en "+x.carga+" ("+x.autonomia+")." }).join("\n")
+      : "En carga rápida, "+v.carga+". Batería de "+v.bateria+" y "+v.autonomia+".";
     return v.Art+" "+v.nombre+" es 100% eléctrico, así que sí se carga.\n\n"+
-      "En casa, con un cargador de pared: lo dejas conectado en la noche y amaneces al 100%. En carga rápida, "+v.carga+".\n\n"+
-      "Batería de "+v.bateria+" y "+v.autonomia+"."+
+      "En casa, con un cargador de pared: lo dejas conectado en la noche y amaneces al 100%.\n\n"+
+      detalle+
       (lead.carga ? "" : "\n\n¿Tienes parqueadero propio donde instalar el cargador?");
   }},
 
@@ -157,6 +182,11 @@ var KB = [
   r:function(v){
     if(v.tec==="hibrido") return v.consumo.charAt(0).toUpperCase()+v.consumo.slice(1)+", y "+v.autonomia+".\n\n"+
       "En la página hay un simulador donde pones tu consumo actual y los kilómetros que haces al mes, y te dice cuánto cambiaría tu gasto. ¿Te lo comparto?";
+    if(v.versiones) return v.Art+" "+v.nombre+" no gasta gasolina.\n\n"+
+      v.versiones.map(function(x){
+        return "· "+x.n+" ("+x.precio+"): "+x.autonomia+" con una carga, batería de "+x.bateria+".";
+      }).join("\n")+"\n\n"+
+      "Cargando en casa, el costo por kilómetro es una fracción del de un carro a gasolina. La cifra exacta depende de tu tarifa de energía y de tu estrato — no te la invento aquí; un asesor te la calcula con tu recibo.";
     return v.Art+" "+v.nombre+" no gasta gasolina: da "+v.autonomia+" con una carga, y la batería es de "+v.bateria+".\n\n"+
       "Cargando en casa, el costo por kilómetro es una fracción del de un carro a gasolina. La cifra exacta depende de tu tarifa de energía y de tu estrato — no te la invento aquí; un asesor te la calcula con tu recibo.";
   }},

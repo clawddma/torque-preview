@@ -201,6 +201,15 @@ var PERSONAS = [
   veh:"box",
   turnos:[
     {q:"me puedes comunicar con un asesor de verdad?", espera:"escala:pedido"}
+  ]},
+
+ {nombre:"Esteban · el de las dos versiones del Vigo",
+  perfil:"Camilo encontró que anunciábamos los 470 km de la E2+ junto al precio de la E2, que hace 401. Eso es publicidad engañosa y además le daña la venta al asesor: el cliente llega esperando otra cosa. Esta conversación existe para que no vuelva a pasar.",
+  veh:"vigo",
+  turnos:[
+    {q:"cuanto vale la vigo?", espera:"precio", contiene:"$89.990.000"},
+    {q:"cuantos kilometros hace", espera:"consumo", contiene:"401 km"},
+    {q:"y cuanto se demora cargando", espera:"enchufe", contiene:"18 minutos"}
   ]}
 ];
 
