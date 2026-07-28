@@ -216,6 +216,13 @@ var KB = [
     return "Hay "+COMUN.red+"\n\nSon más sitios para atenderla que para comprarla. Dime tu ciudad y te digo cuál te queda más cerca.";
   }},
 
+ /* Sale del mismo hallazgo del seguro: al arreglar "cuánto cuesta el
+    mantenimiento" el bot pasó a contestar cuántos talleres hay, que no es lo
+    que preguntaron. No tenemos tarifas de mantenimiento; inventarlas sería
+    exactamente lo que este bot no hace. */
+ {id:"costoservicio", k:["cuanto cuesta el mantenimiento","cuanto vale el mantenimiento","cuanto sale el mantenimiento","precio del mantenimiento","costo del mantenimiento","costo de mantenimiento","valor del mantenimiento","cuanto cuesta la revision","mantenimiento cuanto"],
+  r:"El costo de los mantenimientos lo fija cada centro de servicio y depende del kilometraje de la revisión, así que no te voy a dar una cifra que no pueda sostener.\n\nLo que sí es cierto: un eléctrico no lleva cambios de aceite ni filtros de combustible, y los mantenimientos son más espaciados y más baratos que los de un carro a gasolina.\n\nTe paso con un asesor para que te den el plan de mantenimiento con valores reales.", esc:"costoservicio"},
+
  {id:"seguridad", k:["seguridad","airbag","frenos","abs","asistencia","adas","camara","cámara","punto ciego","carril","choque","segura","es seguro"],
   r:function(v){ return COMUN.seguridad+"\n\nLa línea suma conducción asistida nivel 2: frenado automático de emergencia, control crucero adaptativo, mantenimiento de carril, monitoreo de punto ciego y visión 360°.\n\nLa dotación exacta cambia por versión; te la confirma la sala." }},
 
@@ -295,6 +302,7 @@ var ESC = {
   tributario:  "Devolución de IVA: depende del caso y el criterio DIAN ha cambiado.",
   normativo:   "Pico y placa o impuesto vehicular: la norma cambia por ciudad y por año.",
   seguro:      "Costo de póliza: lo cotiza la aseguradora, no el bot.",
+  costoservicio:"Costo de mantenimiento: lo fija cada centro de servicio, no el bot.",
   instalacion: "Instalación de cargador: depende de la acometida y de la copropiedad.",
   descuento:   "Pide descuento. Negociación es de la sala, nunca del bot.",
   reclamo:     "Reclamo o queja. Va a humano de inmediato.",
@@ -382,6 +390,32 @@ function puntuar(q){
   });
   fuertes.sort(function(a,b){ return b.p-a.p });
   debiles.sort(function(a,b){ return b.p-a.p });
+
+  /* ── La regla del sujeto ────────────────────────────────────────────────
+     "cuánto cuesta el SEGURO" contestaba con el precio del carro. Y peor:
+     "cuánto cuesta el MANTENIMIENTO" también. El motivo es que "cuesta",
+     "vale" y "cuánto cuesta" son palabras de `precio` y pesan mucho, mientras
+     que el sujeto real de la pregunta —seguro, mantenimiento, cargador— pesa
+     poco por ser una sola palabra.
+
+     Preguntar cuánto cuesta ALGO es preguntar por ese algo, no por el carro.
+     Entonces: `precio` solo gana si nadie más aportó un sujeto. Si otro tema
+     reconoció una palabra que no es un verbo de precio, ese manda. */
+  if(fuertes.length>1 && fuertes[0].t.id==="precio"){
+    var genericas={};
+    for(var g=0;g<KB.length;g++) if(KB[g].id==="precio")
+      KB[g].k.forEach(function(w){ genericas[norm(w)]=1 });
+
+    for(var f=1;f<fuertes.length;f++){
+      var sujeto = fuertes[f].hits.some(function(h){ return !genericas[h] });
+      if(sujeto){
+        var mejor=fuertes.splice(f,1)[0];
+        fuertes.unshift(mejor);
+        break;
+      }
+    }
+  }
+
   return fuertes.concat(debiles);
 }
 

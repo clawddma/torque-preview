@@ -162,7 +162,7 @@ var param=(location.search.match(/[?&]v=(\w+)/)||[])[1];
 var ses=B.crearSesion(param||"mage");
 var marcados=[];              /* lo que Daniel o Camilo señalaron como malo */
 var ultimaPregunta="";
-var n=0;
+var ultimoDiag={};            /* qué entendió el motor en el último turno */
 
 try{ var g=JSON.parse(localStorage.getItem(LLAVE)||"{}"); if(g.marcados) marcados=g.marcados }catch(e){}
 function guardar(){ try{ localStorage.setItem(LLAVE,JSON.stringify({marcados:marcados})) }catch(e){} }
@@ -204,8 +204,17 @@ function juez(fila, pregunta, respuesta){
   b.onclick=function(){
     var i=marcados.findIndex(function(m){ return m.r===respuesta && m.q===pregunta });
     if(i>-1){ marcados.splice(i,1); b.classList.remove("on"); fila.classList.remove("marcado") }
-    else{ marcados.push({q:pregunta,r:respuesta,nota:""}); b.classList.add("on"); fila.classList.add("marcado") }
-    guardar();
+    else{
+      /* Se guarda el diagnóstico junto con la queja: qué tema creyó reconocer
+         el motor y con cuáles palabras. Sin eso yo recibo "esto suena mal" y
+         tengo que adivinar por qué; con eso, la causa está en el reporte. */
+      marcados.push({q:pregunta, r:respuesta, nota:"",
+        tema:(ultimoDiag.tema||"—"), veh:ultimoDiag.veh||"",
+        pistas:(ultimoDiag.candidatos||[]).slice(0,3)
+          .map(function(c){ return c.id+":"+c.p }).join(" ")});
+      b.classList.add("on"); fila.classList.add("marcado");
+    }
+    guardar(); contador();
   };
   j.appendChild(b);
   hilo.appendChild(j);
@@ -239,6 +248,7 @@ function sistema(texto){
 async function responder(q){
   ultimaPregunta=q;
   var o=ses.responder(q);
+  ultimoDiag={tema:o.tema, candidatos:o.candidatos, veh:B.VEH[ses.lead.vehiculo].nombre};
   var textos=[];
   if(o.texto) textos.push(o.texto);
   if(o.empujon) textos.push(o.empujon);
@@ -316,34 +326,72 @@ function pintarPanel(){
       +'<textarea class="n" data-i="'+i+'" placeholder="¿Qué está mal? (opcional)">'+(m.nota||"")+'</textarea></div>';
   });
   h+='<div class="acciones">'
-    +'<a class="acc1" id="mandar" href="#">Enviarme el reporte por WhatsApp</a>'
-    +'<button class="acc2" id="limpiar">Borrar todo lo marcado</button></div>';
+    +'<button class="acc1" id="copiar">Copiar el reporte</button>'
+    +'<a class="acc2" id="mandar" href="#">Enviarlo por WhatsApp</a>'
+    +'<button class="acc2" id="limpiar">Borrar todo lo marcado</button></div>'
+    +'<p class="pintro" style="margin-top:16px">Copia el reporte y pégamelo en el chat de trabajo: '
+    +'trae el diagnóstico de por qué el bot entendió lo que entendió, así lo corrijo de una '
+    +'sin tener que adivinar. El botón de WhatsApp es para que Camilo te lo mande a ti.</p>';
   c.innerHTML=h;
 
   c.querySelectorAll(".n").forEach(function(t){
     t.oninput=function(){ marcados[+t.dataset.i].nota=t.value; guardar(); armarEnlace() };
   });
   c.querySelector("#limpiar").onclick=function(){
-    if(confirm("¿Borrar las "+marcados.length+" marcas?")){ marcados=[]; guardar(); pintarPanel() }
+    if(confirm("¿Borrar las "+marcados.length+" marcas?")){ marcados=[]; guardar(); contador(); pintarPanel() }
+  };
+  c.querySelector("#copiar").onclick=function(){
+    var b=c.querySelector("#copiar"), t=reporte();
+    var ok=function(){ b.textContent="Copiado ✓";
+      setTimeout(function(){ b.textContent="Copiar el reporte" },1800) };
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok,plan2);
+    else plan2();
+    function plan2(){
+      var ta=document.createElement("textarea"); ta.value=t;
+      ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand("copy"); ok() }catch(e){}
+      document.body.removeChild(ta);
+    }
   };
   armarEnlace();
 }
 
+/* El reporte se escribe para que yo pueda corregir sin volver a preguntar:
+   la frase exacta del cliente, la respuesta que dio, qué tema creyó reconocer
+   el motor y con qué puntaje quedaron los candidatos. Con eso la causa está
+   servida; sin eso, "esto suena mal" obliga a reproducirlo a ciegas. */
+function reporte(){
+  var t="REPORTE · SALA DE PRUEBAS TORQ\n"+marcados.length+" respuesta(s) marcadas como malas\n";
+  marcados.forEach(function(m,i){
+    t+="\n──────────────\n"+(i+1)+") El cliente escribió: \""+m.q+"\"\n";
+    t+="El bot respondió: \""+m.r.replace(/\n+/g," ").slice(0,300)+"\"\n";
+    if(m.nota) t+="QUÉ ESTÁ MAL: "+m.nota+"\n";
+    t+="[diagnóstico: vehículo "+(m.veh||"—")+" · reconoció \""+(m.tema||"—")+"\""
+      +(m.pistas?" · candidatos "+m.pistas:"")+"]\n";
+  });
+  return t;
+}
+
 function armarEnlace(){
   var a=document.getElementById("mandar");
-  if(!a) return;
-  var t="Reporte de la sala de pruebas TORQ — "+marcados.length+" respuesta(s) para corregir:\n";
-  marcados.forEach(function(m,i){
-    t+="\n"+(i+1)+") Cliente: \""+m.q+"\"\n";
-    t+="Bot: \""+m.r.split("\n")[0].slice(0,140)+"…\"\n";
-    if(m.nota) t+="Problema: "+m.nota+"\n";
-  });
-  a.href="https://wa.me/573054310851?text="+encodeURIComponent(t);
+  if(a) a.href="https://wa.me/573054310851?text="+encodeURIComponent(reporte());
+}
+
+/* El menú lleva el número de marcas pendientes: sin eso se marcan cosas y se
+   olvidan ahí, que es como este ciclo se muere. */
+function contador(){
+  var b=document.getElementById("abrir");
+  b.textContent = marcados.length ? "☰ "+marcados.length : "☰";
+  b.style.color = marcados.length ? "#f15c6d" : "";
+  b.style.fontSize = marcados.length ? "15px" : "21px";
+  b.style.fontWeight = marcados.length ? "700" : "";
 }
 
 document.getElementById("abrir").onclick=function(){ pintarPanel(); panel.classList.add("abierto") };
 document.getElementById("cerrar").onclick=function(){ panel.classList.remove("abierto") };
 
+contador();
 reiniciar(param||"mage");
 })();
 </script>
