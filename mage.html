@@ -34,8 +34,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(18px);b
 .nav-in{max-width:1320px;margin:0 auto;padding:0 calc(var(--pad) + var(--safe-r)) 0 calc(var(--pad) + var(--safe-l));height:var(--nav);display:flex;align-items:center;justify-content:space-between;gap:14px}
 .logo{display:flex;align-items:center;gap:1px;font-size:clamp(30px,3vw,40px);font-weight:800;letter-spacing:-.035em;line-height:1;flex-shrink:0}
 .logo svg{width:1.04em;height:1.04em;display:block;margin:0 1px}
-.logo-lock{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
-.nav-tag{font-size:clamp(9px,.72vw,10.5px);letter-spacing:.2em;text-transform:uppercase;color:var(--mut2);font-weight:700;white-space:nowrap}
+.logo-lock{display:flex;align-items:center;gap:16px;flex-shrink:0}
+.nav-tag{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--mut2);font-weight:600;line-height:1.5;white-space:nowrap;padding-left:16px;border-left:1px solid var(--line2)}
 .nav-links{display:flex;gap:38px;list-style:none}
 .nav-links a{color:var(--mut);text-decoration:none;font-size:12.5px;letter-spacing:.06em;transition:color .25s}
 .nav-links a:hover{color:var(--paper)}
@@ -336,6 +336,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
   .city:hover{border-color:var(--line);background:var(--ink2)}
   .city:active{border-color:var(--acc);background:rgba(200,242,74,.07)}
 }
+@media(max-width:760px){.nav-tag{display:none}}
 </style>
 <script src="nav.js" defer></script>
 </head>
@@ -343,7 +344,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
 
 <nav>
   <div class="nav-in">
-    <a href="index.html" class="logo-lock" style="text-decoration:none;color:inherit"><div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45" shape-rendering="geometricPrecision"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div><div class="nav-tag">Compra y renting de carros</div></a>
+    <a href="index.html" class="logo-lock" style="text-decoration:none;color:inherit"><div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="33" fill="none" stroke="#fafafa" stroke-width="14"/><path d="M58 58 L90 90" stroke="#c8f24a" stroke-width="14" stroke-linecap="round"/></svg></div><div class="nav-tag">Compra y renting<br>de carros</div></a>
     <ul class="nav-links">
       <li><a href="vigo.html">Vigo</a></li>
       <li><a href="box.html">Box</a></li>
@@ -612,7 +613,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
   <p>Cuatro preguntas rápidas y te escribimos por WhatsApp con disponibilidad real, cuota estimada y si tu caso aplica a la devolución de IVA. Y cuando quieras verla, te agendamos en la sala más cercana.</p>
 
 <div class="firma">
-    <div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div>
+    <div class="logo">TOR<svg viewBox="0 0 100 100" aria-label="Q"><circle cx="50" cy="50" r="33" fill="none" stroke="#fafafa" stroke-width="14"/><path d="M58 58 L90 90" stroke="#c8f24a" stroke-width="14" stroke-linecap="round"/></svg></div>
     <div class="tag">Tu carro, tu mejor decisión.</div>
     <div class="desc">Compra y renting de carros.</div>
 
@@ -624,7 +625,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
   
   </div>
   <footer><div class="foot-in">
-    <div class="foot-brand"><div class="logo" style="font-size:15px">TOR<svg viewBox="0 0 100 100" style="width:17px;height:17px" aria-label="Q"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45" shape-rendering="geometricPrecision"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div>
+    <div class="foot-brand"><div class="logo" style="font-size:15px">TOR<svg viewBox="0 0 100 100" style="width:17px;height:17px" aria-label="Q"><circle cx="50" cy="50" r="33" fill="none" stroke="#fafafa" stroke-width="14"/><path d="M58 58 L90 90" stroke="#c8f24a" stroke-width="14" stroke-linecap="round"/></svg></div>
       <div class="foot-tag">Tu carro, tu mejor decisión.</div>
       <div class="foot-desc">Compra y renting de carros.</div>
       <a href="politica-datos.html" style="display:inline-flex;align-items:center;min-height:44px;font-size:11px;color:var(--mut2);text-decoration:underline;margin-top:4px">Política de Tratamiento de Datos</a>
