@@ -365,53 +365,60 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 
 
 /* ═══ CARRUSEL DE APERTURA ════════════════════════════════════════
-   La imagen va primero: es lo que detiene al visitante. El texto vive
-   dentro del marco, sobre un velo, para que la foto no compita con un
-   bloque de tipografia encima. Sigue contenido -no a sangre- para que
-   nunca se estire mas alla de su resolucion. */
-.carr-sec{padding-top:clamp(26px,3vw,44px);padding-bottom:clamp(30px,3.4vw,52px)}
-.carr{position:relative;border-radius:20px;overflow:hidden;background:#0b0c0e;
-  aspect-ratio:21/9;border:1px solid var(--line)}
-.carr .slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;
-  pointer-events:none}
+   Rehecho. La version anterior tenia el marco a 21:9 -demasiado bajo-
+   con seis elementos apilados a la izquierda: el titular no mandaba y
+   todo quedaba apretado. Ahora el carro llena un marco 16:9 y el texto
+   baja a una banda inferior de ancho completo, que es como resuelven el
+   hero las marcas que saben: la tipografia tiene aire, el titular pesa,
+   y la foto no compite con un bloque encima. */
+.carr-sec{padding-top:clamp(22px,2.6vw,38px);padding-bottom:clamp(28px,3.2vw,48px)}
+.carr{position:relative;border-radius:22px;overflow:hidden;background:#0b0c0e;
+  aspect-ratio:16/9;border:1px solid var(--line)}
+.carr .slide{position:absolute;inset:0;opacity:0;transition:opacity .9s ease;pointer-events:none}
 .carr .slide.on{opacity:1;pointer-events:auto}
 .carr .slide img{width:100%;height:100%;object-fit:cover;display:block}
 .carr .velo{position:absolute;inset:0;
-  background:linear-gradient(90deg,rgba(8,9,10,.92) 0%,rgba(8,9,10,.72) 34%,rgba(8,9,10,.15) 62%,transparent 88%)}
-.carr .txt{position:absolute;left:0;top:0;bottom:0;display:flex;flex-direction:column;
-  justify-content:center;padding:clamp(28px,4.4vw,70px);max-width:min(62%,660px)}
-.carr .txt .eyebrow{font-size:clamp(10px,.86vw,12px)}
-.carr .txt h2{font-size:clamp(30px,4.6vw,62px);font-weight:800;letter-spacing:-.04em;
-  line-height:1.02;margin:12px 0 0}
-.carr .txt p{color:#d3d8dd;font-size:clamp(14px,1.35vw,19px);line-height:1.5;
-  margin-top:14px;max-width:30ch}
-.carr .txt .fila{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:clamp(18px,2.2vw,30px)}
-.carr .txt .pr{font-size:clamp(11px,.9vw,12.5px);color:var(--mut);line-height:1.3}
-.carr .txt .pr b{display:block;color:var(--paper);font-size:clamp(19px,2.1vw,27px);
-  font-weight:800;letter-spacing:-.025em;font-variant-numeric:tabular-nums;margin-top:2px}
-.carr .tag{display:inline-block;background:var(--acc);color:#0a0c07;font-size:10px;
-  letter-spacing:.14em;text-transform:uppercase;font-weight:800;padding:5px 11px;
-  border-radius:100px;margin-bottom:14px;width:max-content}
+  background:linear-gradient(to top,rgba(6,7,8,.97) 0%,rgba(6,7,8,.93) 26%,rgba(6,7,8,.72) 42%,rgba(6,7,8,.26) 60%,transparent 78%)}
+
+/* la banda de texto: ancho completo, alineada abajo */
+.carr .txt{position:absolute;left:0;right:0;bottom:0;
+  padding:clamp(26px,3.4vw,58px) clamp(26px,3.6vw,64px) clamp(26px,3.2vw,52px)}
+.carr .lin{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:clamp(12px,1.4vw,20px)}
+.carr .tag{background:var(--acc);color:#0a0c07;font-size:clamp(9.5px,.78vw,11px);
+  letter-spacing:.15em;text-transform:uppercase;font-weight:800;padding:6px 13px;border-radius:100px}
+.carr .mod{font-size:clamp(11px,.92vw,13px);letter-spacing:.24em;text-transform:uppercase;
+  color:#c2c8ce;font-weight:700}
+.carr h2{font-size:clamp(34px,5.6vw,84px);font-weight:800;letter-spacing:-.045em;
+  line-height:.98;margin:0;max-width:15ch}
+.carr .pie{display:flex;align-items:flex-end;justify-content:space-between;gap:clamp(20px,3vw,48px);
+  flex-wrap:wrap;margin-top:clamp(16px,2vw,28px)}
+.carr .izq{display:flex;align-items:flex-end;gap:clamp(20px,2.6vw,42px);flex-wrap:wrap}
+.carr .dato{font-size:clamp(11px,.88vw,12.5px);color:#8b9199;line-height:1.3;white-space:nowrap}
+.carr .dato b{display:block;color:var(--paper);font-size:clamp(19px,2.1vw,29px);font-weight:800;
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-top:3px}
+.carr .cta{padding:clamp(12px,1.2vw,16px) clamp(22px,2.2vw,32px);font-size:clamp(13px,1.15vw,16px)}
 
 /* controles */
-.carr .dots{position:absolute;right:clamp(20px,2.4vw,34px);bottom:clamp(20px,2.4vw,32px);
-  display:flex;gap:9px;z-index:3}
-.carr .dots button{width:34px;height:4px;border-radius:3px;border:none;cursor:pointer;
-  background:rgba(255,255,255,.28);padding:0;transition:background .3s}
+.carr .dots{position:absolute;right:clamp(26px,3.6vw,64px);top:clamp(26px,3vw,46px);
+  display:flex;gap:8px;z-index:4}
+.carr .dots button{width:36px;height:3px;border-radius:2px;border:none;cursor:pointer;
+  background:rgba(255,255,255,.3);padding:0;transition:background .3s}
 .carr .dots button[aria-current="true"]{background:var(--acc)}
-.carr .flechas{position:absolute;right:clamp(20px,2.4vw,34px);top:clamp(20px,2.4vw,32px);
-  display:flex;gap:8px;z-index:3}
-.carr .flechas button{width:40px;height:40px;border-radius:50%;cursor:pointer;
-  background:rgba(8,9,10,.5);border:1px solid rgba(255,255,255,.16);color:var(--paper);
-  backdrop-filter:blur(10px);font-size:16px;line-height:1;transition:background .25s}
-.carr .flechas button:hover{background:rgba(8,9,10,.8);border-color:var(--mut)}
+.carr .flechas{position:absolute;right:clamp(26px,3.6vw,64px);bottom:clamp(26px,3.2vw,52px);
+  display:flex;gap:9px;z-index:4;transform:translateY(-84px)}
+.carr .flechas button{width:42px;height:42px;border-radius:50%;cursor:pointer;
+  background:rgba(6,7,8,.42);border:1px solid rgba(255,255,255,.18);color:var(--paper);
+  backdrop-filter:blur(12px);font-size:17px;line-height:1;transition:background .25s,border-color .25s}
+.carr .flechas button:hover{background:rgba(6,7,8,.8);border-color:rgba(255,255,255,.4)}
 
 @media(max-width:860px){
-  .carr{aspect-ratio:4/5;border-radius:15px}
-  .carr .slide img{object-position:center 62%}
-  .carr .velo{background:linear-gradient(to top,rgba(8,9,10,.95) 26%,rgba(8,9,10,.5) 56%,transparent 86%)}
-  .carr .txt{max-width:none;justify-content:flex-end;padding:24px}
-  .carr .txt p{max-width:none}
+  .carr{aspect-ratio:3/4;border-radius:16px}
+  .carr .slide img{object-position:center 40%}
+  .carr .velo{background:linear-gradient(to top,rgba(6,7,8,.97) 30%,rgba(6,7,8,.6) 56%,transparent 82%)}
+  .carr h2{max-width:none;font-size:clamp(32px,8.4vw,46px)}
+  .carr .txt{padding:24px 22px 26px}
+  .carr .pie{align-items:stretch;flex-direction:column;gap:18px}
+  .carr .cta{text-align:center;width:100%}
   .carr .flechas{display:none}
-  .carr .dots{left:24px;right:auto;bottom:16px}
 }
+@media(max-width:860px){ .carr .dots{top:20px;bottom:auto;right:22px;transform:none} }
