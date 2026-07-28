@@ -365,60 +365,66 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 
 
 /* ═══ CARRUSEL DE APERTURA ════════════════════════════════════════
-   Rehecho. La version anterior tenia el marco a 21:9 -demasiado bajo-
-   con seis elementos apilados a la izquierda: el titular no mandaba y
-   todo quedaba apretado. Ahora el carro llena un marco 16:9 y el texto
-   baja a una banda inferior de ancho completo, que es como resuelven el
-   hero las marcas que saben: la tipografia tiene aire, el titular pesa,
-   y la foto no compite con un bloque encima. */
-.carr-sec{padding-top:clamp(22px,2.6vw,38px);padding-bottom:clamp(28px,3.2vw,48px)}
-.carr{position:relative;border-radius:22px;overflow:hidden;background:#0b0c0e;
-  aspect-ratio:16/9;border:1px solid var(--line)}
-.carr .slide{position:absolute;inset:0;opacity:0;transition:opacity .9s ease;pointer-events:none}
-.carr .slide.on{opacity:1;pointer-events:auto}
-.carr .slide img{width:100%;height:100%;object-fit:cover;display:block}
-.carr .velo{position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(6,7,8,.97) 0%,rgba(6,7,8,.93) 26%,rgba(6,7,8,.72) 42%,rgba(6,7,8,.26) 60%,transparent 78%)}
+   A todo el ancho, sin flechas, con rotacion automatica. Tres decisiones
+   de oficio que hacen la diferencia:
 
-/* la banda de texto: ancho completo, alineada abajo */
-.carr .txt{position:absolute;left:0;right:0;bottom:0;
-  padding:clamp(26px,3.4vw,58px) clamp(26px,3.6vw,64px) clamp(26px,3.2vw,52px)}
-.carr .lin{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:clamp(12px,1.4vw,20px)}
+   1. <picture> con art direction: en escritorio sirve un 16:9 y en movil
+      un 3:4 recortado aparte. No es la misma foto encogida: es otra
+      composicion, porque un panoramico en vertical deja al carro del
+      tamano de una moneda.
+   2. Un pseudo-zoom lentisimo (Ken Burns) mientras la diapositiva esta
+      activa. Da vida y, de paso, el ojo deja de buscar el pixel.
+   3. Barra de progreso en los puntos: el visitante ve cuanto falta para
+      el cambio, asi la rotacion no se siente arbitraria.
+   ═══════════════════════════════════════════════════════════════════ */
+.carr{position:relative;width:100%;height:clamp(520px,82vh,860px);overflow:hidden;
+  background:#0b0c0e;border-bottom:1px solid var(--line)}
+.carr .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.1s ease;
+  pointer-events:none;will-change:opacity}
+.carr .slide.on{opacity:1;pointer-events:auto}
+.carr .slide img{width:100%;height:100%;object-fit:cover;display:block;
+  transform:scale(1.045);transition:transform 9s linear}
+.carr .slide.on img{transform:scale(1)}
+@media(prefers-reduced-motion:reduce){
+  .carr .slide img{transform:none!important;transition:none}
+  .carr .slide{transition:opacity .3s}
+}
+.carr .velo{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(6,7,8,.95) 0%,rgba(6,7,8,.86) 20%,rgba(6,7,8,.55) 40%,rgba(6,7,8,.12) 62%,transparent 80%),
+             linear-gradient(90deg,rgba(6,7,8,.55) 0%,rgba(6,7,8,.15) 44%,transparent 70%)}
+
+.carr .txt{position:absolute;left:0;right:0;bottom:0;z-index:2}
+.carr .txt .wrap{padding-bottom:clamp(38px,4.6vw,74px)}
+.carr .lin{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:clamp(14px,1.6vw,22px)}
 .carr .tag{background:var(--acc);color:#0a0c07;font-size:clamp(9.5px,.78vw,11px);
   letter-spacing:.15em;text-transform:uppercase;font-weight:800;padding:6px 13px;border-radius:100px}
 .carr .mod{font-size:clamp(11px,.92vw,13px);letter-spacing:.24em;text-transform:uppercase;
-  color:#c2c8ce;font-weight:700}
-.carr h2{font-size:clamp(34px,5.6vw,84px);font-weight:800;letter-spacing:-.045em;
-  line-height:.98;margin:0;max-width:15ch}
-.carr .pie{display:flex;align-items:flex-end;justify-content:space-between;gap:clamp(20px,3vw,48px);
-  flex-wrap:wrap;margin-top:clamp(16px,2vw,28px)}
-.carr .izq{display:flex;align-items:flex-end;gap:clamp(20px,2.6vw,42px);flex-wrap:wrap}
-.carr .dato{font-size:clamp(11px,.88vw,12.5px);color:#8b9199;line-height:1.3;white-space:nowrap}
-.carr .dato b{display:block;color:var(--paper);font-size:clamp(19px,2.1vw,29px);font-weight:800;
+  color:#c8ced4;font-weight:700}
+.carr h2{font-size:clamp(38px,6.4vw,96px);font-weight:800;letter-spacing:-.048em;
+  line-height:.96;margin:0;max-width:16ch;
+  text-shadow:0 2px 40px rgba(0,0,0,.5)}
+.carr .pie{display:flex;align-items:flex-end;justify-content:space-between;
+  gap:clamp(20px,3vw,52px);flex-wrap:wrap;margin-top:clamp(20px,2.4vw,34px)}
+.carr .izq{display:flex;align-items:flex-end;gap:clamp(22px,2.8vw,46px);flex-wrap:wrap}
+.carr .dato{font-size:clamp(11px,.88vw,13px);color:#9ba2a9;line-height:1.3;white-space:nowrap}
+.carr .dato b{display:block;color:var(--paper);font-size:clamp(21px,2.3vw,32px);font-weight:800;
   letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-top:3px}
-.carr .cta{padding:clamp(12px,1.2vw,16px) clamp(22px,2.2vw,32px);font-size:clamp(13px,1.15vw,16px)}
+.carr .cta{padding:clamp(13px,1.3vw,18px) clamp(24px,2.4vw,36px);font-size:clamp(13px,1.15vw,16px)}
 
-/* controles */
-.carr .dots{position:absolute;right:clamp(26px,3.6vw,64px);top:clamp(26px,3vw,46px);
-  display:flex;gap:8px;z-index:4}
-.carr .dots button{width:36px;height:3px;border-radius:2px;border:none;cursor:pointer;
-  background:rgba(255,255,255,.3);padding:0;transition:background .3s}
-.carr .dots button[aria-current="true"]{background:var(--acc)}
-.carr .flechas{position:absolute;right:clamp(26px,3.6vw,64px);bottom:clamp(26px,3.2vw,52px);
-  display:flex;gap:9px;z-index:4;transform:translateY(-84px)}
-.carr .flechas button{width:42px;height:42px;border-radius:50%;cursor:pointer;
-  background:rgba(6,7,8,.42);border:1px solid rgba(255,255,255,.18);color:var(--paper);
-  backdrop-filter:blur(12px);font-size:17px;line-height:1;transition:background .25s,border-color .25s}
-.carr .flechas button:hover{background:rgba(6,7,8,.8);border-color:rgba(255,255,255,.4)}
+/* puntos con barra de progreso: se ve cuanto falta para el cambio */
+.carr .dots{position:absolute;left:0;right:0;bottom:0;z-index:3}
+.carr .dots .wrap{display:flex;gap:10px;padding-bottom:clamp(16px,1.8vw,26px)}
+.carr .dots button{position:relative;width:clamp(44px,5vw,84px);height:3px;border-radius:2px;
+  border:none;cursor:pointer;background:rgba(255,255,255,.22);padding:0;overflow:hidden}
+.carr .dots button i{position:absolute;inset:0;width:0;background:var(--acc);border-radius:2px}
+.carr .dots button[aria-current="true"] i{width:100%;transition:width var(--dur,5s) linear}
 
 @media(max-width:860px){
-  .carr{aspect-ratio:3/4;border-radius:16px}
-  .carr .slide img{object-position:center 40%}
-  .carr .velo{background:linear-gradient(to top,rgba(6,7,8,.97) 30%,rgba(6,7,8,.6) 56%,transparent 82%)}
-  .carr h2{max-width:none;font-size:clamp(32px,8.4vw,46px)}
-  .carr .txt{padding:24px 22px 26px}
-  .carr .pie{align-items:stretch;flex-direction:column;gap:18px}
+  .carr{height:auto;aspect-ratio:3/4;max-height:76vh}
+  .carr .velo{background:linear-gradient(to top,rgba(6,7,8,.96) 26%,rgba(6,7,8,.7) 48%,rgba(6,7,8,.12) 72%,transparent 88%)}
+  .carr h2{max-width:none;font-size:clamp(34px,8.8vw,50px)}
+  .carr .txt .wrap{padding-bottom:44px}
+  .carr .pie{flex-direction:column;align-items:stretch;gap:20px}
   .carr .cta{text-align:center;width:100%}
-  .carr .flechas{display:none}
+  .carr .dots .wrap{padding-bottom:16px}
 }
-@media(max-width:860px){ .carr .dots{top:20px;bottom:auto;right:22px;transform:none} }
