@@ -65,6 +65,14 @@ section{padding:clamp(72px,9vw,130px) 0}
 .veh .ph{position:relative;aspect-ratio:5/4;overflow:hidden;background:#0b0c0e}
 .veh .ph img{width:100%;height:100%;object-fit:cover;object-position:center 54%;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
 .veh:hover .ph img{transform:scale(1.04)}
+/* Las tres fotos vienen de estudios distintos y las dos de fondo claro
+   dejaban una franja brillante -el piso del ciclorama- que chocaba con
+   la tarjeta oscura y se leia como una linea de borde, no como foto.
+   Este degradado apaga solo ese ultimo tramo y cose la imagen con la
+   tarjeta. No toca el vehiculo: arranca al 78% de alto. */
+.veh .ph::after{content:'';position:absolute;left:0;right:0;bottom:0;height:26%;
+  pointer-events:none;
+  background:linear-gradient(to bottom,transparent 0%,rgba(15,17,19,.35) 46%,rgba(15,17,19,.8) 78%,var(--ink2) 100%)}
 .veh .tag{position:absolute;top:13px;left:13px;background:var(--acc);color:#0a0c07;
   font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;
   padding:5px 11px;border-radius:100px}
@@ -73,7 +81,13 @@ section{padding:clamp(72px,9vw,130px) 0}
 .veh .body{padding:30px 28px 32px;display:flex;flex-direction:column;flex:1}
 .veh .k{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut2);font-weight:700}
 .veh h3{font-size:clamp(32px,3.2vw,42px);font-weight:800;letter-spacing:-.035em;margin:10px 0 0;line-height:1}
-.veh .desc{color:var(--mut);font-size:15.5px;line-height:1.7;margin-top:14px;flex:1}
+/* El gancho: una sola frase, en blanco, que dice de que se trata el
+   carro antes de que el ojo llegue al parrafo. Las tres tienen la misma
+   forma -un hecho concreto, no un adjetivo- para que se puedan comparar
+   de un vistazo. */
+.veh .gancho{display:block;color:var(--paper);font-size:clamp(17px,1.45vw,19.5px);
+  font-weight:700;letter-spacing:-.018em;line-height:1.3;margin-top:13px;text-wrap:balance}
+.veh .desc{color:var(--mut);font-size:15px;line-height:1.7;margin-top:11px;flex:1}
 .veh .specs{display:flex;gap:24px;flex-wrap:wrap;margin-top:22px;padding-top:20px;
   border-top:1px solid var(--line)}
 .veh .specs div{font-size:12.5px;color:var(--mut2);line-height:1.35}
