@@ -27,31 +27,6 @@
  {"@type":"Offer","itemOffered":{"@type":"Car","name":"Dongfeng MAGE HEV","fuelType":"Híbrido"},"price":"109000000","priceCurrency":"COP"}]}
 </script>
 <style>
-/* ── hero: el Vigo manda, porque es el que hay que mover ────── */
-.hero{position:relative;min-height:min(94vh,860px);display:flex;align-items:flex-end;
-  padding-top:var(--nav);overflow:hidden}
-.hero .bg{position:absolute;inset:0;z-index:0}
-.hero .bg img{width:100%;height:100%;object-fit:cover;object-position:center 56%}
-.hero .veil{position:absolute;inset:0;z-index:1;
-  background:linear-gradient(to top,rgba(8,9,10,.97) 4%,rgba(8,9,10,.64) 36%,rgba(8,9,10,.26) 66%,rgba(8,9,10,.52))}
-.hero .wrap{position:relative;z-index:2;padding-bottom:74px;width:100%}
-.hero h1{font-size:clamp(46px,8.6vw,104px);font-weight:800;letter-spacing:-.045em;
-  line-height:.95;margin-top:18px;max-width:14ch}
-.hero .sub{color:#dfe3e7;font-size:clamp(17px,1.9vw,23px);line-height:1.58;max-width:42ch;margin-top:24px}
-.hero .acciones{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px;align-items:center}
-.hero .desde{font-size:13px;color:var(--mut);margin-right:6px}
-.hero .desde b{display:block;color:var(--paper);font-size:28px;font-weight:800;
-  letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
-.ghost{border:1px solid var(--line2);color:var(--paper);padding:13px 26px;border-radius:100px;
-  font-size:15px;font-weight:600;text-decoration:none;background:rgba(8,9,10,.4);backdrop-filter:blur(8px)}
-.ghost:hover{border-color:var(--mut)}
-@media(max-width:960px){
-  .hero{min-height:auto;display:block}
-  .hero .bg{position:relative;height:60vw;max-height:390px}
-  .hero .veil{background:linear-gradient(to top,var(--ink) 3%,transparent 58%)}
-  .hero .wrap{padding:24px 22px 40px}
-  .hero h1{max-width:none}
-}
 </style>
 </head>
 <body>
@@ -70,17 +45,37 @@
   <a class="cta" href="#contacto">Cotizar</a>
 </div></nav>
 
-<header class="hero">
-  <div class="bg"><img src="img/vigo/hero.jpg" alt="Cuatro Dongfeng Vigo el&eacute;ctricas de distintos colores estacionadas frente al mar" width="900" height="600" fetchpriority="high"></div>
-  <div class="veil"></div>
+
+<div class="respaldo-top"><div class="wrap in">
+  <span class="et">Distribuye</span>
+  <img src="img/marcas/dongfeng-electricos.png" alt="Dongfeng El&eacute;ctricos" width="622" height="163">
+  <img src="img/marcas/corautos-andino.png" alt="Corautos Andino" width="509" height="139">
+  <span class="et">Grupo</span>
+  <span class="txt">FOTON</span>
+  <span class="txt">Corbeta &middot; Colombiana de Comercio</span>
+</div></div>
+
+<header class="hx">
+  <div class="halo"></div>
   <div class="wrap">
-    <p class="eyebrow">Nueva Dongfeng Vigo &middot; 100% el&eacute;ctrica</p>
-    <h1>La SUV el&eacute;ctrica que s&iacute; cabe en el presupuesto</h1>
-    <p class="sub">470 km de autonom&iacute;a, del 30 al 80% de carga en 18 minutos y ocho a&ntilde;os de garant&iacute;a en la bater&iacute;a. Sin gasolina, sin cambios de aceite.</p>
-    <div class="acciones">
-      <span class="desde">Precio de lanzamiento<b>Desde $84.990.000</b></span>
-      <a class="cta" href="vigo.html">Ver la Vigo</a>
-      <a class="ghost" href="#flota">Ver las tres</a>
+    <div class="titular">
+      <p class="eyebrow">Nueva Dongfeng Vigo &middot; 100% el&eacute;ctrica</p>
+      <h1>Ya no tienes que pasar por la bomba</h1>
+      <p class="sub">La cargas en tu casa mientras duermes y amaneces con el tanque lleno. Todos los d&iacute;as.</p>
+      <div class="acciones">
+        <span class="desde">Desde<b>$84.990.000</b></span>
+        <a class="cta" href="vigo.html">Conocer la Vigo</a>
+        <a class="ghost" href="#flota">Ver los tres</a>
+      </div>
+    </div>
+    <div class="plano">
+      <img src="img/vigo/hero-ancho.jpg" srcset="img/vigo/hero-ancho.jpg 2400w, img/vigo/hero-ancho@2x.jpg 3600w" sizes="(max-width:960px) 100vw, 1180px" alt="Cuatro Dongfeng Vigo el&eacute;ctricas de distintos colores estacionadas frente al mar" width="2400" height="1021" fetchpriority="high">
+    </div>
+    <div class="franja">
+      <div><b>470 km</b>de autonom&iacute;a con una carga</div>
+      <div><b>18 min</b>del 30 al 80% de bater&iacute;a</div>
+      <div><b>8 a&ntilde;os</b>de garant&iacute;a en la bater&iacute;a</div>
+      <div><b>$0</b>de gasolina, para siempre</div>
     </div>
   </div>
 </header>
@@ -184,16 +179,16 @@
 
   <div class="cards">
     <div class="card">
-      <h3>Te acompa&ntilde;amos hasta la sala</h3>
-      <p>Resolvemos tus dudas por WhatsApp, te decimos qu&eacute; hay disponible de verdad y te conectamos con el asesor de la sala m&aacute;s cercana. De ah&iacute; en adelante seguimos pendientes de que te respondan.</p>
+      <h3>Del inter&eacute;s a las llaves</h3>
+      <p>Cuando decidas dar el paso, te conectamos con un representante directo de la marca, que te acompa&ntilde;a hasta la entrega.</p>
     </div>
     <div class="card">
       <h3>Precios claros, sin letra menuda</h3>
       <p>Publicamos el precio de venta oficial de Corautos Andino con IVA incluido. A eso se suman los <b style="color:var(--paper)">gastos de matr&iacute;cula</b>, que dependen de tu ciudad y te los calcula el asesor antes de que decidas.</p>
     </div>
     <div class="card">
-      <h3>Prueba de ruta donde est&eacute;s</h3>
-      <p>Coordinamos la prueba en la sala m&aacute;s cercana. Si en tu ciudad no hay sala, te decimos exactamente c&oacute;mo funciona la entrega.</p>
+      <h3>Disponibilidad real, no promesas</h3>
+      <p>Te decimos qu&eacute; hay hoy, en qu&eacute; color y para cu&aacute;ndo. Si algo est&aacute; bajo pedido, lo sabes antes de decidir.</p>
     </div>
   </div>
 
