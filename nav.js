@@ -26,6 +26,7 @@
     ["Tablero",      "analitica.html"],
     ["Pipeline",     "crm.html?k=torq2026"],
     ["Leads",        "leads.html?k=torq2026"],
+    ["Sala de pruebas","chat.html"],
     ["Bot",          "bot.html"],
     ["Respuestas",   "respuestas.html"],
     ["Piezas",       "piezas/index.html"],

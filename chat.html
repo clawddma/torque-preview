@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#0b141a">
+<meta name="color-scheme" content="dark">
+<title>TORQ &middot; Sala de pruebas</title>
+<style>
+/* La paleta es la de WhatsApp a prop&oacute;sito. No es falta de criterio: si
+   vamos a juzgar si una conversaci&oacute;n se siente bien, tiene que verse donde
+   va a pasar. Un chat con la est&eacute;tica del sitio enga&ntilde;a el juicio. */
+:root{
+  --fondo:#0b141a; --barra:#202c33; --entra:#202c33; --sale:#005c4b;
+  --texto:#e9edef; --sec:#8696a0; --linea:#2a3942; --verde:#00a884;
+  --mal:#f15c6d; --brand:#c8f24a;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--fondo);color:var(--texto);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+
+.app{height:100dvh;display:flex;flex-direction:column;max-width:520px;margin:0 auto;
+  border-left:1px solid var(--linea);border-right:1px solid var(--linea)}
+
+/* ── barra superior ── */
+.top{background:var(--barra);flex-shrink:0;padding-top:env(safe-area-inset-top,0px)}
+.top-in{display:flex;align-items:center;gap:11px;padding:9px 12px}
+.av{width:40px;height:40px;border-radius:50%;background:#0a0c07;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center}
+.av svg{width:22px;height:22px}
+.who{flex:1;min-width:0}
+.who .n{font-size:15.5px;font-weight:500;line-height:1.2}
+.who .s{font-size:12px;color:var(--sec);margin-top:1px}
+.menu{background:none;border:none;color:var(--sec);font-size:21px;padding:6px 8px;cursor:pointer;line-height:1}
+
+/* ── selector de veh&iacute;culo: simula de cu&aacute;l anuncio vino el cliente ── */
+.origen{display:flex;gap:6px;padding:0 12px 9px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.origen button{background:transparent;border:1px solid var(--linea);color:var(--sec);
+  font-family:inherit;font-size:11.5px;font-weight:600;padding:6px 12px;border-radius:100px;
+  white-space:nowrap;cursor:pointer;flex-shrink:0;min-height:32px}
+.origen button.on{background:var(--verde);border-color:var(--verde);color:#0b141a}
+
+/* ── hilo ── */
+.hilo{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 9px 8px;
+  display:flex;flex-direction:column;gap:3px;
+  background-image:radial-gradient(rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:22px 22px}
+.dia{align-self:center;background:var(--barra);color:var(--sec);font-size:11.5px;
+  padding:5px 12px;border-radius:7px;margin:4px 0 10px}
+
+.fila{display:flex;max-width:100%}
+.fila.yo{justify-content:flex-end}
+.b{max-width:80%;padding:6px 9px 7px;border-radius:8px;font-size:14.6px;line-height:1.42;
+  white-space:pre-wrap;word-wrap:break-word;position:relative;box-shadow:0 1px .5px rgba(11,20,26,.28)}
+.b.bot{background:var(--entra);border-top-left-radius:0}
+.b.yo{background:var(--sale);border-top-right-radius:0}
+.meta{float:right;margin:8px -3px -4px 9px;font-size:10.5px;color:rgba(233,237,239,.5);
+  display:flex;align-items:center;gap:3px;white-space:nowrap}
+.tick{width:15px;height:11px;fill:#53bdeb}
+
+/* ── el bot&oacute;n de "esto suena mal": el motivo de que esta p&aacute;gina exista ── */
+.juez{align-self:flex-start;margin:-1px 0 7px 3px;display:flex;gap:7px}
+.juez button{background:transparent;border:1px solid var(--linea);color:var(--sec);
+  font-family:inherit;font-size:11px;padding:5px 10px;border-radius:100px;cursor:pointer;min-height:28px}
+.juez button.malo{border-color:var(--mal);color:var(--mal)}
+.juez button.malo.on{background:var(--mal);color:#fff}
+.marcado .b.bot{outline:1.5px solid var(--mal);outline-offset:1px}
+
+.escribiendo{display:flex;gap:3px;padding:11px 13px;background:var(--entra);
+  border-radius:8px;border-top-left-radius:0;align-self:flex-start;margin-bottom:4px}
+.escribiendo i{width:7px;height:7px;border-radius:50%;background:var(--sec);
+  animation:p 1.3s infinite ease-in-out}
+.escribiendo i:nth-child(2){animation-delay:.18s}
+.escribiendo i:nth-child(3){animation-delay:.36s}
+@keyframes p{0%,60%,100%{opacity:.32;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+.aviso-sis{align-self:center;background:rgba(200,242,74,.09);border:1px solid rgba(200,242,74,.3);
+  color:#cfe08a;font-size:11.5px;text-align:center;padding:8px 13px;border-radius:8px;
+  margin:7px 0;max-width:88%;line-height:1.5}
+
+/* ── barra de escritura ── */
+.barra{background:var(--barra);flex-shrink:0;padding:8px 9px calc(8px + env(safe-area-inset-bottom,0px));
+  display:flex;gap:8px;align-items:flex-end}
+.barra textarea{flex:1;background:#2a3942;border:none;border-radius:20px;color:var(--texto);
+  font-family:inherit;font-size:16px;padding:11px 15px;resize:none;max-height:100px;line-height:1.4}
+.barra textarea:focus{outline:none}
+.env{width:44px;height:44px;border-radius:50%;background:var(--verde);border:none;
+  flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.env svg{width:21px;height:21px;fill:#0b141a}
+
+/* ── panel de reporte ── */
+.panel{position:fixed;inset:0;background:var(--fondo);z-index:90;display:none;
+  flex-direction:column;max-width:520px;margin:0 auto}
+.panel.abierto{display:flex}
+.ptop{background:var(--barra);padding:calc(12px + env(safe-area-inset-top,0px)) 15px 12px;
+  display:flex;align-items:center;gap:13px;flex-shrink:0}
+.ptop h2{font-size:16px;font-weight:600;flex:1}
+.ptop button{background:none;border:none;color:var(--texto);font-size:22px;cursor:pointer;line-height:1}
+.pcuerpo{flex:1;overflow-y:auto;padding:18px 15px 30px}
+.pintro{font-size:13px;color:var(--sec);line-height:1.65;margin-bottom:18px}
+.marca{border:1px solid var(--linea);border-left:2.5px solid var(--mal);border-radius:7px;
+  padding:13px 14px;margin-bottom:10px}
+.marca .q{font-size:12.5px;color:var(--sec);margin-bottom:7px}
+.marca .q b{color:var(--texto)}
+.marca .r{font-size:13.5px;line-height:1.55;white-space:pre-wrap}
+.marca .n{width:100%;margin-top:11px;background:#2a3942;border:none;border-radius:7px;
+  color:var(--texto);font-family:inherit;font-size:14px;padding:10px 12px;resize:vertical;min-height:62px}
+.vacio{color:var(--sec);font-size:13.5px;line-height:1.7;text-align:center;padding:40px 20px}
+.acciones{display:grid;gap:9px;margin-top:22px}
+.acciones a,.acciones button{display:block;text-align:center;text-decoration:none;
+  font-family:inherit;font-size:14.5px;font-weight:600;padding:14px;border-radius:9px;
+  cursor:pointer;border:none;min-height:48px}
+.acc1{background:var(--verde);color:#0b141a}
+.acc2{background:transparent;border:1px solid var(--linea)!important;color:var(--sec)}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="top">
+    <div class="top-in">
+      <div class="av"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div>
+      <div class="who"><div class="n">TORQ</div><div class="s" id="estado">en l&iacute;nea</div></div>
+      <button class="menu" id="abrir" aria-label="Reporte">&#9776;</button>
+    </div>
+    <div class="origen" id="origen"></div>
+  </div>
+
+  <div class="hilo" id="hilo"></div>
+
+  <div class="barra">
+    <textarea id="txt" rows="1" placeholder="Escribe un mensaje" autocomplete="off"></textarea>
+    <button class="env" id="enviar" aria-label="Enviar"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+  </div>
+</div>
+
+<div class="panel" id="panel">
+  <div class="ptop">
+    <button id="cerrar" aria-label="Volver">&larr;</button>
+    <h2>Lo que sonó mal</h2>
+  </div>
+  <div class="pcuerpo" id="pcuerpo"></div>
+</div>
+
+<script src="bot-motor.js"></script>
+<script>
+(function(){
+"use strict";
+var B=window.TORQBOT;
+var LLAVE="torq_pruebas_v1";
+
+var hilo=document.getElementById("hilo"), txt=document.getElementById("txt"),
+    origen=document.getElementById("origen"), panel=document.getElementById("panel");
+
+/* El vehículo de arranque simula de cuál anuncio llegó el cliente. En
+   producción lo trae el enlace del anuncio (?v=box); aquí se elige a mano
+   para poder probar los tres caminos. */
+var param=(location.search.match(/[?&]v=(\w+)/)||[])[1];
+var ses=B.crearSesion(param||"mage");
+var marcados=[];              /* lo que Daniel o Camilo señalaron como malo */
+var ultimaPregunta="";
+var n=0;
+
+try{ var g=JSON.parse(localStorage.getItem(LLAVE)||"{}"); if(g.marcados) marcados=g.marcados }catch(e){}
+function guardar(){ try{ localStorage.setItem(LLAVE,JSON.stringify({marcados:marcados})) }catch(e){} }
+
+function hora(){
+  var d=new Date(), h=d.getHours(), m=d.getMinutes();
+  var ap=h>=12?"p. m.":"a. m."; h=h%12||12;
+  return h+":"+(m<10?"0":"")+m+" "+ap;
+}
+
+function abajo(){ hilo.scrollTop=hilo.scrollHeight }
+
+function burbuja(quien,texto){
+  var fila=document.createElement("div");
+  fila.className="fila "+(quien==="yo"?"yo":"");
+  var b=document.createElement("div");
+  b.className="b "+(quien==="yo"?"yo":"bot");
+  b.textContent=texto;
+  var meta=document.createElement("span");
+  meta.className="meta";
+  meta.innerHTML=hora()+(quien==="yo"
+    ? ' <svg class="tick" viewBox="0 0 16 11"><path d="M11.07.65a.47.47 0 00-.66 0L5.2 5.86 3.4 4.06a.47.47 0 10-.66.66l2.13 2.13c.18.18.48.18.66 0L11.07 1.3a.47.47 0 000-.65zm3.4 0a.47.47 0 00-.66 0L8.6 5.86l-.5-.5a.47.47 0 10-.67.66l.84.83c.18.18.48.18.66 0l5.54-5.54a.47.47 0 000-.66z"/></svg>'
+    : "");
+  b.appendChild(meta);
+  fila.appendChild(b);
+  hilo.appendChild(fila);
+  abajo();
+  return fila;
+}
+
+/* Cada respuesta del bot trae debajo el botón que hace útil esta página.
+   Sin esto sería una demo; con esto es una prueba: lo que marquen se
+   convierte en el trabajo del día siguiente. */
+function juez(fila, pregunta, respuesta){
+  var j=document.createElement("div");
+  j.className="juez";
+  var b=document.createElement("button");
+  b.className="malo"; b.textContent="👎 esto suena mal";
+  b.onclick=function(){
+    var i=marcados.findIndex(function(m){ return m.r===respuesta && m.q===pregunta });
+    if(i>-1){ marcados.splice(i,1); b.classList.remove("on"); fila.classList.remove("marcado") }
+    else{ marcados.push({q:pregunta,r:respuesta,nota:""}); b.classList.add("on"); fila.classList.add("marcado") }
+    guardar();
+  };
+  j.appendChild(b);
+  hilo.appendChild(j);
+  abajo();
+}
+
+/* El bot no contesta al instante: escribe. La pausa es proporcional al largo
+   del mensaje, como una persona. Sin esto la conversación se siente a máquina
+   y el juicio sobre si "suena bien" queda contaminado. */
+function escribiendo(ms){
+  var d=document.createElement("div");
+  d.className="escribiendo"; d.innerHTML="<i></i><i></i><i></i>";
+  hilo.appendChild(d); abajo();
+  document.getElementById("estado").textContent="escribiendo…";
+  return new Promise(function(res){
+    setTimeout(function(){
+      d.remove();
+      document.getElementById("estado").textContent="en línea";
+      res();
+    },ms);
+  });
+}
+var pausa=function(t){ return Math.min(2200, 480+String(t).length*11) };
+
+function sistema(texto){
+  var d=document.createElement("div");
+  d.className="aviso-sis"; d.textContent=texto;
+  hilo.appendChild(d); abajo();
+}
+
+async function responder(q){
+  ultimaPregunta=q;
+  var o=ses.responder(q);
+  var textos=[];
+  if(o.texto) textos.push(o.texto);
+  if(o.empujon) textos.push(o.empujon);
+  if(!textos.length) textos.push("…");
+
+  for(var i=0;i<textos.length;i++){
+    await escribiendo(pausa(textos[i]));
+    var fila=burbuja("bot",textos[i]);
+    juez(fila,q,textos[i]);
+  }
+  if(o.escala){
+    sistema("El bot pasó la conversación a un asesor humano · motivo: "+(B.ESC[o.escala]||o.escala));
+  }
+}
+
+function enviar(){
+  var q=txt.value.trim();
+  if(!q) return;
+  burbuja("yo",q);
+  txt.value=""; txt.style.height="auto";
+  responder(q);
+}
+
+document.getElementById("enviar").onclick=enviar;
+txt.addEventListener("input",function(){
+  txt.style.height="auto"; txt.style.height=Math.min(100,txt.scrollHeight)+"px";
+});
+txt.addEventListener("keydown",function(e){
+  if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); enviar() }
+});
+
+/* ── de cuál anuncio vino ── */
+function pintarOrigen(){
+  origen.innerHTML="";
+  B.ORDEN.forEach(function(id){
+    var b=document.createElement("button");
+    b.textContent="Anuncio: "+B.VEH[id].nombre;
+    b.className = id===ses.lead.vehiculo ? "on":"";
+    b.onclick=function(){ reiniciar(id) };
+    origen.appendChild(b);
+  });
+}
+
+async function reiniciar(vid){
+  hilo.innerHTML="";
+  ses=B.crearSesion(vid||ses.lead.vehiculo);
+  pintarOrigen();
+  var d=document.createElement("div");
+  d.className="dia"; d.textContent="HOY";
+  hilo.appendChild(d);
+  await escribiendo(700);
+  var f=burbuja("bot",ses.saludo());
+  juez(f,"(primer contacto)",ses.saludo());
+}
+
+/* ── reporte ── */
+function pintarPanel(){
+  var c=document.getElementById("pcuerpo");
+  if(!marcados.length){
+    c.innerHTML='<div class="vacio">Todavía no has marcado ninguna respuesta.<br><br>'
+      +'Cuando algo suene mal —falso, frío, confuso o simplemente no como hablaría un asesor de verdad— '
+      +'tócale <b>👎 esto suena mal</b> debajo. Aquí se van juntando y me las mandas de una.'
+      +'<br><br><span style="color:#cfe08a">Una advertencia honesta:</span> esta sala reconoce las preguntas '
+      +'por palabras clave. El bot de producción le suma un intérprete que entiende frases raras, '
+      +'así que <b>allá va a entender más que aquí</b>. Lo que sí es idéntico es <b>qué contesta y qué se '
+      +'niega a contestar</b>: eso es lo que hay que juzgar.</div>';
+    return;
+  }
+  var h='<p class="pintro">'+marcados.length+' respuesta'+(marcados.length>1?"s":"")
+    +' marcada'+(marcados.length>1?"s":"")+'. Escribe al lado qué le falta o qué sobra: '
+    +'con esa nota corrijo el motor, y cada corrección queda blindada con su propia prueba para que no se dañe otra vez.</p>';
+  marcados.forEach(function(m,i){
+    h+='<div class="marca"><div class="q">El cliente dijo: <b>'+m.q.replace(/</g,"&lt;")+'</b></div>'
+      +'<div class="r">'+m.r.replace(/</g,"&lt;")+'</div>'
+      +'<textarea class="n" data-i="'+i+'" placeholder="¿Qué está mal? (opcional)">'+(m.nota||"")+'</textarea></div>';
+  });
+  h+='<div class="acciones">'
+    +'<a class="acc1" id="mandar" href="#">Enviarme el reporte por WhatsApp</a>'
+    +'<button class="acc2" id="limpiar">Borrar todo lo marcado</button></div>';
+  c.innerHTML=h;
+
+  c.querySelectorAll(".n").forEach(function(t){
+    t.oninput=function(){ marcados[+t.dataset.i].nota=t.value; guardar(); armarEnlace() };
+  });
+  c.querySelector("#limpiar").onclick=function(){
+    if(confirm("¿Borrar las "+marcados.length+" marcas?")){ marcados=[]; guardar(); pintarPanel() }
+  };
+  armarEnlace();
+}
+
+function armarEnlace(){
+  var a=document.getElementById("mandar");
+  if(!a) return;
+  var t="Reporte de la sala de pruebas TORQ — "+marcados.length+" respuesta(s) para corregir:\n";
+  marcados.forEach(function(m,i){
+    t+="\n"+(i+1)+") Cliente: \""+m.q+"\"\n";
+    t+="Bot: \""+m.r.split("\n")[0].slice(0,140)+"…\"\n";
+    if(m.nota) t+="Problema: "+m.nota+"\n";
+  });
+  a.href="https://wa.me/573054310851?text="+encodeURIComponent(t);
+}
+
+document.getElementById("abrir").onclick=function(){ pintarPanel(); panel.classList.add("abierto") };
+document.getElementById("cerrar").onclick=function(){ panel.classList.remove("abierto") };
+
+reiniciar(param||"mage");
+})();
+</script>
+</body>
+</html>

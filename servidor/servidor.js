@@ -37,7 +37,9 @@ const CFG = {
   telefono: process.env.WA_PHONE_ID || "",       // id del número emisor
   verificar:process.env.WA_VERIFY || "torq",     // clave del webhook
   secreto:  process.env.WA_APP_SECRET || "",     // para validar la firma
-  tgToken:  process.env.TG_TOKEN || "",          // aviso de escaladas
+  asesor:   process.env.WA_ASESOR || "",         // WhatsApp del asesor: aquí llegan los avisos
+  plantilla:process.env.WA_PLANTILLA_AVISO || "", // plantilla aprobada, para avisar a cualquier hora
+  tgToken:  process.env.TG_TOKEN || "",          // respaldo opcional
   tgChat:   process.env.TG_CHAT || "",
   sitio:    process.env.TORQ_SITIO || "https://clawddma.github.io/torque-preview/"
 };
@@ -63,8 +65,22 @@ let enviar = async function (waId, texto) {
 const usarEnvio = (fn) => { enviar = fn };
 
 /* ═══ AVISO DE ESCALADA ══════════════════════════════════════════════════════
-   El asesor recibe el hilo completo, no un teléfono suelto. Si le llega solo
-   el número, el cliente tiene que repetir todo y la conversación se enfría. */
+   EL CLIENTE HABLA POR WHATSAPP Y SOLO POR WHATSAPP. Esto es otra cosa: es el
+   aviso que recibe el ASESOR cuando una conversación necesita a un humano.
+
+   Por defecto también va por WhatsApp, al número del asesor. Hay una regla de
+   Meta que conviene saber: a un número que no te ha escrito en las últimas 24
+   horas solo se le puede mandar una PLANTILLA aprobada. Por eso:
+
+     · si hay plantilla configurada (WA_PLANTILLA_AVISO) → se usa y llega
+       siempre, a cualquier hora;
+     · si no, se manda texto plano, que funciona mientras el asesor haya
+       escrito al bot en las últimas 24 h;
+     · Telegram queda como respaldo opcional, para el caso de que Meta
+       rechace o demore la plantilla. Es un canal de respaldo, no el principal.
+
+   El asesor recibe el hilo completo, no un teléfono suelto: si le llega solo el
+   número, el cliente tiene que repetir todo y la conversación se enfría. */
 async function avisar(waId, motivo, lead, nombre) {
   const conv = almacen.hilo(waId, 20)
     .map(m => (m.direccion === "entra" ? "▸ " : "  ") + m.texto.split("\n")[0].slice(0, 110))
@@ -83,13 +99,46 @@ Temas: ${lead.interes.join(", ") || "—"}
 Conversación:
 ${conv}`;
 
-  if (!CFG.tgToken || !CFG.tgChat) { log("AVISO (sin Telegram configurado):\n" + texto); return }
-  try {
-    await fetch(`https://api.telegram.org/bot${CFG.tgToken}/sendMessage`, {
-      method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ chat_id: CFG.tgChat, text: texto, disable_web_page_preview: true })
-    });
-  } catch (e) { log("no se pudo avisar por Telegram:", e.message) }
+  let llegó = false;
+
+  /* 1 · WhatsApp del asesor — el canal principal */
+  if (CFG.asesor) {
+    if (CFG.plantilla && CFG.token && CFG.telefono) {
+      try {
+        const res = await fetch(`https://graph.facebook.com/v21.0/${CFG.telefono}/messages`, {
+          method: "POST",
+          headers: { "content-type": "application/json", authorization: "Bearer " + CFG.token },
+          body: JSON.stringify({
+            messaging_product: "whatsapp", to: CFG.asesor, type: "template",
+            template: { name: CFG.plantilla, language: { code: "es" },
+              components: [{ type: "body", parameters: [
+                { type: "text", text: (nombre || "Un cliente").slice(0, 60) },
+                { type: "text", text: (BOT.ESC[motivo] || motivo).slice(0, 120) },
+                { type: "text", text: waId }
+              ]}]}
+          })
+        });
+        llegó = res.ok;
+        if (!res.ok) log("plantilla rechazada:", res.status, (await res.text()).slice(0, 160));
+      } catch (e) { log("no se pudo avisar por plantilla:", e.message) }
+    }
+    /* sin plantilla: texto plano. Llega si el asesor escribió al bot en las
+       últimas 24 h. Se intenta igual — si falla, queda el respaldo. */
+    if (!llegó) llegó = await enviar(CFG.asesor, texto);
+  }
+
+  /* 2 · Telegram — respaldo, solo si el aviso por WhatsApp no salió */
+  if (!llegó && CFG.tgToken && CFG.tgChat) {
+    try {
+      await fetch(`https://api.telegram.org/bot${CFG.tgToken}/sendMessage`, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ chat_id: CFG.tgChat, text: texto, disable_web_page_preview: true })
+      });
+      llegó = true;
+    } catch (e) { log("respaldo Telegram falló:", e.message) }
+  }
+
+  if (!llegó) log("AVISO (sin canal configurado):\n" + texto);
 }
 
 /* ═══ EL TURNO ═══════════════════════════════════════════════════════════════ */
