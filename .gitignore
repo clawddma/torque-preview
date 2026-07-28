@@ -1,1 +1,4 @@
 preview-*.png
+servidor/datos/
+*.db
+*.db-journal

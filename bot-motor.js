@@ -123,7 +123,7 @@ var KB = [
     /* Si el bot recomienda otro vehículo, la conversación se mueve con él:
        el "cuánto vale" siguiente debe ser el del recomendado, no el anterior. */
     lead.vehiculo = rec.id;
-    return "Por lo que me cuentas, el que te cuadra es el "+rec.nombre+" — "+por+".\n\n"+
+    return "Por lo que me cuentas, "+(rec.art==="la"?"la que":"el que")+" te cuadra es "+rec.art+" "+rec.nombre+" — "+por+".\n\n"+
       rec.largo+", desde "+rec.precio+". "+rec.gancho+".\n\n"+
       "¿Quieres que un asesor te lo muestre en detalle?";
   }},
@@ -427,7 +427,7 @@ function crearSesion(vehiculoInicial){
       "¿Qué quieres saber?";
   };
 
-  s.responder = function(q){
+  s.responder = function(q, opciones){
     s.lead.turnos++;
     var out = {
       pregunta:q, tema:null, puntaje:0, candidatos:[],
@@ -464,6 +464,29 @@ function crearSesion(vehiculoInicial){
     /* 4 · tema normal */
     var items = puntuar(q);
     out.candidatos = items.slice(0,5).map(function(x){ return {id:x.t.id,p:x.p,hits:x.hits} });
+
+    /* 4a · el intérprete.
+       Cuando las palabras clave no reconocen nada, el servidor puede pedirle a
+       un modelo que diga a QUÉ TEMA se parece el mensaje — y solo eso. El texto
+       lo sigue poniendo esta base de conocimiento, nunca el modelo. Un modelo
+       que redacta sobre carros inventa cifras; uno que solo clasifica no puede.
+       Si el intérprete propone un veto, se trata como veto: gana igual. */
+    if(!items.length && opciones && opciones.tema){
+      var forzado=null, esVeto=false;
+      for(var w=0;w<VETO.length;w++) if(VETO[w].id===opciones.tema){ forzado=VETO[w]; esVeto=true }
+      if(!forzado) for(var y=0;y<KB.length;y++) if(KB[y].id===opciones.tema) forzado=KB[y];
+      if(forzado){
+        out.interpretado=true;
+        items=[{t:forzado,p:0,hits:[]}];
+        out.candidatos=[{id:forzado.id,p:0,hits:["intérprete"]}];
+        if(esVeto){
+          out.tema="veto:"+forzado.id; out.entendido=true;
+          out.texto=forzado.r; out.escala=forzado.esc;
+          s.lead.escalado=forzado.esc; s.fallos=0;
+          s.historia.push(out); return out;
+        }
+      }
+    }
 
     /* 4b · el cliente contestó lo que el bot le preguntó.
        "es para andar en ciudad, al trabajo" no es un tema de la base: es la

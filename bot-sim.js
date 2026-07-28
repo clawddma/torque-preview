@@ -150,7 +150,7 @@ var PERSONAS = [
   turnos:[
     {q:"hola", espera:"saludo"},
     {q:"no se cual me conviene la verdad", espera:"cual"},
-    {q:"tengo parqueadero propio en la casa", espera:"cual", contiene:"Box"},
+    {q:"tengo parqueadero propio en la casa", espera:"cual", contiene:"el Box"},
     {q:"es para andar en ciudad, al trabajo", espera:"cual", contiene:"Box"},
     {q:"cuanto vale ese", espera:"precio"}
   ]},
