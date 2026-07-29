@@ -175,6 +175,41 @@ de la buena voluntad del distribuidor.
 Por eso conviene que esa oferta sea corta y fácil de aceptar: no es un extra, es el
 mecanismo de control de la venta principal.
 
+## 3d. Cobertura: son cuatro, no una
+
+El bot llegó a decirle a un cliente de Bucaramanga *"allá hay red de servicio"*.
+**Nadie nos dio ese dato.** Sabemos que Corautos tiene 26 centros en 19 ciudades,
+pero en ningún documento del proyecto está **cuáles son esas 19**. El bot estaba
+afirmando ciudad por ciudad algo que no consta.
+
+Y encima trataba todo como una sola cobertura. Son cuatro y no coinciden:
+
+| Cobertura | Qué responde | Qué sabemos hoy |
+|---|---|---|
+| `servicio` | dónde le hacen mantenimiento | 26 centros / 19 ciudades — **sin la lista** |
+| `venta` | dónde hay sala para comprarlo | **nada** |
+| `prueba` | dónde hay unidad para manejarla | **nada** |
+| `seguro` | dónde opera la corredora | **nada** |
+
+Una ciudad puede tener taller y no sala. Puede tener sala y no unidad de prueba.
+Decir "sí hay" sin saberlo es el error que más caro sale: **el cliente se desplaza,
+no encuentra nada, y la culpa se la lleva la marca.**
+
+Mientras las listas estén vacías, el bot dice lo que sabe a nivel país, **no afirma
+ni niega** la ciudad concreta, y pasa a un asesor. El motivo de escalada cambia según
+qué preguntaron: una prueba de ruta es un lead más caliente que una duda de taller.
+
+**Esto se destraba con un dato, no con código.** Pedirle a Corautos:
+
+- [ ] Las **19 ciudades** con centro de servicio
+- [ ] Las ciudades con **sala de venta**
+- [ ] Dónde hay **unidad de prueba de ruta** (no es lo mismo que sala)
+- [ ] Cobertura de la **corredora de seguros** aliada
+
+Con eso se llenan cuatro listas en `COBERTURA` (en `bot-motor.js`) y el bot pasa de
+"no te lo puedo confirmar" a "sí, en tu ciudad tenemos". Es el cambio que más sube
+la calidad de las respuestas por cada minuto de trabajo.
+
 ## 4. Infraestructura
 
 ### Los tres niveles

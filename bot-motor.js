@@ -223,8 +223,8 @@ var KB = [
 
  {id:"servicio", k:["servicio","mantenimiento","taller","repuesto","posventa","atienden","arreglan","revision","revisión","centro de servicio","donde lo reviso"],
   r:function(v,lead){
-    if(lead.ciudad) return "En "+lead.ciudad+" hay centro de servicio de la red. En total son "+COMUN.red+"\n\n¿Quieres que un asesor te dé la dirección exacta?";
-    return "Hay "+COMUN.red+"\n\nSon más sitios para atenderla que para comprarla. Dime tu ciudad y te digo cuál te queda más cerca.";
+    if(lead.ciudad) return frasesCobertura("servicio", lead.ciudad);
+    return "Hay "+COMUN.red+"\n\nSon más sitios para atenderla que para comprarla. ¿En qué ciudad estás? Con eso el asesor te dice cuál te queda más cerca.";
   }, espera:function(lead){ return lead.ciudad ? "direccionTaller" : null }},
 
  /* Sale del mismo hallazgo del seguro: al arreglar "cuánto cuesta el
@@ -273,8 +273,35 @@ var KB = [
       "¿Te la cotizo? Responde SÍ y seguimos.";
   }, sub:"seguro"},
 
+ /* Preguntar "¿hay sala allá?" es preguntar por cobertura de VENTA, no por
+    prueba de ruta. Este tema va antes justamente para desambiguar: mira de
+    cuál de las cuatro coberturas se trata y responde esa. */
+ {id:"cobertura", k:["cobertura","cubren","hay sala","tienen sala","hay vitrina","hay concesionario",
+   "venden en","venden alla","venden allá","atienden en","atienden alla","atienden allá","llegan a",
+   "tienen presencia","hay taller","hay taller alla","hay taller allá","tienen sede","hay sede",
+   "en mi ciudad","para mi ciudad","hasta alla","hasta allá","hay en mi ciudad"],
+  r:function(v,lead){
+    var tipo = tipoDeCobertura(q_actual) || "venta";
+    return frasesCobertura(tipo, lead.ciudad);
+  }, esc:function(lead, q){
+    /* Si no sabemos la ciudad, la respuesta la pregunta y no hay a quién
+       pasar todavía. Si ya la sabemos, la respuesta dice "te paso con un
+       asesor" — y tiene que ser verdad. El motivo depende de qué preguntó:
+       una prueba de ruta es un lead más caliente que una duda de taller. */
+    if(!lead.ciudad) return null;
+    return tipoDeCobertura(q)==="prueba" ? "agenda" : "pedido";
+  }},
+
  {id:"prueba", k:["prueba","probar","manejar","test drive","ruta","ver el carro","conocer","visitar","cita","agendar","donde queda","dónde queda","vitrina","sala","direccion","dirección","horario","verla","verlo","quiero verla","quiero verlo","quiero conocerla","me gustaria verla","me gustaría verla","ir a mirarla"],
-  r:"Claro que sí. La prueba de ruta y la visita a sala se agendan directamente con la sala de tu ciudad.\n\nTe paso con un asesor para que cuadren día y hora.", esc:"agenda"},
+  r:function(v,lead){
+    /* "Se agenda con la sala de tu ciudad" daba por hecho que hay sala —y
+       unidad de prueba— donde vive el cliente. Son dos coberturas distintas
+       y de ninguna tenemos la lista. */
+    var t = "Claro que se puede agendar.";
+    if(lead.ciudad) t += "\n\nLo que no te puedo confirmar por aquí es si hay unidad de prueba en "+lead.ciudad+": eso depende de la sala y cambia. Te paso con un asesor para que te diga dónde y qué día puedes manejarla.";
+    else t += "\n\nDime en qué ciudad estás y te paso con un asesor para que cuadren dónde y qué día puedes manejarla.";
+    return t;
+  }, esc:"agenda"},
 
  {id:"credito", k:["credito","crédito","con credito","con crédito","a credito","por credito","cuota","cuota mensual","financia","financiar","banco","tasa","plazo","inicial","aprobar","aprobacion","aprobación","cuotas","mensual","leasing"],
   r:"El crédito lo estudia y aprueba la sala con sus aliados financieros; yo no puedo aprobarlo ni darte una tasa.\n\nLo que sí tenemos es un simulador de costo en la página, pero es ilustrativo y no constituye una oferta. Te paso con un asesor para que te dé condiciones reales.", esc:"credito"},
@@ -372,6 +399,91 @@ var ALIADOS = {
 function aliado(k){
   var a=ALIADOS[k];
   return (a && a.nombre) ? a.nombre : "uno de nuestros aliados";
+}
+
+/* ═══ COBERTURA — CUATRO COBERTURAS DISTINTAS, NO UNA ══════════════════════
+   Daniel dijo que estaba en Bucaramanga y el bot contestó "allá hay red de
+   servicio". No lo sabemos. Sabemos que Corautos tiene 26 centros en 19
+   ciudades, pero **en ningún documento del proyecto está CUÁLES son esas 19**.
+   El bot estaba afirmando ciudad por ciudad un dato que nadie le dio.
+
+   Y encima tratándolo todo como una sola cobertura. Son cuatro y no coinciden:
+
+     servicio · dónde le hacen mantenimiento → 26 centros / 19 ciudades
+     venta    · dónde hay sala para comprarlo
+     prueba   · dónde hay unidad de demostración para manejarla
+     seguro   · dónde opera la corredora aliada
+
+   Una ciudad puede tener taller y no sala. Puede tener sala y no unidad de
+   prueba. Decir "sí hay" sin saberlo es el error que más caro sale: el
+   cliente se desplaza, no encuentra nada, y la culpa se la lleva la marca.
+
+   Mientras `ciudades` sea null, el bot dice lo que sabe a nivel país y deja
+   que el asesor confirme la ciudad. Cuando Corautos entregue las listas se
+   llenan aquí y el bot pasa a responder con certeza. */
+var COBERTURA = {
+  servicio: {
+    nombre:"red de servicio",
+    pais:"26 centros de servicio en 19 ciudades del país y más de 100 puntos de repuestos",
+    ciudades:null,        // ⚠️ PENDIENTE: pedir la lista a Corautos
+    quePasa:"cuál te queda más cerca"
+  },
+  venta: {
+    nombre:"salas de venta",
+    pais:"la red de Corautos cubre las principales ciudades del país",
+    ciudades:null,        // ⚠️ PENDIENTE
+    quePasa:"desde cuál sala te lo pueden entregar"
+  },
+  prueba: {
+    nombre:"prueba de ruta",
+    pais:"la prueba de ruta se agenda con la sala que tenga unidad disponible",
+    ciudades:null,        // ⚠️ PENDIENTE
+    quePasa:"dónde y qué día puedes manejarla"
+  },
+  seguro: {
+    nombre:"cotización de seguro",
+    pais:"la cotización se hace con nuestro aliado y no depende de dónde vivas",
+    ciudades:null,
+    quePasa:"las condiciones para tu ciudad"
+  }
+};
+
+var TIPO_COBERTURA = [
+  {id:"prueba",   k:["prueba de ruta","probar","manejar","test drive","manejarla","manejarlo","conducirla","tirarle","sacarla a"]},
+  {id:"servicio", k:["taller","mantenimiento","servicio","repuesto","posventa","revision","revisión","garantia alla","garantía allá"]},
+  {id:"seguro",   k:["seguro","poliza","póliza","aseguradora"]},
+  {id:"venta",    k:["sala","vitrina","concesionario","comprar","comprarlo","comprarla","entrega","entregar","venden","vender","exhibicion","exhibición"]}
+];
+
+function tipoDeCobertura(q){
+  var n=norm(q), mejor=null, mp=0;
+  TIPO_COBERTURA.forEach(function(t){
+    var p=0;
+    t.k.forEach(function(w){
+      var wn=norm(w);
+      if(wn.indexOf(" ")>-1){ if(n.indexOf(wn)>-1) p+=6 }
+      else n.split(" ").forEach(function(tk){ if(tk===wn || (wn.length>=6 && tk.indexOf(wn)===0)) p+=2 });
+    });
+    if(p>mp){ mp=p; mejor=t.id }
+  });
+  return mejor;
+}
+
+/* La frase que NUNCA afirma ni niega una ciudad concreta mientras no tengamos
+   la lista. Es más larga que "sí, allá hay", y es la única honesta. */
+function frasesCobertura(tipo, ciudad){
+  var c = COBERTURA[tipo] || COBERTURA.servicio;
+  if(c.ciudades){
+    var hay = c.ciudades.some(function(x){ return norm(x)===norm(ciudad||"") });
+    return ciudad
+      ? (hay ? "Sí, en "+ciudad+" tenemos "+c.nombre+"."
+             : "En "+ciudad+" no tenemos "+c.nombre+" propia, pero un asesor te dice cuál es la más cercana.")
+      : c.pais+".";
+  }
+  var P = c.pais.charAt(0).toUpperCase()+c.pais.slice(1);
+  if(!ciudad) return P+". ¿En qué ciudad estás? Con eso te confirmo "+c.quePasa+".";
+  return P+".\n\nNo tengo la lista ciudad por ciudad, así que no te voy a decir que sí hay en "+ciudad+
+         " sin estar seguro. Te paso con un asesor para que te confirme "+c.quePasa+" — es cosa de minutos.";
 }
 
 /* ═══ COMPARAR ENTRE LO NUESTRO ════════════════════════════════════════════
@@ -851,6 +963,8 @@ function detectarLista(q, lista){
   return null;
 }
 
+var q_actual = "";
+
 function detectarCiudad(q){
   var n=norm(q);
   /* primero las conocidas, de la más larga a la más corta: sin eso "cali"
@@ -899,6 +1013,7 @@ function crearSesion(vehiculoInicial){
   };
 
   s.responder = function(q, opciones){
+    q_actual = q;          /* algunas respuestas necesitan la frase completa */
     s.lead.turnos++;
     var out = {
       pregunta:q, tema:null, puntaje:0, candidatos:[],
@@ -1103,7 +1218,11 @@ function crearSesion(vehiculoInicial){
         out.tema="cual";
         out.texto = tCual.r(v, s.lead);
       }else if(nuevas.indexOf("ciudad")>-1){
-        out.texto = "Anotado, "+s.lead.ciudad+".\n\nAllá hay red de servicio. ¿Qué te gustaría saber del "+v.nombre+" — precio, autonomía, garantía?";
+        /* Decía "allá hay red de servicio" sin tener la lista de las 19
+           ciudades. Afirmar cobertura ciudad por ciudad sin saberlo es el
+           error que hace que un cliente se desplace a un taller que no
+           existe — y la culpa se la lleva la marca. */
+        out.texto = "Anotado, "+s.lead.ciudad+".\n\n¿Qué te gustaría saber "+(v.art==="la"?"de la ":"del ")+v.nombre+" — precio, autonomía, garantía o dónde le hacen el mantenimiento?";
       }else if(nuevas.indexOf("plazo")>-1){
         out.texto = "Perfecto, lo tengo en cuenta.\n\n¿Qué necesitas saber del "+v.nombre+" para decidir?";
       }else{
@@ -1139,7 +1258,8 @@ function crearSesion(vehiculoInicial){
     if(out.cambioVehiculo) r = "Perfecto, hablemos "+(v.art==="la"?"de la ":"del ")+v.nombre+".\n\n"+r;
     out.texto=r;
 
-    if(top.t.esc){ out.escala=top.t.esc; s.lead.escalado=top.t.esc }
+    var escVal = (typeof top.t.esc==="function") ? top.t.esc(s.lead, q) : top.t.esc;
+    if(escVal){ out.escala=escVal; s.lead.escalado=escVal }
 
     /* lo que este tema deja prometido para el turno siguiente */
     var espId = (typeof top.t.espera==="function") ? top.t.espera(s.lead) : top.t.espera;
@@ -1176,7 +1296,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.16";
+var VERSION = "2026-07-28.17";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -1200,6 +1320,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"se puede hacer la prueba de ruta en mi ciudad bucaramanga",
+   arreglo:"El bot afirmaba «allá hay red de servicio» sin tener la lista de las 19 ciudades, y trataba venta, taller, prueba de ruta y seguro como una sola cobertura. Ahora son cuatro coberturas distintas, y ninguna se afirma ciudad por ciudad mientras Corautos no entregue las listas.",
+   ver:"2026-07-28.17"},
   {q:"tienes el vehiculo para entrega inmediata me encuentro en barrancabermeja",
    arreglo:"Dos cosas: el bot solo conocía 30 ciudades y no reconocía Barrancabermeja, por eso volvía a preguntarla. Ahora conoce las 32 capitales más los municipios grandes, y las que no estén las reconoce por la frase («me encuentro en X»). Y la respuesta de disponibilidad dejó de ser tibia: afirma que hay unidades con entrega inmediata y aclara que lo que se verifica es el color y la versión.",
    ver:"2026-07-28.16"},

@@ -196,7 +196,7 @@ var PERSONAS = [
     {q:"cuanta autonomia tiene", espera:"consumo"},
     {q:"cuanto se demora cargando", espera:"enchufe"},
     {q:"que garantia tiene la bateria", espera:"garantia"},
-    {q:"hay taller en cali?", espera:"servicio"},
+    {q:"hay taller en cali?", espera:"cobertura", noContiene:"en Cali hay", escalaOk:true},
     {q:"de que colores hay", espera:"colores"},
     {q:"listo quiero probarla", espera:"escala:agenda"}
   ]},
@@ -269,6 +269,16 @@ var PERSONAS = [
   turnos:[
     {q:"tienes el vehiculo para entrega inmediata? me encuentro en barrancabermeja", espera:"disponible", noContiene:"¿En qué ciudad estás?"},
     {q:"si", espera:"resp:precioAsesor", contiene:"Barrancabermeja"}
+  ]},
+
+ {nombre:"Álvaro · el de Bucaramanga y las cuatro coberturas",
+  perfil:"Daniel dijo que estaba en Bucaramanga y el bot le contestó «allá hay red de servicio» — un dato que nadie nos dio: sabemos que son 26 centros en 19 ciudades, pero no CUÁLES. Y trataba venta, taller y prueba de ruta como una sola cobertura. Son cuatro y no coinciden.",
+  veh:"mage",
+  turnos:[
+    {q:"hola, estoy en bucaramanga", espera:"senal:ciudad", noContiene:"hay red de servicio"},
+    {q:"y venden alla? hay sala?", espera:"cobertura", contiene:"No tengo la lista ciudad por ciudad", escalaOk:true},
+    {q:"hay taller alla?", espera:"cobertura", contiene:"26 centros", escalaOk:true},
+    {q:"se puede hacer la prueba de ruta en mi ciudad?", espera:"escala:agenda", contiene:"unidad disponible"}
   ]},
 
  {nombre:"Esteban · el de las dos versiones del Vigo",
@@ -347,7 +357,11 @@ function correr(BOT){
       if(esRespuesta){ if(o.escala) res.escalasOk++ }
       else if(debia && o.escala) res.escalasOk++;
       else if(debia && !o.escala) res.escalasFalt++;
-      else if(!debia && o.escala && o.escala!=="nose") res.escalasSobra++;
+      /* `escalaOk` marca los turnos donde escalar es correcto aunque el tema
+         no sea de escalada: una pregunta de cobertura que no podemos
+         responder termina, con razón, en un asesor. */
+      else if(!debia && o.escala && o.escala!=="nose" && !t.escalaOk) res.escalasSobra++;
+      else if(t.escalaOk && o.escala) res.escalasOk++;
 
       det.turnos.push({q:t.q, espera:t.espera, obtuvo:obtuvo, bien:bien, r:o.texto, empujon:o.empujon});
     });
