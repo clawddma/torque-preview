@@ -498,7 +498,12 @@ function compararNuestros(ids, dim){
   lista.forEach(function(v){
     t += "· "+v.nombre+" — "+d.dato(v)+"\n";
   });
-  t += "\n"+d.nota+"\n\n¿Quieres que los compare en otra cosa: precio, autonomía, potencia o espacio?";
+  /* No se ofrece comparar en lo que se acaba de comparar. Suena a que el bot
+     no escuchó — y es exactamente lo que el cliente ya preguntó. */
+  var otras = DIMENSIONES.filter(function(x){ return x.id!==d.id })
+                         .map(function(x){ return x.titulo.toLowerCase() });
+  t += "\n"+d.nota+"\n\n¿Los comparo en algo más? Tengo "+
+       otras.slice(0,-1).join(", ")+" o "+otras[otras.length-1]+".";
   return t;
 }
 
@@ -570,6 +575,23 @@ var ESPERAS = {
 
   /* El empujón: el bot propone la prueba de ruta y un "sí" no hacía nada.
      Es el momento de la conversión — perderlo ahí es perder el lead. */
+  /* Después de comparar, un "y en precio?" es seguir la misma comparación,
+     no una pregunta nueva sobre un solo carro. Sin esto el cliente tenía que
+     repetir "compárame el precio del Vigo y la MAGE" cada vez. */
+  otraDimension: {
+    libre:function(v,lead,q,ctx){
+      /* Solo continúa si el mensaje es un FRAGMENTO —"y en precio?"— no una
+         pregunta completa. Si nombra un carro concreto ("cuánto vale la
+         MAGE") ya no está comparando: está preguntando por ese. */
+      if(norm(q).split(" ").length>6) return null;
+      if(vehiculosNombrados(q).length) return null;
+      var d = detectarDimension(q);
+      if(!d || d.id===ctx.dim) return null;
+      return {texto: compararNuestros(ctx.ids, d), espera:"otraDimension",
+              ctx:{ids:ctx.ids, dim:d.id}};
+    }
+  },
+
   agendar: {
     si:function(v,lead){ return {texto:"Listo, eso es lo mejor: verlo en persona resuelve más que cualquier ficha.\n\nTe paso con un asesor para que cuadren día y hora"+(lead.ciudad?" en "+lead.ciudad:"")+".", escala:"agenda"} },
     no:function(v){ return {texto:"Sin afán, tranquilo. Aquí sigo para lo que necesites saber."} }
@@ -884,7 +906,8 @@ function crearSesion(vehiculoInicial){
       out.entendido = true;
       out.texto = compararNuestros(ids, dim);
       if(s.lead.interes.indexOf("comparar")<0) s.lead.interes.push("comparar");
-      s.fallos=0; s.espera=null;
+      s.fallos=0;
+      s.espera={id:"otraDimension", turno:s.lead.turnos, ctx:{ids:ids, dim:dim?dim.id:"precio"}};
       s.historia.push(out); return out;
     }
 
@@ -906,7 +929,16 @@ function crearSesion(vehiculoInicial){
       var otro = puntuar(q);
       var pisaTema = otro.length && !otro[0].t.debil && otro[0].p>=6;
       var si = esSi(q), no = esNo(q);
-      if(esp && !pisaTema && (si || no)){
+      if(esp && esp.libre){
+        var libre = esp.libre(v, s.lead, q, s.espera.ctx||{});
+        if(libre){
+          out.tema="resp:"+s.espera.id; out.entendido=true; out.texto=libre.texto;
+          s.espera = libre.espera ? {id:libre.espera, turno:s.lead.turnos, ctx:libre.ctx} : null;
+          s.fallos=0; s.historia.push(out); return out;
+        }
+        s.espera=null;
+      }
+      else if(esp && !pisaTema && (si || no)){
         var res = (si ? esp.si : esp.no)(v, s.lead);
         out.tema = "resp:"+s.espera.id; out.entendido = true;
         out.texto = res.texto;
@@ -1095,7 +1127,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.14";
+var VERSION = "2026-07-28.15";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -1119,6 +1151,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"comparame la autonomia de este vehiculo con el vigo",
+   arreglo:"Ya no ofrece comparar en lo que acaba de comparar. Y ahora la comparación continúa sola: un «y en precio?» sigue midiendo los mismos dos carros, sin que tengas que repetir cuáles.",
+   ver:"2026-07-28.15"},
   {q:"cual es la autonomia de este vehiculo y me lo puedes comparar con el vigo",
    arreglo:"El bot ya compara entre los tres, en autonomía, precio, potencia, espacio o batería — y nombrar otro carro en una comparación ya no muda la conversación a ese carro.",
    ver:"2026-07-28.14"},

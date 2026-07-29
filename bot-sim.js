@@ -246,7 +246,11 @@ var PERSONAS = [
   veh:"mage",
   turnos:[
     {q:"cual es la autonomia de este vehiculo y me lo puedes comparar con el vigo?", espera:"compara:mage-vigo:autonomia", contiene:"1.000 km"},
-    {q:"y en precio?", espera:"precio"},
+    /* el cierre no puede volver a ofrecer lo que acaba de responder */
+    {q:"cual es la autonomia de este vehiculo y me lo puedes comparar con el vigo?", espera:"compara:mage-vigo:autonomia", noContiene:"Tengo autonomía"},
+    /* y la comparación sigue sola: un fragmento mantiene los mismos carros */
+    {q:"y en precio?", espera:"resp:otraDimension", contiene:"$84.990.000"},
+    {q:"cuanto vale la mage", espera:"precio"},
     {q:"comparame los tres en potencia", espera:"compara:vigo-box-mage:potencia", contiene:"288"},
     {q:"cual es la diferencia entre la e2 y la e2+", espera:"compara:vigo-box-mage"}
   ]},
@@ -308,6 +312,10 @@ function correr(BOT){
          calle. El tema estaba bien; la respuesta estaba al revés. */
       var faltoTexto = bien && t.contiene && (o.texto||"").indexOf(t.contiene)<0;
       if(faltoTexto) bien=false;
+      /* `noContiene` blinda lo contrario: que una frase NO aparezca. Nació de
+         que el bot ofrecía comparar en la dimensión que acababa de comparar. */
+      var sobroTexto = bien && t.noContiene && (o.texto||"").indexOf(t.noContiene)>-1;
+      if(sobroTexto) bien=false;
 
       res.evaluados++;
       if(bien){ res.aciertos++; det.ok++ }
