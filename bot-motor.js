@@ -287,8 +287,25 @@ var KB = [
  {id:"devolucion", k:["devolucion","devolución","devuelven","recuperar","upme","dian","beneficio tributario","exencion","exención","iva","impuesto"],
   r:"La DIAN fijó un procedimiento para devolver el IVA de vehículos certificados por la UPME, dentro de los 5 años siguientes a la factura.\n\nNo te lo puedo dar por hecho: depende de tu caso particular y el criterio ha cambiado. Lo que sí puedo es ponerte con alguien que lo revise contigo con tus documentos.", esc:"tributario"},
 
- {id:"picoyplaca", k:["pico y placa","pico placa","restriccion","restricción","circulacion","circulación","dia sin carro","día sin carro","exento","impuesto vehicular","impuesto de rodamiento","soat","matricula","matrícula"],
-  r:"Esa es de las preguntas donde no te quiero dar un dato bonito y equivocado: **el pico y placa y el impuesto vehicular los define cada ciudad y cada departamento, y las reglas para eléctricos e híbridos han cambiado varias veces.**\n\nHay beneficios reales, pero dependen de dónde vives y del año. Te paso con un asesor para que te confirme exactamente qué aplica en tu ciudad hoy.", esc:"normativo"},
+ /* "¿Cuánto cuestan los documentos de matrícula?" caía en pico y placa
+    porque compartían la palabra. Son cosas distintas y esta es de las
+    preguntas que más se hacen: es plata que el cliente tiene que sumar y que
+    NO está en el precio publicado. Contestarle otra cosa lo deja pensando
+    que le escondimos un costo. */
+ {id:"matricula", k:["matricula","matrícula","matricular","documentos","papeles","tramites","trámites",
+   "runt","placas","placa nueva","traspaso","soat","tecnomecanica","tecnomecánica","gastos de matricula",
+   "cuanto cuesta matricular","que mas hay que pagar","gastos adicionales","costos adicionales","aparte del precio"],
+  r:function(v,lead){
+    return "Los gastos de matrícula van aparte del precio del vehículo — el valor que te di es del carro, con IVA, sin matricular.\n\n"+
+      "Cuánto suman depende de tu ciudad: los derechos de tránsito los fija cada municipio, y encima van SOAT y placas. Por eso no te doy una cifra al aire; el asesor te la calcula exacta"+
+      (lead.ciudad ? " para "+lead.ciudad : " para tu ciudad")+" antes de que decidas nada.\n\n"+
+      "¿Te lo calculo con un asesor?";
+  }, espera:"precioAsesor"},
+
+ {id:"picoyplaca", k:["pico y placa","pico placa","restriccion","restricción","circulacion","circulación","dia sin carro","día sin carro","exento","impuesto vehicular","impuesto de rodamiento","exencion","exención"],
+  /* Ojo con el formato: WhatsApp pone negrita con UN asterisco. Los dobles
+     se ven literales, con los asteriscos a la vista. */
+  r:"Esa es de las preguntas donde no te quiero dar un dato bonito y equivocado: el pico y placa y el impuesto vehicular los define cada ciudad y cada departamento, y las reglas para eléctricos e híbridos han cambiado varias veces.\n\nHay beneficios reales, pero dependen de dónde vives y del año. Te paso con un asesor para que te confirme exactamente qué aplica en tu ciudad hoy.", esc:"normativo"},
 
  {id:"seguro", k:["el seguro","un seguro","del seguro","mi seguro","poliza","póliza","aseguradora","asegurar","asegurarlo","asegurarla","todo riesgo","soat","cuanto vale el seguro","seguro del carro","seguro del vehiculo"],
   /* Historia de esta respuesta, porque cada línea salió de una corrección:
@@ -1587,7 +1604,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.23";
+var VERSION = "2026-07-28.24";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -1611,12 +1628,18 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"cuanto cuestan los documentos de matricula",
+   arreglo:"Los gastos de matrícula ya tienen respuesta propia: antes caían en pico y placa porque compartían la palabra. Y se corrigió el formato de negrita, que en WhatsApp se veía con los asteriscos a la vista.",
+   ver:"2026-07-28.24"},
   {q:"precio y autonomia y prueba de ruta en armenia",
    arreglo:"Tres cosas: la ciudad se reconoce aunque venga con un dedazo pegado («armenia1010»); ya no se te ofrece comparar con otros carros cuando preguntaste por uno; y una respuesta a varias preguntas cierra con UNA sola pregunta al final, no con tres.",
    ver:"2026-07-28.23"},
   {q:"cuanto vale la mage",
    arreglo:"Al preguntar el precio ya no se listan los otros dos más baratos sin que los pidas: eso era ponerle competencia propia a una venta que ya iba avanzando. Ahora la comparación se ofrece, y si la quieres se da completa.",
    ver:"2026-07-28.22"},
+  {q:"cuanto cuestan los documentos de matricula",
+   arreglo:"Los gastos de matrícula ya tienen respuesta propia: antes caían en pico y placa porque compartían la palabra. Y se corrigió el formato de negrita, que en WhatsApp se veía con los asteriscos a la vista.",
+   ver:"2026-07-28.24"},
   {q:"precio y autonomia y prueba de ruta en armenia",
    arreglo:"Tres preguntas en un mensaje ahora reciben tres respuestas, en el orden en que las escribiste, y la que necesita a un asesor va de última para que quedes conectado sin perder las otras.",
    ver:"2026-07-28.21"},

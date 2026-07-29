@@ -353,6 +353,16 @@ var PERSONAS = [
     {q:"y cuanto vale la mage sola", espera:"precio", noContiene:"$69.990.000"}
   ]},
 
+ {nombre:"Germán · el que suma la plata real",
+  perfil:"Daniel: «sigues respondiendo lo que no te han preguntado». Preguntó cuánto cuestan los documentos de matrícula y el bot le habló de pico y placa — compartían la palabra «matrícula». Es de las preguntas que más se hacen: es plata que NO está en el precio publicado, y contestarle otra cosa lo deja pensando que le escondimos un costo.",
+  veh:"mage",
+  turnos:[
+    {q:"estoy en armenia", espera:"senal:ciudad"},
+    {q:"cuanto cuestan los documentos de matricula?", espera:"matricula", contiene:"van aparte del precio", noContiene:"pico y placa"},
+    {q:"y el soat?", espera:"matricula"},
+    {q:"hay pico y placa para electricos en mi ciudad?", espera:"escala:normativo", contiene:"pico y placa"}
+  ]},
+
  {nombre:"Esteban · el de las dos versiones del Vigo",
   perfil:"Camilo encontró que anunciábamos los 470 km de la E2+ junto al precio de la E2, que hace 401. Eso es publicidad engañosa y además le daña la venta al asesor: el cliente llega esperando otra cosa. Esta conversación existe para que no vuelva a pasar.",
   veh:"vigo",
