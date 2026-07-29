@@ -114,10 +114,12 @@ var PERSONAS = [
   ]},
 
  {nombre:"Óscar · pregunta por el seguro",
-  perfil:"Costo total de propiedad. El bot no tiene esa tarifa.",
+  perfil:"Pregunta el seguro de entrada, sin haber mostrado interés en el carro. Ahí NO se ofrece la cotización: al aliado se le presentan interesados de verdad. Cuando ya preguntó por el carro y vuelve a insistir, ahí sí.",
   veh:"mage",
   turnos:[
-    {q:"cuanto me sale el seguro al año?", espera:"seguro", contiene:"Responde SÍ"},
+    {q:"cuanto me sale el seguro al año?", espera:"seguro", contiene:"Cuando tengas claro el carro"},
+    {q:"y cuanto vale el carro", espera:"precio"},
+    {q:"y el seguro entonces?", espera:"seguro", contiene:"Responde SÍ"},
     {q:"si por favor", espera:"sub:seguro", contiene:"rango de edad"},
     {q:"tengo 34", espera:"sub:seguro", contiene:"siniestros"},
     {q:"no, nunca", espera:"sub:seguro", contiene:"aliado de seguros"}
@@ -212,7 +214,7 @@ var PERSONAS = [
   perfil:"Daniel marcó en negativo que al preguntar por el seguro le contestaban el precio del carro. Era estructural: preguntar cuánto cuesta ALGO es preguntar por ese algo, no por el vehículo. Estas frases lo blindan.",
   veh:"mage",
   turnos:[
-    {q:"cuanto cuesta aproximadamente un seguro para este vehiculo?", espera:"seguro", contiene:"Responde SÍ"},
+    {q:"cuanto cuesta aproximadamente un seguro para este vehiculo?", espera:"seguro", contiene:"Cuando tengas claro el carro"},
     {q:"y cuanto cuesta el mantenimiento", espera:"escala:costoservicio"},
     {q:"cuanto vale el carro entonces", espera:"precio", contiene:"$109.000.000"}
   ]},

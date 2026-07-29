@@ -226,7 +226,7 @@ var KB = [
  {id:"costoservicio", k:["cuanto cuesta el mantenimiento","cuanto vale el mantenimiento","cuanto sale el mantenimiento","precio del mantenimiento","costo del mantenimiento","costo de mantenimiento","valor del mantenimiento","cuanto cuesta la revision","mantenimiento cuanto"],
   r:"El costo de los mantenimientos lo fija cada centro de servicio y depende del kilometraje de la revisión, así que no te voy a dar una cifra que no pueda sostener.\n\nLo que sí es cierto: un eléctrico no lleva cambios de aceite ni filtros de combustible, y los mantenimientos son más espaciados y más baratos que los de un carro a gasolina.\n\nTe paso con un asesor para que te den el plan de mantenimiento con valores reales.", esc:"costoservicio"},
 
- {id:"seguridad", k:["seguridad","airbag","frenos","abs","asistencia","adas","camara","cámara","punto ciego","carril","choque","segura","es seguro"],
+ {id:"seguridad", k:["seguridad","airbag","frenos","abs","asistencia","adas","camara","cámara","punto ciego","carril","choque","segura","es seguro","que tan seguro","qué tan seguro","tan segura"],
   r:function(v){ return COMUN.seguridad+"\n\nLa línea suma conducción asistida nivel 2: frenado automático de emergencia, control crucero adaptativo, mantenimiento de carril, monitoreo de punto ciego y visión 360°.\n\nLa dotación exacta cambia por versión; te la confirma la sala." }},
 
  {id:"colores", k:["color","colores","blanco","negro","azul","plata","gris","rojo"],
@@ -244,19 +244,37 @@ var KB = [
  {id:"picoyplaca", k:["pico y placa","pico placa","restriccion","restricción","circulacion","circulación","dia sin carro","día sin carro","exento","impuesto vehicular","impuesto de rodamiento","soat","matricula","matrícula"],
   r:"Esa es de las preguntas donde no te quiero dar un dato bonito y equivocado: **el pico y placa y el impuesto vehicular los define cada ciudad y cada departamento, y las reglas para eléctricos e híbridos han cambiado varias veces.**\n\nHay beneficios reales, pero dependen de dónde vives y del año. Te paso con un asesor para que te confirme exactamente qué aplica en tu ciudad hoy.", esc:"normativo"},
 
- {id:"seguro", k:["seguro","poliza","póliza","aseguradora","cuanto vale el seguro","asegurar"],
+ {id:"seguro", k:["el seguro","un seguro","del seguro","mi seguro","poliza","póliza","aseguradora","asegurar","asegurarlo","asegurarla","todo riesgo","soat","cuanto vale el seguro","seguro del carro","seguro del vehiculo"],
   /* Dos correcciones de Daniel, y la segunda es de negocio, no de estilo:
      1. "no te la voy a estimar" sonaba tosco. Se dice lo mismo sin regañar.
      2. Decía que "la sala trabaja con aliados" — eso le regala el contacto a
         Corautos. El seguro no es del distribuidor: es una necesidad del
         cliente que TORQ puede atender con sus propios aliados. Ahí hay un
         lead, y se captura. */
-  r:"El valor del seguro lo define la aseguradora, y cambia según tu edad, tu historial de conducción y la ciudad donde lo matricules. Por eso prefiero no darte una cifra que después no se cumpla.\n\nLo que sí puedo hacer es cotizártelo con uno de nuestros aliados. Te hago dos preguntas rápidas y te lo cotizan con tus datos reales, junto con el vehículo.\n\n¿Arrancamos? Responde SÍ y seguimos.", sub:"seguro"},
+  /* 3. La cotización NO se ofrece de entrada. Criterio de Daniel, y es el
+        correcto: al aliado se le presenta un interesado de verdad, no alguien
+        que preguntó de paso. Ofrecerlo al primer mensaje suena a venta
+        cruzada y le quema el tiempo al aliado con leads fríos.
+
+        Se ofrece cuando el cliente ya mostró que está en compra —preguntó
+        dos o más cosas del carro, o soltó ciudad, plazo o forma de pago— o
+        cuando vuelve a insistir con el seguro, que ya es señal explícita.
+
+        Si todavía está frío se responde igual de completo y se deja la
+        puerta abierta. No se pierde nada: si vuelve, ahí sí se ofrece. */
+  r:function(v,lead){
+    var base = "El valor del seguro lo define la aseguradora, y cambia según tu edad, tu historial de conducción y la ciudad donde lo matricules. Por eso prefiero no darte una cifra que después no se cumpla.";
+    var tibio = lead.interes.length>=2 || !!lead.ciudad || !!lead.plazo || !!lead.pago ||
+                lead.interes.indexOf("seguro")>-1;
+    lead._ofrecio = tibio;
+    if(!tibio) return base+"\n\nCuando tengas claro el carro te lo cotizo con uno de nuestros aliados y te dan el valor real.\n\n¿Seguimos con el vehículo? Dime qué quieres saber.";
+    return base+"\n\nLo que sí puedo hacer es cotizártelo con uno de nuestros aliados. Te hago dos preguntas rápidas y te lo cotizan con tus datos reales, junto con el vehículo.\n\n¿Arrancamos? Responde SÍ y seguimos.";
+  }, sub:"seguro"},
 
  {id:"prueba", k:["prueba","probar","manejar","test drive","ruta","ver el carro","conocer","visitar","cita","agendar","donde queda","dónde queda","vitrina","sala","direccion","dirección","horario","verla","verlo","quiero verla","quiero verlo","quiero conocerla","me gustaria verla","me gustaría verla","ir a mirarla"],
   r:"Claro que sí. La prueba de ruta y la visita a sala se agendan directamente con la sala de tu ciudad.\n\nTe paso con un asesor para que cuadren día y hora.", esc:"agenda"},
 
- {id:"credito", k:["credito","crédito","cuota","financia","banco","tasa","plazo","inicial","aprobar","aprobacion","aprobación","cuotas","mensual","leasing"],
+ {id:"credito", k:["credito","crédito","con credito","con crédito","a credito","por credito","cuota","cuota mensual","financia","financiar","banco","tasa","plazo","inicial","aprobar","aprobacion","aprobación","cuotas","mensual","leasing"],
   r:"El crédito lo estudia y aprueba la sala con sus aliados financieros; yo no puedo aprobarlo ni darte una tasa.\n\nLo que sí tenemos es un simulador de costo en la página, pero es ilustrativo y no constituye una oferta. Te paso con un asesor para que te dé condiciones reales.", esc:"credito"},
 
  {id:"retoma", k:["retoma","parte de pago","entregar mi","mi carro","cambio","permuta","usado","recibir mi"],
@@ -293,6 +311,12 @@ var KB = [
     if(lead.turnos<=1) return null; // el saludo inicial lo da arrancar()
     return "¡Hola! Aquí sigo. ¿En qué más te ayudo con el "+v.nombre+"?";
   }},
+
+ /* Un "sí" suelto, sin pregunta pendiente, no es incomprensión: es un cliente
+    diciendo que siga. Contestarle "no entendí" es la peor forma de recibir un
+    gesto de colaboración. Es tema débil: solo gana si no hay nada mejor. */
+ {id:"afirmacion", debil:true, k:["si","sí","claro","dale","obvio","sip","listo si","si señor"],
+  r:function(v){ return "Listo. ¿Qué quieres saber "+(v.art==="la"?"de la ":"del ")+v.nombre+" — precio, autonomía, garantía o dónde le hacen el mantenimiento?" }},
 
  {id:"gracias", debil:true, k:["gracias","muchas gracias","listo","perfecto","ok","dale","vale","bueno","entendido","chevere","chévere"],
   r:"Con gusto. Si te queda cualquier otra duda, aquí estoy. Y cuando quieras, te paso con un asesor para agendar la prueba de ruta."},
@@ -418,9 +442,14 @@ function norm(s){
    de la frase hacía que casi toda pregunta cayera en "precio". Una frase de
    dos o más palabras pesa mucho más que una palabra suelta. */
 function puntuarUno(tema, n, toks){
-  var p=0, hits=[];
+  var p=0, hits=[], yaVi={};
   for(var j=0;j<tema.k.length;j++){
     var wn=norm(tema.k[j]), hit=false;
+    /* "si" y "sí" normalizan al mismo token, igual que "poliza"/"póliza".
+       Sin esto la misma coincidencia sumaba dos veces y un "sí" suelto
+       llegaba a puntaje de tema fuerte. */
+    if(yaVi[wn]) continue;
+    yaVi[wn]=1;
     if(wn.indexOf(" ")>-1){
       if(n.indexOf(wn)>-1){ p+=6; hit=true }
     }else{
@@ -449,7 +478,11 @@ function puntuar(q){
     var item={t:t,p:s.p,hits:s.hits};
     if(t.debil){
       var frase = s.hits.some(function(h){ return h.indexOf(" ")>-1 });
-      var cubre = s.hits.reduce(function(a,h){ return a + h.split(" ").length }, 0);
+      /* Sin quitar repetidos, "si" y "sí" —que normalizan al mismo token—
+         contaban dos veces y hacían que "si o que" pareciera cubrir medio
+         mensaje. Un mensaje confuso debe quedar confuso. */
+      var unicos = s.hits.filter(function(h,ix){ return s.hits.indexOf(h)===ix });
+      var cubre = unicos.reduce(function(a,h){ return a + h.split(" ").length }, 0);
       /* pasa si el mensaje ES la muletilla ("hola"), si trae una despedida
          explícita de dos palabras ("lo pienso"), o si cubre medio mensaje.
          "bueno pues entonces" no cumple ninguna: se admite que no entendió. */
@@ -601,7 +634,10 @@ function crearSesion(vehiculoInicial){
        deja cambiar de tema es un formulario, no una conversación. */
     if(s.sub){
       var fuera = puntuar(q);
-      var cambioDeTema = fuera.length && fuera[0].p>=6 && fuera[0].t.id!=="gracias";
+      /* Solo un tema FUERTE interrumpe la cotización. Un "sí", un "ok" o un
+         "listo" son respuestas a lo que se está preguntando, no un cambio de
+         conversación. */
+      var cambioDeTema = fuera.length && !fuera[0].t.debil && fuera[0].p>=6;
       if(cambioDeTema){
         out.subAbandonado = s.sub.id;
         s.sub = null;
@@ -719,6 +755,7 @@ function crearSesion(vehiculoInicial){
     var top=items[0];
     out.tema=top.t.id; out.puntaje=top.p; out.entendido=true;
 
+    delete s.lead._ofrecio;
     var r = (typeof top.t.r==="function") ? top.t.r(v, s.lead) : top.t.r;
     if(r===null){ // el tema decidió no hablar (ej. saludo repetido en turno 1)
       s.historia.push(out); return out;
@@ -734,7 +771,8 @@ function crearSesion(vehiculoInicial){
 
     /* El tema abre una cotización paralela: se arma el subflujo y el próximo
        turno lo atiende el bloque 3b. */
-    if(top.t.sub && SUBFLUJOS[top.t.sub] && !(s.lead.secundarios||[]).includes(top.t.sub)){
+    if(top.t.sub && SUBFLUJOS[top.t.sub] && !(s.lead.secundarios||[]).includes(top.t.sub)
+       && s.lead._ofrecio !== false){
       s.sub = {id:top.t.sub, paso:0, confirmado:false, datos:{}};
       out.abreSub = top.t.sub;
     }
@@ -761,7 +799,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.7";
+var VERSION = "2026-07-28.8";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -785,6 +823,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"que tan seguro es el carro",
+   arreglo:"Antes ofrecía póliza a quien preguntaba por SEGURIDAD. 'Seguro' suelto ya no dispara el tema: en Colombia es muletilla («seguro que sí», «de seguro»). Solo cuenta cuando es sustantivo.",
+   ver:"2026-07-28.8"},
   {q:"cuanto puede costar un seguro aproximadamente para este vehiculo",
    arreglo:"Ya no se acaba ahí: el bot ofrece cotizarlo, hace dos preguntas y guarda un SEGUNDO lead de seguro, sin cortar la conversación del carro.",
    ver:"2026-07-28.6"},

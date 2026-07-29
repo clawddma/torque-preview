@@ -173,6 +173,23 @@ ${datos || "—"}
   log("LEAD SECUNDARIO (sin canal configurado):\n" + texto);
 }
 
+/* ═══ UNA FILA POR CONVERSACIÓN ══════════════════════════════════════════════
+   La gente escribe dos y tres mensajes seguidos: "hola" · "estoy en Cali" ·
+   "cuánto vale". Meta los empuja casi al tiempo y, sin esto, el segundo lee
+   el estado ANTES de que el primero lo haya guardado: la ciudad se pierde,
+   la cotización a medio hacer se olvida y el bot contesta como si nada.
+
+   Se atienden en orden, uno detrás de otro, por número. Conversaciones de
+   personas distintas siguen corriendo en paralelo. */
+const colas = new Map();
+function enCola(waId, tarea) {
+  const previa = colas.get(waId) || Promise.resolve();
+  const siguiente = previa.then(tarea, tarea).catch(e => log("cola", waId, e.message));
+  colas.set(waId, siguiente);
+  siguiente.finally(() => { if (colas.get(waId) === siguiente) colas.delete(waId) });
+  return siguiente;
+}
+
 /* ═══ EL TURNO ═══════════════════════════════════════════════════════════════ */
 async function atender(waId, texto, nombre, campana) {
   /* 3 · memoria */
@@ -323,7 +340,7 @@ function crearServidor() {
                  calificador del sitio: "— ref BOG-MAGE-01" */
               const ref = texto.match(/—\s*ref\s+([\w-]+)/i);
               try {
-                await atender(waId, texto, nombre, ref ? ref[1] : null);
+                await enCola(waId, () => atender(waId, texto, nombre, ref ? ref[1] : null));
               } catch (e) {
                 log("ERROR atendiendo", waId, e.stack);
                 await enviar(waId, "Se me cruzaron los cables un segundo. ¿Me repites la pregunta?");

@@ -54,7 +54,10 @@ async function empujar(waId, texto, nombre, id, firmar = true) {
   if (firmar) cab["x-hub-signature-256"] = firma;
   else cab["x-hub-signature-256"] = "sha256=" + "0".repeat(64);
   const res = await fetch(`http://127.0.0.1:${PUERTO}/webhook`, { method: "POST", headers: cab, body: crudo });
-  await new Promise(r => setTimeout(r, 40));   // el trabajo sigue tras el 200
+  /* A Meta se le responde 200 de inmediato y el trabajo sigue después, así que
+     la prueba espera a que la fila de esa conversación termine antes de mirar
+     el resultado. */
+  await new Promise(r => setTimeout(r, 160));
   return res.status;
 }
 
