@@ -196,7 +196,7 @@ var PERSONAS = [
     {q:"cuanta autonomia tiene", espera:"consumo"},
     {q:"cuanto se demora cargando", espera:"enchufe"},
     {q:"que garantia tiene la bateria", espera:"garantia"},
-    {q:"hay taller en cali?", espera:"cobertura", noContiene:"en Cali hay", escalaOk:true},
+    {q:"hay taller en cali?", espera:"cobertura", contiene:"Sí, en Cali hay taller"},
     {q:"de que colores hay", espera:"colores"},
     {q:"listo quiero probarla", espera:"escala:agenda"}
   ]},
@@ -272,13 +272,31 @@ var PERSONAS = [
   ]},
 
  {nombre:"Álvaro · el de Bucaramanga y las cuatro coberturas",
-  perfil:"Daniel dijo que estaba en Bucaramanga y el bot le contestó «allá hay red de servicio» — un dato que nadie nos dio: sabemos que son 26 centros en 19 ciudades, pero no CUÁLES. Y trataba venta, taller y prueba de ruta como una sola cobertura. Son cuatro y no coinciden.",
+  perfil:"El bot afirmaba cobertura ciudad por ciudad sin tener la lista. Ahora la tiene, de la pieza oficial de Corautos: 22 puntos de venta y 26 talleres en 20 ciudades. Y son cuatro coberturas distintas, no una.",
   veh:"mage",
   turnos:[
     {q:"hola, estoy en bucaramanga", espera:"senal:ciudad", noContiene:"hay red de servicio"},
-    {q:"y venden alla? hay sala?", espera:"cobertura", contiene:"No tengo la lista ciudad por ciudad", escalaOk:true},
-    {q:"hay taller alla?", espera:"cobertura", contiene:"26 centros", escalaOk:true},
+    {q:"y venden alla? hay sala?", espera:"cobertura", contiene:"Sí, en Bucaramanga hay punto de venta"},
+    {q:"hay taller alla?", espera:"cobertura", contiene:"Sí, en Bucaramanga hay taller"},
     {q:"se puede hacer la prueba de ruta en mi ciudad?", espera:"escala:agenda", contiene:"unidad disponible"}
+  ]},
+
+ {nombre:"Nubia · Cartagena, donde hay taller pero no sala",
+  perfil:"La excepción que evita el error caro. En Cartagena y Santa Marta hay taller pero NO punto de venta; en Tunja al revés. Decir «sí hay» en bloque manda al cliente a un sitio que no existe.",
+  veh:"box",
+  turnos:[
+    {q:"buenas, estoy en cartagena", espera:"senal:ciudad"},
+    {q:"hay sala de ventas alla?", espera:"cobertura", contiene:"no hay punto de venta", escalaOk:true},
+    {q:"y taller si hay?", espera:"servicio", contiene:"Sí, en Cartagena hay taller"}
+  ]},
+
+ {nombre:"Hugo · Tunja, donde es al revés",
+  perfil:"Tunja tiene punto de venta pero no taller. El más cercano es Duitama, y el bot lo dice en vez de dejarlo buscando.",
+  veh:"mage",
+  turnos:[
+    {q:"vivo en tunja", espera:"senal:ciudad"},
+    {q:"hay taller alla?", espera:"cobertura", contiene:"Duitama", escalaOk:true},
+    {q:"y venden en tunja?", espera:"cobertura", contiene:"Sí, en Tunja hay punto de venta"}
   ]},
 
  {nombre:"Esteban · el de las dos versiones del Vigo",

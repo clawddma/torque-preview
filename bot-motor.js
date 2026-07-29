@@ -32,7 +32,10 @@ var VEH = {
     carga:null,
     baul:"360 litros",
     medidas:"4.650 mm de largo, 1.905 de ancho y 1.630 de alto, con 2.775 mm entre ejes",
-    colores:"Plata, Azul, Blanco y Negro, más dos bicolor: Blanco/Negro y Plata/Negro",
+    /* Del tablero de inventario de Corautos, 28 de julio de 2026 (ver
+       COBERTURA.md). Antes decía "Negro" a secas, que no existe: son
+       bicolores. */
+    colores:"Azul, Blanco y Plata, más dos bicolor: Blanco/Negro y Plata/Negro",
     gancho:"288 caballos que se recargan solos",
     llaves:["mage","mague","magge","hibrida","híbrida","hibrido","híbrido","hev","la que no se enchufa","autorecargable"]
   },
@@ -81,6 +84,7 @@ var VEH = {
     baul:"326 litros",
     medidas:null,
     colores:null,
+    colores:"Azul, Blanco y Plata, y varios bicolor: Azul/Blanco, Rojo/Blanco, Verde/Blanco, Rosa Perlado/Blanco y Violeta Perlado/Blanco. Es el de la línea con más carta de color",
     gancho:"Se carga en tu casa mientras duermes",
     llaves:["box","boxe","bocs","urbano","pequeño","pequeno","chiquito","hatchback","el barato","el económico","el economico"]
   }
@@ -283,13 +287,23 @@ var KB = [
   r:function(v,lead){
     var tipo = tipoDeCobertura(q_actual) || "venta";
     return frasesCobertura(tipo, lead.ciudad);
+  }, espera:function(lead){
+    /* Ahora que tenemos las listas, cuando SÍ hay cobertura la respuesta
+       cierra ofreciendo la dirección — no hace falta escalar de una. */
+    var t = tipoDeCobertura(q_actual) || "venta";
+    var c = COBERTURA[t];
+    if(!lead.ciudad || !c.ciudades) return null;
+    return c.ciudades.some(function(x){ return norm(x)===norm(lead.ciudad) }) ? "direccionTaller" : null;
   }, esc:function(lead, q){
-    /* Si no sabemos la ciudad, la respuesta la pregunta y no hay a quién
-       pasar todavía. Si ya la sabemos, la respuesta dice "te paso con un
-       asesor" — y tiene que ser verdad. El motivo depende de qué preguntó:
-       una prueba de ruta es un lead más caliente que una duda de taller. */
+    /* Solo se escala cuando el bot NO puede resolverlo: una prueba de ruta
+       (no sabemos dónde hay unidad demo) o una ciudad sin cobertura, donde
+       hay que explicarle al cliente cómo se maneja su caso. */
     if(!lead.ciudad) return null;
-    return tipoDeCobertura(q)==="prueba" ? "agenda" : "pedido";
+    var t = tipoDeCobertura(q) || "venta";
+    if(t==="prueba") return "agenda";
+    var c = COBERTURA[t];
+    if(!c.ciudades) return "pedido";
+    return c.ciudades.some(function(x){ return norm(x)===norm(lead.ciudad) }) ? null : "pedido";
   }},
 
  {id:"prueba", k:["prueba","probar","manejar","test drive","ruta","ver el carro","conocer","visitar","cita","agendar","donde queda","dónde queda","vitrina","sala","direccion","dirección","horario","verla","verlo","quiero verla","quiero verlo","quiero conocerla","me gustaria verla","me gustaría verla","ir a mirarla"],
@@ -422,22 +436,36 @@ function aliado(k){
    que el asesor confirme la ciudad. Cuando Corautos entregue las listas se
    llenan aquí y el bot pasa a responder con certeza. */
 var COBERTURA = {
+  /* Listas tomadas de la pieza oficial de Corautos (fuentes/cobertura-
+     corautos-2026-07-26.jpg): 22 puntos de venta, 26 talleres, 20 ciudades.
+     El detalle que importa son las excepciones —Cartagena y Santa Marta
+     tienen taller pero no sala; Tunja tiene sala pero no taller— porque son
+     exactamente los casos donde afirmar de más manda a un cliente a un sitio
+     que no existe. Todo el detalle en COBERTURA.md. */
   servicio: {
-    nombre:"red de servicio",
-    pais:"26 centros de servicio en 19 ciudades del país y más de 100 puntos de repuestos",
-    ciudades:null,        // ⚠️ PENDIENTE: pedir la lista a Corautos
+    nombre:"taller de servicio",
+    pais:"26 talleres de servicio técnico en 19 ciudades del país y más de 100 puntos de repuestos",
+    ciudades:["bogotá","medellín","copacabana","cali","bucaramanga","cúcuta","ibagué","neiva",
+              "manizales","pereira","cartagena","barranquilla","montería","santa marta",
+              "valledupar","pasto","popayán","villavicencio","duitama"],
+    cercana:{"tunja":"Duitama"},
     quePasa:"cuál te queda más cerca"
   },
   venta: {
-    nombre:"salas de venta",
-    pais:"la red de Corautos cubre las principales ciudades del país",
-    ciudades:null,        // ⚠️ PENDIENTE
+    nombre:"punto de venta",
+    pais:"22 puntos de venta en 18 ciudades del país",
+    ciudades:["bogotá","medellín","copacabana","cali","bucaramanga","cúcuta","ibagué","neiva",
+              "manizales","pereira","barranquilla","montería","valledupar","pasto","popayán",
+              "villavicencio","tunja","duitama"],
+    cercana:{"cartagena":"Barranquilla","santa marta":"Barranquilla"},
     quePasa:"desde cuál sala te lo pueden entregar"
   },
   prueba: {
     nombre:"prueba de ruta",
+    /* Tener sala NO garantiza unidad de demostración, y eso no lo dice
+       ninguna pieza. Se deja en null a propósito. */
     pais:"la prueba de ruta se agenda con la sala que tenga unidad disponible",
-    ciudades:null,        // ⚠️ PENDIENTE
+    ciudades:null,        // ⚠️ PENDIENTE: en cuáles salas hay unidad demo
     quePasa:"dónde y qué día puedes manejarla"
   },
   seguro: {
@@ -474,11 +502,14 @@ function tipoDeCobertura(q){
 function frasesCobertura(tipo, ciudad){
   var c = COBERTURA[tipo] || COBERTURA.servicio;
   if(c.ciudades){
-    var hay = c.ciudades.some(function(x){ return norm(x)===norm(ciudad||"") });
-    return ciudad
-      ? (hay ? "Sí, en "+ciudad+" tenemos "+c.nombre+"."
-             : "En "+ciudad+" no tenemos "+c.nombre+" propia, pero un asesor te dice cuál es la más cercana.")
-      : c.pais+".";
+    if(!ciudad) return c.pais.charAt(0).toUpperCase()+c.pais.slice(1)+". ¿En qué ciudad estás?";
+    var hay = c.ciudades.some(function(x){ return norm(x)===norm(ciudad) });
+    if(hay) return "Sí, en "+ciudad+" hay "+c.nombre+".\n\nEn total son "+c.pais+
+                   ". ¿Quieres que un asesor te dé la dirección exacta y los horarios?";
+    var cerca = c.cercana && c.cercana[norm(ciudad)];
+    return "En "+ciudad+" no hay "+c.nombre+" — te lo digo de frente para que no te desplaces en vano."+
+      (cerca ? "\n\nEl más cercano está en "+cerca+"." : "")+
+      "\n\nEn total son "+c.pais+". Un asesor te confirma cuál te queda mejor y cómo se maneja tu caso.";
   }
   var P = c.pais.charAt(0).toUpperCase()+c.pais.slice(1);
   if(!ciudad) return P+". ¿En qué ciudad estás? Con eso te confirmo "+c.quePasa+".";
@@ -1296,7 +1327,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.17";
+var VERSION = "2026-07-28.18";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
