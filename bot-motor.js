@@ -908,8 +908,21 @@ var SUBFLUJOS = {
 var AFIRMA = ["si","sí","claro","dale","listo","bueno","ok","okay","vale","por favor","hagale","hágale","de una","obvio","me interesa","porfa","sip","correcto","exacto","perfecto"];
 var NIEGA  = ["no","nop","ahorita no","por ahora no","despues","después","luego","todavia no","todavía no","no gracias","asi esta bien","así está bien","no por ahora"];
 
-function esSi(q){ var n=norm(q); return AFIRMA.some(function(w){ return n===w || n.indexOf(w+" ")===0 || n.indexOf(" "+w)>-1 }) }
-function esNo(q){ var n=norm(q); return NIEGA.some(function(w){ return n===w || n.indexOf(w+" ")===0 || n.indexOf(" "+w+" ")>-1 }) }
+/* Un "sí" es un mensaje corto. "Y SI sube la reforma, ¿qué pasa con el
+   precio?" contiene "si" y se leía como una afirmación a lo que el bot
+   hubiera preguntado antes — respondiendo cualquier cosa menos lo que
+   preguntaron. Una frase larga nunca es un sí ni un no: es una pregunta. */
+function corto(n){ return n.split(" ").filter(Boolean).length <= 4 }
+function esSi(q){
+  var n=norm(q);
+  if(!corto(n)) return false;
+  return AFIRMA.some(function(w){ return n===w || n.indexOf(w+" ")===0 || n.indexOf(" "+w)>-1 });
+}
+function esNo(q){
+  var n=norm(q);
+  if(!corto(n)) return false;
+  return NIEGA.some(function(w){ return n===w || n.indexOf(w+" ")===0 || n.indexOf(" "+w+" ")>-1 });
+}
 
 /* ═══ SEÑALES QUE EL BOT VA APRENDIENDO DEL CLIENTE ════════════════════════ */
 /* Las 32 capitales de departamento más los municipios grandes de las áreas
@@ -1536,7 +1549,12 @@ function crearSesion(vehiculoInicial){
        en pie después de limpiar los cierres intermedios */
     var ultimo = multi[multi.length-1].t;
     var espId = (typeof ultimo.espera==="function") ? ultimo.espera(s.lead) : ultimo.espera;
-    if(espId && ESPERAS[espId] && !out.escala) s.espera = {id:espId, turno:s.lead.turnos};
+    /* Cada turno o deja una promesa nueva, o no deja ninguna. Antes, si el
+       turno no dejaba promesa, la anterior seguía viva y un "y si sube la
+       reforma…" se leía como el "sí" de una pregunta de hace dos mensajes. */
+    s.espera = (espId && ESPERAS[espId] && !out.escala)
+      ? {id:espId, turno:s.lead.turnos}
+      : null;
 
     /* El tema abre una cotización paralela: se arma el subflujo y el próximo
        turno lo atiende el bloque 3b. */
