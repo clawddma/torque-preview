@@ -172,6 +172,36 @@ function revisar(nombre, cond, detalle) {
           lead3.estado === "agendado" && !!lead3.contactado && !!lead3.agendado);
   revisar("conserva el sello de 'entregado' para medir el SLA", !!lead3.entregado);
 
+  /* ── 11b · dos leads de una misma conversación ────────────────────────── */
+  console.log("\n11b · El seguro: segundo negocio sin cortar la charla del carro");
+  enviados.length = 0;
+  await empujar("573004445555", "hola, me interesa la mage, estoy en pereira", "Marta", "s1");
+  await empujar("573004445555", "sabes cuanto cuesta un seguro para este vehiculo?", "Marta", "s2");
+  await empujar("573004445555", "si claro", "Marta", "s3");
+  await empujar("573004445555", "entre 26 y 40", "Marta", "s4");
+  await empujar("573004445555", "no he tenido ninguno", "Marta", "s5");
+  revisar("cierra la cotizacion y devuelve la charla al carro",
+          enviados.some(e => /Volviendo al carro/.test(e.texto)),
+          enviados.map(e => e.texto.slice(0,40)).join(" | "));
+  const todos = almacen.listarLeads();
+  const lv = todos.find(l => l.id === "573004445555");
+  const lsg = todos.find(l => l.id === "573004445555:seguro");
+  revisar("quedan DOS leads de la misma conversacion", !!lv || !!lsg);
+  revisar("el lead de seguro guarda lo que contesto",
+          lsg && /26 a 40|26 y 40/.test(lsg.detalle || ""), JSON.stringify(lsg && lsg.detalle));
+  revisar("el lead de seguro hereda vehiculo y ciudad",
+          lsg && lsg.vehiculo === "mage" && lsg.ciudad === "Pereira",
+          JSON.stringify(lsg && [lsg.vehiculo, lsg.ciudad]));
+  revisar("la conversacion sigue viva despues de cotizar", (function(){
+            const c = almacen.leerConversacion("573004445555");
+            return c && !c.estado._sub;
+          })());
+  enviados.length = 0;
+  await empujar("573004445555", "y que garantia tiene la bateria?", "Marta", "s6");
+  revisar("responde normal el siguiente tema del carro",
+          enviados.some(e => /8 años o 200.000 km/.test(e.texto)),
+          enviados.map(e => e.texto.slice(0,50)).join(" | "));
+
   /* ── 12 · salud ───────────────────────────────────────────────────────── */
   console.log("\n12 · Reporte de salud");
   const s = await (await fetch(`http://127.0.0.1:${PUERTO}/salud`)).json();

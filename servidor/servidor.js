@@ -141,6 +141,38 @@ ${conv}`;
   if (!llegó) log("AVISO (sin canal configurado):\n" + texto);
 }
 
+/* Aviso del segundo negocio. Va aparte del de escalada porque no lo atiende
+   la misma persona: el lead del carro va a la sala; el del seguro o el del
+   cargador, al aliado correspondiente. */
+async function avisarSecundario(waId, ls, lead, nombre) {
+  const datos = Object.keys(ls.datos || {})
+    .map(k => "· " + k + ": " + ls.datos[k]).join("\n");
+  const texto =
+`💼 LEAD NUEVO — ${ls.etiqueta}
+
+${nombre ? nombre + " · " : ""}wa.me/${waId}
+
+Vehículo: ${BOT.VEH[lead.vehiculo] ? BOT.VEH[lead.vehiculo].nombre : "—"}
+Ciudad: ${lead.ciudad || "—"}
+
+Lo que contestó:
+${datos || "—"}
+
+(Sale de la misma conversación del carro, que sigue abierta.)`;
+
+  if (CFG.asesor) { if (await enviar(CFG.asesor, texto)) return }
+  if (CFG.tgToken && CFG.tgChat) {
+    try {
+      await fetch(`https://api.telegram.org/bot${CFG.tgToken}/sendMessage`, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ chat_id: CFG.tgChat, text: texto, disable_web_page_preview: true })
+      });
+      return;
+    } catch (e) {}
+  }
+  log("LEAD SECUNDARIO (sin canal configurado):\n" + texto);
+}
+
 /* ═══ EL TURNO ═══════════════════════════════════════════════════════════════ */
 async function atender(waId, texto, nombre, campana) {
   /* 3 · memoria */
@@ -155,7 +187,10 @@ async function atender(waId, texto, nombre, campana) {
        sin que nadie lo rescatara. Lo mismo con el empujón: se repetía. */
     ses.fallos   = guardado.estado._fallos   || 0;
     ses.empujado = !!guardado.estado._empujado;
-    delete ses.lead._fallos; delete ses.lead._empujado;
+    /* la cotización a medio hacer también es del hilo, no del lead: sin esto
+       el cliente contesta "26 a 40" y el bot no sabe qué le preguntó */
+    ses.sub      = guardado.estado._sub || null;
+    delete ses.lead._fallos; delete ses.lead._empujado; delete ses.lead._sub;
   }
 
   almacen.anotarMensaje(waId, "entra", texto);
@@ -195,10 +230,21 @@ async function atender(waId, texto, nombre, campana) {
   }
 
   almacen.guardarConversacion(waId,
-    Object.assign({}, ses.lead, { _fallos: ses.fallos, _empujado: ses.empujado }),
+    Object.assign({}, ses.lead, { _fallos: ses.fallos, _empujado: ses.empujado, _sub: ses.sub }),
     nombre, campana);
 
-  /* 7 · escalar */
+  /* 7a · el segundo negocio de la misma conversación.
+     No es una escalada: el cliente sigue hablando con el bot del carro. Es un
+     lead aparte —seguro, instalación de cargador— que se le entrega a otro
+     aliado y se cobra distinto, así que lleva su propio ciclo de estados. */
+  if (o.leadSecundario) {
+    const ls = o.leadSecundario;
+    almacen.registrarLeadSecundario(waId, ls.tipo, ls.etiqueta, ls.datos, ses.lead, nombre, campana);
+    await avisarSecundario(waId, ls, ses.lead, nombre);
+    log(`lead secundario ${ls.tipo} · ${waId}`);
+  }
+
+  /* 7b · escalar */
   if (o.escala) {
     const r = almacen.registrarLead(waId, ses.lead, o.escala, nombre, campana);
     await avisar(waId, o.escala, ses.lead, nombre);

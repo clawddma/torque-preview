@@ -48,7 +48,10 @@ CREATE TABLE IF NOT EXISTS mensajes (
 CREATE INDEX IF NOT EXISTS ix_msg_wa ON mensajes(wa_id, id);
 
 CREATE TABLE IF NOT EXISTS leads (
-  wa_id      TEXT PRIMARY KEY,
+  id         TEXT PRIMARY KEY,         -- wa_id para el vehículo, wa_id:tipo para los demás
+  wa_id      TEXT NOT NULL,
+  tipo       TEXT NOT NULL DEFAULT 'vehiculo',   -- vehiculo | seguro | cargador
+  detalle    TEXT,                     -- lo que se capturó en la cotización
   nombre     TEXT,
   vehiculo   TEXT,
   ciudad     TEXT,
@@ -116,32 +119,56 @@ function hilo(waId, limite = 40) {
    `contactado` es el SLA que se le mide a la sala. */
 function registrarLead(waId, lead, motivo, nombre, campana) {
   const t = ahora();
-  const existe = db.prepare("SELECT wa_id,estado FROM leads WHERE wa_id=?").get(waId);
+  const existe = db.prepare("SELECT id FROM leads WHERE id=?").get(waId);
   const campos = [lead.vehiculo || null, lead.ciudad || null, lead.plazo || null,
                   lead.pago || null, lead.uso || null, lead.carga || null];
   if (existe) {
     db.prepare(`UPDATE leads SET vehiculo=COALESCE(?,vehiculo), ciudad=COALESCE(?,ciudad),
                 plazo=COALESCE(?,plazo), pago=COALESCE(?,pago), uso=COALESCE(?,uso),
                 carga=COALESCE(?,carga), motivo=?, nombre=COALESCE(?,nombre),
-                actualizado=? WHERE wa_id=?`)
+                actualizado=? WHERE id=?`)
       .run(...campos, motivo || null, nombre || null, t, waId);
     return { nuevo: false };
   }
-  db.prepare(`INSERT INTO leads (wa_id,nombre,vehiculo,ciudad,plazo,pago,uso,carga,
+  db.prepare(`INSERT INTO leads (id,wa_id,tipo,nombre,vehiculo,ciudad,plazo,pago,uso,carga,
               motivo,campana,estado,entregado,creado,actualizado)
-              VALUES (?,?,?,?,?,?,?,?,?,?,'entregado',?,?,?)`)
-    .run(waId, nombre || null, ...campos, motivo || null, campana || null, t, t, t);
+              VALUES (?,?,'vehiculo',?,?,?,?,?,?,?,?,?,'entregado',?,?,?)`)
+    .run(waId, waId, nombre || null, ...campos, motivo || null, campana || null, t, t, t);
   return { nuevo: true };
 }
 
-function avanzarLead(waId, estado) {
+/* ── el SEGUNDO lead ───────────────────────────────────────────────────────
+   Una conversación puede producir más de un negocio: el carro y, en la misma
+   charla, la cotización del seguro o la instalación del cargador. Se guardan
+   como leads aparte —con su propio ciclo de estados— porque se le entregan a
+   aliados distintos y se cobran distinto. Comparten el wa_id para poder
+   reconstruir de qué conversación salieron. */
+function registrarLeadSecundario(waId, tipo, etiqueta, datos, lead, nombre, campana) {
+  const t = ahora();
+  const id = waId + ":" + tipo;
+  const existe = db.prepare("SELECT id FROM leads WHERE id=?").get(id);
+  const detalle = JSON.stringify(datos || {});
+  if (existe) {
+    db.prepare("UPDATE leads SET detalle=?, actualizado=? WHERE id=?").run(detalle, t, id);
+    return { nuevo: false };
+  }
+  db.prepare(`INSERT INTO leads (id,wa_id,tipo,nombre,vehiculo,ciudad,detalle,motivo,
+              campana,estado,entregado,creado,actualizado)
+              VALUES (?,?,?,?,?,?,?,?,?,'entregado',?,?,?)`)
+    .run(id, waId, tipo, nombre || null, lead.vehiculo || null, lead.ciudad || null,
+         detalle, etiqueta || tipo, campana || null, t, t, t);
+  return { nuevo: true };
+}
+
+function avanzarLead(waId, estado, tipo) {
+  const id = tipo && tipo !== "vehiculo" ? waId + ":" + tipo : waId;
   const validos = ["entregado", "contactado", "agendado", "facturado", "no_califica"];
   if (!validos.includes(estado)) throw new Error("estado inválido: " + estado);
   const col = { contactado: "contactado", agendado: "agendado", facturado: "facturado" }[estado];
   const t = ahora();
-  if (col) db.prepare(`UPDATE leads SET estado=?, ${col}=COALESCE(${col},?), actualizado=? WHERE wa_id=?`)
-             .run(estado, t, t, waId);
-  else db.prepare("UPDATE leads SET estado=?, actualizado=? WHERE wa_id=?").run(estado, t, waId);
+  if (col) db.prepare(`UPDATE leads SET estado=?, ${col}=COALESCE(${col},?), actualizado=? WHERE id=?`)
+             .run(estado, t, t, id);
+  else db.prepare("UPDATE leads SET estado=?, actualizado=? WHERE id=?").run(estado, t, id);
 }
 
 function listarLeads(limite = 200) {
@@ -165,6 +192,6 @@ module.exports = {
   db, RUTA,
   leerConversacion, guardarConversacion,
   anotarMensaje, hilo,
-  registrarLead, avanzarLead, listarLeads,
+  registrarLead, registrarLeadSecundario, avanzarLead, listarLeads,
   yaVisto
 };

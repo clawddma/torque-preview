@@ -117,7 +117,10 @@ var PERSONAS = [
   perfil:"Costo total de propiedad. El bot no tiene esa tarifa.",
   veh:"mage",
   turnos:[
-    {q:"cuanto me sale el seguro al año?", espera:"escala:seguro", contiene:"nuestros aliados"}
+    {q:"cuanto me sale el seguro al año?", espera:"seguro", contiene:"cotizo"},
+    {q:"si por favor", espera:"sub:seguro", contiene:"rango de edad"},
+    {q:"tengo 34", espera:"sub:seguro", contiene:"siniestros"},
+    {q:"no, nunca", espera:"sub:seguro", contiene:"aliado de seguros"}
   ]},
 
  {nombre:"Rocío · comparando marcas",
@@ -159,8 +162,10 @@ var PERSONAS = [
   perfil:"Quiere el eléctrico pero pregunta la instalación. Depende de la copropiedad: escala.",
   veh:"box",
   turnos:[
-    {q:"cuanto cuesta instalar el cargador de pared en la casa?", espera:"escala:instalacion", contiene:"nuestros aliados"},
-    {q:"vivo en conjunto, toca permiso de la administracion?", espera:"escala:instalacion"}
+    {q:"cuanto cuesta instalar el cargador de pared en la casa?", espera:"instalacion", contiene:"cotizo"},
+    {q:"si", espera:"sub:instalacion", contiene:"casa o en conjunto"},
+    {q:"vivo en conjunto", espera:"sub:instalacion", contiene:"parqueadero"},
+    {q:"es propio, hay una toma cerca", espera:"sub:instalacion", contiene:"aliado"}
   ]},
 
  {nombre:"Claudia · afán de entrega",
@@ -207,7 +212,7 @@ var PERSONAS = [
   perfil:"Daniel marcó en negativo que al preguntar por el seguro le contestaban el precio del carro. Era estructural: preguntar cuánto cuesta ALGO es preguntar por ese algo, no por el vehículo. Estas frases lo blindan.",
   veh:"mage",
   turnos:[
-    {q:"cuanto cuesta aproximadamente un seguro para este vehiculo?", espera:"escala:seguro", contiene:"nuestros aliados"},
+    {q:"cuanto cuesta aproximadamente un seguro para este vehiculo?", espera:"seguro", contiene:"cotizo"},
     {q:"y cuanto cuesta el mantenimiento", espera:"escala:costoservicio"},
     {q:"cuanto vale el carro entonces", espera:"precio", contiene:"$109.000.000"}
   ]},

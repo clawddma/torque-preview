@@ -178,8 +178,8 @@ var KB = [
       /* Mismo criterio que el seguro: instalar el cargador no es asunto del
          distribuidor, es una necesidad del cliente que nosotros resolvemos.
          Ese contacto se captura, no se regala. */
-      "El costo cambia caso por caso, así que no te doy una cifra al aire.\n\nTe pongo en contacto con uno de nuestros aliados para que vayan a mirarlo y te coticen la instalación con tu acometida real. ¿Te lo agendo?";
-  }, esc:"instalacion"},
+      "El costo cambia caso por caso, así que no te doy una cifra al aire.\n\nTe lo puedo cotizar con uno de nuestros aliados, que van, lo miran y te dan el valor con tu instalación real. ¿Te lo cotizo?";
+  }, sub:"instalacion"},
 
  {id:"consumo", k:["consumo","gasolina","litros","rinde","tanque","tanquear","galon","galón","km/l","economico","económico","gasto","cuanto gasta","ahorro","autonomia","autonomía","cuanto recorre","kilometros","kilómetros"],
   r:function(v){
@@ -251,7 +251,7 @@ var KB = [
         Corautos. El seguro no es del distribuidor: es una necesidad del
         cliente que TORQ puede atender con sus propios aliados. Ahí hay un
         lead, y se captura. */
-  r:"El valor del seguro lo define la aseguradora, y cambia según tu edad, tu historial de conducción y la ciudad donde lo matricules. Por eso prefiero no darte una cifra que después no se cumpla.\n\nLo que sí puedo hacer es ponerte en contacto con uno de nuestros aliados para que te lo coticen con tus datos reales, junto con el vehículo. ¿Te lo agendo?", esc:"seguro"},
+  r:"El valor del seguro lo define la aseguradora, y cambia según tu edad, tu historial de conducción y la ciudad donde lo matricules. Por eso prefiero no darte una cifra que después no se cumpla.\n\nLo que sí puedo hacer es cotizártelo con uno de nuestros aliados, con tus datos reales y junto con el vehículo. ¿Te lo cotizo?", sub:"seguro"},
 
  {id:"prueba", k:["prueba","probar","manejar","test drive","ruta","ver el carro","conocer","visitar","cita","agendar","donde queda","dónde queda","vitrina","sala","direccion","dirección","horario","verla","verlo","quiero verla","quiero verlo","quiero conocerla","me gustaria verla","me gustaría verla","ir a mirarla"],
   r:"Claro que sí. La prueba de ruta y la visita a sala se agendan directamente con la sala de tu ciudad.\n\nTe paso con un asesor para que cuadren día y hora.", esc:"agenda"},
@@ -267,7 +267,7 @@ var KB = [
 
  {id:"disponible", k:["disponible","inventario","entrega","entregan","stock","unidades","llega","cuando llega","hay disponible","cuanto se demora la entrega","inmediata","la quiero","lo quiero","quiero comprar","me la llevo","me lo llevo","cuando me la entregan","hay en"],
   r:function(v,lead){
-    return "Hay unidades del "+v.nombre+" y viene más inventario en camino, pero la existencia por color y ciudad cambia de un día a otro.\n\n"+
+    return "Hay unidades "+(v.art==="la"?"de la ":"del ")+v.nombre+" y viene más inventario en camino, pero la existencia por color y ciudad cambia de un día a otro.\n\n"+
       "No te quiero dar una fecha que no pueda sostener: eso lo confirma la sala en el momento."+
       (lead.ciudad ? " Se lo pregunto para "+lead.ciudad+"." : " ¿En qué ciudad estás?");
   }},
@@ -318,6 +318,65 @@ var ESC = {
   datos:       "Pidió o intentó dar datos sensibles o pagos. El bot no los toca.",
   nose:        "Tres intentos sin entender. Antes de frustrar al cliente, pasa a humano."
 };
+
+/* ═══ SUBFLUJOS — UNA CONVERSACIÓN, DOS LEADS ══════════════════════════════
+   Un cliente que pregunta por el seguro no es una conversación que se acabó:
+   es un segundo negocio dentro de la misma charla. Antes el bot decía "te
+   paso con un asesor" y ahí moría el tema; ahora hace las dos preguntas que
+   una aseguradora necesita para cotizar de verdad, se guarda ese lead aparte,
+   y devuelve la conversación al carro sin que el cliente sienta el corte.
+
+   Reglas que hacen que esto no se vuelva un interrogatorio:
+   · Máximo dos preguntas. Más que eso y el cliente se va.
+   · Si en medio del subflujo pregunta otra cosa, MANDA su pregunta. El bot
+     suelta el hilo y responde lo que le preguntaron; no secuestra la charla.
+   · Nunca se pide cédula, fecha de nacimiento ni dato de contacto: rango de
+     edad y siniestros bastan para que el aliado llame. Pedir documento por
+     chat está prohibido por el guardarraíl `datos` y por la Ley 1581.
+   · Un "no" se acepta a la primera y no se vuelve a insistir. */
+var SUBFLUJOS = {
+  seguro: {
+    lead:"seguro",
+    etiqueta:"Cotización de seguro",
+    pasos:[
+      {campo:"edad",
+       pregunta:"Listo. Para que la cotización sea real y no un número al aire, necesito dos cosas nada más.\n\n¿En qué rango de edad estás: 18 a 25, 26 a 40, o más de 40? Es lo que más mueve la prima."},
+      {campo:"siniestros",
+       pregunta:"Perfecto. Y la última: ¿has tenido choques o siniestros en los últimos dos años?"}
+    ],
+    cierre:function(lead,datos){
+      var v=VEH[lead.vehiculo];
+      return "Con eso basta. Le paso tu caso a nuestro aliado de seguros para que te cotice todo riesgo con "+
+        (v ? v.art+" "+v.nombre : "el vehículo")+
+        (lead.ciudad?" en "+lead.ciudad:"")+", y te contactan con el valor real.\n\n"+
+        "Volviendo al carro: ¿qué más quieres saber?";
+    },
+    /* Si dice que no, se cierra el tema de una y sin insistir. */
+    rechazo:"Sin problema. Si más adelante lo quieres cotizar, me dices y lo movemos.\n\n¿Seguimos con el carro?"
+  },
+
+  instalacion: {
+    lead:"cargador",
+    etiqueta:"Instalación de cargador",
+    pasos:[
+      {campo:"vivienda",
+       pregunta:"Listo. Dos preguntas y ya.\n\n¿Vives en casa o en conjunto? Lo pregunto porque en conjunto toca permiso de la administración y eso cambia el tiempo."},
+      {campo:"parqueadero",
+       pregunta:"Entendido. ¿El parqueadero es propio y tiene toma cerca, o habría que llevar la acometida desde el contador?"}
+    ],
+    cierre:function(lead,datos){
+      return "Con eso el técnico ya sabe a qué va. Le paso tu caso a nuestro aliado para que te coticen la instalación"+
+        (lead.ciudad?" en "+lead.ciudad:"")+".\n\nVolviendo al carro: ¿en qué más te ayudo?";
+    },
+    rechazo:"Listo, lo dejamos ahí. Cuando lo necesites me dices.\n\n¿Seguimos con el carro?"
+  }
+};
+
+var AFIRMA = ["si","sí","claro","dale","listo","bueno","ok","okay","vale","por favor","hagale","hágale","de una","obvio","me interesa","porfa","sip","correcto","exacto","perfecto"];
+var NIEGA  = ["no","nop","ahorita no","por ahora no","despues","después","luego","todavia no","todavía no","no gracias","asi esta bien","así está bien","no por ahora"];
+
+function esSi(q){ var n=norm(q); return AFIRMA.some(function(w){ return n===w || n.indexOf(w+" ")===0 || n.indexOf(" "+w)>-1 }) }
+function esNo(q){ var n=norm(q); return NIEGA.some(function(w){ return n===w || n.indexOf(w+" ")===0 || n.indexOf(" "+w+" ")>-1 }) }
 
 /* ═══ SEÑALES QUE EL BOT VA APRENDIENDO DEL CLIENTE ════════════════════════ */
 var CIUDADES = ["bogotá","bogota","medellín","medellin","cali","barranquilla","bucaramanga","cúcuta","cucuta","villavicencio","montería","monteria","valledupar","pasto","pereira","manizales","ibagué","ibague","neiva","popayán","popayan","duitama","tunja","cartagena","santa marta","copacabana","armenia","sincelejo","riohacha","yopal"];
@@ -483,6 +542,7 @@ function crearSesion(vehiculoInicial){
     },
     fallos: 0,
     empujado: false,
+    sub: null,
     historia: []
   };
 
@@ -532,6 +592,57 @@ function crearSesion(vehiculoInicial){
       out.texto=veto.t.r; out.escala=veto.t.esc;
       s.lead.escalado=veto.t.esc; s.fallos=0;
       s.historia.push(out); return out;
+    }
+
+    /* 3b · ¿hay un subflujo abierto? (cotización de seguro o de cargador)
+       Va después del veto —un descuento se atiende siempre— y antes de los
+       temas. Pero con una salvaguarda: si el cliente preguntó otra cosa
+       claramente, su pregunta manda y el subflujo se suelta. Un bot que no
+       deja cambiar de tema es un formulario, no una conversación. */
+    if(s.sub){
+      var fuera = puntuar(q);
+      var cambioDeTema = fuera.length && fuera[0].p>=6 && fuera[0].t.id!=="gracias";
+      if(cambioDeTema){
+        out.subAbandonado = s.sub.id;
+        s.sub = null;
+      }else{
+        var fl = SUBFLUJOS[s.sub.id];
+        out.tema = "sub:"+s.sub.id; out.entendido = true;
+
+        if(s.sub.paso===0 && !s.sub.confirmado){
+          if(esNo(q)){
+            out.texto = fl.rechazo; s.sub=null;
+            s.historia.push(out); return out;
+          }
+          if(!esSi(q)){
+            /* ni sí ni no: se pregunta una vez más y no se insiste más */
+            if(s.sub.reintento){ s.sub=null; out.tema=null; out.entendido=false }
+            else{
+              s.sub.reintento=true;
+              out.texto="¿Te lo cotizo? Dime sí o no y seguimos.";
+              s.historia.push(out); return out;
+            }
+          }else{
+            s.sub.confirmado=true;
+            out.texto=fl.pasos[0].pregunta;
+            s.historia.push(out); return out;
+          }
+        }else{
+          /* guarda la respuesta del paso actual y avanza */
+          s.sub.datos[fl.pasos[s.sub.paso].campo] = q.slice(0,120);
+          s.sub.paso++;
+          if(s.sub.paso < fl.pasos.length){
+            out.texto = fl.pasos[s.sub.paso].pregunta;
+            s.historia.push(out); return out;
+          }
+          /* cerrado: sale el SEGUNDO lead y la charla vuelve al carro */
+          out.texto = fl.cierre(s.lead, s.sub.datos);
+          out.leadSecundario = {tipo:fl.lead, etiqueta:fl.etiqueta, datos:s.sub.datos};
+          s.lead.secundarios = (s.lead.secundarios||[]).concat([fl.lead]);
+          s.sub = null;
+          s.historia.push(out); return out;
+        }
+      }
     }
 
     /* 4 · tema normal */
@@ -621,6 +732,13 @@ function crearSesion(vehiculoInicial){
 
     if(top.t.esc){ out.escala=top.t.esc; s.lead.escalado=top.t.esc }
 
+    /* El tema abre una cotización paralela: se arma el subflujo y el próximo
+       turno lo atiende el bloque 3b. */
+    if(top.t.sub && SUBFLUJOS[top.t.sub] && !(s.lead.secundarios||[]).includes(top.t.sub)){
+      s.sub = {id:top.t.sub, paso:0, confirmado:false, datos:{}};
+      out.abreSub = top.t.sub;
+    }
+
     /* 5 · el empujón: el bot no se queda contestando para siempre. Después de
        tres temas resueltos sin escalar, propone el siguiente paso UNA vez. */
     if(!out.escala && !s.empujado && !s.lead.escalado && s.lead.interes.length>=3){
@@ -643,7 +761,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.5";
+var VERSION = "2026-07-28.6";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -667,6 +785,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"cuanto puede costar un seguro aproximadamente para este vehiculo",
+   arreglo:"Ya no se acaba ahí: el bot ofrece cotizarlo, hace dos preguntas y guarda un SEGUNDO lead de seguro, sin cortar la conversación del carro.",
+   ver:"2026-07-28.6"},
   {q:"cuanto cuesta el mantenimiento",
    arreglo:"Antes contestaba cuántos talleres hay. Ahora es tema propio: explica que no tenemos tarifas, que un eléctrico se mantiene más barato, y pasa a un asesor.",
    ver:"2026-07-28.5"}
