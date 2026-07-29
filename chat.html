@@ -312,7 +312,9 @@ async function responder(q){
   var esGuardarrail = o.tema && o.tema.indexOf("veto:")===0;
 
   /* 2 · el modelo, salvo que sea un guardarraíl */
-  if(CEREBRO.activo && !esGuardarrail){
+  /* Algunas respuestas van literales: listas de ciudades, tablas de
+     versiones. El modelo las resumiría y dejaría al cliente sin lo que pidió. */
+  if(CEREBRO.activo && !esGuardarrail && !o.exacto){
     var d=document.createElement("div");
     d.className="escribiendo"; d.innerHTML="<i></i><i></i><i></i>";
     hilo.appendChild(d); abajo();
@@ -326,9 +328,19 @@ async function responder(q){
       ultimoDiag.tema=(r.temas&&r.temas.join(", "))||"modelo";
     }else{
       fuente="reglas ("+((r&&r.fallo)||"sin modelo")+")";
+      /* Si la red de seguridad tumbó la respuesta —el modelo inventó una
+         cifra— el motor de reglas puede no entender la frase y soltar un "no
+         entendí" que suena peor que el error original. En ese caso se
+         responde algo honesto y se pasa a un asesor. */
+      if(r && /cifra inventada|json/.test(r.fallo||"") && (!o.entendido || o.tema===null)){
+        textos=["Prefiero no darte un dato que no pueda sostener.\n\nTe paso con un asesor para que te confirme eso con certeza."];
+        escala="pedido";
+      }
     }
   }else if(esGuardarrail){
     fuente="guardarraíl";
+  }else if(o.exacto){
+    fuente="dato exacto";
   }
 
   /* 3 · si el modelo no contestó, contesta el motor de reglas */

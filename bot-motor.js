@@ -350,6 +350,8 @@ var KB = [
  {id:"cobertura", k:["cobertura","cubren","hay sala","tienen sala","hay vitrina","hay concesionario",
    "venden en","venden alla","venden allá","atienden en","atienden alla","atienden allá","llegan a",
    "tienen presencia","hay taller","hay taller alla","hay taller allá","tienen sede","hay sede",
+   "agencia","hay agencia","no hay agencia","tienen agencia","que ciudades","qué ciudades","en cuales ciudades",
+   "en cuáles ciudades","donde tienen","dónde tienen","cuales ciudades","ciudades",
    "en mi ciudad","para mi ciudad","hasta alla","hasta allá","hay en mi ciudad"],
   r:function(v,lead){
     var tipo = tipoDeCobertura(q_actual) || "venta";
@@ -617,10 +619,27 @@ function tipoDeCobertura(q){
 
 /* La frase que NUNCA afirma ni niega una ciudad concreta mientras no tengamos
    la lista. Es más larga que "sí, allá hay", y es la única honesta. */
+/* Hay respuestas que NO puede redactar un modelo: una lista de ciudades
+   resumida en "26 talleres en 19 ciudades" no responde nada — el cliente
+   quiere saber si la suya está. Haiku resume por naturaleza, y con razón,
+   porque también le pedimos que sea breve. Estas van literales desde el
+   código. */
+var EXACTO = false;
 function frasesCobertura(tipo, ciudad){
+  EXACTO = false;
   var c = COBERTURA[tipo] || COBERTURA.servicio;
   if(c.ciudades){
-    if(!ciudad) return c.pais.charAt(0).toUpperCase()+c.pais.slice(1)+". ¿En qué ciudad estás?";
+    /* Si preguntan por las ciudades, se listan. Dar solo el número —"26
+       talleres en 19 ciudades"— no responde nada: el cliente quiere saber si
+       la suya está. */
+    if(!ciudad){
+      EXACTO = true;   /* esta respuesta va literal: es una lista, no un resumen */
+      var nombres = c.ciudades.map(function(x){
+        return x.split(" ").map(function(p){ return p.charAt(0).toUpperCase()+p.slice(1) }).join(" ");
+      });
+      return c.pais.charAt(0).toUpperCase()+c.pais.slice(1)+":\n\n"+nombres.join(" · ")+
+             ".\n\n¿En cuál estás? Te digo cómo se maneja tu caso.";
+    }
     var hay = c.ciudades.some(function(x){ return norm(x)===norm(ciudad) });
     if(hay) return "Sí, en "+ciudad+" hay "+c.nombre+".\n\nEn total son "+c.pais+
                    ". ¿Quieres que un asesor te dé la dirección exacta y los horarios?";
@@ -1611,6 +1630,7 @@ function crearSesion(vehiculoInicial){
     /* la promesa viva es la del ÚLTIMO bloque: es la única pregunta que quedó
        en pie después de limpiar los cierres intermedios */
     var ultimo = multi[multi.length-1].t;
+    out.exacto = EXACTO;   /* si es true, esta respuesta no la debe reescribir el modelo */
     var espId = (typeof ultimo.espera==="function") ? ultimo.espera(s.lead) : ultimo.espera;
     /* Cada turno o deja una promesa nueva, o no deja ninguna. Antes, si el
        turno no dejaba promesa, la anterior seguía viva y un "y si sube la
@@ -1650,7 +1670,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.25";
+var VERSION = "2026-07-29.1";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
