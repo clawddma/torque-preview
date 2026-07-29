@@ -86,7 +86,7 @@ var PERSONAS = [
   veh:"mage",
   turnos:[
     {q:"reciben mi carro en parte de pago?", espera:"escala:retoma"},
-    {q:"tengo una duster 2019", espera:null}
+    {q:"tengo una duster 2019", espera:"retoma", contiene:"Duster 2019", escalaOk:true}
   ]},
 
  {nombre:"Sandra · empresa con flota",
@@ -320,6 +320,20 @@ var PERSONAS = [
     {q:"cual me conviene? no tengo parqueadero", espera:"cual", contiene:"MAGE"},
     {q:"hay taller en mi ciudad?", espera:"cobertura", contiene:"Sí, en Pereira"},
     {q:"listo, quiero verla", espera:"escala:agenda"}
+  ]},
+
+ {nombre:"Patricia R. · la conversación larga y desordenada",
+  perfil:"La prueba que pidió Daniel: un interesado que hace muchas preguntas seguidas y espera resolverlo todo en un solo chat. Si el bot se pierde, olvida algo o vuelve al menú, el lead se cae. Aquí se vigila cada unión.",
+  veh:"box",
+  turnos:[
+    {q:"hola buenas", espera:"saludo", contiene:"Aquí estoy"},
+    {q:"cuanto vale y que garantia tiene?", espera:"precio+garantia", contiene:"200.000 km"},
+    {q:"de que colores hay?", espera:"colores"},
+    {q:"el rojo me gusta", espera:"colores", contiene:"Anotado: Rojo"},
+    {q:"tengo un mazda 3 2018 para entregar", espera:"escala:retoma"},
+    {q:"vivo en pereira", espera:"senal:ciudad"},
+    {q:"en que mas me puedes ayudar?", espera:"capacidades", contiene:"Comparar"},
+    {q:"resumeme lo que hemos hablado", espera:"resumen", contiene:"Mazda 3 2018"}
   ]},
 
  {nombre:"Esteban · el de las dos versiones del Vigo",

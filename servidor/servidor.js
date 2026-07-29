@@ -94,6 +94,7 @@ ${nombre ? nombre + " · " : ""}wa.me/${waId}
 Vehículo: ${BOT.VEH[lead.vehiculo] ? BOT.VEH[lead.vehiculo].nombre : "—"}
 Ciudad: ${lead.ciudad || "—"}   ·   Compra: ${lead.plazo || "—"}
 Pago: ${lead.pago || "—"}   ·   Carga en casa: ${lead.carga || "—"}
+Color que le gustó: ${lead.color || "—"}   ·   Entrega en parte de pago: ${lead.usado || "—"}
 Temas: ${lead.interes.join(", ") || "—"}
 
 Conversación:

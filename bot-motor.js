@@ -241,8 +241,9 @@ var KB = [
  {id:"seguridad", k:["seguridad","airbag","frenos","abs","asistencia","adas","camara","cámara","punto ciego","carril","choque","segura","es seguro","que tan seguro","qué tan seguro","tan segura"],
   r:function(v){ return COMUN.seguridad+"\n\nLa línea suma conducción asistida nivel 2: frenado automático de emergencia, control crucero adaptativo, mantenimiento de carril, monitoreo de punto ciego y visión 360°.\n\nLa dotación exacta cambia por versión; te la confirma la sala." }},
 
- {id:"colores", k:["color","colores","blanco","negro","azul","plata","gris","rojo"],
-  r:function(v){
+ {id:"colores", k:["color","colores","blanco","negro","azul","plata","gris","rojo","verde","rosa","violeta"],
+  r:function(v,lead){
+    if(lead.color) return "Anotado: "+lead.color+".\n\nLa disponibilidad por color cambia según el lote, así que el asesor te confirma si hay "+lead.color.toLowerCase()+" disponible hoy. ¿Quieres que lo revise?";
     if(v.colores) return v.Art+" "+v.nombre+" viene en "+v.colores+".\n\nLa disponibilidad por color cambia según el lote. ¿Cuál te interesa? Lo confirmo con la sala.";
     return "La carta de colores del "+v.nombre+" cambia por lote y por versión, así que prefiero no darte una lista que no pueda sostener.\n\n¿Qué color buscas? Se lo pregunto a la sala y te confirman qué hay disponible hoy.";
   }},
@@ -320,8 +321,17 @@ var KB = [
  {id:"credito", k:["credito","crédito","con credito","con crédito","a credito","por credito","cuota","cuota mensual","financia","financiar","banco","tasa","plazo","inicial","aprobar","aprobacion","aprobación","cuotas","mensual","leasing"],
   r:"El crédito lo estudia y aprueba la sala con sus aliados financieros; yo no puedo aprobarlo ni darte una tasa.\n\nLo que sí tenemos es un simulador de costo en la página, pero es ilustrativo y no constituye una oferta. Te paso con un asesor para que te dé condiciones reales.", esc:"credito"},
 
- {id:"retoma", k:["retoma","parte de pago","entregar mi","mi carro","cambio","permuta","usado","recibir mi"],
-  r:"Sí se recibe vehículo en parte de pago. El avalúo lo hace la sala directamente, porque depende del estado, el modelo y el kilometraje.\n\n¿Qué carro tienes? Se lo paso al asesor para que vaya adelantando.", esc:"retoma"},
+ {id:"retoma", k:["retoma","parte de pago","entregar mi","entregar el","para entregar","mi carro","mi camioneta","mi moto",
+   "cambio","permuta","usado","recibir mi","reciben mi","cuanto me dan","cuánto me dan","cuanto me reciben",
+   "avaluo","avalúo","lo tengo","tengo un","tengo una","doy mi","dar mi",
+   "mazda","renault","chevrolet","toyota","kia","nissan","hyundai","ford","volkswagen","suzuki","logan","duster","sandero","spark","picanto","corolla","onix","tucson","sportage"],
+  r:function(v,lead){
+    var base = "Sí se recibe vehículo en parte de pago. El avalúo lo hace la sala directamente, porque depende del estado, el kilometraje y el modelo.";
+    /* Si ya dijo qué carro tiene, volver a preguntárselo es el error que más
+       enfría una conversación. */
+    if(lead.usado) return base+"\n\nYa anoté tu "+lead.usado+". Te paso con un asesor para que vaya adelantando el avalúo.";
+    return base+"\n\n¿Qué carro tienes? Se lo paso al asesor para que vaya adelantando.";
+  }, esc:"retoma"},
 
  {id:"renting", k:["renting","arriendo","alquiler","suscripcion","suscripción","empresa","flota","varias unidades","corporativo","facturar a nombre"],
   r:"El renting y los planes para empresa los manejamos caso por caso, porque cambian según el plazo, el kilometraje y el número de unidades.\n\nTe paso con un asesor para armarte una propuesta concreta.", esc:"renting"},
@@ -351,13 +361,51 @@ var KB = [
     return "Contra los eléctricos de su rango: el Vigo tiene batería de 51,87 kWh y 500 litros de baúl.\n\nEl Kia EV2 Air cuesta lo mismo con 42,2 kWh y 362 litros. El Geely EX5 SE cuesta más y tiene menos batería.\n\nEl Vigo lleva la batería más grande y el baúl más grande del trío. Donde pierde: el Kia es de fabricación europea y trae un airbag más — te lo digo para que decidas con todo sobre la mesa.";
   }},
 
+ /* Todo bot bueno sabe decir qué sabe hacer. El nuestro contestaba "no
+    entendí" a "¿en qué más me puedes ayudar?", que es la peor respuesta
+    posible: el cliente está pidiendo permiso para seguir. */
+ {id:"capacidades", k:["que me puedes ayudar","qué me puedes ayudar","en que me ayudas","en qué me ayudas",
+   "que puedes hacer","qué puedes hacer","que sabes","qué sabes","como me ayudas","cómo me ayudas",
+   "que mas","qué más","en que mas","en qué más","ayudame","ayúdame","que informacion tienes","opciones"],
+  r:function(v,lead){
+    return "Te ayudo con lo que necesites saber antes de decidir:\n\n"+
+      "· Precio y versiones de los tres — Vigo, Box y MAGE\n"+
+      "· Autonomía, consumo, ficha técnica y espacio\n"+
+      "· Compararlos entre ellos o contra otras marcas\n"+
+      "· Garantía, talleres y cobertura en tu ciudad\n"+
+      "· Colores y disponibilidad\n"+
+      "· Cotizarte el seguro con nuestro aliado\n\n"+
+      "Y cuando quieras avanzar: prueba de ruta, crédito o retoma de tu carro los cuadra un asesor. "+
+      "¿Por dónde empezamos?";
+  }},
+
+ /* Recapitular antes de cerrar. Un cliente que pide el resumen está a punto
+    de decidir, y el asesor que reciba el lead necesita exactamente esto. */
+ {id:"resumen", k:["resumen","resume","resúmeme","resumeme","recapitula","recapitulemos","en resumen",
+   "que hemos hablado","qué hemos hablado","lo que hablamos","reca","dime todo","recapitulame"],
+  r:function(v,lead){
+    var L=[];
+    L.push("· Vehículo: "+v.largo+" ("+v.precio+")");
+    if(lead.ciudad) L.push("· Ciudad: "+lead.ciudad);
+    if(lead.plazo)  L.push("· Compra: "+lead.plazo);
+    if(lead.pago)   L.push("· Pago: "+lead.pago);
+    if(lead.carga)  L.push("· ¿Puede cargar en casa?: "+lead.carga);
+    if(lead.color)  L.push("· Color que le gustó: "+lead.color);
+    if(lead.usado)  L.push("· Vehículo para entregar: "+lead.usado);
+    if(lead.interes.length) L.push("· Temas que miramos: "+lead.interes.join(", "));
+    if(L.length<=1) return "Todavía no hemos hablado mucho. Cuéntame qué te interesa saber "+(v.art==="la"?"de la ":"del ")+v.nombre+" y lo vamos armando.";
+    return "Esto es lo que llevamos:\n\n"+L.join("\n")+
+      "\n\n¿Sigo con algo más, o te paso con un asesor para cerrar?";
+  }},
+
  {id:"humano", k:["asesor","persona","humano","hablar con","llamar","telefono","teléfono","alguien","atienda","un vendedor","no me sirves","eres un bot","eres un robot"],
   r:"Con gusto. Te paso con un asesor especializado.", esc:"pedido"},
 
  {id:"saludo", debil:true, k:["hola","buenas","buenos dias","buenos días","buenas tardes","buenas noches","que tal","qué tal","hey","saludos","alo","aló"],
   r:function(v,lead){
-    if(lead.turnos<=1) return null; // el saludo inicial lo da arrancar()
-    return "¡Hola! Aquí sigo. ¿En qué más te ayudo con el "+v.nombre+"?";
+    /* Antes devolvía null en el primer turno y el bot se quedaba MUDO. */
+    return "¡Hola! Aquí estoy. ¿Qué quieres saber "+(v.art==="la"?"de la ":"del ")+v.nombre+
+           " — precio, autonomía, garantía o dónde le hacen el mantenimiento?";
   }},
 
  /* Un "sí" suelto, sin pregunta pendiente, no es incomprensión: es un cliente
@@ -1042,7 +1090,7 @@ function crearSesion(vehiculoInicial){
   var s = {
     lead: {
       vehiculo: vehiculoInicial && VEH[vehiculoInicial] ? vehiculoInicial : "mage",
-      ciudad:null, plazo:null, pago:null, uso:null, carga:null,
+      ciudad:null, plazo:null, pago:null, uso:null, carga:null, color:null, usado:null,
       interes:[], escalado:null, turnos:0
     },
     fallos: 0,
@@ -1083,6 +1131,21 @@ function crearSesion(vehiculoInicial){
     var pg=detectarLista(q,PAGO);  if(pg && pg!==s.lead.pago){ s.lead.pago=pg;  nuevas.push("pago") }
     var us=detectarLista(q,USO);   if(us && us!==s.lead.uso){ s.lead.uso=us;    nuevas.push("uso") }
     var cg=detectarLista(q,CARGA); if(cg && cg!==s.lead.carga){ s.lead.carga=cg; nuevas.push("carga") }
+
+    /* El color que le gustó y el carro que quiere entregar son datos de venta,
+       no charla. "El rojo me gusta" hacía que el bot repitiera la carta de
+       colores; ahora queda anotado y el asesor lo recibe. */
+    var col = (norm(q).match(/\b(blanco|negro|azul|plata|gris|rojo|verde|rosa|violeta)\b/)||[])[1];
+    if(col && /gusta|quiero|prefiero|me encanta|ese|me sirve|busco|seria|sería/.test(norm(q))
+       && col!==norm(s.lead.color||"")){
+      s.lead.color = col.charAt(0).toUpperCase()+col.slice(1); nuevas.push("color");
+    }
+    var us2 = q.match(/\b(mazda|renault|chevrolet|toyota|kia|nissan|hyundai|ford|volkswagen|suzuki|logan|duster|sandero|spark|picanto|corolla|onix|tucson|sportage)\b[^,.;]{0,20}/i);
+    if(us2 && !s.lead.usado){
+      s.lead.usado = us2[0].replace(/\s+(para|de|que|y|lo|en)\s.*$/i,"").trim()
+                       .replace(/^./, function(c){ return c.toUpperCase() });
+      nuevas.push("usado");
+    }
     out.senales=nuevas;
 
     /* 2 · ¿de cuál vehículo habla?
@@ -1145,14 +1208,24 @@ function crearSesion(vehiculoInicial){
        Solo vale para el turno inmediatamente siguiente, y solo si el mensaje
        no trae una pregunta de fondo — si cambió de tema, manda su tema. */
     if(s.espera && s.espera.turno === s.lead.turnos-1){
-      var esp = ESPERAS[s.espera.id];
+      var espId0 = s.espera.id;
+      var esp = ESPERAS[espId0];
       var otro = puntuar(q);
       var pisaTema = otro.length && !otro[0].t.debil && otro[0].p>=6;
-      var si = esSi(q), no = esNo(q);
-      if(esp && esp.libre){
-        var libre = esp.libre(v, s.lead, q, s.espera.ctx||{});
+      /* "No, me refiero al Box" empieza por "no", pero no está contestando:
+         está corrigiendo. Si el turno nombra otro vehículo o trae una
+         fórmula de corrección, la expectativa se suelta y manda la
+         corrección. Tratar una corrección como un "no" es la forma más
+         rápida de que el cliente sienta que no lo están escuchando. */
+      var corrige = /me refiero|quise decir|no era|no es eso|estoy hablando de|hablo de|es sobre|del otro/.test(norm(q))
+                    || vehiculosNombrados(q).length>0;
+      var ctxEsp = s.espera.ctx || {};
+      if(corrige) s.espera = null;
+      var si = !corrige && esSi(q), no = !corrige && esNo(q);
+      if(!corrige && esp && esp.libre){
+        var libre = esp.libre(v, s.lead, q, ctxEsp);
         if(libre){
-          out.tema="resp:"+s.espera.id; out.entendido=true; out.texto=libre.texto;
+          out.tema="resp:"+espId0; out.entendido=true; out.texto=libre.texto;
           s.espera = libre.espera ? {id:libre.espera, turno:s.lead.turnos, ctx:libre.ctx} : null;
           s.fallos=0; s.historia.push(out); return out;
         }
@@ -1160,7 +1233,7 @@ function crearSesion(vehiculoInicial){
       }
       else if(esp && !pisaTema && (si || no)){
         var res = (si ? esp.si : esp.no)(v, s.lead);
-        out.tema = "resp:"+s.espera.id; out.entendido = true;
+        out.tema = "resp:"+espId0; out.entendido = true;
         out.texto = res.texto;
         if(res.escala){ out.escala=res.escala; s.lead.escalado=res.escala }
         s.espera = res.espera ? {id:res.espera, turno:s.lead.turnos} : null;
@@ -1324,6 +1397,35 @@ function crearSesion(vehiculoInicial){
     }
 
     s.fallos=0;
+
+    /* Dos preguntas en un mensaje. "¿Cuánto vale y qué garantía tiene?" traía
+       DOS intenciones y el bot contestaba una — la otra se perdía y el cliente
+       tenía que volver a escribirla. La gente escribe así en WhatsApp: de
+       corrido y sin puntuación.
+
+       Se responden las dos, en el orden en que aparecen en la frase, y solo
+       si las dos son informativas: si una escala o abre una cotización, esa
+       manda sola para no encimarle dos cosas al cliente. */
+    var segunda = null;
+    var nq = norm(q);
+    /* La señal de que son DOS preguntas es un conector: "y", "también",
+       "además", o una coma. Sin conector, dos temas que puntúan parecido son
+       casi siempre la misma pregunta vista de dos maneras. */
+    var conector = /(^|\s)(y|e|tambien|también|ademas|además|otra cosa|de paso)(\s|$)/.test(nq) || /[,;]/.test(q);
+    if(conector && items.length>1 && items[1].p>=3 && !items[1].t.debil && !items[0].t.debil
+       && !items[0].t.esc && !items[1].t.esc && !items[0].t.sub && !items[1].t.sub){
+      var pos = function(it){
+        var m = 1e9;
+        it.hits.forEach(function(h){ var i=nq.indexOf(h); if(i>-1 && i<m) m=i });
+        return m;
+      };
+      /* y que estén en tramos distintos de la frase, no pegadas */
+      if(Math.abs(pos(items[0])-pos(items[1])) >= 5){
+        if(pos(items[1]) < pos(items[0])) { var tmp=items[0]; items[0]=items[1]; items[1]=tmp }
+        segunda = items[1];
+      }
+    }
+
     var top=items[0];
     out.tema=top.t.id; out.puntaje=top.p; out.entendido=true;
 
@@ -1335,6 +1437,16 @@ function crearSesion(vehiculoInicial){
 
     if(top.t.id!=="saludo" && top.t.id!=="gracias" && top.t.id!=="despedida" &&
        s.lead.interes.indexOf(top.t.id)<0) s.lead.interes.push(top.t.id);
+
+    /* la segunda intención se contesta a continuación, en el mismo turno */
+    if(segunda){
+      var r2 = (typeof segunda.t.r==="function") ? segunda.t.r(v, s.lead) : segunda.t.r;
+      if(r2){
+        r = r + "\n\n───\n\n" + r2;
+        out.tema = top.t.id+"+"+segunda.t.id;
+        if(s.lead.interes.indexOf(segunda.t.id)<0) s.lead.interes.push(segunda.t.id);
+      }
+    }
 
     if(out.cambioVehiculo) r = "Perfecto, hablemos "+(v.art==="la"?"de la ":"del ")+v.nombre+".\n\n"+r;
     out.texto=r;
@@ -1380,7 +1492,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.19";
+var VERSION = "2026-07-28.20";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -1404,6 +1516,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"cuanto vale y que garantia tiene",
+   arreglo:"Dos preguntas en un mensaje ahora reciben dos respuestas. Y se sumaron: qué sabe hacer el bot, el resumen de la conversación, reconocer la marca del carro que entregas en parte de pago, y anotar el color que te gustó.",
+   ver:"2026-07-28.20"},
   {q:"hay servicio para prueba de ruta en cucuta y en cartagena",
    arreglo:"«¿Y en Cartagena?» ya no pierde la pregunta: repite la misma para la ciudad nueva. Lo mismo con el carro: si venían hablando de precio y dices «¿y el Box?», te da el precio del Box, no una presentación.",
    ver:"2026-07-28.19"},
