@@ -118,6 +118,30 @@ que solo quiere hablar con una persona.
 **Regla: todo defecto que se encuentre se convierte en un cliente de prueba.** Así no
 vuelve. Los cinco que ya están blindados salieron de correr esto la primera vez.
 
+## 3c. El segundo negocio, y por qué importa más de lo que parece
+
+Una conversación puede producir **dos leads**: el del carro y el de la cotización del
+seguro. El bot **nunca saca el tema por su cuenta** — sería venta cruzada y se siente
+lejano. Pero si el cliente pregunta por el seguro, eso ya es interés explícito, y ahí se
+le ofrece: dos preguntas rápidas (rango de edad y siniestros) y un asesor especializado
+lo contacta.
+
+Nunca se pide cédula, fecha de nacimiento ni dato financiero. Rango de edad y siniestros
+bastan para que el corredor llame; el resto se lo pide él directamente.
+
+**La razón de negocio, que es la que manda (idea de Daniel):**
+
+> La cotización del seguro es el **único punto donde TORQ se entera de si el carro
+> efectivamente se facturó**. Nadie asegura un vehículo que no compró.
+
+Eso resuelve el agujero más grande del modelo de comisión: el estado `facturado` depende
+hoy de que Corautos lo reporte. Un lead de seguro que se convierte es **evidencia
+independiente** de que la venta se cerró, y sirve para reclamar la comisión sin depender
+de la buena voluntad del distribuidor.
+
+Por eso conviene que esa oferta sea corta y fácil de aceptar: no es un extra, es el
+mecanismo de control de la venta principal.
+
 ## 4. Infraestructura
 
 ### Los tres niveles

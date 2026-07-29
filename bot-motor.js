@@ -245,35 +245,24 @@ var KB = [
   r:"Esa es de las preguntas donde no te quiero dar un dato bonito y equivocado: **el pico y placa y el impuesto vehicular los define cada ciudad y cada departamento, y las reglas para eléctricos e híbridos han cambiado varias veces.**\n\nHay beneficios reales, pero dependen de dónde vives y del año. Te paso con un asesor para que te confirme exactamente qué aplica en tu ciudad hoy.", esc:"normativo"},
 
  {id:"seguro", k:["el seguro","un seguro","del seguro","mi seguro","poliza","póliza","aseguradora","asegurar","asegurarlo","asegurarla","todo riesgo","soat","cuanto vale el seguro","seguro del carro","seguro del vehiculo"],
-  /* Dos correcciones de Daniel, y la segunda es de negocio, no de estilo:
-     1. "no te la voy a estimar" sonaba tosco. Se dice lo mismo sin regañar.
-     2. Decía que "la sala trabaja con aliados" — eso le regala el contacto a
-        Corautos. El seguro no es del distribuidor: es una necesidad del
-        cliente que TORQ puede atender con sus propios aliados. Ahí hay un
-        lead, y se captura. */
-  /* 3. La cotización NO se ofrece de entrada. Criterio de Daniel, y es el
-        correcto: al aliado se le presenta un interesado de verdad, no alguien
-        que preguntó de paso. Ofrecerlo al primer mensaje suena a venta
-        cruzada y le quema el tiempo al aliado con leads fríos.
+  /* Historia de esta respuesta, porque cada línea salió de una corrección:
+     1. Decía "no te la voy a estimar" — regañaba. Fuera.
+     2. Decía que "la sala trabaja con aliados", y eso le regalaba el contacto
+        a Corautos. El seguro no es del distribuidor.
+     3. Sacaba a los aliados en la primera frase: se sentía lejano, como si lo
+        estuvieran pasando a otro antes de atenderlo. Ahora se habla de un
+        asesor especializado, que es lo que el cliente entiende.
+     4. Era larga. Cuatro párrafos para decir "depende" cansan a cualquiera.
 
-        Se ofrece cuando el cliente ya mostró que está en compra —preguntó
-        dos o más cosas del carro, o soltó ciudad, plazo o forma de pago— o
-        cuando vuelve a insistir con el seguro, que ya es señal explícita.
-
-        Si todavía está frío se responde igual de completo y se deja la
-        puerta abierta. No se pierde nada: si vuelve, ahí sí se ofrece. */
+     Y el motivo de negocio, que es el que manda: la cotización del seguro es
+     el ÚNICO punto donde TORQ se entera de si el carro efectivamente se
+     facturó. Nadie asegura un vehículo que no compró. Por eso se ofrece
+     siempre que el cliente pregunte —no se le insiste nunca si no pregunta—
+     y por eso vale la pena que la respuesta sea corta y fácil de aceptar. */
   r:function(v,lead){
-    var base = "El valor lo pone la aseguradora y cambia bastante de una persona a otra: pesan tu edad, tu historial al volante y la ciudad donde lo matricules.\n\nSi te doy una cifra ahora, lo más probable es que después no te cuadre, y prefiero no hacerte eso.";
-    var tibio = lead.interes.length>=2 || !!lead.ciudad || !!lead.plazo || !!lead.pago ||
-                lead.interes.indexOf("seguro")>-1;
-    lead._ofrecio = tibio;
-    /* En frío NO se mencionan aliados. Sacarlos en la primera frase se siente
-       lejano —como si lo estuvieran pasando a otro antes de haberlo atendido—
-       y el cliente todavía no ha pedido nada de eso. Aquí solo se responde
-       bien y se sigue la conversación. La ayuda se ofrece en primera persona:
-       "yo te ayudo", no "nuestros aliados te contactan". */
-    if(!tibio) return base+"\n\nCuando tengamos claro cuál es el tuyo, yo te ayudo a cotizarlo con calma y con tus datos, no con un estimado.\n\n¿Seguimos? Cuéntame qué más te gustaría saber.";
-    return base+"\n\nLo que sí puedo hacer es ayudarte a cotizarlo. Te hago dos preguntas rápidas, se las paso a "+aliado("seguros")+" de seguros y te escriben con una cifra hecha para tu caso.\n\n¿Arrancamos? Responde SÍ y seguimos.";
+    return "El valor lo pone la aseguradora: cambia con tu edad, tu historial al volante y la ciudad. Darte una cifra ahora sería inventármela.\n\n"+
+      "Si quieres te la cotizo de verdad: dos preguntas rápidas y un asesor especializado te contacta con el valor de tu caso.\n\n"+
+      "¿Te la cotizo? Responde SÍ y seguimos.";
   }, sub:"seguro"},
 
  {id:"prueba", k:["prueba","probar","manejar","test drive","ruta","ver el carro","conocer","visitar","cita","agendar","donde queda","dónde queda","vitrina","sala","direccion","dirección","horario","verla","verlo","quiero verla","quiero verlo","quiero conocerla","me gustaria verla","me gustaría verla","ir a mirarla"],
@@ -393,15 +382,15 @@ var SUBFLUJOS = {
     etiqueta:"Cotización de seguro",
     pasos:[
       {campo:"edad",
-       pregunta:"Listo. Para que la cotización sea real y no un número al aire, necesito dos cosas nada más.\n\n¿En qué rango de edad estás: 18 a 25, 26 a 40, o más de 40? Es lo que más mueve la prima."},
+       pregunta:"¿En qué rango de edad estás: 18 a 25, 26 a 40, o más de 40? Es lo que más mueve la prima."},
       {campo:"siniestros",
-       pregunta:"Perfecto. Y la última: ¿has tenido choques o siniestros en los últimos dos años?"}
+       pregunta:"Y la última: ¿has tenido choques o siniestros en los últimos dos años?"}
     ],
     cierre:function(lead,datos){
       var v=VEH[lead.vehiculo];
-      return "Listo, con eso me sirve. Se lo paso a "+aliado("seguros")+" para que te armen la cotización de todo riesgo para "+
+      return "Listo, con eso me sirve. Un asesor especializado te contacta con la cotización de todo riesgo para "+
         (v ? v.art+" "+v.nombre : "el vehículo")+
-        (lead.ciudad?" en "+lead.ciudad:"")+", y te escriben con la cifra.\n\n"+
+        (lead.ciudad?" en "+lead.ciudad:"")+".\n\n"+
         "Sigamos con el carro, que es lo importante: ¿qué más quieres saber?";
     },
     /* Si dice que no, se cierra el tema de una y sin insistir. */
@@ -828,7 +817,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.11";
+var VERSION = "2026-07-28.12";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
