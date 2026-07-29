@@ -174,7 +174,8 @@ var PERSONAS = [
   turnos:[
     {q:"hay unidades disponibles ya?", espera:"disponible"},
     {q:"cuanto se demora la entrega si compro hoy", espera:"disponible"},
-    {q:"estoy en barranquilla", espera:"senal:ciudad"},
+    /* al decir la ciudad, repite la disponibilidad para ESA ciudad */
+    {q:"estoy en barranquilla", espera:"disponible", contiene:"Barranquilla"},
     {q:"gracias, lo pienso y te escribo", espera:"despedida"}
   ]},
 
@@ -297,6 +298,28 @@ var PERSONAS = [
     {q:"vivo en tunja", espera:"senal:ciudad"},
     {q:"hay taller alla?", espera:"cobertura", contiene:"Duitama", escalaOk:true},
     {q:"y venden en tunja?", espera:"cobertura", contiene:"Sí, en Tunja hay punto de venta"}
+  ]},
+
+ {nombre:"Liliana · la que compara dos ciudades",
+  perfil:"Daniel: «mira esta conversación cómo pierde contexto». Preguntó por prueba de ruta en Cúcuta y luego «¿y en Cartagena?» — el bot anotaba la ciudad y volvía al menú. Un «y en X?» no es un dato suelto: es LA MISMA pregunta con otra ciudad, y quien pregunta por dos ciudades está decidiendo dónde comprar.",
+  veh:"mage",
+  turnos:[
+    {q:"hay servicio para prueba de ruta en cucuta?", espera:"escala:agenda", contiene:"Cúcuta"},
+    {q:"y en cartagena?", espera:"prueba", contiene:"Cartagena", escalaOk:true},
+    {q:"y donde le hacen el mantenimiento?", espera:"servicio", contiene:"Cartagena"},
+    {q:"y en bogota?", espera:"servicio", contiene:"Bogotá", escalaOk:true}
+  ]},
+
+ {nombre:"Fabián · el embudo completo",
+  perfil:"El recorrido que tiene que funcionar de punta a punta: llega por un anuncio, compara, cambia de carro sin repetir la pregunta, resuelve la cobertura de su ciudad y termina agendando. Si esto se rompe en cualquier punto, se cae el lead.",
+  veh:"box",
+  turnos:[
+    {q:"hola, vivo en pereira", espera:"senal:ciudad"},
+    {q:"cuanto vale?", espera:"precio", contiene:"$69.990.000"},
+    {q:"y el vigo?", espera:"precio", contiene:"$84.990.000"},
+    {q:"cual me conviene? no tengo parqueadero", espera:"cual", contiene:"MAGE"},
+    {q:"hay taller en mi ciudad?", espera:"cobertura", contiene:"Sí, en Pereira"},
+    {q:"listo, quiero verla", espera:"escala:agenda"}
   ]},
 
  {nombre:"Esteban · el de las dos versiones del Vigo",

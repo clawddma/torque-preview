@@ -655,6 +655,29 @@ function compararNuestros(ids, dim){
   return t;
 }
 
+/* ═══ REPETIR LA MISMA PREGUNTA CON OTRO DATO ═════════════════════════════
+   "¿Hay prueba de ruta en Cúcuta?" … "¿Y en Cartagena?"
+
+   Eso último no es un dato suelto: es LA MISMA PREGUNTA con otra ciudad. El
+   bot anotaba la ciudad y volvía al menú, y el cliente tenía que reescribir
+   toda la frase. En una conversación de venta eso es donde se cae el lead:
+   el que pregunta por dos ciudades está comparando dónde comprar.
+
+   Lo mismo con el vehículo: si venían hablando de precio y el cliente dice
+   "¿y el Box?", quiere el precio del Box, no una presentación del Box.
+
+   Estos son los temas que cambian de respuesta según la ciudad o según el
+   carro. Los demás no se repiten: preguntar la garantía otra vez porque
+   cambió de ciudad no tiene sentido. */
+var TEMAS_POR_CIUDAD   = ["cobertura","servicio","prueba","disponible"];
+var TEMAS_POR_VEHICULO = ["precio","consumo","ficha","espacio","colores","disponible",
+                          "enchufe","comparar","seguridad","instalacion"];
+
+function buscarTema(id){
+  for(var i=0;i<KB.length;i++) if(KB[i].id===id) return KB[i];
+  return null;
+}
+
 /* ═══ EXPECTATIVAS — LO QUE EL BOT ACABA DE PROMETER ═══════════════════════
    El agujero que faltaba, y el que más caro salía.
 
@@ -1026,6 +1049,8 @@ function crearSesion(vehiculoInicial){
     empujado: false,
     sub: null,
     espera: null,
+    ultimoTema: null,
+    ultimoCob: null,
     historia: []
   };
 
@@ -1233,6 +1258,18 @@ function crearSesion(vehiculoInicial){
        trajo una señal nueva, el bot la usa y sigue. */
     /* "hola me interesa el box" no pregunta nada concreto, pero SÍ dice de cuál
        vehículo habla. Presentarlo es mejor respuesta que un saludo genérico. */
+    /* "¿Y el Box?" después de hablar de precio es el precio del Box. */
+    if(!items.length && out.vehiculoNombrado && TEMAS_POR_VEHICULO.indexOf(s.ultimoTema)>-1){
+      var tv = buscarTema(s.ultimoTema);
+      if(tv){
+        s.fallos=0; out.entendido=true; out.tema=s.ultimoTema; out.repetido=true;
+        out.texto = (typeof tv.r==="function") ? tv.r(v, s.lead) : tv.r;
+        var e3 = (typeof tv.esc==="function") ? tv.esc(s.lead, q) : tv.esc;
+        if(e3){ out.escala=e3; s.lead.escalado=e3 }
+        s.historia.push(out); return out;
+      }
+    }
+
     if(!items.length && out.vehiculoNombrado){
       s.fallos=0; out.entendido=true; out.tema="presenta";
       out.texto = v.Art+" "+v.largo+" — "+v.clase+", desde "+v.precio+".\n\n"+
@@ -1245,6 +1282,19 @@ function crearSesion(vehiculoInicial){
       s.fallos=0; out.entendido=true; out.tema="senal:"+nuevas[0];
       var tCual=null;
       for(var z=0;z<KB.length;z++) if(KB[z].id==="cual") tCual=KB[z];
+      /* Ciudad nueva y una pregunta viva: se repite esa pregunta, no se
+         vuelve al menú. */
+      if(nuevas.indexOf("ciudad")>-1 && TEMAS_POR_CIUDAD.indexOf(s.ultimoTema)>-1){
+        var tRep = buscarTema(s.ultimoTema);
+        if(tRep){
+          if(s.ultimoTema==="cobertura") q_actual = s.ultimoCob || "venta";
+          out.tema = s.ultimoTema; out.repetido = true;
+          out.texto = (typeof tRep.r==="function") ? tRep.r(v, s.lead) : tRep.r;
+          var e2 = (typeof tRep.esc==="function") ? tRep.esc(s.lead, q_actual) : tRep.esc;
+          if(e2){ out.escala=e2; s.lead.escalado=e2 }
+          s.historia.push(out); return out;
+        }
+      }
       if((nuevas.indexOf("uso")>-1 || nuevas.indexOf("carga")>-1) && tCual){
         out.tema="cual";
         out.texto = tCual.r(v, s.lead);
@@ -1293,6 +1343,9 @@ function crearSesion(vehiculoInicial){
     if(escVal){ out.escala=escVal; s.lead.escalado=escVal }
 
     /* lo que este tema deja prometido para el turno siguiente */
+    s.ultimoTema = top.t.id;
+    if(top.t.id==="cobertura") s.ultimoCob = tipoDeCobertura(q) || "venta";
+
     var espId = (typeof top.t.espera==="function") ? top.t.espera(s.lead) : top.t.espera;
     if(espId && ESPERAS[espId] && !out.escala) s.espera = {id:espId, turno:s.lead.turnos};
 
@@ -1327,7 +1380,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.18";
+var VERSION = "2026-07-28.19";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -1351,6 +1404,12 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"hay servicio para prueba de ruta en cucuta y en cartagena",
+   arreglo:"«¿Y en Cartagena?» ya no pierde la pregunta: repite la misma para la ciudad nueva. Lo mismo con el carro: si venían hablando de precio y dices «¿y el Box?», te da el precio del Box, no una presentación.",
+   ver:"2026-07-28.19"},
+  {q:"servicios en cucuta",
+   arreglo:"Ya está cargada la cobertura real de Corautos: 22 puntos de venta y 26 talleres en 20 ciudades, con las excepciones (Cartagena y Santa Marta sin sala, Tunja sin taller).",
+   ver:"2026-07-28.19"},
   {q:"se puede hacer la prueba de ruta en mi ciudad bucaramanga",
    arreglo:"El bot afirmaba «allá hay red de servicio» sin tener la lista de las 19 ciudades, y trataba venta, taller, prueba de ruta y seguro como una sola cobertura. Ahora son cuatro coberturas distintas, y ninguna se afirma ciudad por ciudad mientras Corautos no entregue las listas.",
    ver:"2026-07-28.17"},
