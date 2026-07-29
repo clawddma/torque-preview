@@ -102,7 +102,10 @@ var PERSONAS = [
   veh:"mage",
   turnos:[
     {q:"es verdad que devuelven el iva?", espera:"escala:tributario"},
-    {q:"y si sube la reforma que pasa con el precio", espera:"reforma"}
+    {q:"y si sube la reforma que pasa con el precio", espera:"reforma"},
+    /* al preguntar el precio de la MAGE no se le ponen al lado los dos más
+       baratos: es ponerle competencia propia a una venta que ya iba */
+    {q:"y cuanto vale la mage sola", espera:"precio", noContiene:"$69.990.000"}
   ]},
 
  {nombre:"Diana · pregunta de pico y placa",
@@ -341,7 +344,10 @@ var PERSONAS = [
   veh:"mage",
   turnos:[
     {q:"Precio y autonomia y prueba de ruta en armenia", espera:"precio+consumo+prueba", contiene:"$109.000.000", escalaOk:true},
-    {q:"y si sube la reforma que pasa con el precio", espera:"reforma"}
+    {q:"y si sube la reforma que pasa con el precio", espera:"reforma"},
+    /* al preguntar el precio de la MAGE no se le ponen al lado los dos más
+       baratos: es ponerle competencia propia a una venta que ya iba */
+    {q:"y cuanto vale la mage sola", espera:"precio", noContiene:"$69.990.000"}
   ]},
 
  {nombre:"Esteban · el de las dos versiones del Vigo",

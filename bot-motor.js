@@ -115,10 +115,16 @@ var VETO = [
 var KB = [
 
  {id:"precio", k:["precio","cuesta","vale","valor","costo","cuanto vale","cuanto cuesta","que precio","cuanto sale","presupuesto"],
-  r:function(v){
-    var otros = ORDEN.filter(function(x){return x!==v.id}).map(function(x){
-      return VEH[x].nombre+" "+VEH[x].precio;
-    }).join(" · ");
+  r:function(v,lead){
+    /* Antes esta respuesta listaba el precio de los otros dos SIEMPRE. Con la
+       MAGE eso era un autogol: al cliente que ya se decidió por la de
+       $109.000.000 se le ponían al lado dos carros más baratos que no pidió.
+       Ningún vendedor hace eso.
+
+       La comparación se OFRECE, no se impone. Si el cliente la quiere —y
+       muchos la quieren— la pide, y ahí el bot la da completa y con criterio.
+       Lo que sí se dice sin que lo pidan es cuando hay una versión más
+       económica DEL MISMO carro, porque eso no le quita la venta a nadie. */
     /* Si el vehículo tiene dos versiones, se dicen las DOS con su precio. Dar
        solo el "desde" y dejar que el cliente asuma que trae las cifras de la
        de arriba es cómo se pierde una venta en la sala — y cómo se incumple
@@ -129,11 +135,10 @@ var KB = [
         t += "· "+v.nombre+" "+x.n+" — "+x.precio+": "+x.autonomia+", batería de "+x.bateria+", carga en "+x.carga+".\n";
       });
       return t+"\nLos dos con IVA incluido y sujetos a confirmación con la sala.\n\n"+
-        "Para que compares: "+otros+". ¿Quieres que un asesor te confirme el precio vigente para tu ciudad?";
+        "¿Quieres que un asesor te confirme el precio vigente para tu ciudad? Y si te sirve, te lo comparo con los otros dos de la línea o contra la competencia.";
     }
-    return v.Art+" "+v.nombre+" está en "+v.precio+", con IVA incluido.\n\n"+
-      "Ese valor está sujeto a confirmación con la sala, porque depende de la versión exacta y de disponibilidad.\n\n"+
-      "Para que compares: "+otros+". ¿Quieres que un asesor te confirme el precio vigente para tu ciudad?";
+    return v.Art+" "+v.nombre+" está en "+v.precio+", con IVA incluido y sujeto a confirmación con la sala.\n\n"+
+      "¿Quieres que un asesor te confirme el precio vigente para tu ciudad? Y si te sirve, te lo comparo con los otros dos de la línea o contra la competencia.";
   }, espera:"precioAsesor"},
 
  {id:"cual", k:["cual me conviene","cuál me conviene","cual es mejor","cuál es mejor","que me recomiendas","qué me recomiendas","no se cual","no sé cuál","ayudame a elegir","ayúdame a elegir","cual elijo","cuál elijo","estoy entre","diferencia entre"],
@@ -1527,7 +1532,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.21";
+var VERSION = "2026-07-28.22";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -1551,6 +1556,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"cuanto vale la mage",
+   arreglo:"Al preguntar el precio ya no se listan los otros dos más baratos sin que los pidas: eso era ponerle competencia propia a una venta que ya iba avanzando. Ahora la comparación se ofrece, y si la quieres se da completa.",
+   ver:"2026-07-28.22"},
   {q:"precio y autonomia y prueba de ruta en armenia",
    arreglo:"Tres preguntas en un mensaje ahora reciben tres respuestas, en el orden en que las escribiste, y la que necesita a un asesor va de última para que quedes conectado sin perder las otras.",
    ver:"2026-07-28.21"},
