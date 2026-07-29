@@ -122,7 +122,7 @@ var KB = [
     return v.Art+" "+v.nombre+" está en "+v.precio+", con IVA incluido.\n\n"+
       "Ese valor está sujeto a confirmación con la sala, porque depende de la versión exacta y de disponibilidad.\n\n"+
       "Para que compares: "+otros+". ¿Quieres que un asesor te confirme el precio vigente para tu ciudad?";
-  }},
+  }, espera:"precioAsesor"},
 
  {id:"cual", k:["cual me conviene","cuál me conviene","cual es mejor","cuál es mejor","que me recomiendas","qué me recomiendas","no se cual","no sé cuál","ayudame a elegir","ayúdame a elegir","cual elijo","cuál elijo","estoy entre","diferencia entre"],
   r:function(v,lead){
@@ -148,7 +148,7 @@ var KB = [
     return "Por lo que me cuentas, "+(rec.art==="la"?"la que":"el que")+" te cuadra es "+rec.art+" "+rec.nombre+" — "+por+".\n\n"+
       rec.largo+", desde "+rec.precio+". "+rec.gancho+".\n\n"+
       "¿Quieres que un asesor te lo muestre en detalle?";
-  }},
+  }, espera:function(lead){ return lead.carga ? "verDetalle" : "puedeCargar" }},
 
  {id:"enchufe", k:["enchuf","cargar","cargador","carga","estacion","estación","electrolinera","poste","como se carga","cómo se carga","donde cargo","dónde cargo","donde lo cargo","donde la cargo","dónde lo cargo","cuanto se demora cargando","parqueo en la calle","no tengo parqueadero","sin parqueadero"],
   r:function(v,lead){
@@ -169,7 +169,7 @@ var KB = [
       "En casa, con un cargador de pared: lo dejas conectado en la noche y amaneces al 100%.\n\n"+
       detalle+
       (lead.carga ? "" : "\n\n¿Tienes parqueadero propio donde instalar el cargador?");
-  }},
+  }, espera:function(lead){ return lead.carga ? null : "puedeCargar" }},
 
  {id:"instalacion", k:["instalar cargador","instalar el cargador","cuesta instalar","instalacion","instalación","instalacion del cargador","instalación del cargador","wallbox","cargador de pared","obra","electricista","conjunto","administracion","administración","copropiedad","permiso de la"],
   r:function(v){
@@ -192,15 +192,15 @@ var KB = [
       "Cargando en casa, el costo por kilómetro es una fracción del de un carro a gasolina. La cifra exacta depende de tu tarifa de energía y de tu estrato — no te la invento aquí; un asesor te la calcula con tu recibo.";
     return v.Art+" "+v.nombre+" no gasta gasolina: da "+v.autonomia+" con una carga, y la batería es de "+v.bateria+".\n\n"+
       "Cargando en casa, el costo por kilómetro es una fracción del de un carro a gasolina. La cifra exacta depende de tu tarifa de energía y de tu estrato — no te la invento aquí; un asesor te la calcula con tu recibo.";
-  }},
+  }, espera:function(lead){ return VEH[lead.vehiculo] && VEH[lead.vehiculo].tec==="hibrido" ? "simulador" : null }},
 
  {id:"ficha", k:["potencia","caballos","hp","torque","motor","especificac","ficha","tecnica","técnica","velocidad","transmision","transmisión","bateria","batería","kwh","cuanta bateria","cuánta batería"],
   r:function(v){
     var t = v.Art+" "+v.nombre+" da "+v.motor+".";
     if(v.tec==="electrico") t += "\n\nBatería de "+v.bateria+", "+v.autonomia+" y "+v.carga+".";
     else t += "\n\nBatería de "+v.bateria+".";
-    return t+"\n\n¿Quieres la ficha completa? Está en "+v.url;
-  }},
+    return t+"\n\n¿Quieres la ficha completa?";
+  }, espera:"ficha"},
 
  {id:"espacio", k:["espacio","tamaño","grande","baul","baúl","maleta","familia","asientos","cabe","caben","puestos","dimension","dimensión","mercado","coche de bebe","coche de bebé"],
   r:function(v){
@@ -217,7 +217,7 @@ var KB = [
   r:function(v,lead){
     if(lead.ciudad) return "En "+lead.ciudad+" hay centro de servicio de la red. En total son "+COMUN.red+"\n\n¿Quieres que un asesor te dé la dirección exacta?";
     return "Hay "+COMUN.red+"\n\nSon más sitios para atenderla que para comprarla. Dime tu ciudad y te digo cuál te queda más cerca.";
-  }},
+  }, espera:function(lead){ return lead.ciudad ? "direccionTaller" : null }},
 
  /* Sale del mismo hallazgo del seguro: al arreglar "cuánto cuesta el
     mantenimiento" el bot pasó a contestar cuántos talleres hay, que no es lo
@@ -360,6 +360,80 @@ function aliado(k){
   var a=ALIADOS[k];
   return (a && a.nombre) ? a.nombre : "uno de nuestros aliados";
 }
+
+/* ═══ EXPECTATIVAS — LO QUE EL BOT ACABA DE PROMETER ═══════════════════════
+   El agujero que faltaba, y el que más caro salía.
+
+   El bot hacía quince preguntas y solo sabía qué hacer con cinco. Ofrecía el
+   simulador de ahorro y, cuando el cliente decía "dale, compártelo",
+   contestaba un menú genérico: había prometido algo y no lo entregaba. Peor
+   todavía: proponía la prueba de ruta —el momento exacto de la conversión—
+   y un "sí" no hacía absolutamente nada.
+
+   La causa no era cada respuesta suelta: era que el motor tenía memoria de
+   los HECHOS (qué carro, qué ciudad, qué guardarraíles) pero no del CONTRATO
+   de la conversación: qué acabo de preguntar, y qué significa un "sí" en
+   este momento.
+
+   Aquí vive eso. Cada respuesta que termina en pregunta declara qué espera y
+   qué hacer con el sí y con el no. Una expectativa dura un solo turno: un
+   "sí" tres mensajes después ya no es respuesta a nada. */
+var SITIO = "https://clawddma.github.io/torque-preview/";
+
+function recomendar(lead){
+  if(lead.carga==="No") return VEH.mage;
+  if(lead.uso==="Familia" || lead.uso==="Carretera") return VEH.vigo;
+  return VEH.box;
+}
+
+var ESPERAS = {
+
+  /* "En la página hay un simulador… ¿Te lo comparto?" — y no lo compartía. */
+  simulador: {
+    si:function(v){ return {texto:"Claro, aquí está:\n\n"+SITIO+v.url+"#simulador\n\nPones tu consumo de hoy y los kilómetros que haces al mes, y te dice cuánto cambiaría tu gasto.\n\n¿Te ayudo con algo más?"} },
+    no:function(v){ return {texto:"Listo. ¿Qué más quieres saber "+(v.art==="la"?"de la ":"del ")+v.nombre+"?"} }
+  },
+
+  ficha: {
+    si:function(v){ return {texto:"Aquí la tienes completa:\n\n"+SITIO+v.url+"#ficha\n\nSi quieres te resumo algo puntual, dime qué."} },
+    no:function(v){ return {texto:"Listo. ¿Qué más te gustaría saber?"} }
+  },
+
+  precioAsesor: {
+    si:function(v,lead){ return {texto:"Perfecto. Te paso con un asesor para que te confirme el precio vigente"+(lead.ciudad?" en "+lead.ciudad:"")+" y la disponibilidad real.", escala:"pedido"} },
+    no:function(v){ return {texto:"Listo. ¿Qué más quieres saber?"} }
+  },
+
+  verDetalle: {
+    si:function(v,lead){ return {texto:"Listo. Te paso con un asesor para que te muestre "+v.art+" "+v.nombre+" en detalle y cuadren una prueba de ruta.", escala:"agenda"} },
+    no:function(v){ return {texto:"Sin problema. ¿Quieres que miremos otro de la línea, o prefieres preguntarme algo puntual?"} }
+  },
+
+  direccionTaller: {
+    si:function(v,lead){ return {texto:"Listo. Te paso con un asesor para que te dé la dirección exacta"+(lead.ciudad?" en "+lead.ciudad:"")+" y los horarios.", escala:"pedido"} },
+    no:function(v){ return {texto:"Listo. ¿Qué más te gustaría saber?"} }
+  },
+
+  /* "¿Tienes dónde cargar?" — un sí o un no aquí decide cuál carro se
+     recomienda, y antes se perdía por completo. */
+  puedeCargar: {
+    si:function(v,lead){
+      lead.carga="Sí"; var rec=recomendar(lead); lead.vehiculo=rec.id;
+      return {texto:"Perfecto, eso te abre los eléctricos.\n\nCon parqueadero propio, "+rec.art+" "+rec.nombre+" es el que más te cuadra: "+rec.gancho.toLowerCase()+", desde "+rec.precio+".\n\n¿Quieres que te lo muestre en detalle?", espera:"verDetalle"};
+    },
+    no:function(v,lead){
+      lead.carga="No"; lead.vehiculo="mage";
+      return {texto:"Entonces te ahorro un dolor de cabeza: sin dónde cargar de noche, un eléctrico se vuelve una vuelta cada semana.\n\nLa MAGE es híbrida y nunca se enchufa: tanqueas gasolina normal y hace 4,9 litros a los 100 km. Desde "+VEH.mage.precio+".\n\n¿Te la muestro en detalle?", espera:"verDetalle"};
+    }
+  },
+
+  /* El empujón: el bot propone la prueba de ruta y un "sí" no hacía nada.
+     Es el momento de la conversión — perderlo ahí es perder el lead. */
+  agendar: {
+    si:function(v,lead){ return {texto:"Listo, eso es lo mejor: verlo en persona resuelve más que cualquier ficha.\n\nTe paso con un asesor para que cuadren día y hora"+(lead.ciudad?" en "+lead.ciudad:"")+".", escala:"agenda"} },
+    no:function(v){ return {texto:"Sin afán, tranquilo. Aquí sigo para lo que necesites saber."} }
+  }
+};
 
 /* ═══ SUBFLUJOS — UNA CONVERSACIÓN, DOS LEADS ══════════════════════════════
    Un cliente que pregunta por el seguro no es una conversación que se acabó:
@@ -594,6 +668,7 @@ function crearSesion(vehiculoInicial){
     fallos: 0,
     empujado: false,
     sub: null,
+    espera: null,
     historia: []
   };
 
@@ -643,6 +718,27 @@ function crearSesion(vehiculoInicial){
       out.texto=veto.t.r; out.escala=veto.t.esc;
       s.lead.escalado=veto.t.esc; s.fallos=0;
       s.historia.push(out); return out;
+    }
+
+    /* 3a · ¿el cliente está contestando lo que el bot acaba de preguntar?
+       Va antes de los temas porque un "sí" no es un tema: es una respuesta.
+       Solo vale para el turno inmediatamente siguiente, y solo si el mensaje
+       no trae una pregunta de fondo — si cambió de tema, manda su tema. */
+    if(s.espera && s.espera.turno === s.lead.turnos-1){
+      var esp = ESPERAS[s.espera.id];
+      var otro = puntuar(q);
+      var pisaTema = otro.length && !otro[0].t.debil && otro[0].p>=6;
+      var si = esSi(q), no = esNo(q);
+      if(esp && !pisaTema && (si || no)){
+        var res = (si ? esp.si : esp.no)(v, s.lead);
+        out.tema = "resp:"+s.espera.id; out.entendido = true;
+        out.texto = res.texto;
+        if(res.escala){ out.escala=res.escala; s.lead.escalado=res.escala }
+        s.espera = res.espera ? {id:res.espera, turno:s.lead.turnos} : null;
+        s.fallos = 0;
+        s.historia.push(out); return out;
+      }
+      s.espera = null;   /* no contestó a eso: la promesa caduca */
     }
 
     /* 3b · ¿hay un subflujo abierto? (cotización de seguro o de cargador)
@@ -787,6 +883,10 @@ function crearSesion(vehiculoInicial){
 
     if(top.t.esc){ out.escala=top.t.esc; s.lead.escalado=top.t.esc }
 
+    /* lo que este tema deja prometido para el turno siguiente */
+    var espId = (typeof top.t.espera==="function") ? top.t.espera(s.lead) : top.t.espera;
+    if(espId && ESPERAS[espId] && !out.escala) s.espera = {id:espId, turno:s.lead.turnos};
+
     /* El tema abre una cotización paralela: se arma el subflujo y el próximo
        turno lo atiende el bloque 3b. */
     if(top.t.sub && SUBFLUJOS[top.t.sub] && !(s.lead.secundarios||[]).includes(top.t.sub)
@@ -799,6 +899,7 @@ function crearSesion(vehiculoInicial){
        tres temas resueltos sin escalar, propone el siguiente paso UNA vez. */
     if(!out.escala && !s.empujado && !s.lead.escalado && s.lead.interes.length>=3){
       s.empujado = true;
+      s.espera = {id:"agendar", turno:s.lead.turnos};
       out.empujon = "Por lo que hemos hablado, creo que ya tienes lo que necesitas para decidir si te vale la pena verlo en persona."+
         (s.lead.ciudad ? " ¿Te agendo una prueba de ruta en "+s.lead.ciudad+"?" : " ¿En qué ciudad estás? Te agendo una prueba de ruta.");
     }
@@ -817,7 +918,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.12";
+var VERSION = "2026-07-28.13";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -841,6 +942,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"dale compartelo",
+   arreglo:"El bot ofrecía el simulador de ahorro y no lo compartía. Ya no: ahora cada pregunta que hace tiene respuesta prevista, incluido el «sí» cuando propone la prueba de ruta.",
+   ver:"2026-07-28.13"},
   {q:"que tan seguro es el carro",
    arreglo:"Antes ofrecía póliza a quien preguntaba por SEGURIDAD. 'Seguro' suelto ya no dispara el tema: en Colombia es muletilla («seguro que sí», «de seguro»). Solo cuenta cuando es sustantivo.",
    ver:"2026-07-28.8"},

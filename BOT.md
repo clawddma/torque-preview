@@ -64,6 +64,39 @@ Otras dos reglas que salieron de la misma prueba:
 - **El bot no dice "no entendí" cuando el cliente acaba de contestarle.** Si el turno
   trae una señal nueva (ciudad, plazo, uso, si puede cargar), la usa y sigue.
 
+## 2b. Las cuatro capas del motor
+
+El bot no es una lista de respuestas: son cuatro capas que se consultan en orden.
+La cuarta se agregó tarde y era la que faltaba para que las conversaciones se
+sostuvieran.
+
+| Capa | Qué guarda | Qué pasaba sin ella |
+|---|---|---|
+| **Hechos** | `VEH`, `COMUN`: precios, autonomías, garantías | Inventaría cifras |
+| **Guardarraíles** | `VETO`, motivos de escalamiento | Negociaría descuentos y prometería tasas |
+| **Señales del cliente** | ciudad, plazo, pago, uso, si puede cargar | Preguntaría dos veces lo mismo |
+| **Contrato de la conversación** | `ESPERAS`: qué acabo de preguntar y qué significa un "sí" ahora | **Prometía y no cumplía** |
+
+La cuarta capa nació de un defecto que encontró Daniel probando: el bot ofrecía el
+simulador de ahorro —*"¿te lo comparto?"*—, el cliente contestaba *"dale,
+compártelo"*, y el bot respondía con un menú genérico. Había prometido algo y no lo
+entregaba.
+
+Al revisarlo apareció el fondo del asunto: **el bot hacía quince preguntas y solo
+sabía qué hacer con cinco.** Tenía memoria de los hechos pero no del contrato de la
+conversación. Y el caso más caro no era el simulador: era el empujón. El bot proponía
+la prueba de ruta —el momento exacto de la conversión— y un "sí" no hacía nada.
+
+Ahora cada respuesta que termina en pregunta declara qué espera y qué hacer con el
+sí y con el no. Tres reglas la mantienen honesta:
+
+- **Una expectativa dura un solo turno.** Un "sí" tres mensajes después ya no es
+  respuesta a nada.
+- **Si el cliente cambia de tema, manda su tema.** La promesa caduca sin ruido.
+- **Encadena.** "¿Tienes dónde cargar?" → "no" → recomienda la MAGE → "¿te la
+  muestro en detalle?" → "sí" → escala a prueba de ruta. Tres turnos, una sola
+  intención, sin que el cliente repita nada.
+
 ## 3. Reglas de escalamiento
 
 Trece motivos pasan la conversación a humano:

@@ -207,7 +207,11 @@ async function atender(waId, texto, nombre, campana) {
     /* la cotización a medio hacer también es del hilo, no del lead: sin esto
        el cliente contesta "26 a 40" y el bot no sabe qué le preguntó */
     ses.sub      = guardado.estado._sub || null;
-    delete ses.lead._fallos; delete ses.lead._empujado; delete ses.lead._sub;
+    /* lo que el bot prometió en el mensaje anterior: sin esto, el cliente
+       responde "dale, compártelo" y el bot no sabe qué iba a compartir */
+    ses.espera   = guardado.estado._espera || null;
+    delete ses.lead._fallos; delete ses.lead._empujado;
+    delete ses.lead._sub; delete ses.lead._espera;
   }
 
   almacen.anotarMensaje(waId, "entra", texto);
@@ -247,7 +251,7 @@ async function atender(waId, texto, nombre, campana) {
   }
 
   almacen.guardarConversacion(waId,
-    Object.assign({}, ses.lead, { _fallos: ses.fallos, _empujado: ses.empujado, _sub: ses.sub }),
+    Object.assign({}, ses.lead, { _fallos: ses.fallos, _empujado: ses.empujado, _sub: ses.sub, _espera: ses.espera }),
     nombre, campana);
 
   /* 7a · el segundo negocio de la misma conversación.

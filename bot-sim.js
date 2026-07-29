@@ -217,6 +217,30 @@ var PERSONAS = [
     {q:"cuanto vale el carro entonces", espera:"precio", contiene:"$109.000.000"}
   ]},
 
+ {nombre:"Julián · el que acepta todo lo que le ofrecen",
+  perfil:"Daniel encontró que el bot ofrecía el simulador de ahorro y no lo compartía: prometía y no cumplía. Este cliente dice que sí a todo lo que el bot le propone, para que ninguna promesa quede sin respuesta.",
+  veh:"mage",
+  turnos:[
+    {q:"estoy en medellin", espera:"senal:ciudad"},
+    {q:"cuanto gasta de gasolina", espera:"consumo"},
+    {q:"dale, compartelo", espera:"resp:simulador", contiene:"#simulador"},
+    {q:"cuanto vale", espera:"precio"},
+    {q:"si", espera:"resp:precioAsesor"},
+    {q:"cual es la potencia", espera:"ficha"},
+    {q:"si, mandamela", espera:"resp:ficha", contiene:"#ficha"}
+  ]},
+
+ {nombre:"Bibiana · la que dice que sí a la prueba de ruta",
+  perfil:"El momento de la conversión. El bot proponía agendar y un «sí» no hacía nada: se perdía el lead justo cuando el cliente decía que quería verlo.",
+  veh:"vigo",
+  turnos:[
+    {q:"hola, estoy en cali", espera:"senal:ciudad"},
+    {q:"cuanto cuesta", espera:"precio"},
+    {q:"cuanta autonomia tiene", espera:"consumo"},
+    {q:"que garantia trae", espera:"garantia"},
+    {q:"si, dale", espera:"resp:agendar", contiene:"cuadren día y hora"}
+  ]},
+
  {nombre:"Esteban · el de las dos versiones del Vigo",
   perfil:"Camilo encontró que anunciábamos los 470 km de la E2+ junto al precio de la E2, que hace 401. Eso es publicidad engañosa y además le daña la venta al asesor: el cliente llega esperando otra cosa. Esta conversación existe para que no vuelva a pasar.",
   veh:"vigo",
@@ -281,7 +305,13 @@ function correr(BOT){
 
       /* contabilidad de escaladas */
       var debia = t.espera && (t.espera.indexOf("escala:")===0 || t.espera.indexOf("veto:")===0);
-      if(debia && o.escala) res.escalasOk++;
+      /* Una respuesta a algo que el bot ofreció ("¿te agendo la prueba?" →
+         "sí") a veces escala y a veces no, y las dos están bien: compartir el
+         simulador no escala, aceptar la prueba de ruta sí. No se cuenta en
+         ninguno de los dos lados. */
+      var esRespuesta = t.espera && t.espera.indexOf("resp:")===0;
+      if(esRespuesta){ if(o.escala) res.escalasOk++ }
+      else if(debia && o.escala) res.escalasOk++;
       else if(debia && !o.escala) res.escalasFalt++;
       else if(!debia && o.escala && o.escala!=="nose") res.escalasSobra++;
 
