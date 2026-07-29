@@ -326,7 +326,7 @@ var PERSONAS = [
   perfil:"La prueba que pidió Daniel: un interesado que hace muchas preguntas seguidas y espera resolverlo todo en un solo chat. Si el bot se pierde, olvida algo o vuelve al menú, el lead se cae. Aquí se vigila cada unión.",
   veh:"box",
   turnos:[
-    {q:"hola buenas", espera:"saludo", contiene:"Aquí estoy"},
+    {q:"hola buenas", espera:"saludo", contiene:"Cuéntame"},
     {q:"cuanto vale y que garantia tiene?", espera:"precio+garantia", contiene:"200.000 km"},
     {q:"de que colores hay?", espera:"colores"},
     {q:"el rojo me gusta", espera:"colores", contiene:"Anotado: Rojo"},
@@ -334,6 +334,14 @@ var PERSONAS = [
     {q:"vivo en pereira", espera:"senal:ciudad"},
     {q:"en que mas me puedes ayudar?", espera:"capacidades", contiene:"Comparar"},
     {q:"resumeme lo que hemos hablado", espera:"resumen", contiene:"Mazda 3 2018"}
+  ]},
+
+ {nombre:"Marta L. · tres preguntas en un mensaje",
+  perfil:"Daniel: «3 preguntas y solo responde una». Pidió precio, autonomía y prueba de ruta en Armenia y el bot contestó solo la última. La regla anterior excluía del multi-intento los temas que escalan — justo el que cierra la venta. Ahora responde todo y escala al final.",
+  veh:"mage",
+  turnos:[
+    {q:"Precio y autonomia y prueba de ruta en armenia", espera:"precio+consumo+prueba", contiene:"$109.000.000", escalaOk:true},
+    {q:"y si sube la reforma que pasa con el precio", espera:"reforma"}
   ]},
 
  {nombre:"Esteban · el de las dos versiones del Vigo",

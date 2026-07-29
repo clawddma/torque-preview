@@ -403,9 +403,11 @@ var KB = [
 
  {id:"saludo", debil:true, k:["hola","buenas","buenos dias","buenos días","buenas tardes","buenas noches","que tal","qué tal","hey","saludos","alo","aló"],
   r:function(v,lead){
-    /* Antes devolvía null en el primer turno y el bot se quedaba MUDO. */
-    return "¡Hola! Aquí estoy. ¿Qué quieres saber "+(v.art==="la"?"de la ":"del ")+v.nombre+
-           " — precio, autonomía, garantía o dónde le hacen el mantenimiento?";
+    /* Antes devolvía null en el primer turno y el bot se quedaba MUDO. Y
+       después repetía el menú completo, que ya estaba en el saludo. */
+    if(lead.interes.length) return "¡Hola! Aquí sigo. ¿Seguimos donde íbamos o quieres mirar otra cosa?";
+    return "¡Hola! Cuéntame qué quieres saber "+(v.art==="la"?"de la ":"del ")+v.nombre+
+           ": precio, autonomía, garantía, colores o dónde le hacen el mantenimiento.";
   }},
 
  /* Un "sí" suelto, sin pregunta pendiente, no es incomprensión: es un cliente
@@ -1110,9 +1112,10 @@ function crearSesion(vehiculoInicial){
 
   s.saludo = function(){
     var v = s.vehiculo();
-    return "¡Hola! Soy el asesor digital de TORQ.\n\n"+
+    /* Cuatro párrafos para saludar espantan. Uno basta: quién soy, qué carro
+       traes y una pregunta abierta. */
+    return "¡Hola! Soy el asesor digital de TORQ 👋\n\n"+
       "Veo que vienes por "+v.art+" "+v.largo+" — "+v.clase+", desde "+v.precio+".\n\n"+
-      "Puedo resolverte dudas de precio, ficha, autonomía, garantía o servicio. También te comparo contra los otros dos de la línea. Y si necesitas algo que solo resuelve una persona, te paso con un asesor.\n\n"+
       "¿Qué quieres saber?";
   };
 
@@ -1406,27 +1409,52 @@ function crearSesion(vehiculoInicial){
        Se responden las dos, en el orden en que aparecen en la frase, y solo
        si las dos son informativas: si una escala o abre una cotización, esa
        manda sola para no encimarle dos cosas al cliente. */
-    var segunda = null;
-    var nq = norm(q);
-    /* La señal de que son DOS preguntas es un conector: "y", "también",
-       "además", o una coma. Sin conector, dos temas que puntúan parecido son
-       casi siempre la misma pregunta vista de dos maneras. */
-    var conector = /(^|\s)(y|e|tambien|también|ademas|además|otra cosa|de paso)(\s|$)/.test(nq) || /[,;]/.test(q);
-    if(conector && items.length>1 && items[1].p>=3 && !items[1].t.debil && !items[0].t.debil
-       && !items[0].t.esc && !items[1].t.esc && !items[0].t.sub && !items[1].t.sub){
-      var pos = function(it){
-        var m = 1e9;
-        it.hits.forEach(function(h){ var i=nq.indexOf(h); if(i>-1 && i<m) m=i });
-        return m;
-      };
-      /* y que estén en tramos distintos de la frase, no pegadas */
-      if(Math.abs(pos(items[0])-pos(items[1])) >= 5){
-        if(pos(items[1]) < pos(items[0])) { var tmp=items[0]; items[0]=items[1]; items[1]=tmp }
-        segunda = items[1];
-      }
-    }
+    /* ── VARIAS PREGUNTAS EN UN MENSAJE ────────────────────────────────
+       "Precio y autonomía y prueba de ruta en Armenia" son TRES cosas, y el
+       bot contestaba una. La regla anterior tenía un error de fondo: excluía
+       del multi-intento cualquier tema que escalara — justo el que suele ir
+       de último y cerrar la venta.
 
-    var top=items[0];
+       El orden correcto es el de la frase: se responde todo lo que se puede
+       responder, y la que necesita a un humano va al final y escala. Así el
+       cliente recibe sus respuestas Y queda conectado, en un solo turno.
+
+       Hasta tres: más que eso es un mensaje ilegible en WhatsApp. */
+    var nq = norm(q);
+    var posDe = function(it){
+      var m = 1e9;
+      it.hits.forEach(function(h){ var i2=nq.indexOf(h); if(i2>-1 && i2<m) m=i2 });
+      return m;
+    };
+    /* El conector tiene que estar ENTRE las dos, no en cualquier parte. "Y si
+       sube la reforma, ¿qué pasa con el precio?" empieza por "y" y menciona
+       precio, pero es UNA sola pregunta: el "y" de arranque no separa nada. */
+    var hayConector = function(a,b){
+      var i1=Math.min(a,b), i2=Math.max(a,b);
+      if(i2-i1<5) return false;
+      var tramo = nq.slice(i1, i2);
+      return /(^|\s)(y|e|tambien|también|ademas|además|otra cosa|de paso)(\s|$)/.test(tramo)
+             || /[,;]/.test(q.slice(i1, i2));
+    };
+
+    var multi = [items[0]];
+    for(var mi=1; mi<items.length && multi.length<3; mi++){
+      var c = items[mi];
+      if(c.p<2 || c.t.debil) continue;
+      if(multi.some(function(x){ return x.t.id===c.t.id })) continue;
+      if(!multi.every(function(x){ return hayConector(posDe(x), posDe(c)) })) continue;
+      multi.push(c);
+    }
+    multi.sort(function(a,b){ return posDe(a)-posDe(b) });
+
+    /* la que necesita a un humano va de última: primero se resuelve todo lo
+       que sí se puede resolver */
+    multi.sort(function(a,b){
+      var ea = (a.t.esc||a.t.sub)?1:0, eb=(b.t.esc||b.t.sub)?1:0;
+      return ea-eb;
+    });
+
+    var top=multi[0];
     out.tema=top.t.id; out.puntaje=top.p; out.entendido=true;
 
     delete s.lead._ofrecio;
@@ -1438,13 +1466,20 @@ function crearSesion(vehiculoInicial){
     if(top.t.id!=="saludo" && top.t.id!=="gracias" && top.t.id!=="despedida" &&
        s.lead.interes.indexOf(top.t.id)<0) s.lead.interes.push(top.t.id);
 
-    /* la segunda intención se contesta a continuación, en el mismo turno */
-    if(segunda){
-      var r2 = (typeof segunda.t.r==="function") ? segunda.t.r(v, s.lead) : segunda.t.r;
-      if(r2){
-        r = r + "\n\n───\n\n" + r2;
-        out.tema = top.t.id+"+"+segunda.t.id;
-        if(s.lead.interes.indexOf(segunda.t.id)<0) s.lead.interes.push(segunda.t.id);
+    /* las demás intenciones se contestan a continuación, en el mismo turno */
+    for(var k2=1; k2<multi.length; k2++){
+      var otro = multi[k2];
+      var rN = (typeof otro.t.r==="function") ? otro.t.r(v, s.lead) : otro.t.r;
+      if(!rN) continue;
+      r = r + "\n\n───\n\n" + rN;
+      out.tema += "+" + otro.t.id;
+      if(s.lead.interes.indexOf(otro.t.id)<0) s.lead.interes.push(otro.t.id);
+      var eN = (typeof otro.t.esc==="function") ? otro.t.esc(s.lead, q) : otro.t.esc;
+      if(eN){ out.escala=eN; s.lead.escalado=eN }
+      if(otro.t.sub && SUBFLUJOS[otro.t.sub] && !(s.lead.secundarios||[]).includes(otro.t.sub)
+         && s.lead._ofrecio!==false){
+        s.sub = {id:otro.t.sub, paso:0, confirmado:false, datos:{}};
+        out.abreSub = otro.t.sub;
       }
     }
 
@@ -1492,7 +1527,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.20";
+var VERSION = "2026-07-28.21";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -1516,6 +1551,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"precio y autonomia y prueba de ruta en armenia",
+   arreglo:"Tres preguntas en un mensaje ahora reciben tres respuestas, en el orden en que las escribiste, y la que necesita a un asesor va de última para que quedes conectado sin perder las otras.",
+   ver:"2026-07-28.21"},
   {q:"cuanto vale y que garantia tiene",
    arreglo:"Dos preguntas en un mensaje ahora reciben dos respuestas. Y se sumaron: qué sabe hacer el bot, el resumen de la conversación, reconocer la marca del carro que entregas en parte de pago, y anotar el color que te gustó.",
    ver:"2026-07-28.20"},
