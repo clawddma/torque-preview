@@ -131,7 +131,7 @@ body{background:var(--fondo);color:var(--texto);
   <div class="top">
     <div class="top-in">
       <div class="av"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45"/><path d="M60 60 L88 88" stroke="#c8f24a" stroke-width="12.5" stroke-linecap="round"/></svg></div>
-      <div class="who"><div class="n">TORQ</div><div class="s" id="estado">en l&iacute;nea</div></div>
+      <div class="who"><div class="n">TORQ</div><div class="s"><span id="estado">en l&iacute;nea</span><span id="ver" style="opacity:.45"></span></div></div>
       <button class="menu" id="abrir" aria-label="Reporte">&#9776;</button>
     </div>
     <div class="origen" id="origen"></div>
@@ -153,7 +153,13 @@ body{background:var(--fondo);color:var(--texto);
   <div class="pcuerpo" id="pcuerpo"></div>
 </div>
 
-<script src="bot-motor.js?v=2026-07-28.18"></script>
+<script>
+/* El motor se carga con una marca de tiempo nueva en cada visita.
+   Sin esto el navegador guarda bot-motor.js y sigue respondiendo con la
+   lógica de ayer: pasó tres veces, y cada vez costó un reporte de un defecto
+   que ya estaba corregido. La página puede quedar cacheada; el motor no. */
+document.write('<scr'+'ipt src="bot-motor.js?t='+Date.now()+'"><\/scr'+'ipt>');
+</script>
 <script>
 (function(){
 "use strict";
@@ -425,6 +431,8 @@ function contador(){
 document.getElementById("abrir").onclick=function(){ pintarPanel(); panel.classList.add("abierto") };
 document.getElementById("cerrar").onclick=function(){ panel.classList.remove("abierto") };
 
+/* la versión a la vista: si no coincide con la que te di, tienes copia vieja */
+document.getElementById("ver").textContent = " · v"+B.VERSION.split(".").pop();
 contador();
 reiniciar(param||"mage");
 })();
