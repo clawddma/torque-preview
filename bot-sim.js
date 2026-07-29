@@ -29,7 +29,7 @@ var PERSONAS = [
     {q:"buenas tardes, cuanto cuesta la mage?", espera:"precio"},
     {q:"y se enchufa o no", espera:"enchufe"},
     {q:"cuanto gasta de gasolina", espera:"consumo"},
-    {q:"estoy en medellin, la quiero este mes", espera:"disponible"},
+    {q:"estoy en medellin, la quiero este mes", espera:"disponible", contiene:"Medellín"},
     {q:"listo, quiero verla", espera:"escala:agenda"}
   ]},
 
@@ -261,6 +261,14 @@ var PERSONAS = [
   turnos:[
     {q:"que versiones tiene el vigo?", espera:"versiones:vigo", contiene:"$5.000.000"},
     {q:"si", espera:"resp:precioAsesor"}
+  ]},
+
+ {nombre:"Wilson · el de Barrancabermeja",
+  perfil:"Daniel encontró que el bot le preguntaba la ciudad al cliente que acababa de decirla en la misma frase. La causa: el bot solo conocía 30 ciudades de las 1.100 del país. Ahora conoce las capitales y los municipios grandes, y las demás las saca de la frase.",
+  veh:"mage",
+  turnos:[
+    {q:"tienes el vehiculo para entrega inmediata? me encuentro en barrancabermeja", espera:"disponible", noContiene:"¿En qué ciudad estás?"},
+    {q:"si", espera:"resp:precioAsesor", contiene:"Barrancabermeja"}
   ]},
 
  {nombre:"Esteban · el de las dos versiones del Vigo",

@@ -287,10 +287,15 @@ var KB = [
 
  {id:"disponible", k:["disponible","inventario","entrega","entregan","stock","unidades","llega","cuando llega","hay disponible","cuanto se demora la entrega","inmediata","la quiero","lo quiero","quiero comprar","me la llevo","me lo llevo","cuando me la entregan","hay en"],
   r:function(v,lead){
-    return "Hay unidades "+(v.art==="la"?"de la ":"del ")+v.nombre+" y viene más inventario en camino, pero la existencia por color y ciudad cambia de un día a otro.\n\n"+
-      "No te quiero dar una fecha que no pueda sostener: eso lo confirma la sala en el momento."+
-      (lead.ciudad ? " Se lo pregunto para "+lead.ciudad+"." : " ¿En qué ciudad estás?");
-  }},
+    /* Antes era pura reserva: "no te quiero dar una fecha", y de remate le
+       preguntaba la ciudad al cliente que acababa de decirla. Sí hay unidades
+       con entrega inmediata —está publicado en el sitio— y decirlo no es
+       prometer nada: lo que se verifica es el color y la versión. */
+    var t = "Sí, hay unidades "+(v.art==="la"?"de la ":"del ")+v.nombre+" con entrega inmediata.\n\n"+
+      "Lo que cambia de un día a otro es el color y la versión exacta, así que eso se verifica con la sala en el momento — no te doy un color que después no esté.";
+    if(lead.ciudad) return t+"\n\nAnoto que estás en "+lead.ciudad+". ¿Quieres que un asesor te confirme hoy mismo qué hay disponible para allá?";
+    return t+"\n\n¿En qué ciudad estás? Con eso el asesor te confirma qué hay disponible.";
+  }, espera:function(lead){ return lead.ciudad ? "precioAsesor" : null }},
 
  {id:"marca", k:["dongfeng","china","chino","marca","confiable","confianza","corautos","ustedes","quienes son","quiénes son","es buena","reputacion","reputación","quiebra","se van del pais"],
   r:"Dongfeng es uno de los fabricantes más grandes de China y en Colombia lo representa Corautos Andino, del grupo Colombiana de Comercio (Corbeta) — el mismo grupo detrás de Foton.\n\nEn el primer semestre de 2026 la marca creció 217% en matrículas en el país. Y el respaldo se mide en cosas concretas: "+COMUN.red+" Y 8 años de garantía de batería."},
@@ -658,7 +663,45 @@ function esSi(q){ var n=norm(q); return AFIRMA.some(function(w){ return n===w ||
 function esNo(q){ var n=norm(q); return NIEGA.some(function(w){ return n===w || n.indexOf(w+" ")===0 || n.indexOf(" "+w+" ")>-1 }) }
 
 /* ═══ SEÑALES QUE EL BOT VA APRENDIENDO DEL CLIENTE ════════════════════════ */
-var CIUDADES = ["bogotá","bogota","medellín","medellin","cali","barranquilla","bucaramanga","cúcuta","cucuta","villavicencio","montería","monteria","valledupar","pasto","pereira","manizales","ibagué","ibague","neiva","popayán","popayan","duitama","tunja","cartagena","santa marta","copacabana","armenia","sincelejo","riohacha","yopal"];
+/* Las 32 capitales de departamento más los municipios grandes de las áreas
+   metropolitanas. Antes eran 30 ciudades en un país con 1.100 municipios: un
+   cliente de Barrancabermeja escribía "me encuentro en Barrancabermeja" y el
+   bot le preguntaba en qué ciudad estaba. La lista cerrada nunca va a
+   alcanzar, por eso además está `ciudadPorPatron` más abajo. */
+var CIUDADES = ["bogotá","bogota","medellín","medellin","cali","barranquilla","cartagena",
+  "cúcuta","cucuta","bucaramanga","pereira","santa marta","ibagué","ibague","pasto","manizales",
+  "neiva","villavicencio","armenia","valledupar","montería","monteria","sincelejo","popayán","popayan",
+  "riohacha","tunja","florencia","quibdó","quibdo","yopal","mocoa","san andrés","san andres",
+  "arauca","leticia","inírida","inirida","mitú","mitu","puerto carreño","puerto carreno","san josé del guaviare","san jose del guaviare",
+  "barrancabermeja","girardot","rionegro","envigado","itagüí","itagui","bello","sabaneta","copacabana","la estrella","caldas",
+  "soacha","chía","chia","zipaquirá","zipaquira","facatativá","facatativa","funza","mosquera","madrid","cajicá","cajica","cota","fusagasugá","fusagasuga",
+  "soledad","malambo","apartadó","apartado","turbo","yumbo","palmira","buga","tuluá","tulua","cartago","jamundí","jamundi",
+  "duitama","sogamoso","piedecuesta","floridablanca","girón","giron","dosquebradas","la dorada","magangué","magangue",
+  "maicao","ipiales","tumaco","buenaventura","espinal","melgar","garzón","garzon","pitalito","aguachica","ocaña","ocana"];
+
+/* Y cuando la ciudad no está en la lista —que va a pasar—, se reconoce por la
+   forma de la frase: "estoy en X", "me encuentro en X", "vivo en X". Vale más
+   anotar un nombre desconocido que preguntarle otra vez al cliente algo que
+   ya dijo. */
+var PATRON_CIUDAD = /(?:estoy en|me encuentro en|vivo en|soy de|desde|aqui en|aquí en|resido en|ciudad de|en la ciudad de)\s+([a-záéíóúñü][a-záéíóúñü.\- ]{2,28})/i;
+var NO_CIUDAD = ["la ciudad","mi ciudad","este momento","el momento","casa","el trabajo","la empresa",
+  "colombia","el pais","el país","la costa","el norte","el sur","proceso","busca","realidad","este caso"];
+
+function ciudadPorPatron(q){
+  var m = String(q||"").match(PATRON_CIUDAD);
+  if(!m) return null;
+  var bruto = m[1].trim().replace(/[.,;].*$/,"").split(/\s+(?:y|pero|aunque|porque|para|con)\s+/)[0].trim();
+  if(bruto.length<4 || bruto.split(" ").length>3) return null;
+  if(NO_CIUDAD.indexOf(norm(bruto))>-1) return null;
+  /* "estoy en este momento buscando" no es una ciudad. Un nombre propio no
+     empieza por determinante ni por pronombre. */
+  var DET = ["este","esta","ese","esa","esto","eso","mi","tu","su","el","la","los","las",
+             "un","una","unos","unas","otro","otra","proceso","plan","busca","varios","muchas","muchos"];
+  if(DET.indexOf(norm(bruto).split(" ")[0])>-1) return null;
+  return bruto.split(" ").map(function(p){
+    return p.charAt(0).toUpperCase()+p.slice(1).toLowerCase();
+  }).join(" ");
+}
 
 var PLAZO = [
   {k:["ya","de una","esta semana","este mes","urgente","cuanto antes","lo antes posible","inmediato"], v:"Este mes"},
@@ -810,12 +853,18 @@ function detectarLista(q, lista){
 
 function detectarCiudad(q){
   var n=norm(q);
-  for(var i=0;i<CIUDADES.length;i++){
-    if(n.indexOf(norm(CIUDADES[i]))>-1){
-      return CIUDADES[i].charAt(0).toUpperCase()+CIUDADES[i].slice(1);
+  /* primero las conocidas, de la más larga a la más corta: sin eso "cali"
+     ganaría dentro de "Calima" y "Buga" dentro de "Bugalagrande" */
+  var orden = CIUDADES.slice().sort(function(a,b){ return b.length-a.length });
+  for(var i=0;i<orden.length;i++){
+    var c=norm(orden[i]);
+    if(new RegExp("(^|\\s)"+c+"($|\\s)").test(n)){
+      return orden[i].split(" ").map(function(p){
+        return p.charAt(0).toUpperCase()+p.slice(1);
+      }).join(" ");
     }
   }
-  return null;
+  return ciudadPorPatron(q);
 }
 
 /* ═══ LA SESIÓN ════════════════════════════════════════════════════════════
@@ -1127,7 +1176,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.15";
+var VERSION = "2026-07-28.16";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -1151,6 +1200,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"tienes el vehiculo para entrega inmediata me encuentro en barrancabermeja",
+   arreglo:"Dos cosas: el bot solo conocía 30 ciudades y no reconocía Barrancabermeja, por eso volvía a preguntarla. Ahora conoce las 32 capitales más los municipios grandes, y las que no estén las reconoce por la frase («me encuentro en X»). Y la respuesta de disponibilidad dejó de ser tibia: afirma que hay unidades con entrega inmediata y aclara que lo que se verifica es el color y la versión.",
+   ver:"2026-07-28.16"},
   {q:"comparame la autonomia de este vehiculo con el vigo",
    arreglo:"Ya no ofrece comparar en lo que acaba de comparar. Y ahora la comparación continúa sola: un «y en precio?» sigue midiendo los mismos dos carros, sin que tengas que repetir cuáles.",
    ver:"2026-07-28.15"},
