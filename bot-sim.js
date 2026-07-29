@@ -241,6 +241,24 @@ var PERSONAS = [
     {q:"si, dale", espera:"resp:agendar", contiene:"cuadren día y hora"}
   ]},
 
+ {nombre:"Mauricio D. · el que compara entre los nuestros",
+  perfil:"Daniel pidió «cuál es la autonomía y me lo comparas con el Vigo» y el bot habló solo de la carga del Vigo, además de mudarse de carro. Faltaba lo más básico de una línea de tres: poder ponerlos uno al lado del otro.",
+  veh:"mage",
+  turnos:[
+    {q:"cual es la autonomia de este vehiculo y me lo puedes comparar con el vigo?", espera:"compara:mage-vigo:autonomia", contiene:"1.000 km"},
+    {q:"y en precio?", espera:"precio"},
+    {q:"comparame los tres en potencia", espera:"compara:vigo-box-mage:potencia", contiene:"288"},
+    {q:"cual es la diferencia entre la e2 y la e2+", espera:"compara:vigo-box-mage"}
+  ]},
+
+ {nombre:"Sara · las versiones de un mismo carro",
+  perfil:"Donde está la plata que el cliente sube o no sube. Comparar E2 contra E2+ no es comparar carros: es comparar versiones del mismo.",
+  veh:"vigo",
+  turnos:[
+    {q:"que versiones tiene el vigo?", espera:"versiones:vigo", contiene:"$5.000.000"},
+    {q:"si", espera:"resp:precioAsesor"}
+  ]},
+
  {nombre:"Esteban · el de las dos versiones del Vigo",
   perfil:"Camilo encontró que anunciábamos los 470 km de la E2+ junto al precio de la E2, que hace 401. Eso es publicidad engañosa y además le daña la venta al asesor: el cliente llega esperando otra cosa. Esta conversación existe para que no vuelva a pasar.",
   veh:"vigo",

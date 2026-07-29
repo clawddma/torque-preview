@@ -47,8 +47,10 @@ var VEH = {
        daña la venta al asesor: el cliente llega esperando otra cosa.
        Toda cifra de aquí es de la E2. La E2+ va aparte, con su precio. */
     versiones:[
-      {n:"E2",  precio:"$84.990.000", bateria:"44,94 kWh LFP", autonomia:"401 km CLTC", carga:"30 minutos del 30 al 80%"},
-      {n:"E2+", precio:"$89.990.000", bateria:"51,87 kWh LFP", autonomia:"470 km CLTC", carga:"18 minutos del 30 al 80%"}
+      {n:"E2",  precio:"$84.990.000", bateria:"44,94 kWh LFP", autonomia:"401 km CLTC", carga:"30 minutos del 30 al 80%",
+       extra:"rines de 17 pulgadas"},
+      {n:"E2+", precio:"$89.990.000", bateria:"51,87 kWh LFP", autonomia:"470 km CLTC", carga:"18 minutos del 30 al 80%",
+       extra:"rines de 18 pulgadas y luces LED adaptativas"}
     ],
     autonomia:"401 km CLTC en la E2, y 470 km en la E2+ de $89.990.000",
     consumo:"no consume gasolina: se carga con electricidad",
@@ -70,6 +72,12 @@ var VEH = {
     motor:"94 caballos y 160 Nm",
     bateria:"43,89 kWh de tipo LFP",
     carga:"30 minutos",
+    versiones:[
+      {n:"E2", precio:"$69.990.000", bateria:"43,89 kWh LFP", autonomia:"430 km CLTC", carga:"30 minutos",
+       extra:"cámara de reversa, rines de acero y 4 parlantes"},
+      {n:"E3", precio:"$74.990.000", bateria:"43,89 kWh LFP", autonomia:"430 km CLTC", carga:"30 minutos",
+       extra:"cámara panorámica de 360°, rines de aluminio y asiento eléctrico con memoria, calefacción y ventilación"}
+    ],
     baul:"326 litros",
     medidas:null,
     colores:null,
@@ -359,6 +367,139 @@ var ALIADOS = {
 function aliado(k){
   var a=ALIADOS[k];
   return (a && a.nombre) ? a.nombre : "uno de nuestros aliados";
+}
+
+/* ═══ COMPARAR ENTRE LO NUESTRO ════════════════════════════════════════════
+   El hueco que encontró Daniel: el bot tenía tres vehículos y no sabía
+   ponerlos uno al lado del otro. Le preguntaron "¿cuál es la autonomía de
+   este y me lo comparas con el Vigo?" y contestó solo la carga del Vigo —
+   además de cambiarse de carro, porque bastaba nombrar otro para que el
+   enrutador moviera toda la conversación.
+
+   Dos cosas estaban mal y las dos son de ontología, no de redacción:
+
+   1. `comparar` solo sabía medirse contra OTRAS marcas. Comparar entre los
+      tres propios —que es la pregunta más frecuente cuando hay una línea de
+      tres— no existía.
+   2. Nombrar otro vehículo se leía como "hablemos de ese". En una
+      comparación es al revés: el otro es el término de comparación, no el
+      nuevo tema.
+
+   El valor de verdad está en la última línea de cada comparación: decir en
+   qué se parecen y en qué NO son comparables. Enfrentar los 1.000 km de una
+   híbrida con los 470 de un eléctrico sin explicar que unos son con gasolina
+   y otros con electricidad es desinformar con cifras ciertas. */
+
+var DIMENSIONES = [
+  {id:"autonomia", k:["autonomia","autonomía","kilometros","kilómetros","km","recorre","rinde","alcanza","cuanto anda","cuánto anda","rango"],
+   titulo:"Autonomía",
+   dato:function(v){ return v.autonomia },
+   nota:"Ojo con compararlas de frente: la MAGE hace esos kilómetros con gasolina y sin enchufarse nunca; el Vigo y el Box los hacen con una carga de electricidad. Son dos formas de gastar menos, no la misma."},
+
+  {id:"precio", k:["precio","cuesta","vale","valor","costo","mas barato","más barato","economico","económico"],
+   titulo:"Precio",
+   dato:function(v){ return v.versiones ? v.versiones.map(function(x){return x.n+" "+x.precio}).join(" · ") : v.precio },
+   nota:"Todos con IVA incluido y sujetos a confirmación con la sala. Falta la matrícula, que cambia por ciudad."},
+
+  {id:"potencia", k:["potencia","caballos","hp","torque","motor","fuerza","acelera"],
+   titulo:"Potencia",
+   dato:function(v){ return v.motor },
+   nota:"La MAGE es la más potente de la línea por bastante; los eléctricos entregan su fuerza desde cero, que en ciudad se siente distinto a la cifra."},
+
+  {id:"espacio", k:["espacio","baul","baúl","maleta","tamaño","grande","cabe","familia","puestos"],
+   titulo:"Espacio",
+   dato:function(v){ return v.baul + (v.medidas ? " · "+v.medidas : "") },
+   nota:"Los tres son de cinco puestos. La diferencia real está en el baúl y en el largo."},
+
+  {id:"bateria", k:["bateria","batería","kwh","carga","cargar","enchufe","enchufar"],
+   titulo:"Batería y carga",
+   dato:function(v){ return v.tec==="hibrido"
+      ? v.bateria+" — no se enchufa nunca"
+      : v.bateria+" · carga rápida en "+v.carga },
+   nota:"La MAGE no se enchufa: su batería se recarga sola andando. Los otros dos sí, y ahí lo que manda es si tienes dónde cargar en casa."}
+];
+
+function detectarDimension(q){
+  var n=norm(q), mejor=null, mp=0;
+  DIMENSIONES.forEach(function(d){
+    var p=0;
+    d.k.forEach(function(w){
+      var wn=norm(w);
+      if(wn.indexOf(" ")>-1){ if(n.indexOf(wn)>-1) p+=6 }
+      else n.split(" ").forEach(function(tk){ if(tk===wn || (wn.length>=5 && tk.indexOf(wn)===0)) p+=2 });
+    });
+    if(p>mp){ mp=p; mejor=d }
+  });
+  return mejor;
+}
+
+var PIDE_COMPARAR = ["compara","comparar","comparalo","compáralo","comparame","compárame","comparacion","comparación",
+  "versus"," vs ","contra","diferencia entre","diferencias entre","cual es mejor","cuál es mejor",
+  "frente a","al lado del","cual conviene mas","cuál conviene más","entre el","entre la"];
+
+function pideComparar(q){
+  var n=" "+norm(q)+" ";
+  return PIDE_COMPARAR.some(function(w){ return n.indexOf(norm(w))>-1 });
+}
+
+/* Marcas de la competencia. Si el cliente compara contra una de ellas, la
+   comparación NO es entre lo nuestro: es la del tema `comparar`, que tiene
+   las cifras verificadas de cada rival. */
+var RIVALES = ["corolla","sportage","territory","mazda","toyota","kia","byd","geely","chery",
+  "seagull","dolphin","mg","mg4","ev2","ex5","yuan","starray","icar","niro","renault","nissan",
+  "suzuki","hyundai","volkswagen","ford","chevrolet","haval","jetour","omoda"];
+function nombraRival(q){
+  var toks=norm(q).split(" ");
+  return RIVALES.some(function(r){ return toks.indexOf(r)>-1 });
+}
+
+/* Todos los vehículos que el mensaje nombra, no solo el que más puntúa. */
+function vehiculosNombrados(q){
+  var n=norm(q), res=[];
+  ORDEN.forEach(function(id){
+    var hay = VEH[id].llaves.some(function(w){
+      var wn=norm(w);
+      return wn.indexOf(" ")>-1 ? n.indexOf(wn)>-1 : n.split(" ").indexOf(wn)>-1;
+    });
+    if(hay) res.push(id);
+  });
+  return res;
+}
+
+/* "¿Cuál es la diferencia entre la E2 y la E2+?" no compara carros: compara
+   versiones del mismo. Es de las preguntas que más deciden una venta, porque
+   ahí está la plata que el cliente sube o no sube. */
+var VERSIONADAS = ["e2","e2+","e3","e2 mas","version de entrada","versión de entrada","la de entrada","la full","tope de gama","la basica","la básica","versiones"];
+function pideVersiones(q){
+  var toks=norm(q).replace(/\+/g," mas ").split(" ");
+  var n=" "+norm(q)+" ";
+  return VERSIONADAS.some(function(w){
+    var wn=norm(w);
+    return wn.indexOf(" ")>-1 ? n.indexOf(wn)>-1 : toks.indexOf(wn)>-1;
+  });
+}
+
+function compararVersiones(v){
+  if(!v.versiones) return null;
+  var t = v.Art+" "+v.nombre+" tiene dos versiones:\n\n";
+  v.versiones.forEach(function(x){
+    t += "· "+x.n+" — "+x.precio+"\n  "+x.autonomia+", batería de "+x.bateria+", carga en "+x.carga+
+         (x.extra ? ".\n  Suma "+x.extra : "")+".\n\n";
+  });
+  var d = parseInt(v.versiones[1].precio.replace(/\D/g,""),10) - parseInt(v.versiones[0].precio.replace(/\D/g,""),10);
+  t += "La diferencia son $"+d.toLocaleString("es-CO")+".\n\n¿Quieres que un asesor te diga cuál hay disponible hoy?";
+  return t;
+}
+
+function compararNuestros(ids, dim){
+  var lista = ids.map(function(id){ return VEH[id] });
+  var d = dim || DIMENSIONES[1];   /* sin dimensión pedida: precio */
+  var t = d.titulo+", uno al lado del otro:\n\n";
+  lista.forEach(function(v){
+    t += "· "+v.nombre+" — "+d.dato(v)+"\n";
+  });
+  t += "\n"+d.nota+"\n\n¿Quieres que los compare en otra cosa: precio, autonomía, potencia o espacio?";
+  return t;
 }
 
 /* ═══ EXPECTATIVAS — LO QUE EL BOT ACABA DE PROMETER ═══════════════════════
@@ -702,14 +843,50 @@ function crearSesion(vehiculoInicial){
     var cg=detectarLista(q,CARGA); if(cg && cg!==s.lead.carga){ s.lead.carga=cg; nuevas.push("carga") }
     out.senales=nuevas;
 
-    /* 2 · ¿de cuál vehículo habla? El router va antes de responder. */
-    var nuevo=detectarVehiculo(q);
+    /* 2 · ¿de cuál vehículo habla?
+       Con una salvedad que costó un reporte: si el cliente está PIDIENDO una
+       comparación, nombrar otro carro no significa "hablemos de ese". El
+       sujeto sigue siendo el suyo y el otro es el término de comparación.
+       Antes bastaba decir "compáralo con el Vigo" para que toda la
+       conversación se mudara al Vigo. */
+    var nombrados = vehiculosNombrados(q);
+    /* Comparar sin nombrar a nadie —"compárame la potencia", "compáralos
+       todos"— es comparar los tres. Y si nombra un rival, manda el tema
+       `comparar`, que tiene las cifras verificadas de la competencia. */
+    var comparando = pideComparar(q) && !nombraRival(q);
+    var nuevo = comparando ? null : detectarVehiculo(q);
     out.vehiculoNombrado = nuevo;
     if(nuevo && nuevo!==s.lead.vehiculo){
       out.cambioVehiculo = {de:s.lead.vehiculo, a:nuevo};
       s.lead.vehiculo = nuevo;
     }
     var v = s.vehiculo();
+
+    /* 2b · comparación entre los nuestros.
+       Va antes de los temas porque "¿cuál es la autonomía y me lo comparas
+       con el Vigo?" trae DOS intenciones, y la que manda es la comparación:
+       responder solo la autonomía de uno deja al cliente sin lo que pidió. */
+    /* versiones del mismo carro */
+    if(pideVersiones(q) && v.versiones){
+      out.tema="versiones:"+v.id; out.entendido=true;
+      out.texto=compararVersiones(v);
+      s.fallos=0; s.espera={id:"precioAsesor", turno:s.lead.turnos};
+      if(s.lead.interes.indexOf("precio")<0) s.lead.interes.push("precio");
+      s.historia.push(out); return out;
+    }
+
+    if(comparando){
+      var ids = nombrados.slice();
+      if(ids.indexOf(s.lead.vehiculo)<0) ids.unshift(s.lead.vehiculo);
+      if(ids.length<=1) ids = ORDEN.slice();          /* "compáralos" a secas */
+      var dim = detectarDimension(q);
+      out.tema = "compara:"+ids.join("-")+(dim?":"+dim.id:"");
+      out.entendido = true;
+      out.texto = compararNuestros(ids, dim);
+      if(s.lead.interes.indexOf("comparar")<0) s.lead.interes.push("comparar");
+      s.fallos=0; s.espera=null;
+      s.historia.push(out); return out;
+    }
 
     /* 3 · GUARDARRAÍL DURO: el veto gana siempre, sin consultar nada más. */
     var veto = vetoDe(q);
@@ -918,7 +1095,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.13";
+var VERSION = "2026-07-28.14";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -942,6 +1119,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"cual es la autonomia de este vehiculo y me lo puedes comparar con el vigo",
+   arreglo:"El bot ya compara entre los tres, en autonomía, precio, potencia, espacio o batería — y nombrar otro carro en una comparación ya no muda la conversación a ese carro.",
+   ver:"2026-07-28.14"},
   {q:"dale compartelo",
    arreglo:"El bot ofrecía el simulador de ahorro y no lo compartía. Ya no: ahora cada pregunta que hace tiene respuesta prevista, incluido el «sí» cuando propone la prueba de ruta.",
    ver:"2026-07-28.13"},
