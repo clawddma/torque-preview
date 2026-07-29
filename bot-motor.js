@@ -138,8 +138,15 @@ function sinCierre(t){
 }
 
 function cierrePrecio(lead){
+  /* Incoherencia que costó un reporte: el bot decía "en Buga no hay taller" y
+     dos mensajes después ofrecía confirmar disponibilidad "en Buga". Si la
+     ciudad no tiene punto de venta, no se la nombra como si la tuviera. */
+  var c = lead && lead.ciudad;
+  var hayVenta = c && COBERTURA.venta.ciudades &&
+                 COBERTURA.venta.ciudades.some(function(x){ return norm(x)===norm(c) });
+  if(c && !hayVenta) return "¿Quieres que un asesor te confirme el precio vigente y desde cuál sala te lo pueden entregar?";
   return "¿Quieres que un asesor te confirme el precio vigente y la disponibilidad"+
-         (lead && lead.ciudad ? " en "+lead.ciudad : " para tu ciudad")+"?";
+         (c ? " en "+c : " para tu ciudad")+"?";
 }
 
 var KB = [
@@ -284,8 +291,17 @@ var KB = [
  {id:"reforma", k:["reforma","reforma tributaria","proyecto","sube el iva","subir","aumenta el precio","van a subir"],
   r:"Hoy los híbridos pagan 5% de IVA. El gobierno radicó el 22 de julio un proyecto que lo subiría a 19%.\n\nSi ese proyecto se aprueba, la MAGE pasaría de $109.000.000 a unos $123.500.000. Ojo: está radicado, no aprobado — todavía puede cambiar o no pasar.\n\nNo te lo pongo como presión de venta: es un hecho público que conviene que sepas."},
 
- {id:"devolucion", k:["devolucion","devolución","devuelven","recuperar","upme","dian","beneficio tributario","exencion","exención","iva","impuesto"],
-  r:"La DIAN fijó un procedimiento para devolver el IVA de vehículos certificados por la UPME, dentro de los 5 años siguientes a la factura.\n\nNo te lo puedo dar por hecho: depende de tu caso particular y el criterio ha cambiado. Lo que sí puedo es ponerte con alguien que lo revise contigo con tus documentos.", esc:"tributario"},
+ /* "Si es empresa, ¿tengo beneficio de IVA?" caía en renting porque compartían
+    la palabra "empresa". Son cosas distintas: una es un producto financiero,
+    la otra una pregunta tributaria — y de las que el bot NUNCA responde. */
+ {id:"devolucion", k:["devolucion","devolución","devuelven","recuperar","upme","dian","beneficio tributario",
+   "exencion","exención","iva","impuesto","beneficio de iva","iva descontable","descontar el iva",
+   "a nombre de la empresa","persona juridica","persona jurídica","facturar a nombre","nit"],
+  r:function(v,lead){
+    var esEmpresa = /empresa|juridica|jurídica|nit|facturar a nombre|descontable/.test(norm(q_actual));
+    if(esEmpresa) return "Si la compra es a nombre de una empresa, el tratamiento del IVA depende de si es responsable de IVA y del uso que le dé al vehículo. Eso lo define tu contador, no yo — y equivocarme ahí te costaría plata.\n\nLo que sí te digo con certeza: el precio que te di ya incluye el IVA. Te paso con un asesor para que lo revise con tu caso y con las cifras de tu empresa.";
+    return "La DIAN fijó un procedimiento para devolver el IVA de vehículos certificados por la UPME, dentro de los 5 años siguientes a la factura.\n\nNo te lo puedo dar por hecho: depende de tu caso particular y el criterio ha cambiado. Lo que sí puedo es ponerte con alguien que lo revise contigo con tus documentos.";
+  }, esc:"tributario"},
 
  /* "¿Cuánto cuestan los documentos de matrícula?" caía en pico y placa
     porque compartían la palabra. Son cosas distintas y esta es de las
@@ -383,7 +399,9 @@ var KB = [
     return base+"\n\n¿Qué carro tienes? Se lo paso al asesor para que vaya adelantando.";
   }, esc:"retoma"},
 
- {id:"renting", k:["renting","arriendo","alquiler","suscripcion","suscripción","empresa","flota","varias unidades","corporativo","facturar a nombre"],
+ {id:"renting", k:["renting","arriendo","alquiler","suscripcion","suscripción","para empresa","para la empresa","para mi empresa","plan empresa","planes de empresa","empresarial",
+   "flota","varias unidades","unidades para","corporativo","leasing operativo","compra por volumen",
+   "somos una empresa","somos empresa","a nombre de mi empresa","para la compania","para la compañía"],
   r:"El renting y los planes para empresa los manejamos caso por caso, porque cambian según el plazo, el kilometraje y el número de unidades.\n\nTe paso con un asesor para armarte una propuesta concreta.", esc:"renting"},
 
  {id:"disponible", k:["disponible","inventario","entrega","entregan","stock","unidades","llega","cuando llega","hay disponible","cuanto se demora la entrega","inmediata","la quiero","lo quiero","quiero comprar","me la llevo","me lo llevo","cuando me la entregan","hay en"],
@@ -1047,11 +1065,27 @@ function puntuarUno(tema, n, toks){
    mensaje —cubre la mitad de las palabras— y nadie más entendió. En
    "bueno pues entonces" no cubre nada real: mejor admitir que no entendió
    que fingir que sí. */
+/* Una palabra negada no cuenta. "No te hablé de renting, es compra" traía la
+   palabra renting y el bot contestaba... renting. El cliente estaba
+   CORRIGIENDO y recibió otra vez lo mismo — la forma más rápida de que se
+   vaya. Se mira lo que hay justo antes de cada coincidencia. */
+/* Con un "no" cualquiera cerca no basta: "eso después NO SE VENDE, se
+   desvaloriza" es justamente la pregunta por la reventa, no un rechazo.
+   Solo cuentan las fórmulas con las que alguien DESCARTA un tema. */
+var RECHAZO = /\b(no te hable de|no te hablé de|no hable de|no hablé de|no pregunte por|no pregunté por|no quiero|no busco|no necesito|no me interesa|no es por|no es de|nada de|olvidate del|olvídate del)\s*$/;
+function estaNegada(n, hit){
+  var i = n.indexOf(hit);
+  if(i < 0) return false;
+  return RECHAZO.test(n.slice(Math.max(0, i-26), i));
+}
+
 function puntuar(q){
-  var n=norm(q), toks=n.split(" ").filter(Boolean), fuertes=[], debiles=[];
+  var n=norm(q), toks=n.split(" ").filter(Boolean), fuertes=[], debiles=[], negados=[];
   KB.forEach(function(t){
     var s=puntuarUno(t,n,toks);
     if(s.p<=0) return;
+    /* si TODAS las coincidencias del tema vienen negadas, el tema no aplica */
+    if(s.hits.length && s.hits.every(function(h){ return estaNegada(n,h) })){ negados.push(t.id); return }
     var item={t:t,p:s.p,hits:s.hits};
     if(t.debil){
       var frase = s.hits.some(function(h){ return h.indexOf(" ")>-1 });
@@ -1094,7 +1128,9 @@ function puntuar(q){
     }
   }
 
-  return fuertes.concat(debiles);
+  var res = fuertes.concat(debiles);
+  res.negados = negados;
+  return res;
 }
 
 function vetoDe(q){
@@ -1420,6 +1456,16 @@ function crearSesion(vehiculoInicial){
       s.historia.push(out); return out;
     }
 
+    /* El cliente descartó algo: "no te hablé de renting, es compra". Merece
+       que se lo confirmen y se siga, no un "no entendí". */
+    if(!items.length && items.negados && items.negados.length){
+      s.fallos=0; out.entendido=true; out.tema="descarta:"+items.negados[0];
+      out.texto = "Entendido, nada de "+({renting:"renting",credito:"crédito",retoma:"retoma",
+        seguro:"seguro",instalacion:"instalación de cargador"}[items.negados[0]] || items.negados[0])+
+        ".\n\n¿Qué necesitas entonces? Precio, ficha, disponibilidad o lo que te sirva.";
+      s.historia.push(out); return out;
+    }
+
     if(!items.length && nuevas.length){
       s.fallos=0; out.entendido=true; out.tema="senal:"+nuevas[0];
       var tCual=null;
@@ -1604,7 +1650,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.24";
+var VERSION = "2026-07-28.25";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -1628,6 +1674,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"si es empresa tengo beneficio de iva",
+   arreglo:"Ya no cae en renting: el IVA de una compra a nombre de empresa es una pregunta tributaria y va a un asesor. Y si le dices «no te hablé de renting», el bot lo acepta en vez de repetirte lo mismo.",
+   ver:"2026-07-28.25"},
   {q:"cuanto cuestan los documentos de matricula",
    arreglo:"Los gastos de matrícula ya tienen respuesta propia: antes caían en pico y placa porque compartían la palabra. Y se corrigió el formato de negrita, que en WhatsApp se veía con los asteriscos a la vista.",
    ver:"2026-07-28.24"},
@@ -1637,6 +1686,9 @@ var RESUELTOS = [
   {q:"cuanto vale la mage",
    arreglo:"Al preguntar el precio ya no se listan los otros dos más baratos sin que los pidas: eso era ponerle competencia propia a una venta que ya iba avanzando. Ahora la comparación se ofrece, y si la quieres se da completa.",
    ver:"2026-07-28.22"},
+  {q:"si es empresa tengo beneficio de iva",
+   arreglo:"Ya no cae en renting: el IVA de una compra a nombre de empresa es una pregunta tributaria y va a un asesor. Y si le dices «no te hablé de renting», el bot lo acepta en vez de repetirte lo mismo.",
+   ver:"2026-07-28.25"},
   {q:"cuanto cuestan los documentos de matricula",
    arreglo:"Los gastos de matrícula ya tienen respuesta propia: antes caían en pico y placa porque compartían la palabra. Y se corrigió el formato de negrita, que en WhatsApp se veía con los asteriscos a la vista.",
    ver:"2026-07-28.24"},

@@ -363,6 +363,17 @@ var PERSONAS = [
     {q:"hay pico y placa para electricos en mi ciudad?", espera:"escala:normativo", contiene:"pico y placa"}
   ]},
 
+ {nombre:"Óscar E. · el que corrige y compra a nombre de empresa",
+  perfil:"Daniel probó tres cosas que fallaron seguidas: preguntó por el IVA de una empresa y le contestaron renting; corrigió con «no te hablé de renting, es compra» y le repitieron renting —porque la palabra estaba en la frase—; y el bot ofreció confirmar disponibilidad en una ciudad donde acababa de decir que no hay nada.",
+  veh:"vigo",
+  turnos:[
+    {q:"taller en buga?", espera:"servicio", contiene:"no hay taller"},
+    {q:"y precio de vigo?", espera:"precio", noContiene:"disponibilidad en Buga"},
+    {q:"y si es empresa tengo beneficio de iva?", espera:"escala:tributario", contiene:"contador", noContiene:"renting"},
+    {q:"no te hable de renting es compra", espera:"descarta:renting"},
+    {q:"eso despues no se vende se desvaloriza mucho", espera:"reventa"}
+  ]},
+
  {nombre:"Esteban · el de las dos versiones del Vigo",
   perfil:"Camilo encontró que anunciábamos los 470 km de la E2+ junto al precio de la E2, que hace 401. Eso es publicidad engañosa y además le daña la venta al asesor: el cliente llega esperando otra cosa. Esta conversación existe para que no vuelva a pasar.",
   veh:"vigo",
