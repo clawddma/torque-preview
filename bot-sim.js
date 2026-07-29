@@ -343,7 +343,10 @@ var PERSONAS = [
   perfil:"Daniel: «3 preguntas y solo responde una». Pidió precio, autonomía y prueba de ruta en Armenia y el bot contestó solo la última. La regla anterior excluía del multi-intento los temas que escalan — justo el que cierra la venta. Ahora responde todo y escala al final.",
   veh:"mage",
   turnos:[
-    {q:"Precio y autonomia y prueba de ruta en armenia", espera:"precio+consumo+prueba", contiene:"$109.000.000", escalaOk:true},
+    /* la ciudad se reconoce aunque venga con un dedazo pegado */
+    {q:"Precio y autonomia y prueba de ruta en armenia1010", espera:"precio+consumo+prueba", contiene:"Armenia", escalaOk:true},
+    /* y no se le ofrecen otros carros a quien ya preguntó por uno */
+    {q:"cuanto vale la mage?", espera:"precio", noContiene:"comparo"},
     {q:"y si sube la reforma que pasa con el precio", espera:"reforma"},
     /* al preguntar el precio de la MAGE no se le ponen al lado los dos más
        baratos: es ponerle competencia propia a una venta que ya iba */

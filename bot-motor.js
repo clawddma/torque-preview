@@ -112,6 +112,36 @@ var VETO = [
 /* ═══ BASE DE CONOCIMIENTO ═════════════════════════════════════════════════
    `r` puede ser texto (igual para los tres) o función (depende del vehículo
    y de lo que el bot ya sabe del cliente). */
+/* El cierre del precio empuja hacia la venta, no hacia otras opciones.
+   Ofrecerle comparaciones a alguien que ya preguntó por UN carro lo distrae
+   de lo que estaba haciendo: decidirse por ese. Si quiere comparar, compara
+   — el bot sabe hacerlo y se lo dice solo cuando lo pide. */
+/* Cuando se responden varias preguntas de un solo golpe, cada respuesta trae
+   su propia pregunta al final y el mensaje termina con tres. Nadie contesta
+   tres preguntas: el cliente elige una y las otras dos quedan colgando, o se
+   siente interrogado y no contesta ninguna.
+
+   Un asesor de verdad responde todo y cierra con UNA sola pregunta, la
+   última. Esto quita el cierre de los bloques intermedios. */
+function sinCierre(t){
+  var p = String(t||"").split("\n\n");
+  if(p.length<2) return t;
+  var ult = p[p.length-1].trim();
+  /* Se quita la PREGUNTA, no el párrafo. "En la página hay un simulador…
+     ¿Te lo comparto?" pierde la pregunta pero conserva el dato, que es lo
+     que el cliente quería. */
+  var frases = ult.split(/(?<=[.!?])\s+/).filter(Boolean);
+  while(frases.length && /\?\s*$/.test(frases[frases.length-1])) frases.pop();
+  if(!frases.length) p.pop();
+  else p[p.length-1] = frases.join(" ");
+  return p.join("\n\n");
+}
+
+function cierrePrecio(lead){
+  return "¿Quieres que un asesor te confirme el precio vigente y la disponibilidad"+
+         (lead && lead.ciudad ? " en "+lead.ciudad : " para tu ciudad")+"?";
+}
+
 var KB = [
 
  {id:"precio", k:["precio","cuesta","vale","valor","costo","cuanto vale","cuanto cuesta","que precio","cuanto sale","presupuesto"],
@@ -134,11 +164,9 @@ var KB = [
       v.versiones.forEach(function(x){
         t += "· "+v.nombre+" "+x.n+" — "+x.precio+": "+x.autonomia+", batería de "+x.bateria+", carga en "+x.carga+".\n";
       });
-      return t+"\nLos dos con IVA incluido y sujetos a confirmación con la sala.\n\n"+
-        "¿Quieres que un asesor te confirme el precio vigente para tu ciudad? Y si te sirve, te lo comparo con los otros dos de la línea o contra la competencia.";
+      return t+"\nLos dos con IVA incluido y sujetos a confirmación con la sala.\n\n"+cierrePrecio(lead);
     }
-    return v.Art+" "+v.nombre+" está en "+v.precio+", con IVA incluido y sujeto a confirmación con la sala.\n\n"+
-      "¿Quieres que un asesor te confirme el precio vigente para tu ciudad? Y si te sirve, te lo comparo con los otros dos de la línea o contra la competencia.";
+    return v.Art+" "+v.nombre+" está en "+v.precio+", con IVA incluido y sujeto a confirmación con la sala.\n\n"+cierrePrecio(lead);
   }, espera:"precioAsesor"},
 
  {id:"cual", k:["cual me conviene","cuál me conviene","cual es mejor","cuál es mejor","que me recomiendas","qué me recomiendas","no se cual","no sé cuál","ayudame a elegir","ayúdame a elegir","cual elijo","cuál elijo","estoy entre","diferencia entre"],
@@ -1081,7 +1109,10 @@ function detectarCiudad(q){
   var orden = CIUDADES.slice().sort(function(a,b){ return b.length-a.length });
   for(var i=0;i<orden.length;i++){
     var c=norm(orden[i]);
-    if(new RegExp("(^|\\s)"+c+"($|\\s)").test(n)){
+    /* "armenia1010" es Armenia con un dedazo pegado. Un humano lo lee sin
+       problema; el bot pedía la ciudad otra vez. Se admite lo que venga
+       pegado después del nombre, siempre que el nombre esté completo. */
+    if(new RegExp("(^|\\s)"+c+"($|\\s|\\d)").test(n)){
       return orden[i].split(" ").map(function(p){
         return p.charAt(0).toUpperCase()+p.slice(1);
       }).join(" ");
@@ -1472,10 +1503,13 @@ function crearSesion(vehiculoInicial){
        s.lead.interes.indexOf(top.t.id)<0) s.lead.interes.push(top.t.id);
 
     /* las demás intenciones se contestan a continuación, en el mismo turno */
+    if(multi.length>1) r = sinCierre(r);
     for(var k2=1; k2<multi.length; k2++){
       var otro = multi[k2];
       var rN = (typeof otro.t.r==="function") ? otro.t.r(v, s.lead) : otro.t.r;
       if(!rN) continue;
+      /* solo la última conserva su pregunta */
+      if(k2 < multi.length-1) rN = sinCierre(rN);
       r = r + "\n\n───\n\n" + rN;
       out.tema += "+" + otro.t.id;
       if(s.lead.interes.indexOf(otro.t.id)<0) s.lead.interes.push(otro.t.id);
@@ -1498,7 +1532,10 @@ function crearSesion(vehiculoInicial){
     s.ultimoTema = top.t.id;
     if(top.t.id==="cobertura") s.ultimoCob = tipoDeCobertura(q) || "venta";
 
-    var espId = (typeof top.t.espera==="function") ? top.t.espera(s.lead) : top.t.espera;
+    /* la promesa viva es la del ÚLTIMO bloque: es la única pregunta que quedó
+       en pie después de limpiar los cierres intermedios */
+    var ultimo = multi[multi.length-1].t;
+    var espId = (typeof ultimo.espera==="function") ? ultimo.espera(s.lead) : ultimo.espera;
     if(espId && ESPERAS[espId] && !out.escala) s.espera = {id:espId, turno:s.lead.turnos};
 
     /* El tema abre una cotización paralela: se arma el subflujo y el próximo
@@ -1532,7 +1569,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.22";
+var VERSION = "2026-07-28.23";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
@@ -1556,6 +1593,9 @@ var RESUELTOS = [
   {q:"cuanto cuesta aproximadamente un seguro con sur americano para este vehiculo",
    arreglo:"La respuesta del seguro se reescribió: se explica sin regañar y ofrecemos poner al cliente con nuestro aliado para cotizar.",
    ver:"2026-07-28.5"},
+  {q:"precio y autonomia y prueba de ruta en armenia",
+   arreglo:"Tres cosas: la ciudad se reconoce aunque venga con un dedazo pegado («armenia1010»); ya no se te ofrece comparar con otros carros cuando preguntaste por uno; y una respuesta a varias preguntas cierra con UNA sola pregunta al final, no con tres.",
+   ver:"2026-07-28.23"},
   {q:"cuanto vale la mage",
    arreglo:"Al preguntar el precio ya no se listan los otros dos más baratos sin que los pidas: eso era ponerle competencia propia a una venta que ya iba avanzando. Ahora la comparación se ofrece, y si la quieres se da completa.",
    ver:"2026-07-28.22"},
