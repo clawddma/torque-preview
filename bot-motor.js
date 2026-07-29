@@ -267,8 +267,8 @@ var KB = [
     var tibio = lead.interes.length>=2 || !!lead.ciudad || !!lead.plazo || !!lead.pago ||
                 lead.interes.indexOf("seguro")>-1;
     lead._ofrecio = tibio;
-    if(!tibio) return base+"\n\nCuando tengas claro el carro te lo cotizo con "+aliado("seguros")+", nuestro aliado, y te dan el valor real.\n\n¿Seguimos con el vehículo? Dime qué quieres saber.";
-    return base+"\n\nLo que sí puedo hacer es cotizártelo con "+aliado("seguros")+", nuestro aliado de seguros. Te hago dos preguntas rápidas, les paso tus datos y te contactan con el valor real.\n\n¿Arrancamos? Responde SÍ y seguimos.";
+    if(!tibio) return base+"\n\nCuando tengas claro el carro te lo cotizo con "+aliado("seguros")+" y te dan el valor real.\n\n¿Seguimos con el vehículo? Dime qué quieres saber.";
+    return base+"\n\nLo que sí puedo hacer es cotizártelo con "+aliado("seguros")+" de seguros. Te hago dos preguntas rápidas, les paso tus datos y te contactan con el valor real.\n\n¿Arrancamos? Responde SÍ y seguimos.";
   }, sub:"seguro"},
 
  {id:"prueba", k:["prueba","probar","manejar","test drive","ruta","ver el carro","conocer","visitar","cita","agendar","donde queda","dónde queda","vitrina","sala","direccion","dirección","horario","verla","verlo","quiero verla","quiero verlo","quiero conocerla","me gustaria verla","me gustaría verla","ir a mirarla"],
@@ -352,8 +352,15 @@ var ESC = {
    tiene que saber A QUIÉN se le entregan sus datos ANTES de darlos. Por eso
    el nombre va en la oferta, no solo en el cierre. */
 var ALIADOS = {
-  seguros: { nombre:"Poli Seguros", confirmado:true },
-  cargador:{ nombre:null, confirmado:false }   // ⚠️ pendiente de conseguir
+  /* Los nombres se ponen SOLO cuando el acuerdo esté cerrado por escrito.
+     Nombrar a un aliado antes de eso es prometerle al cliente algo que
+     todavía no existe — el mismo error que evitamos con las cifras.
+     Mientras `nombre` sea null, el bot dice "uno de nuestros aliados", que
+     es cierto y no compromete a nadie. Cuando se confirme, se llena esta
+     fila y queda corregido en el chat, en las respuestas rápidas y en el
+     simulador al mismo tiempo. */
+  seguros: { nombre:null, confirmado:false },  // en conversación, sin cerrar
+  cargador:{ nombre:null, confirmado:false }   // pendiente de conseguir
 };
 function aliado(k){
   var a=ALIADOS[k];
@@ -816,7 +823,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.9";
+var VERSION = "2026-07-28.10";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del

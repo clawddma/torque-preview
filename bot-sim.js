@@ -119,10 +119,10 @@ var PERSONAS = [
   turnos:[
     {q:"cuanto me sale el seguro al año?", espera:"seguro", contiene:"Cuando tengas claro el carro"},
     {q:"y cuanto vale el carro", espera:"precio"},
-    {q:"y el seguro entonces?", espera:"seguro", contiene:"Poli Seguros"},
+    {q:"y el seguro entonces?", espera:"seguro", contiene:"nuestros aliados"},
     {q:"si por favor", espera:"sub:seguro", contiene:"rango de edad"},
     {q:"tengo 34", espera:"sub:seguro", contiene:"siniestros"},
-    {q:"no, nunca", espera:"sub:seguro", contiene:"Poli Seguros"}
+    {q:"no, nunca", espera:"sub:seguro", contiene:"nuestros aliados"}
   ]},
 
  {nombre:"Rocío · comparando marcas",
