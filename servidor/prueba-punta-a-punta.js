@@ -184,7 +184,7 @@ function revisar(nombre, cond, detalle) {
   await empujar("573004445555", "entre 26 y 40", "Marta", "s4");
   await empujar("573004445555", "no he tenido ninguno", "Marta", "s5");
   revisar("cierra la cotizacion y devuelve la charla al carro",
-          enviados.some(e => /Volviendo al carro/.test(e.texto)),
+          enviados.some(e => /Sigamos con el carro/.test(e.texto)),
           enviados.map(e => e.texto.slice(0,40)).join(" | "));
   const todos = almacen.listarLeads();
   const lv = todos.find(l => l.id === "573004445555");
