@@ -117,12 +117,12 @@ var PERSONAS = [
   perfil:"Pregunta el seguro de entrada, sin haber mostrado interés en el carro. Ahí NO se ofrece la cotización: al aliado se le presentan interesados de verdad. Cuando ya preguntó por el carro y vuelve a insistir, ahí sí.",
   veh:"mage",
   turnos:[
-    {q:"cuanto me sale el seguro al año?", espera:"seguro", contiene:"Cuando tengas claro el carro"},
+    {q:"cuanto me sale el seguro al año?", espera:"seguro", contiene:"yo te ayudo a cotizarlo"},
     {q:"y cuanto vale el carro", espera:"precio"},
     {q:"y el seguro entonces?", espera:"seguro", contiene:"nuestros aliados"},
     {q:"si por favor", espera:"sub:seguro", contiene:"rango de edad"},
     {q:"tengo 34", espera:"sub:seguro", contiene:"siniestros"},
-    {q:"no, nunca", espera:"sub:seguro", contiene:"nuestros aliados"}
+    {q:"no, nunca", espera:"sub:seguro", contiene:"todo riesgo"}
   ]},
 
  {nombre:"Rocío · comparando marcas",
@@ -167,7 +167,7 @@ var PERSONAS = [
     {q:"cuanto cuesta instalar el cargador de pared en la casa?", espera:"instalacion", contiene:"Responde SÍ"},
     {q:"si", espera:"sub:instalacion", contiene:"casa o en conjunto"},
     {q:"vivo en conjunto", espera:"sub:instalacion", contiene:"parqueadero"},
-    {q:"es propio, hay una toma cerca", espera:"sub:instalacion", contiene:"aliado"}
+    {q:"es propio, hay una toma cerca", espera:"sub:instalacion", contiene:"instalación"}
   ]},
 
  {nombre:"Claudia · afán de entrega",
@@ -214,7 +214,7 @@ var PERSONAS = [
   perfil:"Daniel marcó en negativo que al preguntar por el seguro le contestaban el precio del carro. Era estructural: preguntar cuánto cuesta ALGO es preguntar por ese algo, no por el vehículo. Estas frases lo blindan.",
   veh:"mage",
   turnos:[
-    {q:"cuanto cuesta aproximadamente un seguro para este vehiculo?", espera:"seguro", contiene:"Cuando tengas claro el carro"},
+    {q:"cuanto cuesta aproximadamente un seguro para este vehiculo?", espera:"seguro", contiene:"yo te ayudo a cotizarlo"},
     {q:"y cuanto cuesta el mantenimiento", espera:"escala:costoservicio"},
     {q:"cuanto vale el carro entonces", espera:"precio", contiene:"$109.000.000"}
   ]},

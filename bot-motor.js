@@ -263,12 +263,17 @@ var KB = [
         Si todavía está frío se responde igual de completo y se deja la
         puerta abierta. No se pierde nada: si vuelve, ahí sí se ofrece. */
   r:function(v,lead){
-    var base = "El valor del seguro lo define la aseguradora, y cambia según tu edad, tu historial de conducción y la ciudad donde lo matricules. Por eso prefiero no darte una cifra que después no se cumpla.";
+    var base = "El valor lo pone la aseguradora y cambia bastante de una persona a otra: pesan tu edad, tu historial al volante y la ciudad donde lo matricules.\n\nSi te doy una cifra ahora, lo más probable es que después no te cuadre, y prefiero no hacerte eso.";
     var tibio = lead.interes.length>=2 || !!lead.ciudad || !!lead.plazo || !!lead.pago ||
                 lead.interes.indexOf("seguro")>-1;
     lead._ofrecio = tibio;
-    if(!tibio) return base+"\n\nCuando tengas claro el carro te lo cotizo con "+aliado("seguros")+" y te dan el valor real.\n\n¿Seguimos con el vehículo? Dime qué quieres saber.";
-    return base+"\n\nLo que sí puedo hacer es cotizártelo con "+aliado("seguros")+" de seguros. Te hago dos preguntas rápidas, les paso tus datos y te contactan con el valor real.\n\n¿Arrancamos? Responde SÍ y seguimos.";
+    /* En frío NO se mencionan aliados. Sacarlos en la primera frase se siente
+       lejano —como si lo estuvieran pasando a otro antes de haberlo atendido—
+       y el cliente todavía no ha pedido nada de eso. Aquí solo se responde
+       bien y se sigue la conversación. La ayuda se ofrece en primera persona:
+       "yo te ayudo", no "nuestros aliados te contactan". */
+    if(!tibio) return base+"\n\nCuando tengamos claro cuál es el tuyo, yo te ayudo a cotizarlo con calma y con tus datos, no con un estimado.\n\n¿Seguimos? Cuéntame qué más te gustaría saber.";
+    return base+"\n\nLo que sí puedo hacer es ayudarte a cotizarlo. Te hago dos preguntas rápidas, se las paso a "+aliado("seguros")+" de seguros y te escriben con una cifra hecha para tu caso.\n\n¿Arrancamos? Responde SÍ y seguimos.";
   }, sub:"seguro"},
 
  {id:"prueba", k:["prueba","probar","manejar","test drive","ruta","ver el carro","conocer","visitar","cita","agendar","donde queda","dónde queda","vitrina","sala","direccion","dirección","horario","verla","verlo","quiero verla","quiero verlo","quiero conocerla","me gustaria verla","me gustaría verla","ir a mirarla"],
@@ -394,13 +399,13 @@ var SUBFLUJOS = {
     ],
     cierre:function(lead,datos){
       var v=VEH[lead.vehiculo];
-      return "Con eso basta. Le paso tu caso a "+aliado("seguros")+" para que te cotice todo riesgo con "+
+      return "Listo, con eso me sirve. Se lo paso a "+aliado("seguros")+" para que te armen la cotización de todo riesgo para "+
         (v ? v.art+" "+v.nombre : "el vehículo")+
-        (lead.ciudad?" en "+lead.ciudad:"")+", y te contactan con el valor real.\n\n"+
-        "Volviendo al carro: ¿qué más quieres saber?";
+        (lead.ciudad?" en "+lead.ciudad:"")+", y te escriben con la cifra.\n\n"+
+        "Sigamos con el carro, que es lo importante: ¿qué más quieres saber?";
     },
     /* Si dice que no, se cierra el tema de una y sin insistir. */
-    rechazo:"Sin problema. Si más adelante lo quieres cotizar, me dices y lo movemos.\n\n¿Seguimos con el carro?"
+    rechazo:"Tranquilo, sin problema. Si más adelante lo quieres mirar, me dices y lo movemos.\n\nSigamos con el carro: ¿qué más te gustaría saber?"
   },
 
   instalacion: {
@@ -413,10 +418,10 @@ var SUBFLUJOS = {
        pregunta:"Entendido. ¿El parqueadero es propio y tiene toma cerca, o habría que llevar la acometida desde el contador?"}
     ],
     cierre:function(lead,datos){
-      return "Con eso el técnico ya sabe a qué va. Le paso tu caso a nuestro aliado para que te coticen la instalación"+
-        (lead.ciudad?" en "+lead.ciudad:"")+".\n\nVolviendo al carro: ¿en qué más te ayudo?";
+      return "Con eso el técnico ya sabe a qué va. Se lo paso a "+aliado("cargador")+" para que te armen la cotización de la instalación"+
+        (lead.ciudad?" en "+lead.ciudad:"")+".\n\nSigamos con el carro: ¿en qué más te ayudo?";
     },
-    rechazo:"Listo, lo dejamos ahí. Cuando lo necesites me dices.\n\n¿Seguimos con el carro?"
+    rechazo:"Listo, lo dejamos ahí. Cuando lo necesites me dices y lo miramos.\n\nSigamos con el carro: ¿qué más quieres saber?"
   }
 };
 
@@ -823,7 +828,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.10";
+var VERSION = "2026-07-28.11";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
