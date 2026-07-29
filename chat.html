@@ -291,9 +291,10 @@ fetch("/cerebro").then(function(r){return r.json()}).then(function(c){
   }
 }).catch(function(){});
 
+var LLAVE=(location.search.match(/[?&]k=([^&]+)/)||[])[1]||"";
 function pensar(q, hilo){
   return fetch("/pensar",{method:"POST",headers:{"content-type":"application/json"},
-    body:JSON.stringify({texto:q, lead:ses.lead, hilo:hilo})})
+    body:JSON.stringify({texto:q, lead:ses.lead, hilo:hilo, k:LLAVE})})
     .then(function(r){return r.json()}).catch(function(){return {fallo:"sin puente"}});
 }
 

@@ -31,6 +31,10 @@ const cerebro = require("./cerebro.js");
 
 const RAIZ = path.join(__dirname, "..");
 const PUERTO = parseInt(process.env.PORT || "8790", 10);
+/* Cuando esto sale a un túnel público, cualquiera con la dirección podría
+   gastar la suscripción de Daniel. La llave va en la URL, como en los otros
+   tableros del proyecto. */
+const LLAVE = process.env.TORQ_LLAVE || "torq2026";
 
 const TIPOS = {
   ".html": "text/html; charset=utf-8",
@@ -45,6 +49,9 @@ const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
 
 const servidor = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://x");
+  res.setHeader("access-control-allow-origin", "*");
+  res.setHeader("access-control-allow-headers", "content-type");
+  if (req.method === "OPTIONS") { res.writeHead(204); return res.end() }
 
   /* ── el puente al modelo ───────────────────────────────────────────── */
   if (req.method === "POST" && url.pathname === "/pensar") {
@@ -53,6 +60,11 @@ const servidor = http.createServer(async (req, res) => {
     req.on("end", async () => {
       let cuerpo;
       try { cuerpo = JSON.parse(crudo) } catch { cuerpo = null }
+      if (!cuerpo || cuerpo.k !== LLAVE) {
+        log("llave inválida — se descarta");
+        res.writeHead(401, { "content-type": "application/json" });
+        return res.end(JSON.stringify({ fallo: "sin llave" }));
+      }
       if (!cuerpo || !cuerpo.texto) {
         res.writeHead(400, { "content-type": "application/json" });
         return res.end(JSON.stringify({ fallo: "sin texto" }));
@@ -101,7 +113,7 @@ servidor.listen(PUERTO, () => {
   console.log("  │  TORQ · Sala de pruebas con modelo                │");
   console.log("  ╰──────────────────────────────────────────────────╯");
   console.log("");
-  console.log("     Abre:    http://localhost:" + PUERTO + "/chat.html");
+  console.log("     Abre:    http://localhost:" + PUERTO + "/chat.html?k=" + LLAVE);
   console.log("     Cerebro: " + (cerebro.activo() ? cerebro.CFG.modelo + " (vía " + cerebro.CFG.via + ")" : "APAGADO — responde el motor de reglas"));
   console.log("");
   console.log("     El modelo tarda entre 10 y 25 segundos por respuesta:");
