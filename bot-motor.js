@@ -178,7 +178,7 @@ var KB = [
       /* Mismo criterio que el seguro: instalar el cargador no es asunto del
          distribuidor, es una necesidad del cliente que nosotros resolvemos.
          Ese contacto se captura, no se regala. */
-      "El costo cambia caso por caso, así que no te doy una cifra al aire.\n\nTe lo puedo cotizar con uno de nuestros aliados, que van, lo miran y te dan el valor con tu instalación real. ¿Te lo cotizo?";
+      "El costo cambia caso por caso, así que no te doy una cifra al aire.\n\nTe lo puedo cotizar con uno de nuestros aliados, que van, lo miran y te dan el valor real. Te hago dos preguntas rápidas y listo.\n\n¿Arrancamos? Responde SÍ y seguimos.";
   }, sub:"instalacion"},
 
  {id:"consumo", k:["consumo","gasolina","litros","rinde","tanque","tanquear","galon","galón","km/l","economico","económico","gasto","cuanto gasta","ahorro","autonomia","autonomía","cuanto recorre","kilometros","kilómetros"],
@@ -251,7 +251,7 @@ var KB = [
         Corautos. El seguro no es del distribuidor: es una necesidad del
         cliente que TORQ puede atender con sus propios aliados. Ahí hay un
         lead, y se captura. */
-  r:"El valor del seguro lo define la aseguradora, y cambia según tu edad, tu historial de conducción y la ciudad donde lo matricules. Por eso prefiero no darte una cifra que después no se cumpla.\n\nLo que sí puedo hacer es cotizártelo con uno de nuestros aliados, con tus datos reales y junto con el vehículo. ¿Te lo cotizo?", sub:"seguro"},
+  r:"El valor del seguro lo define la aseguradora, y cambia según tu edad, tu historial de conducción y la ciudad donde lo matricules. Por eso prefiero no darte una cifra que después no se cumpla.\n\nLo que sí puedo hacer es cotizártelo con uno de nuestros aliados. Te hago dos preguntas rápidas y te lo cotizan con tus datos reales, junto con el vehículo.\n\n¿Arrancamos? Responde SÍ y seguimos.", sub:"seguro"},
 
  {id:"prueba", k:["prueba","probar","manejar","test drive","ruta","ver el carro","conocer","visitar","cita","agendar","donde queda","dónde queda","vitrina","sala","direccion","dirección","horario","verla","verlo","quiero verla","quiero verlo","quiero conocerla","me gustaria verla","me gustaría verla","ir a mirarla"],
   r:"Claro que sí. La prueba de ruta y la visita a sala se agendan directamente con la sala de tu ciudad.\n\nTe paso con un asesor para que cuadren día y hora.", esc:"agenda"},
@@ -619,7 +619,7 @@ function crearSesion(vehiculoInicial){
             if(s.sub.reintento){ s.sub=null; out.tema=null; out.entendido=false }
             else{
               s.sub.reintento=true;
-              out.texto="¿Te lo cotizo? Dime sí o no y seguimos.";
+              out.texto="No te entendí. ¿Te hago las dos preguntas para cotizarlo? Responde SÍ o NO.";
               s.historia.push(out); return out;
             }
           }else{
@@ -761,7 +761,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.6";
+var VERSION = "2026-07-28.7";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
