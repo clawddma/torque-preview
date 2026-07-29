@@ -267,8 +267,8 @@ var KB = [
     var tibio = lead.interes.length>=2 || !!lead.ciudad || !!lead.plazo || !!lead.pago ||
                 lead.interes.indexOf("seguro")>-1;
     lead._ofrecio = tibio;
-    if(!tibio) return base+"\n\nCuando tengas claro el carro te lo cotizo con uno de nuestros aliados y te dan el valor real.\n\n¿Seguimos con el vehículo? Dime qué quieres saber.";
-    return base+"\n\nLo que sí puedo hacer es cotizártelo con uno de nuestros aliados. Te hago dos preguntas rápidas y te lo cotizan con tus datos reales, junto con el vehículo.\n\n¿Arrancamos? Responde SÍ y seguimos.";
+    if(!tibio) return base+"\n\nCuando tengas claro el carro te lo cotizo con "+aliado("seguros")+", nuestro aliado, y te dan el valor real.\n\n¿Seguimos con el vehículo? Dime qué quieres saber.";
+    return base+"\n\nLo que sí puedo hacer es cotizártelo con "+aliado("seguros")+", nuestro aliado de seguros. Te hago dos preguntas rápidas, les paso tus datos y te contactan con el valor real.\n\n¿Arrancamos? Responde SÍ y seguimos.";
   }, sub:"seguro"},
 
  {id:"prueba", k:["prueba","probar","manejar","test drive","ruta","ver el carro","conocer","visitar","cita","agendar","donde queda","dónde queda","vitrina","sala","direccion","dirección","horario","verla","verlo","quiero verla","quiero verlo","quiero conocerla","me gustaria verla","me gustaría verla","ir a mirarla"],
@@ -343,6 +343,23 @@ var ESC = {
   nose:        "Tres intentos sin entender. Antes de frustrar al cliente, pasa a humano."
 };
 
+/* ═══ LOS ALIADOS ═════════════════════════════════════════════════════════
+   Se nombran aquí y en ningún otro lado. Cuando cambie un aliado —o cuando
+   aparezca el del cargador, que todavía no existe— se edita una fila y queda
+   corregido en el chat, en las respuestas rápidas y en el simulador.
+
+   Nombrar al aliado no es un detalle de estilo: bajo la Ley 1581 el titular
+   tiene que saber A QUIÉN se le entregan sus datos ANTES de darlos. Por eso
+   el nombre va en la oferta, no solo en el cierre. */
+var ALIADOS = {
+  seguros: { nombre:"Poli Seguros", confirmado:true },
+  cargador:{ nombre:null, confirmado:false }   // ⚠️ pendiente de conseguir
+};
+function aliado(k){
+  var a=ALIADOS[k];
+  return (a && a.nombre) ? a.nombre : "uno de nuestros aliados";
+}
+
 /* ═══ SUBFLUJOS — UNA CONVERSACIÓN, DOS LEADS ══════════════════════════════
    Un cliente que pregunta por el seguro no es una conversación que se acabó:
    es un segundo negocio dentro de la misma charla. Antes el bot decía "te
@@ -370,7 +387,7 @@ var SUBFLUJOS = {
     ],
     cierre:function(lead,datos){
       var v=VEH[lead.vehiculo];
-      return "Con eso basta. Le paso tu caso a nuestro aliado de seguros para que te cotice todo riesgo con "+
+      return "Con eso basta. Le paso tu caso a "+aliado("seguros")+" para que te cotice todo riesgo con "+
         (v ? v.art+" "+v.nombre : "el vehículo")+
         (lead.ciudad?" en "+lead.ciudad:"")+", y te contactan con el valor real.\n\n"+
         "Volviendo al carro: ¿qué más quieres saber?";
@@ -799,7 +816,7 @@ function crearSesion(vehiculoInicial){
    Sin este número, un reporte no dice si describe el bot de hoy o el de
    ayer, y se corrige dos veces lo mismo. Se sube al cambiar la lógica o
    cualquier cifra. */
-var VERSION = "2026-07-28.8";
+var VERSION = "2026-07-28.9";
 
 /* ═══ LO QUE YA SE CORRIGIÓ ════════════════════════════════════════════════
    Cada vez que arreglo algo que Daniel o Camilo marcaron, la frase del
