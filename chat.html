@@ -77,6 +77,8 @@ body{background:var(--fondo);color:var(--texto);
 .escribiendo i:nth-child(3){animation-delay:.36s}
 @keyframes p{0%,60%,100%{opacity:.32;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
 
+.fuente{align-self:flex-start;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:#4a5a63;margin:-3px 0 8px 4px}
 .aviso-sis{align-self:center;background:rgba(200,242,74,.09);border:1px solid rgba(200,242,74,.3);
   color:#cfe08a;font-size:11.5px;text-align:center;padding:8px 13px;border-radius:8px;
   margin:7px 0;max-width:88%;line-height:1.5}
@@ -271,23 +273,88 @@ function sistema(texto){
   hilo.appendChild(d); abajo();
 }
 
+/* ═══ EL CEREBRO ═══════════════════════════════════════════════════════════
+   Si la página se abre desde el puente local (node servidor/sala.js), las
+   respuestas las redacta un modelo sobre la base de conocimiento. Si se abre
+   desde GitHub Pages —donde no hay puente— responde el motor de reglas, y la
+   sala funciona igual.
+
+   El reparto no cambia entre los dos casos: las señales del lead y los
+   guardarraíles se resuelven SIEMPRE aquí, en código, antes de consultar al
+   modelo. Una petición de descuento no llega a la IA ni cuando la IA está. */
+var CEREBRO={activo:false};
+fetch("/cerebro").then(function(r){return r.json()}).then(function(c){
+  CEREBRO=c||{activo:false};
+  if(CEREBRO.activo){
+    document.getElementById("ver").textContent =
+      " · v"+B.VERSION.split(".").pop()+" · "+(CEREBRO.modelo||"modelo").replace("claude-","");
+  }
+}).catch(function(){});
+
+function pensar(q, hilo){
+  return fetch("/pensar",{method:"POST",headers:{"content-type":"application/json"},
+    body:JSON.stringify({texto:q, lead:ses.lead, hilo:hilo})})
+    .then(function(r){return r.json()}).catch(function(){return {fallo:"sin puente"}});
+}
+
+var historial=[];   /* lo que se han dicho, para dárselo al modelo */
+
 async function responder(q){
   ultimaPregunta=q;
+
+  /* 1 · reglas: capturan las señales del lead y resuelven los guardarraíles */
   var o=ses.responder(q);
   ultimoDiag={tema:o.tema, candidatos:o.candidatos, veh:B.VEH[ses.lead.vehiculo].nombre};
-  var textos=[];
-  if(o.texto) textos.push(o.texto);
-  if(o.empujon) textos.push(o.empujon);
-  if(!textos.length) textos.push("…");
+  historial.push({direccion:"entra", texto:q});
+
+  var textos=[], fuente="reglas", escala=o.escala;
+  var esGuardarrail = o.tema && o.tema.indexOf("veto:")===0;
+
+  /* 2 · el modelo, salvo que sea un guardarraíl */
+  if(CEREBRO.activo && !esGuardarrail){
+    var d=document.createElement("div");
+    d.className="escribiendo"; d.innerHTML="<i></i><i></i><i></i>";
+    hilo.appendChild(d); abajo();
+    document.getElementById("estado").textContent="pensando…";
+    var r=await pensar(q, historial.slice(0,-1));
+    d.remove();
+    document.getElementById("estado").textContent="en línea";
+    if(r && r.texto){
+      textos=[r.texto]; fuente="modelo"; escala=r.escala||null;
+      if(r.vehiculo) ses.fijarVehiculo(r.vehiculo);
+      ultimoDiag.tema=(r.temas&&r.temas.join(", "))||"modelo";
+    }else{
+      fuente="reglas ("+((r&&r.fallo)||"sin modelo")+")";
+    }
+  }else if(esGuardarrail){
+    fuente="guardarraíl";
+  }
+
+  /* 3 · si el modelo no contestó, contesta el motor de reglas */
+  if(!textos.length){
+    if(o.texto) textos.push(o.texto);
+    if(o.empujon) textos.push(o.empujon);
+    if(!textos.length) textos.push("…");
+  }
 
   for(var i=0;i<textos.length;i++){
-    await escribiendo(pausa(textos[i]));
+    if(fuente!=="modelo") await escribiendo(pausa(textos[i]));
     var fila=burbuja("bot",textos[i]);
+    historial.push({direccion:"sale", texto:textos[i]});
     juez(fila,q,textos[i]);
   }
-  if(o.escala){
-    sistema("El bot pasó la conversación a un asesor humano · motivo: "+(B.ESC[o.escala]||o.escala));
+  if(CEREBRO.activo) marcaFuente(fuente);
+  if(escala){
+    sistema("El bot pasó la conversación a un asesor humano · motivo: "+(B.ESC[escala]||escala));
   }
+}
+
+/* Quién contestó, en pequeñito: para poder juzgar si el modelo lo hace mejor
+   que las reglas sin tener que adivinarlo. */
+function marcaFuente(f){
+  var d=document.createElement("div");
+  d.className="fuente"; d.textContent=f;
+  hilo.appendChild(d); abajo();
 }
 
 function enviar(){
@@ -321,6 +388,7 @@ function pintarOrigen(){
 async function reiniciar(vid){
   hilo.innerHTML="";
   ses=B.crearSesion(vid||ses.lead.vehiculo);
+  historial=[];
   pintarOrigen();
   var d=document.createElement("div");
   d.className="dia"; d.textContent="HOY";
