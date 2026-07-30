@@ -173,9 +173,13 @@
         <div class="campo" id="w-precio"><label for="q-precio" id="lb-precio">Precio del gal&oacute;n</label>
           <input id="q-precio" type="text" inputmode="numeric" value="16.000"></div>
       </div>
-      <div class="campo"><label for="q-valor">&iquest;Cu&aacute;nto vale tu carro hoy?</label>
-        <input id="q-valor" type="text" inputmode="numeric" value="60.000.000">
-        <p class="pista">Con esto estimamos tu seguro y tu impuesto: los dos se calculan sobre el valor comercial.</p></div>
+      <div class="dos">
+        <div class="campo" id="w-anio"><label for="q-anio">A&ntilde;o de tu carro</label>
+          <select id="q-anio"></select></div>
+        <div class="campo"><label for="q-valor">Valor aproximado hoy</label>
+          <input id="q-valor" type="text" inputmode="numeric" value="60.000.000">
+          <p class="pista" id="p-valor">Con esto estimamos tu seguro y tu impuesto.</p></div>
+      </div>
 
       <p class="grupo sep">El que te interesa</p>
       <div class="dos">
@@ -188,6 +192,8 @@
             <option value="mage">Mage &middot; SUV h&iacute;brida</option>
           </select></div>
       </div>
+      <div class="campo" id="w-nversion"><label for="q-nversion">Versi&oacute;n</label>
+        <select id="q-nversion"></select></div>
       <div class="campo" id="w-kwh"><label for="q-kwh">Precio del kWh en tu casa (est&aacute; en el recibo de la luz)</label>
         <input id="q-kwh" type="text" inputmode="numeric" value="950"></div>
       <div class="campo" id="w-corriente" hidden><label for="q-corriente">Precio del gal&oacute;n de corriente (lo que tanquea la Mage)</label>
@@ -358,35 +364,51 @@
      matriculados 2022-2026 según el cubo RUNT, más que Chevrolet
      (101.533)— y la Duster es su línea líder: es la marca y la
      referencia con las que abre el simulador. */
+  /* "seg" clasifica cada referencia por tamaño/precio para poder
+     sugerir un valor de uso aproximado (ver valorEstimado más abajo):
+     citycar · compacto · suvCompacta · suvGrande · premium. */
   var CARROS = {
-    "BYD":        [{n:"Seagull",e:11.5},{n:"Yuan Plus",e:15.0},{n:"Yuan Up",e:14.0}],
-    "Chery":      [{n:"iCar 03",e:16.0},{n:"Tiggo 4 Pro",g:7.0},{n:"Tiggo 7 Pro",g:7.6}],
-    "Chevrolet":  [{n:"Captiva",g:7.8},{n:"Colorado",d:9.5},{n:"Joy",g:6.2},{n:"Montana",g:7.2},
-                   {n:"Onix",g:5.8},{n:"Tracker",g:6.5}],
-    "Citro&euml;n":[{n:"C3",g:6.5},{n:"C3 Aircross",g:6.8}],
-    "Cupra":      [{n:"Formentor",g:7.8}],
-    "Deepal":     [{n:"S05",e:15.5}],
-    "Ford":       [{n:"Escape",g:8.7,h:6.0},{n:"Ranger",d:8.6},{n:"Territory",g:7.9,h:5.9}],
-    "Hyundai":    [{n:"Accent",g:6.5},{n:"Grand i10",g:5.7},{n:"Kona",g:7.0,h:4.6,e:14.7},
-                   {n:"Tucson",g:8.3,h:5.6},{n:"Venue",g:6.8}],
-    "Kia":        [{n:"K3",g:6.3},{n:"K3 Cross",g:6.6},{n:"Niro",h:4.4,e:15.3},{n:"Picanto",g:5.6},
-                   {n:"Seltos",g:7.0},{n:"Sonet",g:6.6},{n:"Soluto",g:6.2},{n:"Sportage",g:8.0,h:5.6},
-                   {n:"Stonic",g:6.4}],
-    "Mazda":      [{n:"2 Hatchback",g:6.1},{n:"2 Sed&aacute;n",g:6.1},{n:"3",g:6.9},{n:"CX-30",g:7.2},
-                   {n:"CX-5",g:8.2},{n:"CX-50",g:8.0}],
-    "Nissan":     [{n:"Frontier",d:9.0},{n:"Kicks",g:6.9,h:5.0},{n:"Qashqai",h:5.4},
-                   {n:"Versa",g:6.5},{n:"X-Trail",g:8.3,h:6.1}],
-    "Peugeot":    [{n:"2008",g:6.6}],
-    "Renault":    [{n:"Arkana",g:7.0},{n:"Duster",g:7.4,d:6.2,h:4.8},{n:"Duster Oroch",g:7.8},
-                   {n:"Kardian",g:6.2},{n:"Kwid",g:5.4,e:13.5},{n:"Logan",g:6.6},
-                   {n:"Sandero",g:6.8},{n:"Stepway",g:6.9}],
-    "Suzuki":     [{n:"Dzire",g:5.4},{n:"Fronx",g:6.0},{n:"Grand Vitara",h:5.4},{n:"Jimny",g:7.4},
-                   {n:"S-Cross",g:6.8},{n:"Swift",g:5.5}],
-    "Tesla":      [{n:"Model 3",e:14.0},{n:"Model Y",e:15.5}],
-    "Toyota":     [{n:"4Runner",g:12.5},{n:"Corolla",g:6.4,h:4.2},{n:"Corolla Cross",g:7.0,h:4.3},
-                   {n:"Fortuner",d:8.9},{n:"Hilux",d:8.4},{n:"Land Cruiser Prado",d:9.8},
-                   {n:"Yaris Cross",g:6.3,h:4.4}],
-    "Volkswagen": [{n:"Nivus",g:6.6},{n:"Polo",g:6.4},{n:"T-Cross",g:6.7}]
+    "BYD":        [{n:"Seagull",e:11.5,seg:"citycar"},{n:"Yuan Plus",e:15.0,seg:"suvCompacta"},
+                   {n:"Yuan Up",e:14.0,seg:"compacto"}],
+    "Chery":      [{n:"iCar 03",e:16.0,seg:"suvCompacta"},{n:"Tiggo 4 Pro",g:7.0,seg:"suvCompacta"},
+                   {n:"Tiggo 7 Pro",g:7.6,seg:"suvCompacta"}],
+    "Chevrolet":  [{n:"Captiva",g:7.8,seg:"suvGrande"},{n:"Colorado",d:9.5,seg:"suvGrande"},
+                   {n:"Joy",g:6.2,seg:"citycar"},{n:"Montana",g:7.2,seg:"compacto"},
+                   {n:"Onix",g:5.8,seg:"compacto"},{n:"Tracker",g:6.5,seg:"suvCompacta"}],
+    "Citro&euml;n":[{n:"C3",g:6.5,seg:"compacto"},{n:"C3 Aircross",g:6.8,seg:"suvCompacta"}],
+    "Cupra":      [{n:"Formentor",g:7.8,seg:"premium"}],
+    "Deepal":     [{n:"S05",e:15.5,seg:"suvCompacta"}],
+    "Ford":       [{n:"Escape",g:8.7,h:6.0,seg:"suvGrande"},{n:"Ranger",d:8.6,seg:"suvGrande"},
+                   {n:"Territory",g:7.9,h:5.9,seg:"suvCompacta"}],
+    "Hyundai":    [{n:"Accent",g:6.5,seg:"compacto"},{n:"Grand i10",g:5.7,seg:"citycar"},
+                   {n:"Kona",g:7.0,h:4.6,e:14.7,seg:"suvCompacta"},
+                   {n:"Tucson",g:8.3,h:5.6,seg:"suvGrande"},{n:"Venue",g:6.8,seg:"suvCompacta"}],
+    "Kia":        [{n:"K3",g:6.3,seg:"compacto"},{n:"K3 Cross",g:6.6,seg:"suvCompacta"},
+                   {n:"Niro",h:4.4,e:15.3,seg:"suvCompacta"},{n:"Picanto",g:5.6,seg:"citycar"},
+                   {n:"Seltos",g:7.0,seg:"suvCompacta"},{n:"Sonet",g:6.6,seg:"suvCompacta"},
+                   {n:"Soluto",g:6.2,seg:"compacto"},{n:"Sportage",g:8.0,h:5.6,seg:"suvGrande"},
+                   {n:"Stonic",g:6.4,seg:"suvCompacta"}],
+    "Mazda":      [{n:"2 Hatchback",g:6.1,seg:"compacto"},{n:"2 Sed&aacute;n",g:6.1,seg:"compacto"},
+                   {n:"3",g:6.9,seg:"compacto"},{n:"CX-30",g:7.2,seg:"suvCompacta"},
+                   {n:"CX-5",g:8.2,seg:"suvGrande"},{n:"CX-50",g:8.0,seg:"suvGrande"}],
+    "Nissan":     [{n:"Frontier",d:9.0,seg:"suvGrande"},{n:"Kicks",g:6.9,h:5.0,seg:"suvCompacta"},
+                   {n:"Qashqai",h:5.4,seg:"suvCompacta"},{n:"Versa",g:6.5,seg:"compacto"},
+                   {n:"X-Trail",g:8.3,h:6.1,seg:"suvGrande"}],
+    "Peugeot":    [{n:"2008",g:6.6,seg:"suvCompacta"}],
+    "Renault":    [{n:"Arkana",g:7.0,seg:"suvCompacta"},{n:"Duster",g:7.4,d:6.2,h:4.8,seg:"suvCompacta"},
+                   {n:"Duster Oroch",g:7.8,seg:"suvGrande"},{n:"Kardian",g:6.2,seg:"suvCompacta"},
+                   {n:"Kwid",g:5.4,e:13.5,seg:"citycar"},{n:"Logan",g:6.6,seg:"compacto"},
+                   {n:"Sandero",g:6.8,seg:"compacto"},{n:"Stepway",g:6.9,seg:"compacto"}],
+    "Suzuki":     [{n:"Dzire",g:5.4,seg:"compacto"},{n:"Fronx",g:6.0,seg:"suvCompacta"},
+                   {n:"Grand Vitara",h:5.4,seg:"suvCompacta"},{n:"Jimny",g:7.4,seg:"suvCompacta"},
+                   {n:"S-Cross",g:6.8,seg:"suvCompacta"},{n:"Swift",g:5.5,seg:"compacto"}],
+    "Tesla":      [{n:"Model 3",e:14.0,seg:"premium"},{n:"Model Y",e:15.5,seg:"premium"}],
+    "Toyota":     [{n:"4Runner",g:12.5,seg:"suvGrande"},{n:"Corolla",g:6.4,h:4.2,seg:"compacto"},
+                   {n:"Corolla Cross",g:7.0,h:4.3,seg:"suvCompacta"},{n:"Fortuner",d:8.9,seg:"suvGrande"},
+                   {n:"Hilux",d:8.4,seg:"suvGrande"},{n:"Land Cruiser Prado",d:9.8,seg:"premium"},
+                   {n:"Yaris Cross",g:6.3,h:4.4,seg:"suvCompacta"}],
+    "Volkswagen": [{n:"Nivus",g:6.6,seg:"suvCompacta"},{n:"Polo",g:6.4,seg:"compacto"},
+                   {n:"T-Cross",g:6.7,seg:"suvCompacta"}]
   };
   var OTRA = "Otra marca / no est&aacute; la m&iacute;a";
 
@@ -402,18 +424,26 @@
     ["Tunja",2820,1.08],["Duitama",2530,1.08],["Otra ciudad",1000,1.08]
   ];
 
-  /* la línea. Consumos reales estimados: la ficha CLTC de un eléctrico
-     es optimista, así que se le suma 15% para no prometer de menos. */
+  /* La línea, CON sus versiones reales: Daniel lo pidió porque comparar
+     siempre contra el precio "desde" no es un comparativo justo cuando el
+     cliente puede elegir la versión con más autonomía. Consumos reales
+     estimados: la ficha CLTC de un eléctrico es optimista, así que se le
+     suma 15% para no prometer de menos. */
   var LINEA = {
-    vigo: { nombre:"Vigo", art:"la", lead:"Vigo", kwh100: 44.94/401*100*1.15,
-            ficha:"401 km CLTC · 44,94 kWh", precio:"$84.990.000", valor:84990000,
-            ele:true, url:"vigo.html" },
-    box:  { nombre:"Box", art:"el", lead:"Box", kwh100: 43.89/430*100*1.15,
-            ficha:"430 km CLTC · 43,89 kWh", precio:"$69.990.000", valor:69990000,
-            ele:true, url:"box.html" },
-    mage: { nombre:"Mage", art:"la", lead:"Mage", l100: 4.9,
-            ficha:"4,9 L/100 km · no se enchufa", precio:"$109.000.000", valor:109000000,
-            ele:false, url:"mage.html" }
+    vigo: { nombre:"Vigo", art:"la", lead:"Vigo", ele:true, url:"vigo.html",
+      versiones:[
+        {n:"E2",  precio:84990000, kwh100: 44.94/401*100*1.15, ficha:"401 km CLTC · 44,94 kWh"},
+        {n:"E2+", precio:89990000, kwh100: 51.87/470*100*1.15, ficha:"470 km CLTC · 51,87 kWh"}
+      ]},
+    box: { nombre:"Box", art:"el", lead:"Box", ele:true, url:"box.html",
+      versiones:[
+        {n:"E2", precio:69990000, kwh100: 43.89/430*100*1.15, ficha:"430 km CLTC · 43,89 kWh"},
+        {n:"E3", precio:74990000, kwh100: 43.89/430*100*1.15, ficha:"430 km CLTC · 43,89 kWh, m\u00e1s equipada"}
+      ]},
+    mage: { nombre:"Mage", art:"la", lead:"Mage", ele:false, url:"mage.html",
+      versiones:[
+        {n:"HEV", precio:109000000, l100:4.9, ficha:"4,9 L/100 km · no se enchufa"}
+      ]}
   };
 
   /* ── lo que cuesta TENER el carro un año ───────────────────────────
@@ -437,6 +467,23 @@
        mantenimiento  plan de taller para unos 15.000 km al año. Un
                eléctrico no lleva aceite, filtro de aceite, correa ni
                bujías: es la diferencia que Camilo señaló. */
+  /* Valor de USO aproximado del carro del cliente: antes era un
+     "$60.000.000" a ciegas, igual para un Picanto que para una Prado. No
+     es una tasación -eso lo hace el asesor con el carro delante- sino un
+     punto de partida razonable para que el cliente no tenga que
+     adivinarlo: precio nuevo aproximado por segmento hoy en Colombia,
+     depreciado por la edad del carro (13% el primer año, algo menos
+     cada año después, con un piso del 15% para que uno viejo no llegue
+     a valer cero). Siempre editable, y siempre se dice que es grueso. */
+  var SEGMENTOS = { citycar:60000000, compacto:78000000, suvCompacta:105000000,
+                     suvGrande:155000000, premium:230000000 };
+  function valorEstimado(seg, anio){
+    var nuevo = SEGMENTOS[seg]; if(!nuevo) return null;
+    var edad = Math.max(0, new Date().getFullYear() - anio);
+    var factor = Math.max(0.15, Math.pow(0.87, edad));
+    return Math.round(nuevo * factor / 500000) * 500000;
+  }
+
   var SOAT_BASE = 650000, RTM_BASE = 310000;
   var MANTEN = { gasolina:1200000, diesel:1500000, hibrida:950000,
                  gnv:1400000, electrica:450000 };
@@ -459,7 +506,8 @@
   var $ = function(id){ return document.getElementById(id) };
   var caja=$("q-tec"), marca=$("q-marca"), ref=$("q-ref"), trans=$("q-trans"), ciudad=$("q-ciudad");
   var rend=$("q-rend"), kmEl=$("q-km"), precioEl=$("q-precio"), kwhEl=$("q-kwh"), corrEl=$("q-corriente");
-  var valorEl=$("q-valor"), nuestro=$("q-nuestro");
+  var valorEl=$("q-valor"), nuestro=$("q-nuestro"), nversion=$("q-nversion"), anioEl=$("q-anio");
+  var tocadoValor = false;   /* ¿el visitante corrigió el valor estimado de su carro? */
   var RUBROS = ["seg","soat","rtm","imp","man"];   /* orden de la tabla */
   var CLAVE = { seg:"seguro", soat:"soat", rtm:"rtm", imp:"imp", man:"man" };
   var suyoTocado = {};   /* qué rubros escribió el cliente: los suyos mandan */
@@ -499,6 +547,15 @@
   CIUDADES.forEach(function(c,i){
     ciudad.insertAdjacentHTML("beforeend","<option value='"+i+"'>"+c[0]+"</option>");
   });
+
+  /* años del carro del cliente: del más nuevo al más viejo, con un
+     default de 4 años -la edad típica de un carro que se está pensando
+     cambiar, ni nuevo ni castigado- */
+  var ANIO_HOY = new Date().getFullYear();
+  for(var yy=ANIO_HOY; yy>=ANIO_HOY-20; yy--){
+    anioEl.insertAdjacentHTML("beforeend","<option value='"+yy+"'>"+yy+"</option>");
+  }
+  anioEl.value = ANIO_HOY-4;
 
   /* ── qué marcas y referencias existen en esta tecnología ───────── */
   function tieneTec(m){
@@ -547,7 +604,48 @@
       else if(marca.value === "Renault") [].forEach.call(ref.options,function(o){ if(o.textContent==="Duster") ref.value=o.value });
     }
     tocado = false;
+    refrescarValorEstimado();
     calc();
+  }
+
+  /* ── el valor del carro del cliente: un punto de partida, no una
+     tasación ──────────────────────────────────────────────────────
+     Se recalcula solo mientras el cliente no haya escrito el suyo -el
+     mismo patrón de "estimado, corrígelo" que ya usa el rendimiento-.
+     Sin marca (o "otra"), no hay segmento del que partir: se deja el
+     campo tal como está, en manos del cliente. */
+  function refrescarValorEstimado(){
+    var p = $("p-valor");
+    if(tocadoValor) return;
+    if(marca.value === "otra"){
+      p.innerHTML = "No tenemos un punto de partida para esta marca: escribe t&uacute; el valor aproximado.";
+      return;
+    }
+    var r = refsDe(marca.value)[+ref.value||0];
+    var v = r && valorEstimado(r.seg, +anioEl.value||ANIO_HOY);
+    if(v == null) return;
+    valorEl.value = mil(v);
+    p.innerHTML = "Estimaci&oacute;n gruesa por el segmento y el a&ntilde;o de tu carro. Si conoces el avalu&oacute; real, corr&iacute;gelo.";
+  }
+
+  /* ── la versión del Dongfeng elegido ───────────────────────────────
+     Comparar siempre contra el precio "desde" no es un comparativo
+     justo si el cliente en realidad quiere la versión con más
+     autonomía: cada versión tiene su propio precio y su propio consumo
+     real, y las dos viven en la ficha oficial. */
+  function refrescarVersiones(){
+    var v = LINEA[nuestro.value] || LINEA.vigo;
+    nversion.innerHTML = "";
+    v.versiones.forEach(function(ver,i){
+      nversion.insertAdjacentHTML("beforeend","<option value='"+i+"'>"+ver.n+" &middot; "+pesos(ver.precio)+"</option>");
+    });
+    /* la Mage hoy solo tiene una versión: elegir entre una sola opción
+       no es una decisión, así que el selector no aporta y se oculta */
+    $("w-nversion").hidden = v.versiones.length <= 1;
+  }
+  function verActual(){
+    var v = LINEA[nuestro.value] || LINEA.vigo;
+    return v.versiones[+nversion.value] || v.versiones[0];
   }
 
   /* Por qué el rendimiento real es menor que el de la ficha: se nombran
@@ -610,10 +708,10 @@
          · el galón de corriente aparece solo si entra la Mage y el carro
            del cliente no tanquea corriente: son dos precios distintos */
     var v = LINEA[nuestro.value] || LINEA.vigo;
-    var nuestroEle = !v.l100;
+    var nuestroEle = v.ele;
     $("w-kwh").hidden = !nuestroEle;
     $("w-precio").hidden = (t.kwh && nuestroEle);
-    $("w-corriente").hidden = !(v.l100 && !(tec==="gasolina" || tec==="hibrida"));
+    $("w-corriente").hidden = !(!v.ele && !(tec==="gasolina" || tec==="hibrida"));
   }
 
   function calc(){
@@ -666,15 +764,20 @@
 
     /* el nuestro, ajustado a la MISMA ciudad: los dos suben las mismas lomas */
     var v = LINEA[nuestro.value] || LINEA.vigo, f = factores(c);
-    var electrico = !v.l100;
+    var ver = verActual();
+    /* vv es v con la versión ya fundida: nombre completo (Vigo E2+) y el
+       precio de ESA versión donde antes iba el precio "desde". Se pasa
+       así a anual()/resumen() para no tocar nada de esas dos funciones. */
+    var vv = { nombre: v.nombre + " " + ver.n, art:v.art, lead:v.lead, url:v.url, ele:v.ele, valor:ver.precio };
+    var electrico = v.ele;
     var suyo = electrico
-      ? km * v.kwh100*f.ele/100 * num(kwhEl,950)
-      : km * v.l100*f.hib/100/GAL * num($("w-corriente").hidden ? precioEl : corrEl, 16000);
+      ? km * ver.kwh100*f.ele/100 * num(kwhEl,950)
+      : km * ver.l100*f.hib/100/GAL * num($("w-corriente").hidden ? precioEl : corrEl, 16000);
 
     var max = Math.max(mio, suyo, 1), dif = mio - suyo;
     $("r-lectura").innerHTML = notaMio;
     $("r-n0").innerHTML = nombreMio + " <small>" + texto(t.nom).toLowerCase() + "</small>";
-    $("r-n1").innerHTML = v.nombre + " <small>" + v.ficha + "</small>";
+    $("r-n1").innerHTML = vv.nombre + " <small>" + ver.ficha + "</small>";
     $("r-b0").textContent = pesos(mio);
     $("r-b1").textContent = pesos(suyo);
     $("r-f0").style.width = (mio/max*100) + "%";
@@ -682,26 +785,26 @@
 
     var mes = $("r-mes");
     if(dif > 500){
-      $("r-titulo").innerHTML = "Te ahorrar&iacute;as al mes con " + v.art + " " + v.nombre;
+      $("r-titulo").innerHTML = "Te ahorrar&iacute;as al mes con " + vv.art + " " + vv.nombre;
       mes.textContent = pesos(dif);
       mes.style.color = "var(--acc)";
       $("r-frase").innerHTML = "Son <b>" + pesos(dif*12) + " al a&ntilde;o</b> y <b>" +
         pesos(dif*60) + " en cinco a&ntilde;os</b>, solo en energ&iacute;a. " +
-        (v.art==="la"?"La ":"El ") + v.nombre + " arranca en <b>" + v.precio +
-        "</b>. <a href='" + v.url + "' style='color:var(--acc)'>Ver la ficha &rsaquo;</a>";
+        (vv.art==="la"?"La ":"El ") + vv.nombre + " arranca en <b>" + pesos(ver.precio) +
+        "</b>. <a href='" + vv.url + "' style='color:var(--acc)'>Ver la ficha &rsaquo;</a>";
     }else{
       /* si su carro ya gasta menos, se dice de frente: es lo que
          sostiene la credibilidad de todo lo demás */
       $("r-titulo").innerHTML = "En energ&iacute;a, tu carro ya va bien";
       mes.textContent = pesos(0);
       mes.style.color = "var(--mut)";
-      $("r-frase").innerHTML = "Con esos n&uacute;meros " + v.art + " " + v.nombre +
+      $("r-frase").innerHTML = "Con esos n&uacute;meros " + vv.art + " " + vv.nombre +
         " no te cambia el gasto de energ&iacute;a" +
         (tec==="electrica" ? " &mdash; ya andas con electricidad" :
          (tec==="gnv" ? " &mdash; el gas es barato y eso cuenta" : "")) +
         ". La diferencia estar&iacute;a en otra parte: <b>garant&iacute;a de 8 a&ntilde;os</b> en la bater&iacute;a, " +
         "mantenimiento m&aacute;s simple y un carro nuevo. " +
-        "<a href='" + v.url + "' style='color:var(--acc)'>Ver la ficha &rsaquo;</a>";
+        "<a href='" + vv.url + "' style='color:var(--acc)'>Ver la ficha &rsaquo;</a>";
     }
 
     /* el pie explica con qué se paga cada lado: es la parte que antes
@@ -714,15 +817,16 @@
       ? "Los dos andan con electricidad a <b style='color:var(--paper)'>"+unidadSuya+
         "</b>: aqu&iacute; la diferencia es solo el consumo. Cambia el precio si el tuyo es otro."
       : "Tu carro paga <b style='color:var(--paper)'>"+unidadSuya+
-        "</b>; " + v.art + " " + v.nombre + ", <b style='color:var(--paper)'>"+unidadNuestra+
+        "</b>; " + vv.art + " " + vv.nombre + ", <b style='color:var(--paper)'>"+unidadNuestra+
         "</b>. Cambia cualquiera de los dos si en tu ciudad son otros.";
 
     /* el calificador de abajo se lleva el vehículo elegido: el lead
-       llega con el interés ya declarado, no genérico */
+       llega con el interés ya declarado, no genérico -la versión no
+       importa aquí, el asesor califica por modelo- */
     var host = document.getElementById("qz-host");
     if(host) host.dataset.vehiculo = v.lead;
 
-    anual(mio, suyo, v, nombreMio);
+    anual(mio, suyo, vv, nombreMio);
   }
 
   /* ── la segunda etapa: el año completo ─────────────────────────────
@@ -918,12 +1022,33 @@
   }
 
   marca.addEventListener("change", refrescarRefs);
-  [ref,trans,ciudad,nuestro].forEach(function(el){ el.addEventListener("change", calc) });
-  [kmEl,precioEl,kwhEl,corrEl,valorEl].forEach(function(el){ el.addEventListener("input", calc) });
+  [ref,trans,ciudad].forEach(function(el){ el.addEventListener("change", calc) });
+  [kmEl,precioEl,kwhEl,corrEl].forEach(function(el){ el.addEventListener("input", calc) });
   RUBROS.forEach(function(r){
     $("a-"+r).addEventListener("input", function(){ suyoTocado[r] = true; calc() });
   });
   rend.addEventListener("input", function(){ tocado = true; calc() });
+
+  /* el modelo Dongfeng trae sus propias versiones: hay que reconstruir
+     el selector ANTES de calcular, o calc() leería las versiones del
+     modelo anterior */
+  nuestro.addEventListener("change", function(){ refrescarVersiones(); calc() });
+  nversion.addEventListener("change", calc);
+
+  /* el año es la otra mitad del estimado de valor: cambia el estimado,
+     no el valor que el cliente ya haya escrito a mano */
+  anioEl.addEventListener("change", function(){ refrescarValorEstimado(); calc() });
+
+  /* el mismo patrón "estimado, corrígelo" que ya usa el rendimiento */
+  valorEl.addEventListener("input", function(){
+    tocadoValor = true;
+    $("p-valor").innerHTML = "Usando tu dato. <button type='button' id='b-volver-valor'>Volver a la estimaci&oacute;n</button>";
+    var vb = $("b-volver-valor");
+    if(vb) vb.onclick = function(){ tocadoValor = false; refrescarValorEstimado(); calc() };
+    calc();
+  });
+
+  refrescarVersiones();
   refrescarMarcas();
 })();
 </script>
