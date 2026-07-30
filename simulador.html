@@ -727,10 +727,17 @@
     var ficha = consumoFicha(c), c100, nombreMio, notaMio;
     if(ficha != null && !tocado) rend.value = aCampo(ficha);
     var dado = num(rend, NaN);
+    /* Con "otra marca" y el campo vacío no hay de dónde sacar un
+       rendimiento: antes esto reescribía rend.value con un relleno, y
+       esa reescritura le ganaba la carrera al usuario que apenas estaba
+       borrando para escribir el suyo -el campo "no dejaba borrar" porque
+       se autocompletaba en cada tecla-. El respaldo de 8 ahora vive SOLO
+       en la cuenta interna; el campo se queda exactamente como el
+       cliente lo dejó, vacío incluido. */
     if(tocado && isFinite(dado)) c100 = deCampo(dado);
     else if(ficha != null) c100 = ficha;
     else if(isFinite(dado)) c100 = deCampo(dado);
-    else { c100 = ficha = 8; rend.value = aCampo(8) }
+    else c100 = 8;
 
     var mio = km * c100/100 * (t.kwh || t.gnv ? precioSuyo : precioSuyo/GAL);
 
@@ -739,27 +746,44 @@
       nombreMio = texto(marca.value) + " " + (r ? r.n : "");
     } else nombreMio = "Tu carro hoy";
 
-    if(tocado){
-      notaMio = "Calculado con <b>tu</b> dato: " + rend.value + " " + texto(t.rend) +
-        ". No le aplicamos ning&uacute;n ajuste, t&uacute; conoces tu carro.";
-      $("p-rend").innerHTML = "Usando tu dato. <button type='button' id='b-volver'>Volver a la estimaci&oacute;n</button>";
+    /* Cuatro estados reales, no tres: importa si HAY una estimación de
+       ficha (ficha!=null) y, por separado, si el campo tiene ahora mismo
+       un número válido (isFinite(dado)) -tocado por sí solo no basta,
+       porque "tocado" queda en true incluso con el campo vacío, y decir
+       "calculado con tu dato: " seguido de nada es peor que decir la
+       verdad: que falta el dato-. */
+    if(ficha != null){
+      if(tocado && isFinite(dado)){
+        notaMio = "Calculado con <b>tu</b> dato: " + rend.value + " " + texto(t.rend) +
+          ". No le aplicamos ning&uacute;n ajuste, t&uacute; conoces tu carro.";
+        $("p-rend").innerHTML = "Usando tu dato. <button type='button' id='b-volver'>Volver a la estimaci&oacute;n</button>";
+      }else if(tocado){
+        notaMio = "Escribe cu&aacute;nto rinde tu carro, o vuelve a nuestra estimaci&oacute;n.";
+        $("p-rend").innerHTML = "Campo vac&iacute;o. <button type='button' id='b-volver'>Volver a la estimaci&oacute;n</button>";
+      }else{
+        var comoRinde = t.kwh
+          ? "gasta unos <b>"+coma(ficha,1)+" kWh cada 100 km</b>"
+          : (t.gnv ? "rinde unos <b>"+coma(100/ficha,1)+" km por m&sup3;</b>"
+                   : "rinde unos <b>"+Math.round(GAL/ficha*100)+" km por gal&oacute;n</b>");
+        notaMio = "Un <b>"+nombreMio+"</b> " + texto(t.nom).toLowerCase() +
+          " en <b>"+c[0]+"</b> ("+mil(c[1])+" msnm) " + comoRinde + ". " +
+          (t.ajuste==="ele"
+            ? "La altura no le quita nada a un el&eacute;ctrico" +
+              (c[2]>1 ? "; lo que pesa son las lomas." : ", y en plano rinde parejo.")
+            : "La ficha dice m&aacute;s: " + razonCiudad(c) + ".");
+        $("p-rend").innerHTML = "Estimado con la ficha y tu ciudad. Si conoces el real, corr&iacute;gelo.";
+      }
       var vb = $("b-volver");
       if(vb) vb.onclick = function(){ tocado=false; calc() };
-    }else if(ficha != null){
-      var comoRinde = t.kwh
-        ? "gasta unos <b>"+coma(ficha,1)+" kWh cada 100 km</b>"
-        : (t.gnv ? "rinde unos <b>"+coma(100/ficha,1)+" km por m&sup3;</b>"
-                 : "rinde unos <b>"+Math.round(GAL/ficha*100)+" km por gal&oacute;n</b>");
-      notaMio = "Un <b>"+nombreMio+"</b> " + texto(t.nom).toLowerCase() +
-        " en <b>"+c[0]+"</b> ("+mil(c[1])+" msnm) " + comoRinde + ". " +
-        (t.ajuste==="ele"
-          ? "La altura no le quita nada a un el&eacute;ctrico" +
-            (c[2]>1 ? "; lo que pesa son las lomas." : ", y en plano rinde parejo.")
-          : "La ficha dice m&aacute;s: " + razonCiudad(c) + ".");
-      $("p-rend").innerHTML = "Estimado con la ficha y tu ciudad. Si conoces el real, corr&iacute;gelo.";
-    }else{
+    }else if(isFinite(dado)){
       notaMio = "Con el rendimiento que nos das, sin ajustes nuestros.";
       $("p-rend").innerHTML = "Tu marca no est&aacute; en la lista: este dato lo pones t&uacute;.";
+    }else{
+      /* el campo está vacío -no es un valor a medio escribir, es la
+         nada-: se lo decimos de frente en vez de fingir que ya tenemos
+         un dato con el que calculamos por debajo */
+      notaMio = "Escribe cu&aacute;nto rinde tu carro para calcular con tu dato real.";
+      $("p-rend").innerHTML = "Tu marca no est&aacute; en la lista: escribe el rendimiento aqu&iacute; arriba.";
     }
 
     /* el nuestro, ajustado a la MISMA ciudad: los dos suben las mismas lomas */
