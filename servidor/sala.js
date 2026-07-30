@@ -93,7 +93,9 @@ const servidor = http.createServer(async (req, res) => {
 
   /* ── archivos del proyecto ─────────────────────────────────────────── */
   let rel = decodeURIComponent(url.pathname);
-  if (rel === "/" || rel === "") rel = "/chat.html";
+  /* La raíz es el sitio, no la sala de pruebas: torq.bellapop.co es la
+     dirección que se comparte. La sala vive en /chat.html?k= */
+  if (rel === "/" || rel === "") rel = "/index.html";
   const archivo = path.join(RAIZ, rel);
   if (!archivo.startsWith(RAIZ)) { res.writeHead(403); return res.end() }
 

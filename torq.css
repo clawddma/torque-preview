@@ -10,7 +10,13 @@
   --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b;
   --acc:#c8f24a; --onacc:#0a0c07;
   --ph:#0b0c0e; --navbg:rgba(8,9,10,.78); --dockbg:rgba(8,9,10,.94);
-  --marcafiltro:grayscale(1) brightness(2.4) contrast(.95);
+  /* Los tres logos de aliados son arte BLANCO sobre transparente. Se
+     resuelven como silueta -brightness(0) los aplana a negro, invert los
+     vuelve blancos- porque asi conservan el alfa y quedan nitidos en
+     cualquier fondo. Aclararlos con brightness>1, que servia en oscuro,
+     los borraba sobre papel: blanco sobre blanco. */
+  --marcafiltro:grayscale(1) brightness(0) invert(1); --marcaop:.62; --marcaop2:.78;
+  --marcacolor:saturate(.95); --marcacolorop:.9;
   --ok:#22c98d; --warn:#d95926;
   --nav:98px; --pad:44px;
   --safe-l:env(safe-area-inset-left,0px); --safe-r:env(safe-area-inset-right,0px);
@@ -26,7 +32,8 @@
   --paper:#16181a; --mut:#5b6167; --mut2:#8d9299;
   --acc:#4a6d15; --onacc:#f7f6f3;
   --ph:#eceae5; --navbg:rgba(247,246,243,.82); --dockbg:rgba(247,246,243,.95);
-  --marcafiltro:grayscale(1) brightness(.35) contrast(.95);
+  --marcafiltro:grayscale(1) brightness(0); --marcaop:.5; --marcaop2:.66;
+  --marcacolor:grayscale(1) brightness(0); --marcacolorop:.62;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -52,7 +59,7 @@ a{color:inherit}
    regla fina, se lee como lo que es: un lockup de marca. */
 .marca{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;flex:none}
 .logo{display:flex;align-items:center;font-weight:800;
-  font-size:clamp(30px,3vw,40px);letter-spacing:-.035em;line-height:.9}
+  font-size:clamp(25px,2.5vw,34px);letter-spacing:-.038em;line-height:.9}
 .logo svg{width:1.04em;height:1.04em;margin:0 1px;flex:none}
 .marca .sub{font-size:10px;letter-spacing:.13em;text-transform:uppercase;
   color:var(--mut2);font-weight:600;line-height:1.5;white-space:nowrap;
@@ -258,8 +265,8 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
   padding:44px 0;margin-top:52px}
 .marcas .fila{display:flex;align-items:center;justify-content:center;
   gap:clamp(34px,6vw,86px);flex-wrap:wrap}
-.marcas img{height:clamp(32px,3.4vw,46px);width:auto;opacity:.9;
-  transition:opacity .25s;filter:saturate(.95)}
+.marcas img{height:clamp(32px,3.4vw,46px);width:auto;opacity:var(--marcacolorop);
+  transition:opacity .25s;filter:var(--marcacolor)}
 .marcas img:hover{opacity:1}
 .marcas .txt{font-size:clamp(15px,1.5vw,19px);font-weight:700;color:var(--mut);
   letter-spacing:-.01em;white-space:nowrap}
@@ -377,10 +384,10 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
   color:var(--mut2);font-weight:700;white-space:nowrap;opacity:.75;
   padding-right:clamp(6px,1.2vw,18px);border-right:1px solid var(--line2)}
 /* monocromo: se anulan los colores de marca para que la barra sea una sola voz */
-.respaldo-top img{width:auto;opacity:.6;
+.respaldo-top img{width:auto;opacity:var(--marcaop);
   filter:var(--marcafiltro);
   transition:opacity .3s}
-.respaldo-top:hover img{opacity:.72}
+.respaldo-top:hover img{opacity:var(--marcaop2)}
 /* escala por peso optico, no por altura: cada marca ocupa lo que debe */
 .respaldo-top .l-dongfeng{height:clamp(17px,1.6vw,21px)}
 .respaldo-top .l-corautos{height:clamp(19px,1.85vw,24px)}
