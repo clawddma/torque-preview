@@ -176,7 +176,21 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
   .specs-strip{grid-template-columns:repeat(2,1fr)}
   section{padding:62px 0}
   .navl{display:none}
-  .burger{display:block}
+}
+/* La barra en un teléfono lleva cuatro piezas -logotipo, menú, tema y
+   Cotizar- y con las medidas de escritorio la última se salía de la
+   pantalla. Se aprieta el aire y se contiene el cuerpo del logotipo:
+   ninguna de las cuatro se sacrifica, porque Cotizar es el camino al
+   lead y el menú es la única navegación que queda. */
+@media(max-width:700px){
+  .nav .wrap{gap:10px}
+  .logo{font-size:23px}
+  .nav .cta{padding:12px 18px;font-size:14px}
+}
+@media(max-width:390px){
+  .nav .wrap{gap:7px}
+  .logo{font-size:21px}
+  .nav .cta{padding:11px 15px;font-size:13.5px}
 }
 
 /* ═══ MÓDULOS DE PÁGINA DE VEHÍCULO ═══════════════════════════════ */

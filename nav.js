@@ -48,7 +48,17 @@
   '#tqnav a.on{color:#c8f24a;background:rgba(200,242,74,.09);font-weight:700}'+
   '#tqnav .sep{width:1px;height:15px;background:#2a2e35;margin:0 5px}'+
   '#tqnav .tag{margin-left:auto;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#5d636b;font-weight:700;white-space:nowrap}'+
-  '@media(max-width:760px){#tqnav .in{padding:6px 12px;gap:4px}#tqnav .tag{display:none}#tqnav a{font-size:11px;padding:4px 7px}}';
+  /* En un teléfono estos doce enlaces se partían en cuatro líneas y la
+     barra se comía media pantalla, tapando el logotipo del sitio. En una
+     sola fila que se desliza ocupa lo que le corresponde: es una barra
+     de trabajo, no el menú del visitante. */
+  '@media(max-width:760px){'+
+    '#tqnav .in{padding:5px 10px;gap:3px;flex-wrap:nowrap;overflow-x:auto;min-height:0;'+
+      'scrollbar-width:none;-webkit-overflow-scrolling:touch}'+
+    '#tqnav .in::-webkit-scrollbar{display:none}'+
+    '#tqnav .tag{display:none}'+
+    '#tqnav a{font-size:11px;padding:4px 7px}'+
+    '#tqnav .gl{font-size:8px}}';
   document.head.appendChild(css);
 
   function grupo(titulo, items){
