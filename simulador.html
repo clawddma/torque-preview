@@ -248,15 +248,21 @@
   <div class="nota"><b>C&oacute;mo calculamos:</b> el rendimiento arranca de la cifra de ficha de tu referencia en la tecnolog&iacute;a que nos digas, y se ajusta por la altura y la topograf&iacute;a de tu ciudad &mdash; en monta&ntilde;a un motor de combusti&oacute;n gasta m&aacute;s; un h&iacute;brido lo siente a la mitad porque regenera en las bajadas, y un el&eacute;ctrico casi no lo siente. <b>Ese n&uacute;mero lo puedes corregir</b>: si conoces el rendimiento real de tu carro, escr&iacute;belo y calculamos con el tuyo. Es una estimaci&oacute;n para comparar, no una promesa. Si tu carro gasta menos que el nuestro, aqu&iacute; lo va a decir.</div>
 
   <div class="resumen" id="resumen">
-    <p class="eyebrow">Los dos comparativos, en un solo n&uacute;mero</p>
-    <h3 class="tit3">&iquest;Cu&aacute;nto quieres sumar?</h3>
-    <p class="lede" style="margin-top:10px;max-width:640px">Elige qu&eacute; ahorro contar: lo que dejas de pagar en consumo, en seguro e impuesto y taller, o los dos juntos. La cifra de abajo es exactamente esa suma.</p>
+    <p class="eyebrow" id="rs-cap-eyebrow">Al cambiarte, hoy</p>
+    <h3 class="tit3" id="rs-cap-tit">&mdash;</h3>
+    <div class="big" id="rs-cap">&mdash;</div>
+    <p class="sm" id="rs-cap-frase" style="max-width:640px;margin-left:auto;margin-right:auto">&mdash;</p>
+
+    <p class="grupo sep" style="margin-top:38px;text-align:center;border-top:none;padding-top:0">M&aacute;s lo que ahorras cada a&ntilde;o</p>
+    <p class="lede" style="margin-top:6px;max-width:640px">Elige qu&eacute; contar: lo que dejas de pagar en consumo, en seguro e impuesto y taller, o los dos juntos.</p>
     <div class="tecs" id="rs-tecs" role="group" aria-label="Qu&eacute; ahorro sumar">
       <button type="button" data-rs="consumo" aria-pressed="true">Ahorro en consumo</button>
       <button type="button" data-rs="gastos" aria-pressed="true">Ahorro en seguro, impuesto y taller</button>
     </div>
     <div class="big" id="rs-total">&mdash;</div>
     <p class="sm" id="rs-frase">&mdash;</p>
+
+    <p class="cierre" id="rs-cierre" style="margin-top:26px;max-width:640px;margin-left:auto;margin-right:auto;text-align:center">&mdash;</p>
     <a class="cta" href="#contacto" id="rs-cta">Hablar con un asesor</a>
   </div>
 </div></section>
@@ -766,7 +772,8 @@
 
     /* el consumo ya vive como una fila más de esta misma tabla: no se
        recalcula, se separa. dif = consumoDif + gastosDif siempre. */
-    resumen(mioMes*12 - suyoMes*12, dif - (mioMes*12 - suyoMes*12), v);
+    var capital = valor - v.valor;   /* > 0: tu carro vale más y sobra; < 0: falta cubrir */
+    resumen(mioMes*12 - suyoMes*12, dif - (mioMes*12 - suyoMes*12), capital, v);
   }
 
   /* ── el resumen: los dos comparativos, en el número que el cliente
@@ -777,35 +784,113 @@
      total que ya mostraba el cierre de arriba -nunca se contradicen-
      porque los dos leen del mismo par de números. */
   var RS_ACTIVO = { consumo:true, gastos:true };
-  var RS_ULTIMO = { consumoDif:0, gastosDif:0, v:null };
-  function resumen(consumoDif, gastosDif, v){
-    RS_ULTIMO = { consumoDif:consumoDif, gastosDif:gastosDif, v:v };
+  var RS_ULTIMO = { consumoDif:0, gastosDif:0, capital:0, v:null };
+  var UMBRAL = 500000;   /* diferencias de valor de carro por debajo de esto: "prácticamente igual" */
+
+  /* Vender o entregar el carro de hoy y comprar el nuestro mueve capital
+     el mismo día del cambio, antes de que exista un solo mes de uso. Si
+     el carro del cliente vale más, ese sobrante es plata a favor desde
+     el arranque -el caso que trajo Daniel: una 4Runner de $138.000.000
+     contra una Vigo de $89.990.000 deja $48.010.000 a favor-. Si vale
+     menos, es una diferencia real que hay que cubrir, y se dice así:
+     nunca se disfraza de "ahorro" un hueco de plata. */
+  function pintarCapital(capital, v){
+    var tit = $("rs-cap-tit"), big = $("rs-cap"), frase = $("rs-cap-frase");
+    if(capital > UMBRAL){
+      tit.textContent = "Empiezas con dinero a favor";
+      big.textContent = pesos(capital); big.style.color = "var(--acc)";
+      frase.innerHTML = "Tu carro de hoy vale m&aacute;s que " + v.art + " " + v.nombre +
+        ". Si lo vendes o lo entregas en parte de pago, te sobran <b>" + pesos(capital) +
+        "</b> antes de contar un solo mes de ahorro en el uso.";
+    }else if(capital < -UMBRAL){
+      tit.textContent = "La diferencia que cubrir\u00edas";
+      big.textContent = pesos(-capital); big.style.color = "var(--mut)";
+      frase.innerHTML = (v.art==="la"?"La ":"El ") + v.nombre + " cuesta <b>" + pesos(-capital) +
+        "</b> m&aacute;s que el valor de tu carro hoy. No es plata perdida: es lo que el ahorro de abajo " +
+        "te empieza a devolver desde el primer a&ntilde;o.";
+    }else{
+      tit.textContent = "Tu carro vale casi lo mismo";
+      big.textContent = pesos(0); big.style.color = "var(--mut)";
+      frase.innerHTML = "El valor de tu carro hoy cubre " + (v.art==="la"?"la ":"el ") + v.nombre +
+        " casi por completo: cambiarte no te cuesta nada de bolsillo aparte del ahorro que sigue cada a&ntilde;o.";
+    }
+  }
+
+  function resumen(consumoDif, gastosDif, capital, v){
+    RS_ULTIMO = { consumoDif:consumoDif, gastosDif:gastosDif, capital:capital, v:v };
+    pintarCapital(capital, v);
+
     var total = (RS_ACTIVO.consumo ? consumoDif : 0) + (RS_ACTIVO.gastos ? gastosDif : 0);
     var etiqueta = RS_ACTIVO.consumo && RS_ACTIVO.gastos ? "consumo, seguro, impuesto y taller"
       : (RS_ACTIVO.consumo ? "consumo" : "seguro, impuesto y taller");
 
-    var big = $("rs-total"), frase = $("rs-frase"), cta = $("rs-cta");
+    var big = $("rs-total"), frase = $("rs-frase"), cierre = $("rs-cierre"), cta = $("rs-cta");
     var host = document.getElementById("qz-host");
+
     if(total > 500){
       big.textContent = pesos(total); big.style.color = "var(--acc)";
       frase.innerHTML = "Eso es lo que dejar&iacute;as de pagar al a&ntilde;o en <b>" + etiqueta +
         "</b> con " + v.art + " " + v.nombre + ", frente a tu carro de hoy. " +
         "En cinco a&ntilde;os son <b>" + pesos(total*5) + "</b>.";
-      cta.textContent = "Hablar con un asesor y asegurar " + pesos(total) + " al año";
-      if(host) host.dataset.ahorro = pesos(total) + " al a\u00f1o en " + etiqueta;
     }else if(total < -500){
       big.textContent = pesos(-total); big.style.color = "var(--mut)";
       frase.innerHTML = "Con lo que elegiste sumar, " + v.art + " " + v.nombre + " sale <b>" + pesos(-total) +
         " m&aacute;s cara</b> al a&ntilde;o que tu carro de hoy. Prueba sumando solo uno de los dos, o mira " +
         "la raz&oacute;n en la tabla de arriba.";
-      cta.textContent = "Hablar con un asesor";
-      if(host) delete host.dataset.ahorro;
     }else{
       big.textContent = pesos(0); big.style.color = "var(--mut)";
       frase.innerHTML = "Con lo que elegiste sumar, el gasto queda pr&aacute;cticamente igual. La raz&oacute;n " +
         "para cambiarte no ser&iacute;a el ahorro, sino el carro en s&iacute; mismo.";
-      cta.textContent = "Hablar con un asesor";
-      if(host) delete host.dataset.ahorro;
+    }
+
+    /* el cierre: las dos piezas juntas, en la misma frase que las trajo
+       Daniel -"empieza con X a favor, más el ahorro en el uso"-, pero
+       CADA UNA con su propio tiempo: lo de hoy no se mezcla con lo de
+       cada año dentro de un solo número, porque son dos cosas distintas
+       y sumarlas sin decirlo sería la clase de cuenta alegre que le
+       cuesta la credibilidad a todo lo demás. Solo el "primer año" -una
+       vez, con su propia etiqueta- las junta. */
+    var partes = [];
+    if(capital > UMBRAL) partes.push("empiezas con <b>" + pesos(capital) + "</b> a favor al cambiarte");
+    else if(capital < -UMBRAL) partes.push("cubrir&iacute;as <b>" + pesos(-capital) + "</b> de diferencia al cambiarte");
+    if(total > 500) partes.push("<b>" + pesos(total) + "</b> al a&ntilde;o en " + etiqueta);
+    else if(total < -500) partes.push("<b>" + pesos(-total) + "</b> m&aacute;s al a&ntilde;o en " + etiqueta);
+
+    if(!partes.length){
+      cierre.innerHTML = "Con estas cifras, cambiarte no mueve la plata ni hoy ni despu&eacute;s: la raz&oacute;n " +
+        "ser&iacute;a el carro en s&iacute; mismo.";
+    }else if(capital > UMBRAL && total > 500){
+      var primerAnio = capital + total;
+      cierre.innerHTML = "En total, " + partes.join(", m&aacute;s ") + ". En el primer a&ntilde;o completo, " +
+        "sumando todo, son <b>" + pesos(primerAnio) + "</b>.";
+    }else if(capital < -UMBRAL && total > 500){
+      var meses = Math.ceil((-capital) / (total/12));
+      var plazo;
+      if(meses <= 18) plazo = "unos <b>" + meses + " meses</b>";
+      else if(meses <= 180) plazo = "unos <b>" + meses + " meses</b> (cerca de " +
+        (Math.round(meses/12*10)/10).toString().replace(".",",") + " a&ntilde;os)";
+      /* pasado ese plazo prometer una recuperación deja de ser un argumento de venta y
+         empieza a ser una promesa vacía: se dice de frente, sin la cuenta de meses */
+      cierre.innerHTML = plazo
+        ? "En total, " + partes.join(", pero ") + ". A este ritmo, el ahorro te devuelve esa diferencia en " + plazo + "."
+        : "En total, " + partes.join(", pero ") + ". A este ritmo, recuperar esa diferencia tomar&iacute;a m&aacute;s de 15 a&ntilde;os: " +
+          "la raz&oacute;n para cambiarte no ser&iacute;a el ahorro, sino el carro en s&iacute; mismo.";
+    }else{
+      cierre.innerHTML = "En total, " + partes.join(", y ") + ".";
+    }
+
+    cta.textContent = capital > UMBRAL
+      ? "Hablar con un asesor y asegurar " + pesos(capital + Math.max(total,0))
+      : (total > 500 ? "Hablar con un asesor y asegurar " + pesos(total) + " al a\u00f1o" : "Hablar con un asesor");
+
+    /* el mensaje de WhatsApp se lleva la misma combinación honesta:
+       nunca un número que no se sostenga cuando el asesor pregunte */
+    if(host){
+      if(capital > UMBRAL && total > 500) host.dataset.ahorro =
+        pesos(capital) + " a favor al cambiarme, m\u00e1s " + pesos(total) + " al a\u00f1o en " + etiqueta;
+      else if(capital > UMBRAL) host.dataset.ahorro = pesos(capital) + " a favor al cambiarme de carro";
+      else if(total > 500) host.dataset.ahorro = pesos(total) + " al a\u00f1o en " + etiqueta;
+      else delete host.dataset.ahorro;
     }
   }
   (function(){
@@ -819,7 +904,7 @@
         if(RS_ACTIVO[clave] && !RS_ACTIVO[otro]) return;
         RS_ACTIVO[clave] = !RS_ACTIVO[clave];
         b.setAttribute("aria-pressed", RS_ACTIVO[clave] ? "true" : "false");
-        if(RS_ULTIMO.v) resumen(RS_ULTIMO.consumoDif, RS_ULTIMO.gastosDif, RS_ULTIMO.v);
+        if(RS_ULTIMO.v) resumen(RS_ULTIMO.consumoDif, RS_ULTIMO.gastosDif, RS_ULTIMO.capital, RS_ULTIMO.v);
       });
     });
   })();
