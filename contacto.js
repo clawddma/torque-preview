@@ -2,7 +2,7 @@
    TORQ — calificador y salida a WhatsApp, compartido por index, vigo
    y box. Se monta en <div id="qz-host" data-vehiculo="Vigo">.
 
-   Misma malla que el calificador de la MAGE: la calificación vive en la
+   Misma malla que el calificador de la Mage: la calificación vive en la
    página, no en la conversación, para que el asesor reciba el lead ya
    calificado y con su código de campaña.
    ═══════════════════════════════════════════════════════════════════ */
@@ -18,6 +18,9 @@ var WA="573054310851";
 var LEADS_URL="";
 
 var VEH=host.dataset.vehiculo||"";
+/* el atributo puede cambiar en caliente (el simulador deja elegir el
+   vehículo a contrastar): se relee al redactar y al registrar */
+function vehAhora(){ return host.dataset.vehiculo || VEH }
 
 /* código de campaña: viaja en ?c= desde el anuncio y sobrevive la
    navegación entre páginas del sitio */
@@ -40,7 +43,7 @@ var PASOS=[
 ];
 if(!VEH){
   PASOS.unshift({k:"Vehiculo", q:"¿Cuál te interesa?",
-    opts:["Vigo eléctrica","Box eléctrico","MAGE híbrida","Todavía no sé"]});
+    opts:["Vigo eléctrica","Box eléctrico","Mage híbrida","Todavía no sé"]});
 }
 
 var i=0, r={};
@@ -122,7 +125,7 @@ function pintar(){
    verdad vino de un anuncio. */
 function redactar(){
   var nom=(r.Nombre||"").trim().split(" ")[0];
-  var veh=VEH || ({"Vigo eléctrica":"Vigo","Box eléctrico":"Box","MAGE híbrida":"MAGE"}[r.Vehiculo]||"");
+  var veh=vehAhora() || ({"Vigo eléctrica":"Vigo","Box eléctrico":"Box","Mage híbrida":"Mage"}[r.Vehiculo]||"");
   var cuando={
     "Este mes":"la estoy pensando para este mes",
     "En 1 a 3 meses":"la estoy pensando para los próximos meses",
@@ -157,7 +160,7 @@ function registrar(){
       headers:{"Content-Type":"text/plain;charset=utf-8"},
       body:JSON.stringify({ciudad:r.Ciudad||"",compra:r.Compra||"",pago:r.Pago||"",
         retoma:r.Retoma||"",nombre:r.Nombre||"",campana:COD,
-        vehiculo:VEH||r.Vehiculo||"Sin definir"})});
+        vehiculo:vehAhora()||r.Vehiculo||"Sin definir"})});
   }catch(e){}
 }
 
