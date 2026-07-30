@@ -140,6 +140,10 @@ function redactar(){
 
   var t="Hola"+(nom?", soy "+nom:"")+". ";
   t += veh ? "Vi la "+veh+" en TORQ y me interesa." : "Vi los carros de TORQ y quisiera asesoría.";
+  /* el simulador deja un ahorro calculado en el mismo host: el mensaje
+     nace con la cifra que lo convenció, no genérico */
+  var ahorro = host.dataset.ahorro;
+  if(ahorro) t += " En el simulador me salió que ahorraría "+ahorro+".";
   var l2=[];
   if(r.Ciudad) l2.push("Estoy en "+r.Ciudad);
   if(cuando)   l2.push(cuando);

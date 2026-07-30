@@ -91,6 +91,28 @@
   .anual .total th,.anual .total td{font-size:16px;padding-top:16px}
 }
 
+/* ── el resumen: los dos comparativos en un solo número ────────────
+   Va DESPUÉS de la letra chica a propósito: el visitante ya vio de dónde
+   sale cada cifra, y esta tarjeta cierra con la conclusión sin repetir
+   el argumento. Es la pieza que empuja al botón, así que lleva su propio
+   fondo -como el resultado de arriba- para que no se lea como una nota
+   más entre las dos de metodología. */
+.resumen{border:1px solid var(--line2);border-radius:16px;
+  padding:clamp(30px,4vw,44px) clamp(28px,4vw,40px);margin-top:40px;
+  background:linear-gradient(160deg,color-mix(in srgb, var(--acc) 8%, transparent),var(--ink2) 55%);
+  text-align:center}
+.resumen .eyebrow{display:block}
+.tit3{font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-.03em;margin-top:8px}
+.resumen .lede{margin-left:auto;margin-right:auto;color:var(--mut)}
+.resumen .tecs{justify-content:center;margin:26px 0 0}
+.resumen .big{font-size:clamp(44px,7vw,68px);margin:20px 0 6px}
+.resumen .sm{max-width:560px;margin-left:auto;margin-right:auto;color:var(--mut);font-size:15.5px;line-height:1.7}
+/* este CTA lleva una cifra variable y a veces es más largo que
+   "Hablar con un asesor": el nowrap de .cta sirve a los botones cortos
+   del resto del sitio, pero aquí necesita envolver */
+.resumen .cta{display:inline-block;margin-top:24px;padding:15px 34px;font-size:16px;
+  white-space:normal;max-width:min(100%,420px);line-height:1.35}
+
 /* la lectura del carro del cliente, antes de las barras */
 .lectura{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px;
   font-size:15px;color:var(--mut);line-height:1.7}
@@ -224,6 +246,19 @@
   <div class="nota"><b>De d&oacute;nde salen nuestras estimaciones:</b> el <b>seguro</b>, 3,3% del valor del veh&iacute;culo &mdash; la referencia real que nos dio un cliente de la Vigo. El <b>impuesto</b>, la tarifa por rango de valor comercial (1,5% · 2,5% · 3,5%), salvo los el&eacute;ctricos, que por la <b>Ley 1964 de 2019</b> tienen tarifa m&aacute;xima del 1% y 10% de descuento en el <b>SOAT</b>. La <b>t&eacute;cnico-mec&aacute;nica</b> no se le hace a un carro nuevo los primeros a&ntilde;os. El <b>mantenimiento</b> es el plan de taller para unos 15.000 km al a&ntilde;o: un el&eacute;ctrico no lleva aceite, filtro de aceite, correa ni buj&iacute;as. Son estimaciones para comparar; <b>el valor exacto de tu ciudad lo liquida el asesor</b>, porque el impuesto lo cobra cada departamento y el seguro depende de tu historial.</div>
 
   <div class="nota"><b>C&oacute;mo calculamos:</b> el rendimiento arranca de la cifra de ficha de tu referencia en la tecnolog&iacute;a que nos digas, y se ajusta por la altura y la topograf&iacute;a de tu ciudad &mdash; en monta&ntilde;a un motor de combusti&oacute;n gasta m&aacute;s; un h&iacute;brido lo siente a la mitad porque regenera en las bajadas, y un el&eacute;ctrico casi no lo siente. <b>Ese n&uacute;mero lo puedes corregir</b>: si conoces el rendimiento real de tu carro, escr&iacute;belo y calculamos con el tuyo. Es una estimaci&oacute;n para comparar, no una promesa. Si tu carro gasta menos que el nuestro, aqu&iacute; lo va a decir.</div>
+
+  <div class="resumen" id="resumen">
+    <p class="eyebrow">Los dos comparativos, en un solo n&uacute;mero</p>
+    <h3 class="tit3">&iquest;Cu&aacute;nto quieres sumar?</h3>
+    <p class="lede" style="margin-top:10px;max-width:640px">Elige qu&eacute; ahorro contar: lo que dejas de pagar en consumo, en seguro e impuesto y taller, o los dos juntos. La cifra de abajo es exactamente esa suma.</p>
+    <div class="tecs" id="rs-tecs" role="group" aria-label="Qu&eacute; ahorro sumar">
+      <button type="button" data-rs="consumo" aria-pressed="true">Ahorro en consumo</button>
+      <button type="button" data-rs="gastos" aria-pressed="true">Ahorro en seguro, impuesto y taller</button>
+    </div>
+    <div class="big" id="rs-total">&mdash;</div>
+    <p class="sm" id="rs-frase">&mdash;</p>
+    <a class="cta" href="#contacto" id="rs-cta">Hablar con un asesor</a>
+  </div>
 </div></section>
 
 <section id="contacto" style="background:var(--ink2);border-top:1px solid var(--line)"><div class="wrap">
@@ -728,7 +763,66 @@
       : "Con estas cifras, tener " + v.art + " " + v.nombre + " te costar&iacute;a <b>" + pesos(-dif) +
         " m&aacute;s al a&ntilde;o</b> que tu carro actual. Te lo decimos igual: la raz&oacute;n para cambiarte " +
         "no ser&iacute;a el costo de tenerlo, sino el carro en s&iacute; &mdash; garant&iacute;a, respaldo y estrenar.";
+
+    /* el consumo ya vive como una fila más de esta misma tabla: no se
+       recalcula, se separa. dif = consumoDif + gastosDif siempre. */
+    resumen(mioMes*12 - suyoMes*12, dif - (mioMes*12 - suyoMes*12), v);
   }
+
+  /* ── el resumen: los dos comparativos, en el número que el cliente
+     decide sumar ──────────────────────────────────────────────────
+     No es un tercer cálculo: es una selección sobre los dos que ya
+     existen. "Consumo" es la fila de energía de la tabla anual;
+     "gastos" es todo lo demás de esa misma tabla. Sumados dan el mismo
+     total que ya mostraba el cierre de arriba -nunca se contradicen-
+     porque los dos leen del mismo par de números. */
+  var RS_ACTIVO = { consumo:true, gastos:true };
+  var RS_ULTIMO = { consumoDif:0, gastosDif:0, v:null };
+  function resumen(consumoDif, gastosDif, v){
+    RS_ULTIMO = { consumoDif:consumoDif, gastosDif:gastosDif, v:v };
+    var total = (RS_ACTIVO.consumo ? consumoDif : 0) + (RS_ACTIVO.gastos ? gastosDif : 0);
+    var etiqueta = RS_ACTIVO.consumo && RS_ACTIVO.gastos ? "consumo, seguro, impuesto y taller"
+      : (RS_ACTIVO.consumo ? "consumo" : "seguro, impuesto y taller");
+
+    var big = $("rs-total"), frase = $("rs-frase"), cta = $("rs-cta");
+    var host = document.getElementById("qz-host");
+    if(total > 500){
+      big.textContent = pesos(total); big.style.color = "var(--acc)";
+      frase.innerHTML = "Eso es lo que dejar&iacute;as de pagar al a&ntilde;o en <b>" + etiqueta +
+        "</b> con " + v.art + " " + v.nombre + ", frente a tu carro de hoy. " +
+        "En cinco a&ntilde;os son <b>" + pesos(total*5) + "</b>.";
+      cta.textContent = "Hablar con un asesor y asegurar " + pesos(total) + " al año";
+      if(host) host.dataset.ahorro = pesos(total) + " al a\u00f1o en " + etiqueta;
+    }else if(total < -500){
+      big.textContent = pesos(-total); big.style.color = "var(--mut)";
+      frase.innerHTML = "Con lo que elegiste sumar, " + v.art + " " + v.nombre + " sale <b>" + pesos(-total) +
+        " m&aacute;s cara</b> al a&ntilde;o que tu carro de hoy. Prueba sumando solo uno de los dos, o mira " +
+        "la raz&oacute;n en la tabla de arriba.";
+      cta.textContent = "Hablar con un asesor";
+      if(host) delete host.dataset.ahorro;
+    }else{
+      big.textContent = pesos(0); big.style.color = "var(--mut)";
+      frase.innerHTML = "Con lo que elegiste sumar, el gasto queda pr&aacute;cticamente igual. La raz&oacute;n " +
+        "para cambiarte no ser&iacute;a el ahorro, sino el carro en s&iacute; mismo.";
+      cta.textContent = "Hablar con un asesor";
+      if(host) delete host.dataset.ahorro;
+    }
+  }
+  (function(){
+    var caja = $("rs-tecs");
+    Array.prototype.forEach.call(caja.children, function(b){
+      b.addEventListener("click", function(){
+        var clave = b.dataset.rs;
+        /* no se puede apagar el último encendido: sumar "nada" no es
+           una opción válida, y un botón muerto confunde más que ayuda */
+        var otro = clave === "consumo" ? "gastos" : "consumo";
+        if(RS_ACTIVO[clave] && !RS_ACTIVO[otro]) return;
+        RS_ACTIVO[clave] = !RS_ACTIVO[clave];
+        b.setAttribute("aria-pressed", RS_ACTIVO[clave] ? "true" : "false");
+        if(RS_ULTIMO.v) resumen(RS_ULTIMO.consumoDif, RS_ULTIMO.gastosDif, RS_ULTIMO.v);
+      });
+    });
+  })();
   /* En una cuenta de gastos un signo menos es ambiguo: no se sabe si es
      menos plata en el bolsillo o menos gasto. Se escribe con palabras. */
   function pintaDif(id, d){
