@@ -311,7 +311,12 @@
      Corolla Cross está en gasolina y en híbrido, el Hilux solo en diésel,
      el Seagull solo en eléctrico.
      El GNV se deriva de la cifra de gasolina con un 5% de castigo: un
-     motor convertido rinde algo menos por unidad de energía. */
+     motor convertido rinde algo menos por unidad de energía.
+
+     Renault es la marca que más registra en Colombia —150.473 livianos
+     matriculados 2022-2026 según el cubo RUNT, más que Chevrolet
+     (101.533)— y la Duster es su línea líder: es la marca y la
+     referencia con las que abre el simulador. */
   var CARROS = {
     "BYD":        [{n:"Seagull",e:11.5},{n:"Yuan Plus",e:15.0},{n:"Yuan Up",e:14.0}],
     "Chery":      [{n:"iCar 03",e:16.0},{n:"Tiggo 4 Pro",g:7.0},{n:"Tiggo 7 Pro",g:7.6}],
@@ -321,7 +326,8 @@
     "Cupra":      [{n:"Formentor",g:7.8}],
     "Deepal":     [{n:"S05",e:15.5}],
     "Ford":       [{n:"Escape",g:8.7,h:6.0},{n:"Ranger",d:8.6},{n:"Territory",g:7.9,h:5.9}],
-    "Hyundai":    [{n:"Accent",g:6.5},{n:"Kona",g:7.0,h:4.6,e:14.7},{n:"Tucson",g:8.3,h:5.6}],
+    "Hyundai":    [{n:"Accent",g:6.5},{n:"Grand i10",g:5.7},{n:"Kona",g:7.0,h:4.6,e:14.7},
+                   {n:"Tucson",g:8.3,h:5.6},{n:"Venue",g:6.8}],
     "Kia":        [{n:"K3",g:6.3},{n:"K3 Cross",g:6.6},{n:"Niro",h:4.4,e:15.3},{n:"Picanto",g:5.6},
                    {n:"Seltos",g:7.0},{n:"Sonet",g:6.6},{n:"Soluto",g:6.2},{n:"Sportage",g:8.0,h:5.6},
                    {n:"Stonic",g:6.4}],
@@ -331,13 +337,15 @@
                    {n:"Versa",g:6.5},{n:"X-Trail",g:8.3,h:6.1}],
     "Peugeot":    [{n:"2008",g:6.6}],
     "Renault":    [{n:"Arkana",g:7.0},{n:"Duster",g:7.4,d:6.2,h:4.8},{n:"Duster Oroch",g:7.8},
-                   {n:"Kardian",g:6.2},{n:"Kwid",g:5.4,e:13.5},{n:"Logan",g:6.6},{n:"Stepway",g:6.9}],
-    "Suzuki":     [{n:"Dzire",g:5.4},{n:"Fronx",g:6.0},{n:"Jimny",g:7.4},{n:"S-Cross",g:6.8},
-                   {n:"Swift",g:5.5}],
+                   {n:"Kardian",g:6.2},{n:"Kwid",g:5.4,e:13.5},{n:"Logan",g:6.6},
+                   {n:"Sandero",g:6.8},{n:"Stepway",g:6.9}],
+    "Suzuki":     [{n:"Dzire",g:5.4},{n:"Fronx",g:6.0},{n:"Grand Vitara",h:5.4},{n:"Jimny",g:7.4},
+                   {n:"S-Cross",g:6.8},{n:"Swift",g:5.5}],
     "Tesla":      [{n:"Model 3",e:14.0},{n:"Model Y",e:15.5}],
-    "Toyota":     [{n:"Corolla",g:6.4,h:4.2},{n:"Corolla Cross",g:7.0,h:4.3},{n:"Fortuner",d:8.9},
-                   {n:"Hilux",d:8.4},{n:"Land Cruiser Prado",d:9.8},{n:"Yaris Cross",g:6.3,h:4.4}],
-    "Volkswagen": [{n:"Polo",g:6.4},{n:"T-Cross",g:6.7}]
+    "Toyota":     [{n:"4Runner",g:12.5},{n:"Corolla",g:6.4,h:4.2},{n:"Corolla Cross",g:7.0,h:4.3},
+                   {n:"Fortuner",d:8.9},{n:"Hilux",d:8.4},{n:"Land Cruiser Prado",d:9.8},
+                   {n:"Yaris Cross",g:6.3,h:4.4}],
+    "Volkswagen": [{n:"Nivus",g:6.6},{n:"Polo",g:6.4},{n:"T-Cross",g:6.7}]
   };
   var OTRA = "Otra marca / no est&aacute; la m&iacute;a";
 
@@ -460,6 +468,7 @@
     var k = TEC[tec].clave;
     return (CARROS[m]||[]).filter(function(r){ return r[k] != null });
   }
+  var primerCarga = true;
   function refrescarMarcas(){
     var previa = marca.value;
     marca.innerHTML = "";
@@ -467,10 +476,19 @@
       marca.insertAdjacentHTML("beforeend","<option value=\""+m+"\">"+m+"</option>");
     });
     marca.insertAdjacentHTML("beforeend","<option value=\"otra\">"+OTRA+"</option>");
-    /* si la marca elegida también existe en la nueva tecnología, se
-       respeta: cambiar de gasolina a híbrido no debe mover el Toyota */
-    if(previa && [].some.call(marca.options,function(o){ return o.value===previa })) marca.value = previa;
+    if(previa && [].some.call(marca.options,function(o){ return o.value===previa })){
+      /* si la marca elegida también existe en la nueva tecnología, se
+         respeta: cambiar de gasolina a híbrido no debe mover el Toyota */
+      marca.value = previa;
+    }else if(primerCarga){
+      /* la primera carga no puede abrir en BYD solo porque es la primera
+         en el alfabeto: Renault es la marca líder del país -150.473
+         livianos matriculados 2022-2026 en el RUNT- y la Duster su
+         referencia más vendida */
+      marca.value = "Renault";
+    }
     refrescarRefs();
+    primerCarga = false;
   }
   function refrescarRefs(){
     var otra = marca.value === "otra";
@@ -483,6 +501,9 @@
         ref.insertAdjacentHTML("beforeend","<option value='"+i+"'>"+r.n+"</option>");
       });
       if(previa) [].forEach.call(ref.options,function(o){ if(o.textContent===previa) ref.value=o.value });
+      /* dentro de Renault, la referencia con la que abre no es la
+         primera alfabética (Arkana): es la Duster, su línea líder */
+      else if(marca.value === "Renault") [].forEach.call(ref.options,function(o){ if(o.textContent==="Duster") ref.value=o.value });
     }
     tocado = false;
     calc();
