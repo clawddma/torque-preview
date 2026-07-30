@@ -22,7 +22,19 @@
     var m = document.querySelector('meta[name="theme-color"]');
     if(m) m.setAttribute("content", t==="light" ? "#f7f6f3" : "#08090a");
   }
+  function alternar(){
+    var t = raiz.dataset.theme === "light" ? "dark" : "light";
+    try{ localStorage.setItem(CLAVE, t) }catch(e){}
+    aplicar(t);
+    return t;
+  }
   aplicar(preferido());
+
+  /* El menú de móvil también cambia el tema, y no puede depender de que
+     el botón ya exista: este archivo va en el <head> y monta su botón en
+     DOMContentLoaded, mientras que menu.js -con defer- corre antes. La
+     puerta es esta función, no el DOM. */
+  window.TORQUETema = { alternar:alternar, actual:function(){ return raiz.dataset.theme } };
 
   /* el interruptor: un punto medio lleno, sobrio, al final del nav */
   function montar(){
@@ -38,13 +50,14 @@
     css.textContent = ".tema-btn{background:none;border:1px solid var(--line2);color:var(--mut);"+
       "width:40px;height:40px;border-radius:50%;cursor:pointer;flex:none;display:flex;"+
       "align-items:center;justify-content:center;transition:color .2s,border-color .2s}"+
-      ".tema-btn:hover{color:var(--paper);border-color:var(--mut2)}";
+      ".tema-btn:hover{color:var(--paper);border-color:var(--mut2)}"+
+      /* En un teléfono la barra ya lleva logotipo con eslogan, menú y
+         Cotizar: el interruptor no cabe sin comerse el margen. Se
+         esconde y pasa al panel del menú, que lo acciona por delegación
+         -el botón sigue aquí, solo deja de verse. */
+      "@media(max-width:560px){.tema-btn{display:none}}";
     document.head.appendChild(css);
-    b.onclick = function(){
-      var t = raiz.dataset.theme==="light" ? "dark" : "light";
-      try{ localStorage.setItem(CLAVE, t) }catch(e){}
-      aplicar(t);
-    };
+    b.onclick = alternar;
     /* antes del CTA, para que el CTA siga siendo lo último que se ve */
     var cta = sitio.querySelector(":scope > .cta");
     if(cta) sitio.insertBefore(b, cta); else sitio.appendChild(b);

@@ -57,14 +57,19 @@ a{color:inherit}
    no debajo: puesto abajo coincidia con el ancho del logotipo y formaba
    una barra que se leia como un subrayado. Al costado, separado por una
    regla fina, se lee como lo que es: un lockup de marca. */
-.marca{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;flex:none}
+/* El eslogan va DEBAJO del logotipo, no al lado, y no se oculta nunca:
+   es la firma de la marca. Se sostiene ahí porque va en versalitas
+   estrechas y su renglón es más largo que el logotipo -si midieran lo
+   mismo se leería como un subrayado, que es lo que pasaba cuando abajo
+   iba el descriptor partido en dos líneas. */
+.marca{display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+  text-decoration:none;color:inherit;flex:none}
 .logo{display:flex;align-items:center;font-weight:800;
   font-size:clamp(25px,2.5vw,34px);letter-spacing:-.038em;line-height:.9}
 .logo svg{width:1.04em;height:1.04em;margin:0 1px;flex:none}
-.marca .sub{font-size:10px;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--mut2);font-weight:600;line-height:1.5;white-space:nowrap;
-  padding-left:16px;border-left:1px solid var(--line2)}
-@media(max-width:760px){ .marca .sub{display:none} }
+.marca .lema{font-size:9px;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--mut2);font-weight:700;line-height:1.2;white-space:nowrap}
+@media(max-width:390px){ .marca .lema{font-size:8px;letter-spacing:.11em} }
 
 .navl{display:flex;gap:32px;align-items:center;list-style:none}
 .navl a{color:var(--mut);text-decoration:none;font-size:15px;transition:color .2s}

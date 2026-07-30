@@ -236,7 +236,7 @@ var KB = [
  {id:"consumo", k:["consumo","gasolina","litros","rinde","tanque","tanquear","galon","galón","km/l","economico","económico","gasto","cuanto gasta","ahorro","autonomia","autonomía","cuanto recorre","kilometros","kilómetros"],
   r:function(v){
     if(v.tec==="hibrido") return v.consumo.charAt(0).toUpperCase()+v.consumo.slice(1)+", y "+v.autonomia+".\n\n"+
-      "En la página hay un simulador donde pones tu consumo actual y los kilómetros que haces al mes, y te dice cuánto cambiaría tu gasto. ¿Te lo comparto?";
+      "En la página hay un simulador: le dices qué carro tienes hoy —marca, referencia y si anda con gasolina, diésel, gas, híbrido o eléctrico— y en qué ciudad, y te dice cuánto cambiaría tu gasto. ¿Te lo comparto?";
     if(v.versiones) return v.Art+" "+v.nombre+" no gasta gasolina.\n\n"+
       v.versiones.map(function(x){
         return "· "+x.n+" ("+x.precio+"): "+x.autonomia+" con una carga, batería de "+x.bateria+".";

@@ -53,6 +53,29 @@
       c.textContent = cta.textContent;
       li.appendChild(c); ul.appendChild(li);
     }
+    /* El interruptor de tema no cabe en la barra de un teléfono: se
+       esconde por CSS y se acciona desde aquí. Se habla con tema.js por
+       su función, no buscando su botón: este archivo corre antes de que
+       ese botón exista. */
+    var temaA = null;
+    if(window.TORQUETema){
+      var temaLi = document.createElement("li");
+      temaA = document.createElement("button");
+      temaA.type = "button"; temaA.className = "fila-tema";
+      temaLi.appendChild(temaA);
+      ul.insertBefore(temaLi, cta ? ul.lastChild : null);
+      temaA.addEventListener("click", function(e){
+        e.stopPropagation();          /* no cerrar: el cambio se ve en sitio */
+        window.TORQUETema.alternar(); rotularTema();
+      });
+    }
+    function rotularTema(){
+      if(!temaA) return;
+      temaA.textContent = window.TORQUETema.actual() === "light"
+        ? "Cambiar a tema oscuro" : "Cambiar a tema claro";
+    }
+    rotularTema();
+
     panel.appendChild(ul);
     boton.setAttribute("aria-controls", panel.id);
 
@@ -76,6 +99,10 @@
       '.menu-movil a{display:block;padding:17px calc(var(--pad) + var(--safe-l));'+
         'text-decoration:none;color:var(--paper);font-size:18px;font-weight:600;letter-spacing:-.015em}'+
       '.menu-movil a[aria-current]{color:var(--acc)}'+
+      '.menu-movil .fila-tema{display:block;width:100%;text-align:left;background:none;border:none;'+
+        'font:inherit;cursor:pointer;color:var(--mut);'+
+        'padding:17px calc(var(--pad) + var(--safe-l));font-size:16px;font-weight:600}'+
+      '@media(min-width:561px){.menu-movil .fila-tema{display:none}}'+
       '.menu-movil .cta-li{margin:16px calc(var(--pad) + var(--safe-l)) 0}'+
       /* el color va explícito: la regla de los enlaces del panel es más
          específica que la del botón y le ganaba la tinta */
@@ -98,7 +125,7 @@
       boton.setAttribute("aria-label", v ? "Cerrar el menú" : "Abrir el menú");
       panel.hidden = !v;
     }
-    boton.addEventListener("click", function(){ poner(!abierto()) });
+    boton.addEventListener("click", function(){ rotularTema(); poner(!abierto()) });
     panel.addEventListener("click", function(e){
       /* un ancla de la misma página no recarga: hay que cerrar a mano */
       if(e.target.tagName === "A") poner(false);
