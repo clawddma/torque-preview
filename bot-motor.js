@@ -1235,7 +1235,7 @@ function crearSesion(vehiculoInicial){
     var v = s.vehiculo();
     /* Cuatro párrafos para saludar espantan. Uno basta: quién soy, qué carro
        traes y una pregunta abierta. */
-    return "¡Hola! Soy el asesor digital de TORQ 👋\n\n"+
+    return "¡Hola! Soy el asesor digital de TORQUE 👋\n\n"+
       "Veo que vienes por "+v.art+" "+v.largo+" — "+v.clase+", desde "+v.precio+".\n\n"+
       "¿Qué quieres saber?";
   };
