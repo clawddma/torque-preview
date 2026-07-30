@@ -110,8 +110,41 @@
 /* este CTA lleva una cifra variable y a veces es más largo que
    "Hablar con un asesor": el nowrap de .cta sirve a los botones cortos
    del resto del sitio, pero aquí necesita envolver */
+/* este CTA lleva una cifra variable y a veces es más largo que
+   "Hablar con un asesor": el nowrap de .cta sirve a los botones cortos
+   del resto del sitio, pero aquí necesita envolver */
 .resumen .cta{display:inline-block;margin-top:24px;padding:15px 34px;font-size:16px;
   white-space:normal;max-width:min(100%,420px);line-height:1.35}
+
+/* ── la línea de tiempo ────────────────────────────────────────────
+   Una decisión de compra no se piensa en "por año": se piensa en hoy,
+   al año y a cinco años. Antes esas tres cifras existían pero dos
+   estaban escondidas dentro de un párrafo, y la de cinco años -que es
+   la que de verdad convence- había que buscarla leyendo. Aquí las tres
+   se ven de un golpe, y cada una dice qué incluye para que nadie tenga
+   que confiar a ciegas en el total. */
+.linea{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:22px;
+  background:var(--line2);border:1px solid var(--line2);border-radius:14px;overflow:hidden}
+.hito{background:var(--ink2);padding:22px 16px;text-align:center;display:flex;
+  flex-direction:column;justify-content:flex-start;gap:6px}
+.hito .et{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--mut2);font-weight:700}
+.hito b{font-size:clamp(21px,2.6vw,30px);font-weight:800;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;line-height:1.05}
+.hito .pie{font-size:11.5px;color:var(--mut2);line-height:1.4}
+/* el hito de cinco años es el que cierra el argumento: se destaca sin
+   gritar, con el mismo tinte de acento que ya usa la tarjeta */
+.hito.destaca{background:color-mix(in srgb, var(--acc) 9%, var(--ink2))}
+@media(max-width:620px){
+  /* apilado y en dos columnas -etiqueta a la izquierda, cifra a la
+     derecha-: en 375px tres columnas dejan la cifra en dos renglones */
+  .linea{grid-template-columns:1fr}
+  .hito{flex-direction:row;align-items:baseline;justify-content:space-between;
+    text-align:left;padding:16px 18px;gap:12px;flex-wrap:wrap}
+  .hito .et{flex:1 1 auto}
+  .hito b{font-size:20px}
+  .hito .pie{flex:1 0 100%;text-align:left}
+}
 
 /* la lectura del carro del cliente, antes de las barras */
 .lectura{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px;
@@ -267,6 +300,25 @@
     </div>
     <div class="big" id="rs-total">&mdash;</div>
     <p class="sm" id="rs-frase">&mdash;</p>
+
+    <p class="grupo sep" style="margin-top:38px;text-align:center;border-top:none;padding-top:0">Todo junto, en el tiempo</p>
+    <div class="linea" id="rs-linea">
+      <div class="hito">
+        <span class="et">Hoy, al cambiarte</span>
+        <b id="rs-h0">&mdash;</b>
+        <span class="pie" id="rs-p0">&mdash;</span>
+      </div>
+      <div class="hito">
+        <span class="et">En 1 a&ntilde;o</span>
+        <b id="rs-h1">&mdash;</b>
+        <span class="pie" id="rs-p1">&mdash;</span>
+      </div>
+      <div class="hito destaca">
+        <span class="et">En 5 a&ntilde;os</span>
+        <b id="rs-h5">&mdash;</b>
+        <span class="pie" id="rs-p5">&mdash;</span>
+      </div>
+    </div>
 
     <p class="cierre" id="rs-cierre" style="margin-top:26px;max-width:640px;margin-left:auto;margin-right:auto;text-align:center">&mdash;</p>
     <a class="cta" href="#contacto" id="rs-cta">Hablar con un asesor</a>
@@ -944,6 +996,35 @@
     }
   }
 
+  /* Los tres momentos que de verdad se piensan al cambiar de carro.
+     Cada hito es un SALDO acumulado desde hoy, no un número suelto:
+     hoy = la diferencia de valor; en 1 año = eso más un año de ahorro;
+     en 5 años = eso más cinco. El capital nunca se multiplica -pasa una
+     sola vez, el día del cambio-. */
+  function pintarLinea(capital, total, etiqueta){
+    var hitos = [
+      { id:"0", valor: capital,
+        pie: Math.abs(capital) <= UMBRAL ? "los dos carros valen casi lo mismo"
+           : (capital > 0 ? "te sobra al vender el tuyo" : "la diferencia que pones") },
+      { id:"1", valor: capital + total,     pie:"m&aacute;s un a&ntilde;o de ahorro en " + etiqueta },
+      { id:"5", valor: capital + total*5,   pie:"m&aacute;s cinco a&ntilde;os de ahorro en " + etiqueta }
+    ];
+    hitos.forEach(function(h){
+      var b = $("rs-h" + h.id);
+      /* el signo se escribe con color y con palabra, nunca con un menos
+         suelto: en una cuenta de bolsillo "−$3.000.000" no dice si es
+         plata que entra o que sale */
+      if(h.valor > 500){
+        b.textContent = pesos(h.valor); b.style.color = "var(--acc)";
+      }else if(h.valor < -500){
+        b.textContent = "−" + pesos(-h.valor); b.style.color = "var(--mut)";
+      }else{
+        b.textContent = pesos(0); b.style.color = "var(--mut)";
+      }
+      $("rs-p" + h.id).innerHTML = h.pie;
+    });
+  }
+
   function resumen(consumoDif, gastosDif, capital, v){
     RS_ULTIMO = { consumoDif:consumoDif, gastosDif:gastosDif, capital:capital, v:v };
     pintarCapital(capital, v);
@@ -971,40 +1052,44 @@
         "para cambiarte no ser&iacute;a el ahorro, sino el carro en s&iacute; mismo.";
     }
 
-    /* el cierre: las dos piezas juntas, en la misma frase que las trajo
-       Daniel -"empieza con X a favor, más el ahorro en el uso"-, pero
-       CADA UNA con su propio tiempo: lo de hoy no se mezcla con lo de
-       cada año dentro de un solo número, porque son dos cosas distintas
-       y sumarlas sin decirlo sería la clase de cuenta alegre que le
-       cuesta la credibilidad a todo lo demás. Solo el "primer año" -una
-       vez, con su propia etiqueta- las junta. */
-    var partes = [];
-    if(capital > UMBRAL) partes.push("empiezas con <b>" + pesos(capital) + "</b> a favor al cambiarte");
-    else if(capital < -UMBRAL) partes.push("cubrir&iacute;as <b>" + pesos(-capital) + "</b> de diferencia al cambiarte");
-    if(total > 500) partes.push("<b>" + pesos(total) + "</b> al a&ntilde;o en " + etiqueta);
-    else if(total < -500) partes.push("<b>" + pesos(-total) + "</b> m&aacute;s al a&ntilde;o en " + etiqueta);
+    /* ── la línea de tiempo ─────────────────────────────────────────
+       El capital se cuenta UNA vez -es un evento del día del cambio- y
+       el ahorro se cuenta cada año: por eso 5 años es capital + total*5
+       y no capital*5. Las tres cifras son acumuladas desde hoy, así que
+       se leen como un saldo, no como tres números sueltos. */
+    pintarLinea(capital, total, etiqueta);
 
-    if(!partes.length){
+    /* El cierre ya no repite las cifras que la línea muestra arriba:
+       dice lo único que la línea no puede decir por sí sola -cuándo se
+       cruza a favor, o por qué no vale la pena mirar el ahorro-. */
+    var cincoAnios = capital + total*5;
+    if(Math.abs(capital) <= UMBRAL && Math.abs(total) <= 500){
       cierre.innerHTML = "Con estas cifras, cambiarte no mueve la plata ni hoy ni despu&eacute;s: la raz&oacute;n " +
         "ser&iacute;a el carro en s&iacute; mismo.";
-    }else if(capital > UMBRAL && total > 500){
-      var primerAnio = capital + total;
-      cierre.innerHTML = "En total, " + partes.join(", m&aacute;s ") + ". En el primer a&ntilde;o completo, " +
-        "sumando todo, son <b>" + pesos(primerAnio) + "</b>.";
     }else if(capital < -UMBRAL && total > 500){
       var meses = Math.ceil((-capital) / (total/12));
-      var plazo;
-      if(meses <= 18) plazo = "unos <b>" + meses + " meses</b>";
-      else if(meses <= 180) plazo = "unos <b>" + meses + " meses</b> (cerca de " +
-        (Math.round(meses/12*10)/10).toString().replace(".",",") + " a&ntilde;os)";
-      /* pasado ese plazo prometer una recuperación deja de ser un argumento de venta y
-         empieza a ser una promesa vacía: se dice de frente, sin la cuenta de meses */
-      cierre.innerHTML = plazo
-        ? "En total, " + partes.join(", pero ") + ". A este ritmo, el ahorro te devuelve esa diferencia en " + plazo + "."
-        : "En total, " + partes.join(", pero ") + ". A este ritmo, recuperar esa diferencia tomar&iacute;a m&aacute;s de 15 a&ntilde;os: " +
+      if(meses <= 60){
+        cierre.innerHTML = "La diferencia que pones hoy se devuelve sola en <b>" + meses + " meses</b>. " +
+          "De ah&iacute; en adelante todo es a favor: a los cinco a&ntilde;os llevas <b class='cifra'>" +
+          pesos(cincoAnios) + "</b>.";
+      }else if(meses <= 180){
+        cierre.innerHTML = "A este ritmo la diferencia se devuelve en <b>" + meses + " meses</b> " +
+          "(cerca de " + (Math.round(meses/12*10)/10).toString().replace(".",",") + " a&ntilde;os), " +
+          "as&iacute; que a cinco a&ntilde;os todav&iacute;a no queda a favor. Te lo decimos igual.";
+      }else{
+        /* pasado ese plazo prometer una recuperación deja de ser un argumento de
+           venta y empieza a ser una promesa vacía: se dice de frente */
+        cierre.innerHTML = "A este ritmo, recuperar esa diferencia tomar&iacute;a m&aacute;s de 15 a&ntilde;os: " +
           "la raz&oacute;n para cambiarte no ser&iacute;a el ahorro, sino el carro en s&iacute; mismo.";
+      }
+    }else if(cincoAnios > 500){
+      cierre.innerHTML = "En cinco a&ntilde;os, cambiarte te deja <b class='cifra'>" + pesos(cincoAnios) +
+        "</b> sumando la diferencia de valor y el ahorro de cada a&ntilde;o. " +
+        "Eso no es el precio del carro: es plata que deja de salir de tu bolsillo.";
     }else{
-      cierre.innerHTML = "En total, " + partes.join(", y ") + ".";
+      cierre.innerHTML = "En cinco a&ntilde;os la cuenta te cuesta <b>" + pesos(-cincoAnios) +
+        "</b>. Te lo decimos igual: la raz&oacute;n para cambiarte no ser&iacute;a el ahorro, " +
+        "sino el carro en s&iacute; mismo.";
     }
 
     cta.textContent = capital > UMBRAL
