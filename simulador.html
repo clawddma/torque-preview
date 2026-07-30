@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#08090a">
+<meta name="color-scheme" content="dark light">
+<title>Simulador de gasto &middot; Tu carro contra la l&iacute;nea Dongfeng &middot; TORQ</title>
+<meta name="description" content="Dinos qu&eacute; carro tienes y en qu&eacute; ciudad anda, y te calculamos cu&aacute;nto gastas hoy contra la Mage h&iacute;brida, la Vigo y el Box el&eacute;ctricos.">
+<link rel="canonical" href="https://clawddma.github.io/torque-preview/simulador.html">
+<link rel="stylesheet" href="torq.css">
+<script src="tema.js"></script>
+<script src="nav.js" defer></script>
+<style>
+/* selects con la misma voz que los inputs del sistema */
+.campo select{width:100%;background:var(--ink);border:1px solid var(--line2);color:var(--paper);
+  padding:14px 16px;border-radius:10px;font-size:17px;font-family:inherit;cursor:pointer;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%238b9199' stroke-width='1.8'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center}
+.campo select:focus{outline:none;border-color:var(--acc)}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){ .dos{grid-template-columns:1fr} }
+
+/* la lectura del carro del cliente, antes de las barras */
+.lectura{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px;
+  font-size:15px;color:var(--mut);line-height:1.7}
+.lectura b{color:var(--paper)}
+
+/* barras del comparativo: el carro del cliente en gris, la línea en acento */
+.sim .fila4 .t small{color:var(--mut2);font-weight:600;margin-left:6px;font-size:11px}
+.dif{display:inline-block;font-size:11.5px;font-weight:700;border-radius:100px;
+  padding:2px 9px;margin-left:8px;vertical-align:1px;white-space:nowrap;
+  background:color-mix(in srgb, var(--acc) 14%, transparent);color:var(--acc)}
+.dif.neg{background:color-mix(in srgb, var(--paper) 7%, transparent);color:var(--mut)}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="wrap">
+  <a class="marca" href="index.html" aria-label="TORQ, inicio">
+    <span class="logo">T<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="34" fill="none" stroke="currentColor" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45"/><circle cx="50" cy="50" r="10.5" fill="#c8f24a"/></svg>RQ</span>
+    <span class="sub">Compra y renting<br>de carros</span>
+  </a>
+  <ul class="navl">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="vigo.html">Vigo</a></li>
+    <li><a href="box.html">Box</a></li>
+    <li><a href="mage.html">Mage</a></li>
+    <li><a href="simulador.html" aria-current="page">Simulador</a></li>
+  </ul>
+  <a class="cta" href="#contacto">Cotizar</a>
+</div></nav>
+
+<main style="padding-top:var(--nav)">
+<section><div class="wrap">
+  <p class="eyebrow">Tu carro contra la l&iacute;nea completa</p>
+  <h2 class="tit">Dinos qu&eacute; manejas<br>y d&oacute;nde lo manejas</h2>
+  <p class="lede">Con la marca, la referencia y tu ciudad estimamos lo que gasta tu carro hoy &mdash; la altura y las lomas cambian el consumo m&aacute;s de lo que parece &mdash; y lo comparamos contra la Mage h&iacute;brida, la Vigo y el Box el&eacute;ctricos. Con tus kil&oacute;metros, no con los nuestros.</p>
+
+  <div class="sim">
+    <div class="sim-in">
+      <div class="campo"><label for="q-marca">Marca de tu carro</label>
+        <select id="q-marca"></select></div>
+      <div class="campo" id="w-ref"><label for="q-ref">Referencia</label>
+        <select id="q-ref"></select></div>
+      <div class="campo" id="w-manual" hidden><label for="q-manual">Cu&aacute;nto rinde tu carro (km por gal&oacute;n)</label>
+        <input id="q-manual" type="text" inputmode="numeric" value="40"></div>
+      <div class="campo" id="w-trans"><label for="q-trans">Transmisi&oacute;n</label>
+        <select id="q-trans">
+          <option value="1">Mec&aacute;nica</option>
+          <option value="1.06">Autom&aacute;tica</option>
+        </select></div>
+      <div class="campo"><label for="q-ciudad">Ciudad donde anda el carro</label>
+        <select id="q-ciudad"></select></div>
+      <div class="dos">
+        <div class="campo"><label for="q-km">Kil&oacute;metros al mes</label>
+          <input id="q-km" type="text" inputmode="numeric" value="1.200"></div>
+        <div class="campo"><label for="q-gal">Precio del gal&oacute;n</label>
+          <input id="q-gal" type="text" inputmode="numeric" value="16.000"></div>
+      </div>
+      <div class="campo"><label for="q-kwh">Precio del kWh en tu casa (est&aacute; en el recibo de la luz)</label>
+        <input id="q-kwh" type="text" inputmode="numeric" value="950"></div>
+    </div>
+
+    <div class="sim-out">
+      <p class="lectura" id="r-lectura">&mdash;</p>
+      <span class="k">Gasto de energ&iacute;a al mes, en tu ciudad</span>
+      <div class="barras" style="border-top:none;padding-top:0;margin-top:18px">
+        <div class="barra fila4"><div class="t"><span>Tu carro hoy<small id="r-n0"></small></span><b id="r-b0">&mdash;</b></div>
+          <div class="p"><i id="r-f0" style="background:var(--mut2);width:0"></i></div></div>
+        <div class="barra fila4"><div class="t"><span>Mage <small>h&iacute;brida &middot; 4,9 L/100 km</small><span class="dif" id="r-d1"></span></span><b id="r-b1">&mdash;</b></div>
+          <div class="p"><i id="r-f1" style="background:var(--acc);width:0"></i></div></div>
+        <div class="barra fila4"><div class="t"><span>Vigo <small>el&eacute;ctrica</small><span class="dif" id="r-d2"></span></span><b id="r-b2">&mdash;</b></div>
+          <div class="p"><i id="r-f2" style="background:var(--acc);width:0"></i></div></div>
+        <div class="barra fila4"><div class="t"><span>Box <small>el&eacute;ctrico</small><span class="dif" id="r-d3"></span></span><b id="r-b3">&mdash;</b></div>
+          <div class="p"><i id="r-f3" style="background:var(--acc);width:0"></i></div></div>
+      </div>
+      <p class="sm" id="r-frase" style="margin-top:20px">&mdash;</p>
+    </div>
+  </div>
+
+  <div class="nota"><b>C&oacute;mo calculamos:</b> el consumo de tu carro parte de la cifra de ficha de cada referencia y se ajusta por la altura y la topograf&iacute;a de tu ciudad &mdash; en monta&ntilde;a un carro a gasolina gasta m&aacute;s; un h&iacute;brido y un el&eacute;ctrico recuperan energ&iacute;a en las bajadas y sufren menos. Es una estimaci&oacute;n para comparar, no una promesa: el consumo real depende de tu forma de conducir, la carga y el tr&aacute;fico. Si tu carro gasta menos que los nuestros, aqu&iacute; lo va a decir.</div>
+</div></section>
+
+<section id="contacto" style="background:var(--ink2);border-top:1px solid var(--line)"><div class="wrap">
+  <p class="eyebrow">Hablemos</p>
+  <h2 class="tit">&iquest;Quieres verlo con cifras reales?</h2>
+  <p class="lede">Cuatro preguntas r&aacute;pidas y te escribimos por WhatsApp con la disponibilidad en tu ciudad y los gastos de matr&iacute;cula calculados por el asesor.</p>
+  <div id="qz-host" data-vehiculo=""></div>
+</div></section>
+</main>
+
+<footer><div class="wrap cols">
+  <div><b style="color:var(--paper);font-size:15px">TORQ</b><br>Compra y renting de carros.<br>Comercializador de Corautos Andino.</div>
+  <div><a href="vigo.html">Vigo</a> &middot; <a href="box.html">Box</a> &middot; <a href="mage.html">Mage</a> &middot; <a href="simulador.html">Simulador</a><br><a href="politica-datos.html">Pol&iacute;tica de Tratamiento de Datos</a></div>
+  <div>El simulador estima con cifras de ficha ajustadas por ciudad; el consumo real var&iacute;a.<br>
+    Precios de venta con IVA incluido, sin gastos de matr&iacute;cula.<br>
+    Autonom&iacute;a declarada en ciclo CLTC/WLTC seg&uacute;n el fabricante.</div>
+</div></footer>
+
+<script src="contacto.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   EL SIMULADOR — tu carro contra la línea completa
+
+   La idea, tomada de cómo pregunta tucarro: marca → referencia →
+   transmisión → ciudad. Con eso se estima el consumo del carro que el
+   visitante YA tiene, ajustado por dónde anda, y se compara contra la
+   Mage (gasolina híbrida), la Vigo y el Box (electricidad).
+
+   Los consumos base son cifras de ficha combinadas de cada referencia.
+   El ajuste por ciudad tiene tres piezas:
+     · altura: un motor a gasolina pierde eficiencia con la altitud
+       (+2% de consumo por cada 1.000 msnm)
+     · relieve: plano ×1,00 · ondulado ×1,08 · montañoso ×1,16
+     · calor: bajo los 600 msnm el aire acondicionado va encendido
+       todo el año (+4%)
+   El híbrido siente ese ajuste a la mitad (regenera en las lomas) y
+   el eléctrico casi no lo siente (recupera en las bajadas, la altura
+   no le quita potencia): solo un tercio del relieve más el calor.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+  var GAL = 3.785411784;
+
+  /* consumo combinado de ficha, en L/100 km, por referencia */
+  var MARCAS = {
+    "Chevrolet":  [["Spark GT",5.9],["Onix",5.8],["Joy",6.2],["Tracker",6.5],["Captiva",7.8]],
+    "Renault":    [["Kwid",5.4],["Logan",6.6],["Sandero",6.8],["Stepway",6.9],["Duster",7.4],["Koleos",8.4]],
+    "Mazda":      [["Mazda 2",6.1],["Mazda 3",6.9],["CX-30",7.2],["CX-5",8.2]],
+    "Kia":        [["Picanto",5.6],["Soluto",6.2],["Rio",6.3],["Seltos",7.0],["Sportage",8.0]],
+    "Toyota":     [["Yaris",6.6],["Corolla",6.4],["Corolla Cross",7.0],["RAV4",7.8],["Hilux",9.5],["Prado",11.5]],
+    "Nissan":     [["March",6.2],["Versa",6.5],["Kicks",6.9],["X-Trail",8.3],["Frontier",9.8]],
+    "Hyundai":    [["Grand i10",5.7],["Accent",6.5],["Venue",6.8],["Tucson",8.3]],
+    "Suzuki":     [["S-Presso",5.2],["Swift",5.5],["Vitara",6.9],["Jimny",7.4]],
+    "Volkswagen": [["Polo",6.4],["Nivus",6.6],["T-Cross",6.7],["Gol",6.9],["Tiguan",8.5]],
+    "Ford":       [["Fiesta",6.5],["EcoSport",7.5],["Escape",8.7],["Ranger",10.2]],
+    "Mitsubishi": [["Mirage",5.8],["ASX",7.6],["Outlander",8.4],["L200",9.9]],
+    "Otra marca / no está el mío": null
+  };
+
+  /* msnm y relieve de las ciudades donde más se cotiza.
+     relieve: 1 = plano · 1.08 = ondulado · 1.16 = montañoso */
+  var CIUDADES = [
+    ["Bogotá",2640,1.08],["Medellín",1495,1.16],["Cali",1018,1],
+    ["Barranquilla",18,1],["Cartagena",2,1],["Bucaramanga",959,1.16],
+    ["Cúcuta",320,1.08],["Ibagué",1285,1.08],["Pereira",1411,1.16],
+    ["Manizales",2160,1.16],["Armenia",1483,1.08],["Villavicencio",467,1],
+    ["Santa Marta",6,1],["Montería",18,1],["Neiva",442,1],
+    ["Valledupar",168,1],["Pasto",2527,1.16],["Popayán",1738,1.08],
+    ["Tunja",2820,1.08],["Duitama",2530,1.08],["Otra ciudad",1000,1.08]
+  ];
+
+  /* la línea: consumos reales estimados (ficha CLTC +15% para los eléctricos) */
+  var LINEA = {
+    mage: { l100:4.9 },                       /* WLTC, gasolina */
+    vigo: { kwh100: 44.94/401*100*1.15 },     /* E2: 12,9 kWh/100 km */
+    box:  { kwh100: 43.89/430*100*1.15 }      /* 11,7 kWh/100 km */
+  };
+
+  var $ = function(id){ return document.getElementById(id) };
+  var marca=$("q-marca"), ref=$("q-ref"), trans=$("q-trans"), ciudad=$("q-ciudad");
+  var kmEl=$("q-km"), galEl=$("q-gal"), kwhEl=$("q-kwh"), manual=$("q-manual");
+  var pesos=function(n){ return "$"+Math.round(n).toLocaleString("es-CO") };
+  function num(el,def){
+    var t=String(el.value).replace(/\./g,"").replace(",",".").replace(/[^0-9.]/g,"");
+    var v=parseFloat(t); return isFinite(v)&&v>0?v:def;
+  }
+
+  /* poblar selects */
+  Object.keys(MARCAS).forEach(function(m){
+    marca.insertAdjacentHTML("beforeend","<option>"+m+"</option>");
+  });
+  CIUDADES.forEach(function(c,i){
+    ciudad.insertAdjacentHTML("beforeend","<option value='"+i+"'>"+c[0]+"</option>");
+  });
+  function refrescarRefs(){
+    var lista = MARCAS[marca.value];
+    var otra = !lista;
+    $("w-ref").hidden = otra; $("w-trans").hidden = otra; $("w-manual").hidden = !otra;
+    if(lista){
+      ref.innerHTML = "";
+      lista.forEach(function(r,i){ ref.insertAdjacentHTML("beforeend","<option value='"+i+"'>"+r[0]+"</option>") });
+    }
+    calc();
+  }
+
+  function calc(){
+    var c = CIUDADES[+ciudad.value||0];
+    var km = num(kmEl,1200), gal = num(galEl,16000), kwh = num(kwhEl,950);
+
+    /* factores de la ciudad */
+    var calor = c[1] < 600 ? 1.04 : 1;
+    var fGas  = (1 + c[1]/1000*0.02) * c[2] * calor;
+    var fHib  = 1 + (fGas-1)*0.45;
+    var fEle  = (1 + (c[2]-1)/3) * (c[1] < 600 ? 1.05 : 1);
+
+    /* el carro del cliente */
+    var lista = MARCAS[marca.value], mio, nombreMio, notaMio;
+    if(lista){
+      var r = lista[+ref.value||0];
+      var l100 = r[1] * parseFloat(trans.value) * fGas;
+      mio = km * l100/100/GAL * gal;
+      nombreMio = marca.value+" "+r[0];
+      var kmgal = Math.round(GAL/l100*100);
+      notaMio = "Un <b>"+nombreMio+"</b> "+(trans.value==="1"?"mec&aacute;nico":"autom&aacute;tico")+
+        " en <b>"+c[0]+"</b> ("+c[1].toLocaleString("es-CO")+" msnm) rinde unos <b>"+kmgal+
+        " km por gal&oacute;n</b>: la ficha dice m&aacute;s, pero la altura y "+
+        (c[2]>1.08?"la monta&ntilde;a":(c[2]>1?"las lomas":"el calor y el aire acondicionado"))+" cobran lo suyo.";
+    }else{
+      var kmg = num(manual,40);
+      mio = km / kmg * gal;              /* rendimiento real dicho por el cliente: no se ajusta */
+      nombreMio = "tu carro";
+      notaMio = "Con <b>"+Math.round(kmg)+" km por gal&oacute;n</b> &mdash; el dato que t&uacute; nos das, sin ajustes nuestros.";
+    }
+
+    /* la línea, ajustada a la misma ciudad */
+    var mage = km * LINEA.mage.l100*fHib/100/GAL * gal;
+    var vigo = km * LINEA.vigo.kwh100*fEle/100 * kwh;
+    var box  = km * LINEA.box.kwh100*fEle/100 * kwh;
+
+    var vals=[mio,mage,vigo,box], max=Math.max.apply(null,vals.concat(1));
+    $("r-lectura").innerHTML = notaMio;
+    vals.forEach(function(v,i){
+      $("r-b"+i).textContent = pesos(v);
+      $("r-f"+i).style.width = (v/max*100)+"%";
+    });
+    [mage,vigo,box].forEach(function(v,i){
+      var d=$("r-d"+(i+1)), dif=mio-v;
+      if(dif>500){ d.className="dif"; d.textContent="ahorras "+pesos(dif)+"/mes" }
+      else if(dif<-500){ d.className="dif neg"; d.textContent="gasta "+pesos(-dif)+" más" }
+      else { d.className="dif neg"; d.textContent="igual" }
+    });
+
+    var mejor = Math.min(mage,vigo,box), ahorro = mio-mejor;
+    var quien = mejor===box ? "el Box" : (mejor===vigo ? "la Vigo" : "la Mage");
+    $("r-frase").innerHTML = ahorro>500
+      ? "La opci&oacute;n que m&aacute;s te cambia el bolsillo es <b>"+quien+"</b>: <b>"+pesos(ahorro)+
+        " menos al mes</b>, que son <b>"+pesos(ahorro*12)+" al a&ntilde;o</b> y <b>"+pesos(ahorro*60)+" en cinco a&ntilde;os</b>, solo en energ&iacute;a."
+      : "Con esos n&uacute;meros tu carro ya gasta lo mismo o menos en energ&iacute;a. La diferencia no estar&iacute;a ah&iacute;, sino en la <b>garant&iacute;a de 8 a&ntilde;os de bater&iacute;a</b>, el mantenimiento m&aacute;s simple y el carro nuevo.";
+  }
+
+  marca.addEventListener("change", refrescarRefs);
+  [ref,trans,ciudad].forEach(function(el){ el.addEventListener("change", calc) });
+  [kmEl,galEl,kwhEl,manual].forEach(function(el){ el.addEventListener("input", calc) });
+  refrescarRefs();
+})();
+</script>
+</body>
+</html>

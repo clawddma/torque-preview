@@ -18,6 +18,7 @@
 
   var CLIENTE = [
     ["Showroom",        "index.html"],
+    ["Simulador",       "simulador.html"],
     ["Política de datos","politica-datos.html"]
   ];
   var INTERNO = [

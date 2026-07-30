@@ -7,10 +7,26 @@
 :root{
   --ink:#08090a; --ink2:#0e1013; --ink3:#141719;
   --line:#1c1f24; --line2:#2a2e35;
-  --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b; --acc:#c8f24a;
+  --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b;
+  --acc:#c8f24a; --onacc:#0a0c07;
+  --ph:#0b0c0e; --navbg:rgba(8,9,10,.78); --dockbg:rgba(8,9,10,.94);
+  --marcafiltro:grayscale(1) brightness(2.4) contrast(.95);
   --ok:#22c98d; --warn:#d95926;
   --nav:98px; --pad:44px;
   --safe-l:env(safe-area-inset-left,0px); --safe-r:env(safe-area-inset-right,0px);
+}
+/* ── tema claro ──────────────────────────────────────────────────
+   Escandinavo: papel tibio, tinta casi negra, un solo acento — el
+   verde baja a oliva porque la lima no se lee sobre blanco. Solo se
+   activa con data-theme, que pone tema.js: las páginas internas que
+   no cargan tema.js siguen oscuras aunque el sistema prefiera claro. */
+:root[data-theme="light"]{
+  --ink:#f7f6f3; --ink2:#ffffff; --ink3:#edebe6;
+  --line:#e7e4de; --line2:#d5d1c9;
+  --paper:#16181a; --mut:#5b6167; --mut2:#8d9299;
+  --acc:#4a6d15; --onacc:#f7f6f3;
+  --ph:#eceae5; --navbg:rgba(247,246,243,.82); --dockbg:rgba(247,246,243,.95);
+  --marcafiltro:grayscale(1) brightness(.35) contrast(.95);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -28,7 +44,7 @@ a{color:inherit}
 
 /* ── nav ─────────────────────────────────────────────────────── */
 .nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav);
-  backdrop-filter:blur(20px);background:rgba(8,9,10,.78);border-bottom:1px solid var(--line)}
+  backdrop-filter:blur(20px);background:var(--navbg);border-bottom:1px solid var(--line)}
 .nav .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:26px}
 /* El logo es la marca, no un adorno del nav. El descriptor va AL LADO,
    no debajo: puesto abajo coincidia con el ancho del logotipo y formaba
@@ -37,7 +53,7 @@ a{color:inherit}
 .marca{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;flex:none}
 .logo{display:flex;align-items:center;font-weight:800;
   font-size:clamp(30px,3vw,40px);letter-spacing:-.035em;line-height:.9}
-.logo svg{width:1.04em;height:1.04em;margin-left:3px;flex:none}
+.logo svg{width:1.04em;height:1.04em;margin:0 1px;flex:none}
 .marca .sub{font-size:10px;letter-spacing:.13em;text-transform:uppercase;
   color:var(--mut2);font-weight:600;line-height:1.5;white-space:nowrap;
   padding-left:16px;border-left:1px solid var(--line2)}
@@ -46,7 +62,7 @@ a{color:inherit}
 .navl{display:flex;gap:32px;align-items:center;list-style:none}
 .navl a{color:var(--mut);text-decoration:none;font-size:15px;transition:color .2s}
 .navl a:hover,.navl a[aria-current]{color:var(--paper)}
-.cta{background:var(--acc);color:#0a0c07;padding:13px 26px;border-radius:100px;
+.cta{background:var(--acc);color:var(--onacc);padding:13px 26px;border-radius:100px;
   font-size:15px;font-weight:700;text-decoration:none;white-space:nowrap;display:inline-block}
 .cta:hover{opacity:.9}
 .burger{display:none;background:none;border:none;color:var(--paper);cursor:pointer;padding:8px}
@@ -62,7 +78,7 @@ section{padding:clamp(72px,9vw,130px) 0}
   background:var(--ink2);text-decoration:none;display:flex;flex-direction:column;
   transition:border-color .3s,transform .3s}
 .veh:hover{border-color:var(--line2);transform:translateY(-3px)}
-.veh .ph{position:relative;aspect-ratio:5/4;overflow:hidden;background:#0b0c0e}
+.veh .ph{position:relative;aspect-ratio:5/4;overflow:hidden;background:var(--ph)}
 .veh .ph img{width:100%;height:100%;object-fit:cover;object-position:center 54%;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
 .veh:hover .ph img{transform:scale(1.04)}
 /* Las tres fotos vienen de estudios distintos y las dos de fondo claro
@@ -72,8 +88,8 @@ section{padding:clamp(72px,9vw,130px) 0}
    tarjeta. No toca el vehiculo: arranca al 78% de alto. */
 .veh .ph::after{content:'';position:absolute;left:0;right:0;bottom:0;height:26%;
   pointer-events:none;
-  background:linear-gradient(to bottom,transparent 0%,rgba(15,17,19,.35) 46%,rgba(15,17,19,.8) 78%,var(--ink2) 100%)}
-.veh .tag{position:absolute;top:13px;left:13px;background:var(--acc);color:#0a0c07;
+  background:linear-gradient(to bottom,transparent 0%,color-mix(in srgb, var(--ink2) 35%, transparent) 46%,color-mix(in srgb, var(--ink2) 80%, transparent) 78%,var(--ink2) 100%)}
+.veh .tag{position:absolute;top:13px;left:13px;background:var(--acc);color:var(--onacc);
   font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;
   padding:5px 11px;border-radius:100px}
 .veh .tag.alt{background:rgba(8,9,10,.82);color:var(--paper);border:1px solid var(--line2);
@@ -111,7 +127,7 @@ section{padding:clamp(72px,9vw,130px) 0}
 .tabla th,.tabla td{padding:18px 18px;border-bottom:1px solid var(--line);text-align:left}
 .tabla th{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);font-weight:700}
 .tabla td.r,.tabla th.r{text-align:right;font-variant-numeric:tabular-nums}
-.tabla tbody tr:hover td{background:rgba(255,255,255,.02)}
+.tabla tbody tr:hover td{background:color-mix(in srgb, var(--paper) 3%, transparent)}
 .tabla .destaca{color:var(--acc);font-weight:700}
 .tw{overflow-x:auto}
 
@@ -137,7 +153,7 @@ section{padding:clamp(72px,9vw,130px) 0}
 .card{border:1px solid var(--line);border-radius:14px;padding:34px 30px;background:var(--ink2)}
 .card h3{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:13px;line-height:1.25}
 .card p{color:var(--mut);font-size:15.5px;line-height:1.72}
-.nota{border-left:4px solid var(--acc);background:rgba(200,242,74,.06);
+.nota{border-left:4px solid var(--acc);background:color-mix(in srgb, var(--acc) 7%, transparent);
   border-radius:0 12px 12px 0;padding:26px 30px;margin-top:34px;font-size:16px;
   line-height:1.78;color:var(--mut)}
 .nota b{color:var(--paper)}
@@ -174,7 +190,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 /* dock móvil */
 .dock{display:none;position:fixed;left:0;right:0;bottom:0;z-index:98;gap:10px;align-items:center;
   padding:11px calc(16px + var(--safe-l)) calc(11px + env(safe-area-inset-bottom,0px)) calc(16px + var(--safe-r));
-  background:rgba(8,9,10,.94);backdrop-filter:blur(18px);border-top:1px solid var(--line);
+  background:var(--dockbg);backdrop-filter:blur(18px);border-top:1px solid var(--line);
   transform:translateY(115%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
 .dock.on{transform:none}
 .dock .p{font-size:11px;color:var(--mut2);line-height:1.25;flex:1;min-width:0}
@@ -192,7 +208,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 .campo input:focus{outline:none;border-color:var(--acc)}
 .campo .hint{font-size:10.5px;color:var(--mut2);margin-top:5px;line-height:1.4}
 .calc-out{border:1px solid var(--line2);border-radius:13px;padding:26px 24px;
-  background:linear-gradient(160deg,rgba(200,242,74,.07),var(--ink2) 62%)}
+  background:linear-gradient(160deg,color-mix(in srgb, var(--acc) 8%, transparent),var(--ink2) 62%)}
 .calc-out .k{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700}
 .calc-out .big{font-size:clamp(34px,5.6vw,50px);font-weight:800;letter-spacing:-.035em;
   line-height:1;margin:11px 0 5px;font-variant-numeric:tabular-nums}
@@ -233,8 +249,8 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 .antes{display:block;font-size:14px;font-weight:600;color:var(--mut2);
   text-decoration:line-through;text-decoration-thickness:1.5px;margin-bottom:2px;
   font-variant-numeric:tabular-nums}
-.ahorro{display:inline-block;background:rgba(200,242,74,.14);color:var(--acc);
-  border:1px solid rgba(200,242,74,.3);border-radius:100px;padding:3px 10px;
+.ahorro{display:inline-block;background:color-mix(in srgb, var(--acc) 14%, transparent);color:var(--acc);
+  border:1px solid color-mix(in srgb, var(--acc) 32%, transparent);border-radius:100px;padding:3px 10px;
   font-size:11.5px;font-weight:700;margin-top:8px;white-space:nowrap}
 
 /* ── respaldo de marcas ──────────────────────────────────────── */
@@ -262,11 +278,11 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 .comp th:first-child,.comp td:first-child{text-align:left;color:var(--mut);font-weight:500}
 .comp thead th{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut2);
   font-weight:700;border-bottom:1px solid var(--line2);vertical-align:bottom;padding-bottom:14px}
-.comp .yo{background:rgba(200,242,74,.05)}
+.comp .yo{background:color-mix(in srgb, var(--acc) 6%, transparent)}
 .comp thead .yo{color:var(--acc);font-size:14px;letter-spacing:.02em;text-transform:none}
 .comp .yo td,.comp td.yo{color:var(--paper);font-weight:700}
-.comp tbody tr:hover td{background:rgba(255,255,255,.02)}
-.comp tbody tr:hover td.yo{background:rgba(200,242,74,.08)}
+.comp tbody tr:hover td{background:color-mix(in srgb, var(--paper) 3%, transparent)}
+.comp tbody tr:hover td.yo{background:color-mix(in srgb, var(--acc) 9%, transparent)}
 
 /* ── reloj de la reforma ─────────────────────────────────────── */
 .reloj{border:1px solid var(--line2);border-radius:15px;padding:34px 32px;background:var(--ink2);margin-top:40px}
@@ -283,7 +299,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 .sim{display:grid;grid-template-columns:1fr 1.2fr;gap:16px;margin-top:44px;align-items:start}
 .sim-in{border:1px solid var(--line);border-radius:15px;padding:30px 28px;background:var(--ink2)}
 .sim-out{border:1px solid var(--line2);border-radius:15px;padding:34px 30px;
-  background:linear-gradient(165deg,rgba(200,242,74,.08),var(--ink2) 60%)}
+  background:linear-gradient(165deg,color-mix(in srgb, var(--acc) 9%, transparent),var(--ink2) 60%)}
 .sim .campo{margin-bottom:20px}
 .sim .campo:last-child{margin-bottom:0}
 .sim .campo label{display:block;font-size:13px;color:var(--mut);margin-bottom:8px}
@@ -317,7 +333,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 .hx .titular{max-width:min(100%,880px)}
 .hx h1{font-size:clamp(46px,8.4vw,104px);font-weight:800;letter-spacing:-.048em;
   line-height:.94;margin-top:16px}
-.hx .sub{color:#c9ced4;font-size:clamp(18px,2vw,26px);line-height:1.5;
+.hx .sub{color:var(--mut);font-size:clamp(18px,2vw,26px);line-height:1.5;
   max-width:min(100%,520px);margin-top:22px;font-weight:400}
 .hx .acciones{display:flex;gap:13px;flex-wrap:wrap;margin-top:34px;align-items:center}
 .hx .desde{font-size:12.5px;color:var(--mut);margin-right:8px;line-height:1.3}
@@ -333,7 +349,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 /* resplandor tenue detras: da profundidad sin tocar la foto */
 .hx .halo{position:absolute;left:50%;top:38%;transform:translateX(-50%);
   width:min(1300px,105%);aspect-ratio:2/1;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse at center,rgba(200,242,74,.08),transparent 66%)}
+  background:radial-gradient(ellipse at center,color-mix(in srgb, var(--acc) 9%, transparent),transparent 66%)}
 
 .hx .franja{display:flex;gap:clamp(22px,3.4vw,54px);flex-wrap:wrap;
   border-top:1px solid var(--line);padding-top:26px;margin-top:clamp(34px,4vw,52px)}
@@ -362,7 +378,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
   padding-right:clamp(6px,1.2vw,18px);border-right:1px solid var(--line2)}
 /* monocromo: se anulan los colores de marca para que la barra sea una sola voz */
 .respaldo-top img{width:auto;opacity:.6;
-  filter:grayscale(1) brightness(2.4) contrast(.95);
+  filter:var(--marcafiltro);
   transition:opacity .3s}
 .respaldo-top:hover img{opacity:.72}
 /* escala por peso optico, no por altura: cada marca ocupa lo que debe */
@@ -417,7 +433,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 .carr .txt{position:absolute;left:0;right:0;bottom:0;z-index:2}
 .carr .txt .wrap{padding-bottom:clamp(38px,4.6vw,74px)}
 .carr .lin{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:clamp(14px,1.6vw,22px)}
-.carr .tag{background:var(--acc);color:#0a0c07;font-size:clamp(9.5px,.78vw,11px);
+.carr .tag{background:var(--acc);color:var(--onacc);font-size:clamp(9.5px,.78vw,11px);
   letter-spacing:.15em;text-transform:uppercase;font-weight:800;padding:6px 13px;border-radius:100px}
 .carr .mod{font-size:clamp(11.5px,.98vw,14px);letter-spacing:.22em;text-transform:uppercase;
   color:#eef1f3;font-weight:700;text-shadow:0 1px 12px rgba(0,0,0,.85)}
@@ -451,3 +467,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
   .carr .cta{text-align:center;width:100%}
   .carr .dots .wrap{padding-bottom:16px}
 }
+
+/* ── zonas sobre fotografía: tinta fija, ajena al tema ─────────── */
+.carr, .gal .marco{--paper:#fafafa; --mut2:#5d636b}
+.carr{color:#fafafa}
