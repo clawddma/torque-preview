@@ -116,8 +116,27 @@ footer b{color:var(--mut)}
   .wrap{padding:0 16px}
   .panel{padding:18px 15px}
 }
+
+/* ── menú lateral de secciones (patrón Shopify Admin) ─────────────── */
+.panel-shell{display:grid;grid-template-columns:194px 1fr;gap:26px;align-items:start;margin-top:22px}
+.panel-nav{position:sticky;display:flex;flex-direction:column;gap:2px;padding:2px;flex:none}
+.panel-nav button{all:unset;box-sizing:border-box;cursor:pointer;padding:9px 12px;border-radius:7px;
+  font-size:12.5px;color:var(--mut);line-height:1.35}
+.panel-nav button:hover{color:var(--paper);background:rgba(255,255,255,.05)}
+.panel-nav button.on{color:#0a0c07;background:var(--brand);font-weight:700}
+.panel-content{min-width:0}
+.panel-content .sec:first-child{margin-top:0}
+@media(max-width:1050px){
+  .panel-shell{grid-template-columns:1fr;gap:12px}
+  .panel-nav{position:static!important;flex-direction:row;overflow-x:auto;gap:6px;
+    padding-bottom:10px;margin-bottom:4px;border-bottom:1px solid var(--line);
+    scrollbar-width:none}
+  .panel-nav::-webkit-scrollbar{display:none}
+  .panel-nav button{white-space:nowrap;flex:none;padding:8px 13px}
+}
 </style>
 <script src="nav.js" defer></script>
+<script src="panel-nav.js" defer></script>
 </head>
 <body>
 <nav><div class="wrap">
@@ -153,6 +172,10 @@ footer b{color:var(--mut)}
     <div class="kpi"><div class="k">Barrera de marca</div><div class="v num" id="k3">&mdash;</div><div class="d" id="k3d"></div></div>
     <div class="kpi"><div class="k">Cobertura Corautos</div><div class="v num" id="k4">&mdash;</div><div class="d" id="k4d"></div></div>
   </div>
+
+  <div class="panel-shell">
+    <nav class="panel-nav" aria-label="Secciones del centro de inteligencia"></nav>
+    <div class="panel-content">
 
   <div class="sec">
     <div class="panel" data-amp="anos">
@@ -252,10 +275,13 @@ footer b{color:var(--mut)}
     </div>
   </div>
 
-  <div class="sec">
+  <div class="sec"><div class="panel">
     <h2 style="font-size:19px;font-weight:800;margin:0 0 6px;letter-spacing:-.015em">Key Sales Points</h2>
     <p style="color:var(--mut);font-size:13px;margin:0 0 18px;line-height:1.65;max-width:680px">Cada uno sale de un dato verificable de arriba, y cada uno mata una objeción concreta. Son la materia prima de la pauta: el ángulo, contra quién, en qué plaza.</p>
     <div class="ksp" id="ksp"></div>
+  </div></div>
+
+    </div>
   </div>
 </div>
 

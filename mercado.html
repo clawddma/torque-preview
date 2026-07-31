@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 <script src="nav.js" defer></script>
+<script src="panel-nav.js" defer></script>
 <style>
 :root{
   --ink:#08090a; --surf:#0e1013; --surf2:#141719; --line:#1c1f24; --line2:#2a2e35;
@@ -130,6 +131,24 @@ footer b{color:var(--mut)}
 @media(max-width:1050px){.kpis{grid-template-columns:repeat(2,1fr)}.g2,.g64{grid-template-columns:1fr}}
 @media(max-width:640px){.wrap{padding:0 14px}h1.pg{font-size:25px}.panel{padding:16px 14px}.amp{display:none}
   .ms{min-width:0;font-size:12px;padding:9px 11px}}
+
+/* ── menú lateral de secciones (patrón Shopify Admin) ─────────────── */
+.panel-shell{display:grid;grid-template-columns:194px 1fr;gap:26px;align-items:start;margin-top:22px}
+.panel-nav{position:sticky;display:flex;flex-direction:column;gap:2px;padding:2px;flex:none}
+.panel-nav button{all:unset;box-sizing:border-box;cursor:pointer;padding:9px 12px;border-radius:7px;
+  font-size:12.5px;color:var(--mut);line-height:1.35}
+.panel-nav button:hover{color:var(--paper);background:rgba(255,255,255,.05)}
+.panel-nav button.on{color:#0a0c07;background:var(--brand);font-weight:700}
+.panel-content{min-width:0}
+.panel-content .sec:first-child{margin-top:0}
+@media(max-width:1050px){
+  .panel-shell{grid-template-columns:1fr;gap:12px}
+  .panel-nav{position:static!important;flex-direction:row;overflow-x:auto;gap:6px;
+    padding-bottom:10px;margin-bottom:4px;border-bottom:1px solid var(--line);
+    scrollbar-width:none}
+  .panel-nav::-webkit-scrollbar{display:none}
+  .panel-nav button{white-space:nowrap;flex:none;padding:8px 13px}
+}
 </style>
 </head>
 <body>
@@ -198,6 +217,10 @@ footer b{color:var(--mut)}
     <div class="kpi"><div class="k">Compra a crédito</div><div class="v num" id="k5">&mdash;</div><div class="d" id="k5d"></div></div>
   </div>
 
+  <div class="panel-shell">
+    <nav class="panel-nav" aria-label="Secciones del tablero"></nav>
+    <div class="panel-content">
+
   <div class="sec"><div class="panel" data-amp="c-evo">
     <h2>Evolución mes a mes</h2>
     <p class="sub">Cada año es una barra de su propio color dentro del mes, para compararlos de frente. Selecciona varios años arriba y aparecen lado a lado.</p>
@@ -264,6 +287,9 @@ footer b{color:var(--mut)}
     <div class="cbox"><canvas id="c-fin"></canvas></div>
     <div class="insight" id="ins-fin"></div>
   </div></div>
+
+    </div>
+  </div>
 </div>
 
 <div id="modal" role="dialog" aria-modal="true" aria-label="Gráfico ampliado">
