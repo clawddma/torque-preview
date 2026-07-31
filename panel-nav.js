@@ -81,11 +81,20 @@
        mismo -clic, bot&oacute;n atr&aacute;s, escribir la URL a mano,
        hasta sin que este script haya cargado- y siempre queda igual de
        bien alineado, sin duplicar la cuenta en dos sitios. */
+    var lado = shell.querySelector(".panel-side") || nav;
     function fijarMargen(){
-      var t = matchMedia("(max-width:1050px)").matches ? techo() : techo() + 14;
+      var angosto = matchMedia("(max-width:1050px)").matches;
+      var t = angosto ? techo() : techo() + 14;
       items.forEach(function(o){ o.panel.style.scrollMarginTop = t + "px" });
-      if(!matchMedia("(max-width:1050px)").matches) nav.style.top = (techo() + 14) + "px";
-      else nav.style.top = "";
+      /* lo pegajoso es la columna entera -filtros incluidos-, no solo el
+         índice de secciones que va dentro de ella */
+      if(!angosto){
+        lado.style.top = (techo() + 14) + "px";
+        lado.style.maxHeight = "calc(100vh - " + (techo() + 28) + "px)";
+      }else{
+        lado.style.top = "";
+        lado.style.maxHeight = "";
+      }
     }
     fijarMargen();
     window.addEventListener("resize", fijarMargen);

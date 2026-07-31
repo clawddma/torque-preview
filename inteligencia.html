@@ -119,20 +119,38 @@ footer b{color:var(--mut)}
   .panel{padding:18px 15px}
 }
 
-/* ── menú lateral de secciones (patrón Shopify Admin) ─────────────── */
-.panel-shell{display:grid;grid-template-columns:194px 1fr;gap:26px;align-items:start;margin-top:22px}
-.panel-nav{position:sticky;display:flex;flex-direction:column;gap:2px;padding:2px;flex:none}
-.panel-nav a{all:unset;box-sizing:border-box;cursor:pointer;padding:9px 12px;border-radius:7px;
-  font-size:12.5px;color:var(--mut);line-height:1.35}
+/* ── panel lateral: selector + secciones (patrón Shopify Admin) ────
+   Mismo sistema que mercado.html: lo que estaba arriba -aquí el selector
+   de portafolio- baja a la columna izquierda, y el índice de secciones
+   va debajo. */
+.panel-shell{display:grid;grid-template-columns:248px 1fr;gap:24px;align-items:start;margin-top:20px}
+.panel-side{position:sticky;display:flex;flex-direction:column;gap:22px;flex:none;
+  max-height:calc(100vh - 90px);overflow-y:auto;padding-right:4px;
+  scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.panel-side::-webkit-scrollbar{width:6px}
+.panel-side::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
+.side-grupo{display:flex;flex-direction:column;gap:9px}
+.side-tit{font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut2);
+  font-weight:700;padding-left:2px}
+/* el selector de portafolio pasa de píldora horizontal a columna */
+.panel-side .seg{flex-direction:column;width:100%;max-width:none;border-radius:9px;margin:0;gap:3px}
+.panel-side .seg button{width:100%;text-align:left;border-radius:7px;font-size:12px;padding:9px 12px;white-space:normal;line-height:1.35}
+
+.panel-nav{display:flex;flex-direction:column;gap:2px}
+.panel-nav a{all:unset;box-sizing:border-box;cursor:pointer;padding:8px 11px;border-radius:7px;
+  font-size:12px;color:var(--mut);line-height:1.35}
 .panel-nav a:hover{color:var(--paper);background:rgba(255,255,255,.05)}
 .panel-nav a.on{color:#0a0c07;background:var(--brand);font-weight:700}
 .panel-content{min-width:0}
 .panel-content .sec:first-child{margin-top:0}
+
 @media(max-width:1050px){
-  .panel-shell{grid-template-columns:1fr;gap:12px}
-  .panel-nav{position:static!important;flex-direction:row;overflow-x:auto;gap:6px;
-    padding-bottom:10px;margin-bottom:4px;border-bottom:1px solid var(--line);
-    scrollbar-width:none}
+  .panel-shell{grid-template-columns:1fr;gap:14px}
+  .panel-side{position:static!important;max-height:none;overflow:visible;
+    gap:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+  .panel-side .seg{flex-direction:row;width:max-content;max-width:100%}
+  .panel-side .seg button{width:auto;text-align:center;white-space:nowrap}
+  .panel-nav{flex-direction:row;overflow-x:auto;gap:6px;scrollbar-width:none}
   .panel-nav::-webkit-scrollbar{display:none}
   .panel-nav a{white-space:nowrap;flex:none;padding:8px 13px}
 }
@@ -163,14 +181,21 @@ footer b{color:var(--mut)}
     <p>La otra cara, que se trabaja en paralelo: las 1.952 unidades de Dongfeng en el país son camiones diésel, furgones GNV y vans de reparto. La marca está posicionada en <b>carga</b>, no en familia. La pauta tiene que construir esa confianza mientras captura la demanda.</p>
   </div>
 
-  <div class="seg" role="group">
-    <button id="b-hev" aria-pressed="true">SUV híbrida &middot; MAGE HEV</button>
-    <button id="b-ev" aria-pressed="false">Eléctricos &middot; Box E2 y Vigo E2+</button>
-  </div>
-
-
   <div class="panel-shell">
-    <nav class="panel-nav" aria-label="Secciones del centro de inteligencia"></nav>
+    <aside class="panel-side">
+      <div class="side-grupo">
+        <span class="side-tit">Portafolio</span>
+        <div class="seg" role="group">
+          <button id="b-hev" aria-pressed="true">SUV híbrida &middot; MAGE HEV</button>
+          <button id="b-ev" aria-pressed="false">Eléctricos &middot; Box E2 y Vigo E2+</button>
+        </div>
+      </div>
+
+      <div class="side-grupo">
+        <span class="side-tit">Secciones</span>
+        <nav class="panel-nav" aria-label="Secciones del centro de inteligencia"></nav>
+      </div>
+    </aside>
     <div class="panel-content">
 
   <div class="kpis">
