@@ -146,6 +146,25 @@
   .hito .pie{flex:1 0 100%;text-align:left}
 }
 
+/* el horizonte de años: una barra, no un campo de texto -Camilo pidió
+   justo esto-, porque es una cantidad chica (1 a 10) que se explora
+   deslizando, no se escribe */
+.anios-plan{margin-top:26px;max-width:460px;margin-left:auto;margin-right:auto}
+.anios-plan label{display:block;font-size:13.5px;color:var(--mut);margin-bottom:10px}
+.anios-plan label b{color:var(--paper);font-variant-numeric:tabular-nums}
+.anios-plan input[type=range]{width:100%;accent-color:var(--acc);height:20px;cursor:pointer}
+
+/* el bloque de reventa: la respuesta directa al miedo de "cuánto pierdo
+   cuando lo venda". Vive fuera de la grilla de hitos porque es una idea
+   distinta -no es saldo acumulado, es cu&aacute;nto del precio de compra
+   se recupera entre el ahorro y lo que el carro todav&iacute;a vale-. */
+.reventa{margin-top:20px;padding-top:20px;border-top:1px solid var(--line);
+  max-width:640px;margin-left:auto;margin-right:auto;text-align:center}
+.reventa .k{font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--acc);font-weight:700}
+.reventa .sm{margin-top:10px;color:var(--mut);font-size:15px;line-height:1.7}
+.reventa .sm b{color:var(--paper)}
+
 /* la lectura del carro del cliente, antes de las barras */
 .lectura{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px;
   font-size:15px;color:var(--mut);line-height:1.7}
@@ -259,7 +278,7 @@
       <th class="r">Diferencia</th>
     </tr></thead>
     <tbody>
-      <tr><th>Energ&iacute;a</th>
+      <tr><th>Combustible / Energ&iacute;a</th>
         <td class="r" id="a-e0">&mdash;</td><td class="r yo" id="a-e1">&mdash;</td><td class="r" id="a-e2">&mdash;</td></tr>
       <tr><th>Seguro todo riesgo</th>
         <td class="r"><input id="a-seg" type="text" inputmode="numeric"></td>
@@ -286,6 +305,8 @@
 
   <div class="nota"><b>C&oacute;mo calculamos:</b> el rendimiento arranca de la cifra de ficha de tu referencia en la tecnolog&iacute;a que nos digas, y se ajusta por la altura y la topograf&iacute;a de tu ciudad &mdash; en monta&ntilde;a un motor de combusti&oacute;n gasta m&aacute;s; un h&iacute;brido lo siente a la mitad porque regenera en las bajadas, y un el&eacute;ctrico casi no lo siente. <b>Ese n&uacute;mero lo puedes corregir</b>: si conoces el rendimiento real de tu carro, escr&iacute;belo y calculamos con el tuyo. Es una estimaci&oacute;n para comparar, no una promesa. Si tu carro gasta menos que el nuestro, aqu&iacute; lo va a decir.</div>
 
+  <div class="nota"><b>Y la depreciaci&oacute;n, de d&oacute;nde sale:</b> se revisaron cerca de 700 anuncios reales en tucarro.com (31 de julio de 2026) de 12 referencias &mdash;desde un Picanto hasta una Hilux&mdash; comparando cu&aacute;nto pide el mercado por cada a&ntilde;o de modelo. La curva que mejor sigue esos datos: un carro pierde r&aacute;pido los primeros a&ntilde;os y se aplana despu&eacute;s, sin llegar nunca a cero. <b>El&eacute;ctricos e h&iacute;bridos usan la misma curva</b>: en Colombia todav&iacute;a no hay suficiente historial de reventa propio para esas tecnolog&iacute;as &mdash;la Mage, por ejemplo, no tiene una sola matr&iacute;cula en el pa&iacute;s a&uacute;n&mdash;, as&iacute; que es el punto de partida m&aacute;s honesto que tenemos, no un dato espec&iacute;fico de la marca. El valor real de reventa siempre depende del estado del carro y de qui&eacute;n compre.</div>
+
   <div class="resumen" id="resumen">
     <p class="eyebrow" id="rs-cap-eyebrow">Al cambiarte, hoy</p>
     <h3 class="tit3" id="rs-cap-tit">&mdash;</h3>
@@ -302,6 +323,10 @@
     <p class="sm" id="rs-frase">&mdash;</p>
 
     <p class="grupo sep" style="margin-top:38px;text-align:center;border-top:none;padding-top:0">Todo junto, en el tiempo</p>
+    <div class="anios-plan">
+      <label for="rs-anios">&iquest;Cu&aacute;ntos a&ntilde;os planeas tener el carro? <b id="rs-anios-val">5 a&ntilde;os</b></label>
+      <input type="range" id="rs-anios" min="1" max="10" step="1" value="5">
+    </div>
     <div class="linea" id="rs-linea">
       <div class="hito">
         <span class="et">Hoy, al cambiarte</span>
@@ -314,10 +339,15 @@
         <span class="pie" id="rs-p1">&mdash;</span>
       </div>
       <div class="hito destaca">
-        <span class="et">En 5 a&ntilde;os</span>
+        <span class="et" id="rs-et5">En 5 a&ntilde;os</span>
         <b id="rs-h5">&mdash;</b>
         <span class="pie" id="rs-p5">&mdash;</span>
       </div>
+    </div>
+
+    <div class="reventa" id="rs-reventa">
+      <span class="k">Y la reventa, para que no te quede la duda</span>
+      <p class="sm" id="rs-reventa-frase">&mdash;</p>
     </div>
 
     <p class="cierre" id="rs-cierre" style="margin-top:26px;max-width:640px;margin-left:auto;margin-right:auto;text-align:center">&mdash;</p>
@@ -524,16 +554,34 @@
      es una tasación -eso lo hace el asesor con el carro delante- sino un
      punto de partida razonable para que el cliente no tenga que
      adivinarlo: precio nuevo aproximado por segmento hoy en Colombia,
-     depreciado por la edad del carro (13% el primer año, algo menos
-     cada año después, con un piso del 15% para que uno viejo no llegue
-     a valer cero). Siempre editable, y siempre se dice que es grueso. */
+     depreciado por la edad del carro. Siempre editable, y siempre se
+     dice que es grueso. */
   var SEGMENTOS = { citycar:60000000, compacto:78000000, suvCompacta:105000000,
                      suvGrande:155000000, premium:230000000 };
+
+  /* La curva de depreciación, SIN inventarla: se sacó de ~700 anuncios
+     reales de tucarro.com (31 de julio de 2026), 12 referencias entre
+     citycar y SUV grande -Picanto, Kwid, Onix, Logan, Corolla, Duster,
+     CX-30, Seltos, Creta, Fortuner, Hilux, Duster Oroch-, comparando el
+     precio pedido de cada año de modelo contra el año más reciente con
+     al menos 3 anuncios (se descartan 2026-2027: mezclan carros 0&nbsp;km
+     con usados y rompen la curva). Los puntos reales, medianos:
+       +1 año 95,8% · +2 88,3% · +3 80,7% · +4 76,9% · +5 73,3% ·
+       +6 72,2% · +7 66,7% · +8 63,6% · +9 62,8% · +11 53,9% · +13 49,9%
+     Se les ajustó la curva más simple que los sigue de cerca -pierde
+     rápido al principio, se aplana después, nunca llega a cero-:
+     retiene = 36% + 64% × 0,90^edad. El eléctrico e híbrido usan la
+     MISMA curva: el mercado de usados de estas tecnologías en Colombia
+     es todavía muy nuevo para tener su propio historial confiable -la
+     Mage, por ejemplo, tiene cero matrículas en el país-, así que es un
+     punto de partida razonable, no un dato específico de la marca. */
+  function retencion(edad){
+    return 0.36 + 0.64 * Math.pow(0.90, Math.max(0, edad));
+  }
   function valorEstimado(seg, anio){
     var nuevo = SEGMENTOS[seg]; if(!nuevo) return null;
     var edad = Math.max(0, new Date().getFullYear() - anio);
-    var factor = Math.max(0.15, Math.pow(0.87, edad));
-    return Math.round(nuevo * factor / 500000) * 500000;
+    return Math.round(nuevo * retencion(edad) / 500000) * 500000;
   }
 
   var SOAT_BASE = 650000, RTM_BASE = 310000;
@@ -966,6 +1014,7 @@
   var RS_ACTIVO = { consumo:true, gastos:true };
   var RS_ULTIMO = { consumoDif:0, gastosDif:0, capital:0, v:null };
   var UMBRAL = 500000;   /* diferencias de valor de carro por debajo de esto: "prácticamente igual" */
+  var ANIOS_PLAN = 5;    /* el horizonte de la barra deslizable */
 
   /* Vender o entregar el carro de hoy y comprar el nuestro mueve capital
      el mismo día del cambio, antes de que exista un solo mes de uso. Si
@@ -999,15 +1048,19 @@
   /* Los tres momentos que de verdad se piensan al cambiar de carro.
      Cada hito es un SALDO acumulado desde hoy, no un número suelto:
      hoy = la diferencia de valor; en 1 año = eso más un año de ahorro;
-     en 5 años = eso más cinco. El capital nunca se multiplica -pasa una
-     sola vez, el día del cambio-. */
+     en N años = eso más N -N lo elige el cliente con la barra deslizable
+     de abajo, Camilo pidió justo eso en vez de un plazo fijo-. El capital
+     nunca se multiplica: pasa una sola vez, el día del cambio. */
   function pintarLinea(capital, total, etiqueta){
+    var n = ANIOS_PLAN;
+    $("rs-et5").textContent = "En " + n + (n===1 ? " año" : " años");
     var hitos = [
       { id:"0", valor: capital,
         pie: Math.abs(capital) <= UMBRAL ? "los dos carros valen casi lo mismo"
            : (capital > 0 ? "te sobra al vender el tuyo" : "la diferencia que pones") },
       { id:"1", valor: capital + total,     pie:"m&aacute;s un a&ntilde;o de ahorro en " + etiqueta },
-      { id:"5", valor: capital + total*5,   pie:"m&aacute;s cinco a&ntilde;os de ahorro en " + etiqueta }
+      { id:"5", valor: capital + total*n,
+        pie:"m&aacute;s " + n + (n===1?" a&ntilde;o":" a&ntilde;os") + " de ahorro en " + etiqueta }
     ];
     hitos.forEach(function(h){
       var b = $("rs-h" + h.id);
@@ -1025,6 +1078,42 @@
     });
   }
 
+  /* ── la reventa: la respuesta directa al miedo de "cuánto pierdo" ───
+     Camilo lo dijo con las palabras exactas de un cliente: "pero en 4
+     años, ¿cuánto le pierdo?". No es lo mismo que la línea de arriba
+     -esa es saldo de caja acumulado desde hoy-. Esto es otra pregunta:
+     de lo que pagaste POR EL CARRO, cuánto recuperas entre el ahorro y
+     lo que el carro todavía valdría. Si esa suma supera el precio de
+     compra, se dice sin rodeos: no solo no se pierde, se gana. */
+  function pintarReventa(total, etiqueta, v){
+    var n = ANIOS_PLAN;
+    var ahorroN = total * n;
+    var retiene = retencion(n);
+    var valorFuturo = v.valor * retiene;
+    var recuperado = ahorroN + valorFuturo;
+    var neto = v.valor - recuperado;
+    var f = $("rs-reventa-frase");
+
+    if(total <= 500){
+      /* sin ahorro que sumar, hablar de "recuperar" sería engañoso:
+         solo se muestra la reventa sola, honesta */
+      f.innerHTML = "Con estas cifras el ahorro de uso no suma, as&iacute; que la cuenta es solo la reventa: " +
+        "en " + n + (n===1?" a&ntilde;o":" a&ntilde;os") + ", " + v.art + " " + v.nombre + " todav&iacute;a valdr&iacute;a " +
+        "aproximadamente <b>" + pesos(valorFuturo) + "</b> (retiene ~" + Math.round(retiene*100) + "% de su precio).";
+    }else if(neto <= 0){
+      f.innerHTML = "En " + n + (n===1?" a&ntilde;o":" a&ntilde;os") + ", entre lo que ahorras (<b>" + pesos(ahorroN) +
+        "</b>) y lo que " + v.art + " " + v.nombre + " todav&iacute;a valdr&iacute;a (<b>" + pesos(valorFuturo) +
+        "</b>, ~" + Math.round(retiene*100) + "% de su precio), recuperas <b>" + pesos(recuperado) +
+        "</b> &mdash; m&aacute;s de los <b>" + pesos(v.valor) + "</b> que pagaste. La depreciaci&oacute;n no deber&iacute;a preocuparte.";
+    }else{
+      f.innerHTML = "En " + n + (n===1?" a&ntilde;o":" a&ntilde;os") + ", " + v.art + " " + v.nombre +
+        " todav&iacute;a valdr&iacute;a aproximadamente <b>" + pesos(valorFuturo) + "</b> (~" + Math.round(retiene*100) +
+        "% de su precio). Sum&aacute;ndolo a lo que ahorras (<b>" + pesos(ahorroN) + "</b>), recuperas <b>" +
+        pesos(recuperado) + "</b> de los <b>" + pesos(v.valor) + "</b> que pagaste: tu costo real de tenerlo " +
+        (n===1?"ese 1 a&ntilde;o":"esos "+n+" a&ntilde;os") + " es de <b>" + pesos(neto) + "</b>.";
+    }
+  }
+
   function resumen(consumoDif, gastosDif, capital, v){
     RS_ULTIMO = { consumoDif:consumoDif, gastosDif:gastosDif, capital:capital, v:v };
     pintarCapital(capital, v);
@@ -1032,6 +1121,7 @@
     var total = (RS_ACTIVO.consumo ? consumoDif : 0) + (RS_ACTIVO.gastos ? gastosDif : 0);
     var etiqueta = RS_ACTIVO.consumo && RS_ACTIVO.gastos ? "consumo, seguro, impuesto y taller"
       : (RS_ACTIVO.consumo ? "consumo" : "seguro, impuesto y taller");
+    pintarReventa(total, etiqueta, v);
 
     var big = $("rs-total"), frase = $("rs-frase"), cierre = $("rs-cierre"), cta = $("rs-cta");
     var host = document.getElementById("qz-host");
@@ -1119,6 +1209,18 @@
         b.setAttribute("aria-pressed", RS_ACTIVO[clave] ? "true" : "false");
         if(RS_ULTIMO.v) resumen(RS_ULTIMO.consumoDif, RS_ULTIMO.gastosDif, RS_ULTIMO.capital, RS_ULTIMO.v);
       });
+    });
+  })();
+  /* la barra deslizable: cambia el horizonte de la línea de tiempo y de
+     la reventa sin recalcular nada -reusa el último resultado, igual
+     que los botones de arriba; resumen() ya llama a pintarLinea() y a
+     pintarReventa() internamente- */
+  (function(){
+    var barra = $("rs-anios"), etiqueta = $("rs-anios-val");
+    barra.addEventListener("input", function(){
+      ANIOS_PLAN = +barra.value;
+      etiqueta.textContent = ANIOS_PLAN + (ANIOS_PLAN===1 ? " año" : " años");
+      if(RS_ULTIMO.v) resumen(RS_ULTIMO.consumoDif, RS_ULTIMO.gastosDif, RS_ULTIMO.capital, RS_ULTIMO.v);
     });
   })();
   /* En una cuenta de gastos un signo menos es ambiguo: no se sabe si es
