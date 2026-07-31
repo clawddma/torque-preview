@@ -162,6 +162,41 @@ footer b{color:var(--mut)}
     <p class="lede">1.073.054 matrículas del RUNT, de enero de 2022 a julio de 2026. Elige la métrica, acumula los años y meses que quieras comparar, y cruza combustible, categoría, región y marca: todo el tablero responde a los mismos filtros.</p>
   </div>
 
+
+  <div class="mets" id="mets"></div>
+</div>
+
+<div class="bar"><div class="wrap">
+  <div class="frow">
+    <div class="fg"><span class="fl">Año</span><button class="ms" data-dim="anio">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="anio"></div></div>
+    <div class="fg"><span class="fl">Mes</span><button class="ms" data-dim="mes">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="mes"></div></div>
+    <div class="fg"><span class="fl">Segmento</span><button class="ms" data-dim="seg">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="seg"></div></div>
+    <div class="fg"><span class="fl">Combustible</span><button class="ms" data-dim="g">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="g"></div></div>
+    <div class="fg"><span class="fl">Categoría</span><button class="ms" data-dim="clase">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="clase"></div></div>
+    <div class="fg"><span class="fl">Región</span><button class="ms" data-dim="depto">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="depto"></div></div>
+    <div class="fg"><span class="fl">Marca</span><button class="ms" data-dim="marca">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="marca"></div></div>
+    <div class="sp"></div>
+    <button class="bt" id="ytd" title="Acumulado hasta el último mes cerrado, contra el mismo acumulado de los años anteriores">YTD</button>
+    <button class="bt" id="limpiar">Limpiar</button>
+    <button class="bt" id="csv">Descargar</button>
+  </div>
+  <div class="chips" id="chips"></div>
+</div></div>
+
+<div class="wrap">
+
+  <div class="panel-shell">
+    <nav class="panel-nav" aria-label="Secciones del tablero"></nav>
+    <div class="panel-content">
+
+  <div class="kpis">
+    <div class="kpi"><div class="k" id="k1k">Matrículas</div><div class="v num" id="k1">&mdash;</div><div class="d" id="k1d"></div></div>
+    <div class="kpi"><div class="k">Promedio mensual</div><div class="v num" id="k2">&mdash;</div><div class="d" id="k2d"></div></div>
+    <div class="kpi"><div class="k">Contra año anterior</div><div class="v num" id="k3">&mdash;</div><div class="d" id="k3d"></div></div>
+    <div class="kpi"><div class="k">Sostenibles</div><div class="v num" id="k4">&mdash;</div><div class="d" id="k4d"></div></div>
+    <div class="kpi"><div class="k">Compra a crédito</div><div class="v num" id="k5">&mdash;</div><div class="d" id="k5d"></div></div>
+  </div>
+
   <div class="sec" style="margin-top:22px"><div class="panel" style="border-color:var(--line2)">
     <h2>Qué es esta base, exactamente</h2>
     <p class="sub" style="margin-bottom:14px">Es el <b>mercado nacional completo de vehículo nuevo</b> según el RUNT. Contrastado contra las cifras oficiales de Fenalco y la ANDI, cuadra con menos de 1% de diferencia:</p>
@@ -190,38 +225,6 @@ footer b{color:var(--mut)}
     <p class="sub" style="margin:15px 0 0">Dos de las especialidades de Camilo &mdash;<b>motos y maquinaria amarilla</b>&mdash; no se pueden analizar con este archivo. Si las quieres, hay que pedirle al RUNT esos otros dos universos.</p>
   </div></div>
 
-  <div class="mets" id="mets"></div>
-</div>
-
-<div class="bar"><div class="wrap">
-  <div class="frow">
-    <div class="fg"><span class="fl">Año</span><button class="ms" data-dim="anio">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="anio"></div></div>
-    <div class="fg"><span class="fl">Mes</span><button class="ms" data-dim="mes">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="mes"></div></div>
-    <div class="fg"><span class="fl">Segmento</span><button class="ms" data-dim="seg">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="seg"></div></div>
-    <div class="fg"><span class="fl">Combustible</span><button class="ms" data-dim="g">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="g"></div></div>
-    <div class="fg"><span class="fl">Categoría</span><button class="ms" data-dim="clase">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="clase"></div></div>
-    <div class="fg"><span class="fl">Región</span><button class="ms" data-dim="depto">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="depto"></div></div>
-    <div class="fg"><span class="fl">Marca</span><button class="ms" data-dim="marca">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="marca"></div></div>
-    <div class="sp"></div>
-    <button class="bt" id="ytd" title="Acumulado hasta el último mes cerrado, contra el mismo acumulado de los años anteriores">YTD</button>
-    <button class="bt" id="limpiar">Limpiar</button>
-    <button class="bt" id="csv">Descargar</button>
-  </div>
-  <div class="chips" id="chips"></div>
-</div></div>
-
-<div class="wrap">
-  <div class="kpis">
-    <div class="kpi"><div class="k" id="k1k">Matrículas</div><div class="v num" id="k1">&mdash;</div><div class="d" id="k1d"></div></div>
-    <div class="kpi"><div class="k">Promedio mensual</div><div class="v num" id="k2">&mdash;</div><div class="d" id="k2d"></div></div>
-    <div class="kpi"><div class="k">Contra año anterior</div><div class="v num" id="k3">&mdash;</div><div class="d" id="k3d"></div></div>
-    <div class="kpi"><div class="k">Sostenibles</div><div class="v num" id="k4">&mdash;</div><div class="d" id="k4d"></div></div>
-    <div class="kpi"><div class="k">Compra a crédito</div><div class="v num" id="k5">&mdash;</div><div class="d" id="k5d"></div></div>
-  </div>
-
-  <div class="panel-shell">
-    <nav class="panel-nav" aria-label="Secciones del tablero"></nav>
-    <div class="panel-content">
 
   <div class="sec"><div class="panel" data-amp="c-evo">
     <h2>Evolución mes a mes</h2>
