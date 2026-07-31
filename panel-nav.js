@@ -6,6 +6,18 @@
    muestra toda su información sin perder el menú de vista. Antes estas
    páginas eran un solo scroll largo sin más navegación que el mouse.
 
+   La primera versión usaba <button> con scroll calculado a mano en
+   JavaScript. Daniel preguntó algo muy simple y muy correcto: "¿por qué
+   en vez de eso, si ya estaba en URL?" — y tenía razón. Cada sección ya
+   tiene un id; lo que faltaba era usar un <a href="#id"> de verdad, no
+   reinventarlo con botones. Con enlaces reales cada sección queda con
+   su propia URL -mercado.html#sec-financiacion se puede copiar, mandar
+   por WhatsApp o guardar en marcadores-, funciona con el bot&oacute;n
+   atr&aacute;s del navegador, y hasta sin JavaScript el salto ocurre
+   igual. Lo único que JavaScript sigue aportando es el offset -para que
+   la secci&oacute;n no quede tapada bajo las barras fijas- y resaltar
+   cuál está a la vista.
+
    Se monta dentro de cualquier `<div class="panel-shell">`: lee los
    `<h2>` de su `.panel-content`, arma el menú solo, y no toca ningún
    id ni listener que ya exista -mueve nodos, nunca los reconstruye-.
@@ -53,39 +65,46 @@
     titulos = titulos.filter(function(h,i){ return titulos.indexOf(h) === i });
     if(!titulos.length) return;
 
-    var botones = [];
+    var items = [];
     titulos.forEach(function(h2){
       var panel = h2.closest(".panel");
       if(!panel.id) panel.id = "sec-" + slug(h2.textContent);
-      var b = document.createElement("button");
-      b.type = "button";
-      b.textContent = h2.textContent;
-      b.dataset.target = panel.id;
-      nav.appendChild(b);
-      botones.push({btn:b, panel:panel});
+      var a = document.createElement("a");
+      a.href = "#" + panel.id;
+      a.textContent = h2.textContent;
+      nav.appendChild(a);
+      items.push({a:a, panel:panel});
     });
 
-    function irA(panel){
-      var y = panel.getBoundingClientRect().top + window.scrollY - techo() - 14;
-      window.scrollTo({top:y, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+    /* el offset va en scroll-margin-top de cada panel, NO en JavaScript
+       calculando adónde saltar: así el salto lo resuelve el navegador
+       mismo -clic, bot&oacute;n atr&aacute;s, escribir la URL a mano,
+       hasta sin que este script haya cargado- y siempre queda igual de
+       bien alineado, sin duplicar la cuenta en dos sitios. */
+    function fijarMargen(){
+      var t = matchMedia("(max-width:1050px)").matches ? techo() : techo() + 14;
+      items.forEach(function(o){ o.panel.style.scrollMarginTop = t + "px" });
+      if(!matchMedia("(max-width:1050px)").matches) nav.style.top = (techo() + 14) + "px";
+      else nav.style.top = "";
     }
-    botones.forEach(function(o){
-      o.btn.addEventListener("click", function(){ irA(o.panel) });
-    });
-
-    /* el techo cambia con el ancho -el menú lateral se vuelve una fila
-       horizontal en móvil, y nav.js recalcula su propia altura-, así
-       que se vuelve a fijar el "top" del menú en cada resize */
-    function fijarTope(){
-      if(matchMedia("(max-width:900px)").matches){ nav.style.top = ""; return }
-      nav.style.top = (techo() + 14) + "px";
-    }
-    fijarTope();
-    window.addEventListener("resize", fijarTope);
+    fijarMargen();
+    window.addEventListener("resize", fijarMargen);
     /* nav.js todavía puede estar acomodando su propia barra un instante
        después del primer pintado (fuentes, imágenes); un reintento
        corto cubre eso sin quedar recalculando para siempre */
-    setTimeout(fijarTope, 300);
+    setTimeout(fijarMargen, 300);
+
+    /* si la página se abrió con un hash -alguien pegó o compartió el
+       enlace directo a una sección-, el navegador ya intentó saltar
+       ahí ANTES de que existiera el scroll-margin-top de arriba, así
+       que puede haber quedado tapado bajo las barras. Se corrige una
+       sola vez, sin animación, para que no se sienta como un rebote. */
+    if(location.hash){
+      var destino = document.querySelector(location.hash);
+      if(destino && contenido.contains(destino)){
+        requestAnimationFrame(function(){ destino.scrollIntoView({block:"start"}) });
+      }
+    }
 
     /* resalta la sección visible mientras se hace scroll, igual que
        Shopify marca la página activa del panel */
@@ -93,7 +112,7 @@
     function marcar(panel){
       if(panel === activo) return;
       activo = panel;
-      botones.forEach(function(o){ o.btn.classList.toggle("on", o.panel === panel) });
+      items.forEach(function(o){ o.a.classList.toggle("on", o.panel === panel) });
     }
     if("IntersectionObserver" in window){
       var io = new IntersectionObserver(function(entries){
@@ -105,7 +124,7 @@
       }, { rootMargin: "-15% 0px -70% 0px" });
       titulos.forEach(function(h2){ io.observe(h2.closest(".panel")) });
     }
-    marcar(botones[0].panel);
+    marcar(items[0].panel);
   }
 
   function iniciar(){
