@@ -138,20 +138,33 @@
     'body.tqadm-on .bar{left:'+LADO+'px}',
     '#tqadm-btn{display:none}',
 
-    /* ── móvil: la columna sale de pantalla y se abre con el botón ── */
+    /* ── móvil: la columna sale de pantalla y se abre con el botón ──
+       El botón es fijo y flota sobre la página, así que el contenido
+       tiene que dejarle su lugar: sin esa reserva se monta encima del
+       título y del texto de arriba, que es justo lo que pasaba. En vez
+       de empujar TODO el body -que descuadraría los elementos pegados
+       al tope- se reserva solo en la primera franja de la página. */
     '@media(max-width:1050px){',
-    '  body.tqadm-on{padding-left:0}',
+    '  body.tqadm-on{padding-left:0;padding-top:56px}',
     '  #tqadm{transform:translateX(-100%);transition:transform .22s cubic-bezier(.4,0,.2,1);',
     '    box-shadow:0 0 40px rgba(0,0,0,.6)}',
     '  #tqadm.abierto{transform:none}',
-    '  #tqadm-btn{display:flex;position:fixed;top:10px;left:10px;z-index:301;width:38px;height:38px;',
+    '  #tqadm-btn{display:flex;position:fixed;top:9px;left:10px;z-index:301;width:38px;height:38px;',
     '    align-items:center;justify-content:center;gap:4px;flex-direction:column;',
     '    background:rgba(11,13,15,.94);backdrop-filter:blur(10px);border:1px solid #2a2e35;',
     '    border-radius:9px;cursor:pointer;padding:0}',
     '  #tqadm-btn i{display:block;width:15px;height:1.7px;background:#fafafa;border-radius:2px}',
     '  #tqadm-velo{position:fixed;inset:0;background:rgba(4,5,6,.6);z-index:299;display:none}',
     '  #tqadm-velo.on{display:block}',
-    '  body.tqadm-on .bar{left:0}',
+    /* con el panel abierto el botón queda ENCIMA de su propio logotipo y
+       le come las dos primeras letras: la marca se corre para dejarle su
+       lugar, igual que hace el contenido de la página */
+    '  #tqadm .marca{padding-left:58px}',
+    /* la barra de filtros sticky de mercado.html se pega bajo el botón,
+       no bajo el borde de la pantalla */
+    '  body.tqadm-on .bar{left:0;top:56px}',
+    /* y lo que la página ya pegaba al tope tiene que bajar lo mismo */
+    '  body.tqadm-on .panel-side{top:56px}',
     '}'
   ].join("");
   document.head.appendChild(css);
