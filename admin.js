@@ -1,28 +1,29 @@
 /* ═══════════════════════════════════════════════════════════════════
    TORQUE — la consola interna (patrón Shopify Admin)
 
-   Camilo lo pidió así, textual: "una interfaz tipo CMS para Ecommerce,
-   que tome de referente a Shopify Admin", y sobre la captura: "todo lo
-   que le pones en la parte superior, que sea como un menú principal...
-   que sea un menú sticky, y al lado siempre tienes toda la información,
-   y va migrando al módulo que quieras".
+   Camilo lo pidió textual: "una interfaz tipo CMS para Ecommerce, que
+   tome de referente a Shopify Admin". Este archivo es ese marco.
 
-   Lo que estaba "en la parte superior" era la barra de trabajo de
-   nav.js: una franja negra horizontal con quince enlaces apretados que
-   había que leer de corrido para encontrar un módulo. Este archivo la
-   reemplaza por lo que usa cualquier consola de administración seria
-   -Shopify, Alegra, Stripe-: una columna fija a la izquierda con los
-   módulos, cada uno con su icono, el activo resaltado, y un buscador
-   arriba para saltar sin levantar las manos del teclado.
+   Tres reglas sacadas de mirar la captura del Admin, y que las dos
+   versiones anteriores rompían:
 
-   El contenido de cada página no se toca: se corre a la derecha del
-   sidebar y se le pone encima una barra con el título del módulo. Si la
-   página trae su propio bloque de contexto -en mercado.html los filtros,
-   en inteligencia.html el selector de portafolio, en las dos el índice
-   de secciones- se recoge y se pega bajo los módulos, para que quede lo
-   que Camilo pidió: al lado, siempre, toda la información.
+   1. LA COLUMNA NO DESAPARECE NUNCA. En Shopify pasas de Orders a
+      Products y el menú sigue ahí. Antes esta consola solo vivía en las
+      páginas internas, así que al abrir el Showroom se esfumaba y había
+      que usar el botón atrás para volver: "eso hace que la experiencia
+      no sea buena", y era cierto. Ahora va en todas.
 
-   Sustituye a nav.js en las páginas internas. Se carga con
+   2. LOS FILTROS VIVEN CON LO QUE FILTRAN. En el Admin la fila de
+      filtros está pegada sobre la tabla, no escondida en el menú. Antes
+      los había metido en la columna, debajo de trece módulos, y quedaban
+      "más abajo y no intuitivos". Vuelven arriba del contenido, fijos,
+      donde se ven mientras se lee el tablero.
+
+   3. EL MÓDULO ACTIVO DESPLIEGA SUS SECCIONES. Igual que Orders abre
+      Drafts y Abandoned checkouts debajo, indentados. Ahí es donde
+      panel-nav.js cuelga las secciones de la página.
+
+   Sustituye por completo a nav.js. Se carga con
    <script src="admin.js" defer></script>.
    ═══════════════════════════════════════════════════════════════════ */
 (function(){
@@ -31,8 +32,8 @@
   var raiz = /\/piezas\//.test(location.pathname) ? "../" : "";
 
   /* Un icono por módulo, dibujado a mano en 20×20. Son trazos, no
-     emojis: a este tamaño un emoji se ve borroso y cada sistema lo pinta
-     distinto, y además arrastran color propio que pelea con la marca. */
+     emojis: a este tamaño un emoji se ve borroso, cada sistema lo pinta
+     distinto y arrastra color propio que pelea con la marca. */
   var I = {
     tienda:'<path d="M3 7l1.5-3h11L17 7M3 7h14M3 7v9a1 1 0 001 1h12a1 1 0 001-1V7M7 17v-5h6v5"/>',
     calc:  '<rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7 6h6M7 9.5h.01M10 9.5h.01M13 9.5h.01M7 13h.01M10 13h.01M13 13h3"/>',
@@ -49,229 +50,276 @@
     marca: '<circle cx="10" cy="10" r="6.5"/><circle cx="10" cy="10" r="2"/>'
   };
 
-  /* Los módulos, agrupados como se piensan: lo que ve el cliente y lo
-     que solo vemos nosotros. El orden es el de uso real, no alfabético:
-     Mercado e Inteligencia son los que se abren todos los días. */
+  /* Los módulos, en el orden en que se usan. Las fichas de vehículo
+     cuelgan del Showroom como sub-items fijos, igual que Drafts cuelga
+     de Orders en el Admin. */
   var MODULOS = [
-    { grupo:"Cliente", items:[
-      ["Showroom",         "index.html",            I.tienda],
-      ["Simulador",        "simulador.html",        I.calc],
+    { grupo:"Sitio público", items:[
+      ["Showroom",         "index.html",          I.tienda,
+        [["Vigo","vigo.html"],["Box","box.html"],["Mage","mage.html"]]],
+      ["Simulador",        "simulador.html",      I.calc],
       ["Política de datos","politica-datos.html", I.doc]
     ]},
     { grupo:"Datos y mercado", items:[
-      ["Mercado",          "mercado.html",          I.grafico],
-      ["Inteligencia",     "inteligencia.html",     I.mapa],
-      ["Tablero",          "analitica.html",        I.panel]
+      ["Mercado",          "mercado.html",        I.grafico],
+      ["Inteligencia",     "inteligencia.html",   I.mapa],
+      ["Tablero",          "analitica.html",      I.panel]
     ]},
     { grupo:"Comercial", items:[
-      ["Pipeline",         "crm.html?k=torq2026",   I.flujo],
+      ["Pipeline",         "crm.html?k=torq2026", I.flujo],
       ["Leads",            "leads.html?k=torq2026", I.gente]
     ]},
     { grupo:"Conversación", items:[
-      ["Sala de pruebas",  "chat.html",             I.chat],
-      ["Bot",              "bot.html",              I.robot],
-      ["Respuestas",       "respuestas.html",       I.lista]
+      ["Sala de pruebas",  "chat.html",           I.chat],
+      ["Bot",              "bot.html",            I.robot],
+      ["Respuestas",       "respuestas.html",     I.lista]
     ]},
     { grupo:"Marca", items:[
-      ["Piezas",           "piezas/index.html",     I.imagen],
-      ["Identidad",        "logo-escala.html",      I.marca]
+      ["Piezas",           "piezas/index.html",   I.imagen],
+      ["Identidad",        "logo-escala.html",    I.marca]
     ]}
   ];
 
-  /* la página actual, para marcarla y no enlazarla a sí misma */
   var aqui = location.pathname.split("/").pop() || "index.html";
   if(/\/piezas\/?$/.test(location.pathname)) aqui = "piezas/index.html";
 
-  var LADO = 236;   /* ancho del sidebar en escritorio */
+  /* Las páginas del sitio público traen su propia barra superior con el
+     logotipo y el menú del visitante. Ahí la consola aporta la columna
+     -para poder volver a un módulo- pero no su barra: serían dos. */
+  var esPublica = !!document.querySelector("nav.nav");
+
+  var LADO = 232;
 
   var css = document.createElement("style");
   css.textContent = [
     /* ── la columna ───────────────────────────────────────────────── */
-    '#tqadm{position:fixed;top:0;left:0;bottom:0;width:'+LADO+'px;z-index:300;',
+    '#tqadm{position:fixed;top:0;left:0;bottom:0;width:'+LADO+'px;z-index:400;',
     '  background:#0b0d0f;border-right:1px solid #1c1f24;display:flex;flex-direction:column;',
     '  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif}',
-    '#tqadm .marca{display:flex;align-items:center;gap:9px;padding:15px 16px 13px;text-decoration:none;flex:none}',
-    '#tqadm .marca .lg{display:flex;align-items:center;font-weight:800;font-size:19px;',
+    '#tqadm .marca{display:flex;align-items:center;gap:9px;padding:14px 15px 12px;',
+    '  text-decoration:none;flex:none;border-bottom:1px solid #16191c}',
+    '#tqadm .marca .lg{display:flex;align-items:center;font-weight:800;font-size:18px;',
     '  letter-spacing:-.035em;color:#fafafa;line-height:1}',
     '#tqadm .marca .lg svg{width:1.04em;height:1.04em;margin:0 1px;flex:none}',
-    '#tqadm .marca .tag{font-size:8px;letter-spacing:.17em;text-transform:uppercase;color:#5d636b;',
-    '  font-weight:700;border-left:1px solid #2a2e35;padding-left:9px;line-height:1.3}',
+    '#tqadm .marca .tag{font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;color:#5d636b;',
+    '  font-weight:700;border-left:1px solid #2a2e35;padding-left:8px;line-height:1.3}',
 
-    /* ── buscador ─────────────────────────────────────────────────── */
-    '#tqadm .bus{position:relative;padding:0 12px 12px;flex:none}',
-    '#tqadm .bus input{width:100%;background:#141719;border:1px solid #2a2e35;color:#fafafa;',
-    '  border-radius:8px;padding:8px 10px 8px 30px;font-size:12.5px;font-family:inherit}',
-    '#tqadm .bus input::placeholder{color:#5d636b}',
-    '#tqadm .bus input:focus{outline:none;border-color:#c8f24a}',
-    '#tqadm .bus svg{position:absolute;left:22px;top:9px;width:14px;height:14px;stroke:#5d636b;',
-    '  fill:none;stroke-width:1.8;pointer-events:none}',
-    '#tqadm .bus kbd{position:absolute;right:22px;top:8px;font-size:9.5px;color:#5d636b;',
-    '  border:1px solid #2a2e35;border-radius:4px;padding:2px 5px;font-family:inherit;pointer-events:none}',
-    '#tqadm .bus input:focus+svg+kbd{display:none}',
-
-    /* ── lista de módulos ─────────────────────────────────────────── */
-    '#tqadm .cuerpo{flex:1;overflow-y:auto;padding:0 8px 16px;scrollbar-width:thin;',
+    '#tqadm .cuerpo{flex:1;overflow-y:auto;padding:8px 8px 16px;scrollbar-width:thin;',
     '  scrollbar-color:#2a2e35 transparent}',
     '#tqadm .cuerpo::-webkit-scrollbar{width:6px}',
     '#tqadm .cuerpo::-webkit-scrollbar-thumb{background:#2a2e35;border-radius:3px}',
     '#tqadm .gl{font-size:8px;letter-spacing:.19em;text-transform:uppercase;color:#5d636b;',
-    '  font-weight:700;padding:14px 10px 6px}',
-    '#tqadm a.mod{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;',
+    '  font-weight:700;padding:13px 10px 5px}',
+    '#tqadm a.mod{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:7px;',
     '  color:#8b9199;text-decoration:none;font-size:12.5px;line-height:1.3}',
     '#tqadm a.mod svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.6;',
     '  stroke-linecap:round;stroke-linejoin:round;flex:none}',
     '#tqadm a.mod:hover{background:#16191c;color:#fafafa}',
     '#tqadm a.mod.on{background:#c8f24a;color:#0a0c07;font-weight:700}',
-    '#tqadm a.mod.oculto{display:none}',
-    '#tqadm .gl.oculto{display:none}',
+
+    /* ── sub-items del módulo abierto (patrón Drafts / Abandoned) ─── */
+    '#tqadm .sub{display:none;flex-direction:column;gap:1px;margin:2px 0 4px}',
+    '#tqadm .sub.on{display:flex}',
+    '#tqadm .sub a{display:block;padding:6px 10px 6px 37px;border-radius:6px;color:#8b9199;',
+    '  text-decoration:none;font-size:12px;line-height:1.35}',
+    '#tqadm .sub a:hover{background:#16191c;color:#fafafa}',
+    '#tqadm .sub a.on{color:#c8f24a;font-weight:600}',
     '#tqadm .vacio{color:#5d636b;font-size:12px;padding:12px 10px;display:none}',
     '#tqadm .vacio.on{display:block}',
 
-    /* ── el contexto de la página, recogido de .panel-side ────────── */
-    '#tqadm .ctx{border-top:1px solid #1c1f24;margin-top:14px;padding-top:14px}',
-    '#tqadm .ctx .side-tit{padding-left:10px}',
-    '#tqadm .ctx .panel-side{position:static!important;max-height:none!important;overflow:visible!important;',
-    '  padding:0 2px;gap:18px}',
+    /* ── la barra superior: buscador, como en el Admin ────────────── */
+    '#tqtop{position:sticky;top:0;z-index:180;background:rgba(11,13,15,.94);',
+    '  backdrop-filter:blur(14px);border-bottom:1px solid #1c1f24;',
+    '  display:flex;align-items:center;gap:12px;padding:9px 20px;',
+    '  font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}',
+    '#tqtop .buscar{position:relative;flex:1;max-width:460px;margin:0 auto}',
+    '#tqtop input{width:100%;background:#141719;border:1px solid #2a2e35;color:#fafafa;',
+    '  border-radius:8px;padding:7px 10px 7px 31px;font-size:12.5px;font-family:inherit}',
+    '#tqtop input::placeholder{color:#5d636b}',
+    '#tqtop input:focus{outline:none;border-color:#c8f24a}',
+    '#tqtop .buscar>svg{position:absolute;left:10px;top:8px;width:14px;height:14px;',
+    '  stroke:#5d636b;fill:none;stroke-width:1.8;pointer-events:none}',
+    '#tqtop kbd{position:absolute;right:9px;top:7px;font-size:9.5px;color:#5d636b;',
+    '  border:1px solid #2a2e35;border-radius:4px;padding:2px 5px;pointer-events:none}',
+    '#tqtop .aqui{font-size:12.5px;color:#8b9199;font-weight:600;white-space:nowrap}',
 
-    /* ── el contenido se corre a la derecha ───────────────────────── */
+    /* ── resultados del buscador ──────────────────────────────────── */
+    '#tqres{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#141719;',
+    '  border:1px solid #2a2e35;border-radius:9px;padding:6px;display:none;',
+    '  box-shadow:0 18px 44px rgba(0,0,0,.65);max-height:320px;overflow:auto;z-index:5}',
+    '#tqres.on{display:block}',
+    '#tqres a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;',
+    '  color:#8b9199;text-decoration:none;font-size:12.5px}',
+    '#tqres a:hover,#tqres a.sel{background:#1c2024;color:#fafafa}',
+    '#tqres a .d{margin-left:auto;font-size:10px;color:#5d636b}',
+    '#tqres .nada{padding:10px;color:#5d636b;font-size:12px}',
+
+    /* ── el contenido se corre a la derecha de la columna ─────────── */
     'body.tqadm-on{padding-left:'+LADO+'px}',
-    'body.tqadm-on .bar{left:'+LADO+'px}',
-    '#tqadm-btn{display:none}',
+    /* lo que la página ya pegaba al tope: se corre, no se tapa */
+    'body.tqadm-on .bar,body.tqadm-on nav.nav{left:'+LADO+'px;right:0;width:auto}',
+    '#tqadm-btn,#tqadm-velo{display:none}',
 
-    /* ── móvil: la columna sale de pantalla y se abre con el botón ──
-       El botón es fijo y flota sobre la página, así que el contenido
-       tiene que dejarle su lugar: sin esa reserva se monta encima del
-       título y del texto de arriba, que es justo lo que pasaba. En vez
-       de empujar TODO el body -que descuadraría los elementos pegados
-       al tope- se reserva solo en la primera franja de la página. */
+    /* ── móvil ────────────────────────────────────────────────────── */
     '@media(max-width:1050px){',
-    '  body.tqadm-on{padding-left:0;padding-top:56px}',
+    '  body.tqadm-on{padding-left:0}',
+    '  body.tqadm-on .bar,body.tqadm-on nav.nav{left:0}',
     '  #tqadm{transform:translateX(-100%);transition:transform .22s cubic-bezier(.4,0,.2,1);',
-    '    box-shadow:0 0 40px rgba(0,0,0,.6)}',
+    '    box-shadow:0 0 40px rgba(0,0,0,.6);width:268px}',
     '  #tqadm.abierto{transform:none}',
-    '  #tqadm-btn{display:flex;position:fixed;top:9px;left:10px;z-index:301;width:38px;height:38px;',
-    '    align-items:center;justify-content:center;gap:4px;flex-direction:column;',
-    '    background:rgba(11,13,15,.94);backdrop-filter:blur(10px);border:1px solid #2a2e35;',
-    '    border-radius:9px;cursor:pointer;padding:0}',
+    '  #tqadm .marca{padding-left:54px}',
+    '  #tqadm-btn{display:flex;align-items:center;justify-content:center;gap:4px;',
+    '    flex-direction:column;width:36px;height:36px;background:#141719;border:1px solid #2a2e35;',
+    '    border-radius:9px;cursor:pointer;padding:0;flex:none}',
     '  #tqadm-btn i{display:block;width:15px;height:1.7px;background:#fafafa;border-radius:2px}',
-    '  #tqadm-velo{position:fixed;inset:0;background:rgba(4,5,6,.6);z-index:299;display:none}',
+    '  #tqadm-velo{position:fixed;inset:0;background:rgba(4,5,6,.6);z-index:399;display:none}',
     '  #tqadm-velo.on{display:block}',
-    /* con el panel abierto el botón queda ENCIMA de su propio logotipo y
-       le come las dos primeras letras: la marca se corre para dejarle su
-       lugar, igual que hace el contenido de la página */
-    '  #tqadm .marca{padding-left:58px}',
-    /* la barra de filtros sticky de mercado.html se pega bajo el botón,
-       no bajo el borde de la pantalla */
-    '  body.tqadm-on .bar{left:0;top:56px}',
-    /* y lo que la página ya pegaba al tope tiene que bajar lo mismo */
-    '  body.tqadm-on .panel-side{top:56px}',
+    '  #tqtop{padding:8px 12px}',
+    '  #tqtop .aqui{display:none}',
     '}'
   ].join("");
   document.head.appendChild(css);
 
   var lg = 'T<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="34" fill="none" stroke="currentColor" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45"/><circle cx="50" cy="50" r="10.5" fill="#c8f24a"/></svg>RQUE';
 
+  /* ── la columna ──────────────────────────────────────────────────── */
   var barra = document.createElement("nav");
   barra.id = "tqadm";
   barra.setAttribute("aria-label", "Módulos de TORQUE");
 
+  var titulo = "";
   var html = '<a class="marca" href="'+raiz+'index.html"><span class="lg">'+lg+'</span>'+
-             '<span class="tag">Consola<br>interna</span></a>'+
-             '<div class="bus"><input type="search" id="tqadm-q" placeholder="Buscar módulo…" '+
-             'autocomplete="off" aria-label="Buscar módulo">'+
-             '<svg viewBox="0 0 20 20"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5L17 17"/></svg>'+
-             '<kbd>/</kbd></div><div class="cuerpo">';
+             '<span class="tag">Consola<br>interna</span></a><div class="cuerpo">';
 
   MODULOS.forEach(function(g){
     html += '<div class="gl">'+g.grupo+'</div>';
     g.items.forEach(function(it){
-      var destino = it[1], archivo = destino.split("?")[0];
+      var nombre = it[0], destino = it[1], icono = it[2], hijos = it[3] || [];
+      var archivo = destino.split("?")[0];
+      var hijoActivo = hijos.some(function(h){ return h[1] === aqui });
       var activa = archivo === aqui;
+      if(activa || hijoActivo) titulo = activa ? nombre : (hijos.filter(function(h){return h[1]===aqui})[0]||[nombre])[0];
       html += '<a class="mod'+(activa?" on":"")+'" href="'+raiz+destino+'"'+
               (activa?' aria-current="page"':'')+'>'+
-              '<svg viewBox="0 0 20 20">'+it[2]+'</svg><span>'+it[0]+'</span></a>';
+              '<svg viewBox="0 0 20 20">'+icono+'</svg><span>'+nombre+'</span></a>';
+      /* el contenedor de sub-items: los fijos van escritos, y panel-nav.js
+         cuelga aquí las secciones de la página cuando el módulo es el
+         abierto -igual que Orders despliega Drafts */
+      html += '<div class="sub'+((activa||hijoActivo)?" on":"")+'" data-sub="'+archivo+'">';
+      hijos.forEach(function(h){
+        html += '<a href="'+raiz+h[1]+'"'+(h[1]===aqui?' class="on"':'')+'>'+h[0]+'</a>';
+      });
+      html += '</div>';
     });
   });
-  html += '<div class="vacio" id="tqadm-vacio">Ning&uacute;n m&oacute;dulo con ese nombre.</div></div>';
+  html += '<div class="vacio" id="tqadm-vacio">Ningún módulo con ese nombre.</div></div>';
   barra.innerHTML = html;
 
-  var btn = document.createElement("button");
-  btn.id = "tqadm-btn";
-  btn.setAttribute("aria-label", "Abrir el menú de módulos");
-  btn.innerHTML = "<i></i><i></i><i></i>";
+  /* ── la barra superior ───────────────────────────────────────────── */
+  var top = null;
+  if(!esPublica){
+    top = document.createElement("div");
+    top.id = "tqtop";
+    top.innerHTML =
+      '<button id="tqadm-btn" aria-label="Abrir el menú de módulos"><i></i><i></i><i></i></button>'+
+      '<span class="aqui">'+(titulo||"TORQUE")+'</span>'+
+      '<div class="buscar">'+
+        '<input type="search" id="tqadm-q" placeholder="Buscar módulo o sección…" '+
+        'autocomplete="off" aria-label="Buscar">'+
+        '<svg viewBox="0 0 20 20"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5L17 17"/></svg>'+
+        '<kbd>/</kbd><div id="tqres" role="listbox"></div>'+
+      '</div>';
+  }
+
   var velo = document.createElement("div");
   velo.id = "tqadm-velo";
+  var cerrarRes = function(){};
 
   function montar(){
     document.body.classList.add("tqadm-on");
     document.body.insertBefore(barra, document.body.firstChild);
+    if(top) document.body.insertBefore(top, barra.nextSibling);
     document.body.appendChild(velo);
-    document.body.appendChild(btn);
 
-    /* Si la página trae su bloque de contexto -filtros, selector de
-       portafolio, índice de secciones-, se recoge dentro del sidebar.
-       Es lo que pidió Camilo: al lado, siempre, toda la información. */
-    var lado = document.querySelector(".panel-side");
-    if(lado){
-      var ctx = document.createElement("div");
-      ctx.className = "ctx";
-      ctx.appendChild(lado);
-      barra.querySelector(".cuerpo").appendChild(ctx);
-      /* el shell queda de una sola columna: el hueco de 248px que
-         reservaba el grid ya no tiene quién lo ocupe */
-      var shell = document.querySelector(".panel-shell");
-      if(shell) shell.style.gridTemplateColumns = "1fr";
+    /* en el sitio público la consola no pone barra propia -la página ya
+       tiene la suya-, así que el botón de móvil va suelto y flotante */
+    if(esPublica){
+      var b = document.createElement("button");
+      b.id = "tqadm-btn";
+      b.setAttribute("aria-label","Abrir el menú de módulos");
+      b.innerHTML = "<i></i><i></i><i></i>";
+      b.style.cssText = "position:fixed;top:9px;left:9px;z-index:401";
+      document.body.appendChild(b);
     }
 
-    /* ── abrir y cerrar en móvil ──────────────────────────────────── */
     function abrir(v){
       barra.classList.toggle("abierto", v);
       velo.classList.toggle("on", v);
     }
-    btn.addEventListener("click", function(){ abrir(!barra.classList.contains("abierto")) });
-    velo.addEventListener("click", function(){ abrir(false) });
-    barra.addEventListener("click", function(e){
-      /* al elegir un módulo en móvil, el panel se cierra solo */
-      if(e.target.closest("a.mod")) abrir(false);
+    document.addEventListener("click", function(e){
+      if(e.target.closest("#tqadm-btn")) return abrir(!barra.classList.contains("abierto"));
+      if(e.target.closest("#tqadm-velo")) return abrir(false);
+      if(e.target.closest("#tqadm a")) return abrir(false);
+      if(!e.target.closest("#tqtop .buscar")) cerrarRes();
     });
     document.addEventListener("keydown", function(e){
-      if(e.key === "Escape") abrir(false);
+      if(e.key === "Escape"){ abrir(false); cerrarRes() }
     });
 
-    /* ── el buscador ──────────────────────────────────────────────── */
-    var q = document.getElementById("tqadm-q");
-    var vacio = document.getElementById("tqadm-vacio");
-    function normalizar(t){
-      return t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
-    }
-    q.addEventListener("input", function(){
-      var t = normalizar(q.value.trim());
-      var hallados = 0;
-      MODULOS.forEach(function(g, gi){
-        var titulo = barra.querySelectorAll(".gl")[gi];
-        var visiblesEnGrupo = 0;
+    if(!top) return;
+
+    /* ── el buscador: módulos y secciones de la página ─────────────── */
+    var q = document.getElementById("tqadm-q"), res = document.getElementById("tqres");
+    function norm(t){ return t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"") }
+    cerrarRes = function(){ res.classList.remove("on"); res.innerHTML = "" };
+
+    function catalogo(){
+      var lista = [];
+      MODULOS.forEach(function(g){
         g.items.forEach(function(it){
-          var a = barra.querySelector('a.mod[href$="'+it[1]+'"]');
-          if(!a) return;
-          var ok = !t || normalizar(it[0]).indexOf(t) >= 0 || normalizar(g.grupo).indexOf(t) >= 0;
-          a.classList.toggle("oculto", !ok);
-          if(ok){ visiblesEnGrupo++; hallados++ }
+          lista.push({t:it[0], h:raiz+it[1], d:g.grupo});
+          (it[3]||[]).forEach(function(h){ lista.push({t:h[0], h:raiz+h[1], d:it[0]}) });
         });
-        if(titulo) titulo.classList.toggle("oculto", visiblesEnGrupo === 0);
       });
-      vacio.classList.toggle("on", hallados === 0);
-    });
+      /* las secciones de ESTA página, que panel-nav.js ya colgó */
+      document.querySelectorAll("#tqadm .sub a[href^='#']").forEach(function(a){
+        lista.push({t:a.textContent, h:a.getAttribute("href"), d:"En esta página"});
+      });
+      return lista;
+    }
+
+    function pintar(){
+      var t = norm(q.value.trim());
+      if(!t) return cerrarRes();
+      var hits = catalogo().filter(function(x){ return norm(x.t).indexOf(t) >= 0 }).slice(0, 8);
+      res.innerHTML = hits.length
+        ? hits.map(function(x,i){
+            return '<a href="'+x.h+'"'+(i===0?' class="sel"':'')+'>'+x.t+
+                   '<span class="d">'+x.d+'</span></a>';
+          }).join("")
+        : '<div class="nada">Sin resultados.</div>';
+      res.classList.add("on");
+    }
+    q.addEventListener("input", pintar);
+    q.addEventListener("focus", pintar);
     q.addEventListener("keydown", function(e){
-      if(e.key === "Enter"){
-        var primero = barra.querySelector("a.mod:not(.oculto)");
-        if(primero) location.href = primero.href;
+      var sel = res.querySelector("a.sel");
+      if(e.key === "Enter" && sel){ e.preventDefault(); location.href = sel.getAttribute("href"); cerrarRes() }
+      if(e.key === "ArrowDown" || e.key === "ArrowUp"){
+        e.preventDefault();
+        var todos = [].slice.call(res.querySelectorAll("a"));
+        if(!todos.length) return;
+        var i = todos.indexOf(sel);
+        i = e.key === "ArrowDown" ? Math.min(i+1, todos.length-1) : Math.max(i-1, 0);
+        todos.forEach(function(a){ a.classList.remove("sel") });
+        todos[i].classList.add("sel");
+        todos[i].scrollIntoView({block:"nearest"});
       }
-      if(e.key === "Escape"){ q.value = ""; q.dispatchEvent(new Event("input")); q.blur() }
+      if(e.key === "Escape"){ q.value = ""; cerrarRes(); q.blur() }
     });
-    /* "/" enfoca el buscador, como en Shopify y GitHub */
     document.addEventListener("keydown", function(e){
-      var dentroDeCampo = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
-      if(e.key === "/" && !dentroDeCampo){ e.preventDefault(); abrir(true); q.focus() }
+      var enCampo = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+      if(e.key === "/" && !enCampo){ e.preventDefault(); q.focus() }
     });
   }
 

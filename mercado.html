@@ -134,60 +134,32 @@ footer b{color:var(--mut)}
 @media(max-width:640px){.wrap{padding:0 14px}h1.pg{font-size:25px}.panel{padding:16px 14px}.amp{display:none}
   .ms{min-width:0;font-size:12px;padding:9px 11px}}
 
-/* ── panel lateral: filtros + secciones (patrón Shopify Admin) ─────
-   Camilo lo pidió con la captura del Admin de Shopify, y su frase era
-   literal: "todo lo que le pones en la parte superior, que sea como un
-   menú principal... al lado siempre tienes toda la información". Lo que
-   estaba en la parte superior eran LOS FILTROS -esa barra sticky
-   horizontal-, así que son ellos los que bajan a la columna izquierda.
-   Debajo va el índice de secciones, como navegación secundaria. */
-.panel-shell{display:grid;grid-template-columns:248px 1fr;gap:24px;align-items:start;margin-top:20px}
-.panel-side{position:sticky;display:flex;flex-direction:column;gap:22px;flex:none;
-  max-height:calc(100vh - 90px);overflow-y:auto;padding-right:4px;
-  scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
-.panel-side::-webkit-scrollbar{width:6px}
-.panel-side::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
-.side-grupo{display:flex;flex-direction:column;gap:9px}
-.side-tit{font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut2);
-  font-weight:700;padding-left:2px}
+/* ── la barra de la vista (patrón Shopify Admin) ───────────────────
+   En el Admin la fila de filtros va pegada SOBRE la tabla que filtra,
+   no escondida en el menú lateral. Se probó al revés -filtros dentro
+   de la columna- y Daniel lo dijo claro: quedaban "más abajo y no
+   intuitivos", porque había que pasar trece módulos para llegar. Aquí
+   viven donde se usan, y se quedan fijos al hacer scroll. */
+.vista-barra{position:sticky;top:0;z-index:60;margin:18px 0 0;
+  background:rgba(8,9,10,.97);backdrop-filter:blur(14px);
+  border:1px solid var(--line);border-radius:11px;padding:12px 14px}
+.vb-fila{display:flex;flex-wrap:wrap;gap:9px;align-items:flex-end}
+.vb-fila+.vb-fila{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.vb-fila .frow{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;flex:1}
+.vb-btns{display:flex;gap:6px;margin-left:auto}
+.vista-barra .mets{margin-top:0}
+.vista-barra .chips{margin-top:10px}
+.vista-barra .chips:empty{margin-top:0}
 
-/* los filtros pasan de fila horizontal a columna */
-.panel-side .frow{flex-direction:column;align-items:stretch;gap:9px}
-.panel-side .fg{width:100%}
-.panel-side .ms{width:100%;min-width:0}
-/* el desplegable deja de flotar: dentro de una columna con scroll propio
-   un menú absoluto se corta contra el borde. Empuja el contenido, como
-   un acordeón -que es además como se comportan los filtros de Shopify-. */
-.panel-side .dd{position:static;margin-top:6px;min-width:0;max-height:250px;
-  box-shadow:none;border-radius:7px}
-.panel-side .mets{flex-direction:column;gap:5px;margin-top:0}
-.panel-side .met{width:100%;justify-content:flex-start;font-size:12px;padding:8px 13px}
-.side-btns{display:flex;gap:6px;flex-wrap:wrap}
-.side-btns .bt{flex:1;min-width:0;text-align:center;padding:8px 10px;font-size:11.5px}
-.panel-side .chips{margin-top:0}
-
-.panel-nav{display:flex;flex-direction:column;gap:2px}
-.panel-nav a{all:unset;box-sizing:border-box;cursor:pointer;padding:8px 11px;border-radius:7px;
-  font-size:12px;color:var(--mut);line-height:1.35}
-.panel-nav a:hover{color:var(--paper);background:rgba(255,255,255,.05)}
-.panel-nav a.on{color:#0a0c07;background:var(--brand);font-weight:700}
+.panel-shell{margin-top:12px}
 .panel-content{min-width:0}
 .panel-content .sec:first-child{margin-top:0}
 
 @media(max-width:1050px){
-  /* en pantalla angosta la columna vuelve arriba: los filtros en dos
-     columnas -siguen siendo lo primero- y las secciones en una fila
-     que se desliza */
-  .panel-shell{grid-template-columns:1fr;gap:14px}
-  .panel-side{position:static!important;max-height:none;overflow:visible;
-    gap:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
-  .panel-side .frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .panel-side .dd{position:absolute;min-width:225px;box-shadow:0 16px 44px rgba(0,0,0,.7)}
-  .panel-side .mets{flex-direction:row;flex-wrap:wrap}
-  .panel-side .met{width:auto}
-  .panel-nav{flex-direction:row;overflow-x:auto;gap:6px;scrollbar-width:none}
-  .panel-nav::-webkit-scrollbar{display:none}
-  .panel-nav a{white-space:nowrap;flex:none;padding:8px 13px}
+  .vista-barra{padding:10px 11px;border-radius:9px}
+  .vb-fila .frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .vb-btns{margin-left:0;width:100%}
+  .vb-btns .bt{flex:1;text-align:center;padding:8px 10px;font-size:11.5px}
 }
 </style>
 </head>
@@ -205,16 +177,12 @@ footer b{color:var(--mut)}
 
 <div class="wrap">
 
-  <div class="panel-shell">
-    <aside class="panel-side">
-      <div class="side-grupo">
-        <span class="side-tit">M&eacute;trica</span>
-        <div class="mets" id="mets"></div>
-      </div>
-
-      <div class="side-grupo">
-        <span class="side-tit">Filtros</span>
-        <div class="frow">
+  <div class="vista-barra">
+    <div class="vb-fila">
+      <div class="mets" id="mets"></div>
+    </div>
+    <div class="vb-fila">
+      <div class="frow">
           <div class="fg"><span class="fl">A&ntilde;o</span><button class="ms" data-dim="anio">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="anio"></div></div>
           <div class="fg"><span class="fl">Mes</span><button class="ms" data-dim="mes">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="mes"></div></div>
           <div class="fg"><span class="fl">Segmento</span><button class="ms" data-dim="seg">Todos <span class="ar">&#9660;</span></button><div class="dd" data-dd="seg"></div></div>
@@ -222,20 +190,18 @@ footer b{color:var(--mut)}
           <div class="fg"><span class="fl">Categor&iacute;a</span><button class="ms" data-dim="clase">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="clase"></div></div>
           <div class="fg"><span class="fl">Regi&oacute;n</span><button class="ms" data-dim="depto">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="depto"></div></div>
           <div class="fg"><span class="fl">Marca</span><button class="ms" data-dim="marca">Todas <span class="ar">&#9660;</span></button><div class="dd" data-dd="marca"></div></div>
-        </div>
-        <div class="side-btns">
-          <button class="bt" id="ytd" title="Acumulado hasta el último mes cerrado, contra el mismo acumulado de los años anteriores">YTD</button>
-          <button class="bt" id="limpiar">Limpiar</button>
-          <button class="bt" id="csv">Descargar</button>
-        </div>
-        <div class="chips" id="chips"></div>
       </div>
+      <div class="vb-btns">
+        <button class="bt" id="ytd" title="Acumulado hasta el último mes cerrado, contra el mismo acumulado de los años anteriores">YTD</button>
+        <button class="bt" id="limpiar">Limpiar</button>
+        <button class="bt" id="csv">Descargar</button>
+      </div>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+  <nav class="panel-nav" hidden aria-label="Secciones del tablero"></nav>
 
-      <div class="side-grupo">
-        <span class="side-tit">Secciones</span>
-        <nav class="panel-nav" aria-label="Secciones del tablero"></nav>
-      </div>
-    </aside>
+  <div class="panel-shell">
     <div class="panel-content">
 
   <div class="kpis">

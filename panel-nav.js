@@ -69,6 +69,11 @@
     titulos = titulos.filter(function(h,i){ return titulos.indexOf(h) === i });
     if(!titulos.length) return;
 
+    /* Las secciones se cuelgan del módulo abierto en la consola, igual
+       que Orders despliega Drafts y Abandoned checkouts debajo. Si la
+       consola no está montada -una página suelta- se quedan en su nav
+       de siempre. */
+    var destino = document.querySelector("#tqadm .sub.on") || nav;
     var items = [];
     titulos.forEach(function(h2){
       var panel = h2.closest(".panel");
@@ -76,7 +81,7 @@
       var a = document.createElement("a");
       a.href = "#" + panel.id;
       a.textContent = h2.textContent;
-      nav.appendChild(a);
+      destino.appendChild(a);
       items.push({a:a, panel:panel});
     });
 
