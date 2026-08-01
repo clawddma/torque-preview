@@ -53,8 +53,12 @@
   }
 
   function montar(shell){
-    var nav = shell.querySelector(".panel-nav");
     var contenido = shell.querySelector(".panel-content");
+    /* admin.js puede haberse llevado ya el bloque de contexto -con su
+       .panel-nav dentro- a la consola lateral. Se busca primero donde
+       nació y, si no está, en todo el documento: así este archivo no
+       depende de quién corra antes. */
+    var nav = shell.querySelector(".panel-nav") || document.querySelector(".panel-nav");
     if(!nav || !contenido) return;
 
     /* cada h2 de primer nivel dentro del contenido es una sección del
@@ -81,13 +85,15 @@
        mismo -clic, bot&oacute;n atr&aacute;s, escribir la URL a mano,
        hasta sin que este script haya cargado- y siempre queda igual de
        bien alineado, sin duplicar la cuenta en dos sitios. */
-    var lado = shell.querySelector(".panel-side") || nav;
+    var lado = shell.querySelector(".panel-side");
+    /* si el contexto ya vive dentro de la consola lateral, esa columna
+       es fija por su cuenta y no hay nada que pegar aquí: solo queda el
+       offset de los anclajes */
+    var enConsola = !!document.querySelector("#tqadm .panel-side");
     function fijarMargen(){
       var angosto = matchMedia("(max-width:1050px)").matches;
-      var t = angosto ? techo() : techo() + 14;
-      items.forEach(function(o){ o.panel.style.scrollMarginTop = t + "px" });
-      /* lo pegajoso es la columna entera -filtros incluidos-, no solo el
-         índice de secciones que va dentro de ella */
+      items.forEach(function(o){ o.panel.style.scrollMarginTop = (techo() + 14) + "px" });
+      if(!lado || enConsola) return;
       if(!angosto){
         lado.style.top = (techo() + 14) + "px";
         lado.style.maxHeight = "calc(100vh - " + (techo() + 28) + "px)";
