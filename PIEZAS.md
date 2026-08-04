@@ -1,6 +1,9 @@
 # TORQ — Piezas de pauta · Fase 1
 
-> Presupuesto: **$1.200.000/mes**. La aritmética y los códigos, en `PAUTA.md`.
+> Presupuesto mes 1: **$1.000.000 en total** (Daniel, 3-ago-2026), y de ahí en adelante
+> se sube segun lo que digan los insights de campana. La aritmetica y los codigos, en
+> `PAUTA.md`. La cifra de $1.200.000 que aparece mas abajo es de la Fase 1 de julio y
+> quedo desactualizada: el plan vigente es el de una sola plaza, una sola cohorte.
 
 ## La lección que costó la primera versión
 
@@ -150,11 +153,11 @@ Editas el texto ahí (objeto `P`) y vuelves a exportar. Una pieza nueva son cinc
 **Ver una en el navegador:** `piezas.html?p=H1&f=45`
 **Formatos:** `45` feed 4:5 (1080×1350) · `11` cuadrada (1080×1080) · `916` stories (1080×1920)
 
-**Exportar las 15 de una vez** (con el sitio servido en el puerto 8912):
+**Exportar las 27 de una vez** (con el sitio servido en el puerto 8912):
 
 ```bash
 CH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-for p in H1 H2 H3 H4 S1; do for f in 45 11 916; do
+for p in H1 H2 H3 H4 S1 D1 D1G D2 D3; do for f in 45 11 916; do
   case $f in 45) H=1350;; 11) H=1080;; 916) H=1920;; esac
   "$CH" --headless --disable-gpu --hide-scrollbars --window-size=1080,$H \
     --screenshot="piezas/${p}-${f}.png" "http://127.0.0.1:8912/piezas.html?p=$p&f=$f"
@@ -163,6 +166,88 @@ done; done
 
 `S1` es la pieza de simulador — la que no parece pieza. Va en frío junto con H1 y H2.
 
-**Pendiente de decisión:** a escala real de feed la firma lee «TOR» + un ícono de carga,
-porque el dial de 16 marcas colapsa. La versión reducida (dial macizo con abertura, que
-sí lee como Q) está probada y es un cambio de dos líneas en `piezas.html`.
+**Resuelto (3-ago-2026).** El sello estaba mal y habia salido asi a las 15 piezas: el
+renombrado a TORQUE de julio cambio el `<title>` de `piezas.html` pero no la funcion
+`lock()`, que seguia armando `'TOR' + rueda` — o sea **TORQ**, con la rueda haciendo de
+Q y su colita. La marca se llama TORQUE y la rueda es la **O**, asi que ahora el sello es
+`T + rueda + RQUE`. Las 15 piezas viejas se volvieron a exportar con el sello corregido;
+su copy y sus conceptos no se tocaron. De paso, la fila de S1 decia «MAGE HEV» en
+mayusculas contra las 18 apariciones del sitio, que dicen «Mage HEV».
+
+**Tambien corregido:** los tres destinos apuntaban a anclas que ya no existen. El
+simulador se mudo a `simulador.html`, y `#ciudades` y `#ficha` desaparecieron de
+`index.html`. Un anuncio que aterriza en el techo de la pagina en vez de en el
+simulador desperdicia el clic que se acaba de pagar.
+
+---
+
+# JUGADA DUSTER → VIGO · Medellin
+
+La primera campana que no vende una categoria sino un **canje**. No pregunta si quiere
+un electrico: le propone cambiar la SUV que ya tiene por la misma SUV, electrica.
+
+**Por que Medellin y no Bogota.** Antioquia tiene el 24,0% de la cohorte contra el 27,9%
+de Bogota, pero el CPM es mas barato, hay dos salas Corautos (Medellin y Copacabana) para
+repartir los test drive, y sobre todo $1.000.000 alcanza a **saturar** esa plaza en vez
+de rozarla. En Bogota el millon se diluye y el resultado no se puede leer.
+
+**La cohorte:** 21.414 Duster 2023-2025 matriculados en el pais; unos 5.139 en Antioquia.
+
+## Las cifras, y de donde sale cada una
+
+| Cifra | Valor | Fuente |
+|---|---|---|
+| Duster 2024 en el mercado | $81.383.000 | mediana de tucarro.com al 31-jul, **menos 3%** |
+| Vigo E2 nueva | $84.990.000 | lista Dongfeng vigente |
+| Lo que pone | $3,6 millones | resta de las dos anteriores |
+| Ahorro al ano | $5.212.720 | motor del simulador: $3,31 M energia + $1,90 M tenencia |
+| En 5 anos | $26.063.600 | el anual por cinco |
+
+**El «aprox.» no es un adorno legal.** La Ley 1480 amarra al anunciante a lo que el aviso
+afirme. Por eso las piezas dicen lo que el **mercado pide** («es lo que se esta pidiendo
+hoy en el mercado de usados»), nunca lo que Corautos paga — ese avaluo todavia no esta
+validado y no es nuestro para prometerlo.
+
+## Las cuatro piezas
+
+**D3 · Las dos cifras** → `D3-MED-F1` · frio · **la principal**
+> Vende tu SUV. Cambiate a electrico.
+> Por tu Duster 2024, aprox. **$81.383.000** · Te ahorras cada ano **$5.212.720**
+> En 5 anos **$26.063.600**
+
+Es la que Daniel pidio explicitamente: lo que le dan por el suyo y lo que se ahorra al
+ano, sin rodeos. El color hace la jerarquia — el ahorro va sobre bloque verde lleno
+porque es la cifra que debe recordar; el avaluo va en blanco sobre negro. Dos niveles,
+no dos gritos. La Vigo va en cuadro porque el producto es parte del gancho.
+
+**D1 · El canje** → `D1-MED-F1` · frio
+> Tu Duster vale **$81 millones** hoy.
+> Una Vigo nueva cuesta $84.990.000. Pones $3,6 millones y ahorras $5.212.720 al ano.
+
+Aqui la cifra **si** puede liderar, y eso no contradice la leccion de julio: lo que
+mato a los $14.533.333 no fue ser una cifra sino no tener referente. «Tu Duster» es el
+referente, y es lo unico que el cliente conoce mejor que nosotros.
+
+**D1G · El canje, generica** → `D1G-MED-F1` · respaldo
+> Tu SUV usada vale **$81 millones** hoy.
+
+Respaldo de D1 sin nombrar la marca ajena. D1 es publicidad comparativa: legal en
+Colombia si es veraz y verificable (Ley 256 de 1996), y nuestros datos lo son, pero Meta
+la manda a revision manual y puede tumbarla sin explicacion. D1G queda lista para subir
+el mismo dia, con la misma foto a proposito — es la misma campana, no otra.
+
+**D2 · El vuelto** → `D2-MED-F1` · frio · **solo cohorte 2025**
+> Cambia tu Duster y te sobran **$8 millones**.
+
+La unica cohorte donde el avaluo aguanta la promesa incluso castigado un 5%. Aqui la
+cifra va sola en el titular porque el mensaje es que le **devuelven** plata, que es lo
+contrario de lo que espera oir en un concesionario.
+
+## Lo que falta antes de que salgan al aire
+
+1. **Camilo tiene que validar el avaluo real de retoma de Corautos.** Si va 5% por debajo
+   de tucarro, D2 se cae (deja de sobrar plata) y D1/D3 pasan de $3,6 a $5,3 millones.
+   Las piezas se regeneran en un comando, pero el numero tiene que ser el suyo.
+2. Autorizacion escrita de Corautos para marca y fotos.
+3. El numero de WhatsApp en `var WA`.
+4. Quitar la consola interna de las paginas publicas antes de pautar.

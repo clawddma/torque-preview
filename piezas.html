@@ -63,6 +63,62 @@ body{background:#111;font-family:ui-sans-serif,system-ui,-apple-system,"Helvetic
 .f11 .sim-t{font-size:66px;margin-bottom:34px}
 .sim-t em{font-style:normal;color:var(--brand)}
 
+/* ---- pieza de canje: las dos cifras que mueven la decisión ----------
+   Daniel las pidió explícitas: cuánto te dan por el tuyo y cuánto te
+   ahorras al año. La lección de julio no fue "sin cifras" sino "sin
+   referente": $14.533.333 flotando no comunicaba. Aquí cada cifra cuelga
+   de algo que el cliente ya conoce -su propio carro, su propio año-, así
+   que puede liderar.
+   El color hace el trabajo de jerarquía: la cifra del ahorro va sobre
+   bloque verde lleno -es la que queremos que se recuerde- y la del
+   avalúo va en verde sobre negro. Dos niveles, no dos gritos. */
+/* La Vigo va SIEMPRE en cuadro, también en la pieza de cifras: es el
+   producto más atractivo del portafolio y verlo es parte del gancho.
+   Por eso esta pieza lleva su propia banda de foto -más corta que la de
+   las H, para dejarle sitio a los dos números- y no vive solo de texto. */
+.cnj{flex:1;display:flex;flex-direction:column;justify-content:flex-start;padding:40px 74px 0}
+.f916 .cnj{padding:56px 74px 0}
+.f11 .cnj{padding:26px 64px 0}
+.cnj-t{font-size:60px;font-weight:800;letter-spacing:-.032em;line-height:1.03;margin-bottom:28px}
+.f11 .cnj-t{font-size:46px;margin-bottom:18px}
+.f916 .cnj-t{font-size:74px;margin-bottom:38px}
+.cnj-t em{font-style:normal;color:var(--brand)}
+
+.cifra{border-radius:20px;padding:26px 34px}
+.cifra+.cifra{margin-top:13px}
+.cifra .k{font-size:21px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;line-height:1.3}
+.cifra .v{font-size:78px;font-weight:800;letter-spacing:-.042em;line-height:1;margin-top:12px;font-variant-numeric:tabular-nums}
+.f11 .cifra{padding:20px 26px}
+.f11 .cifra .k{font-size:17px}
+.f11 .cifra .v{font-size:60px}
+.f916 .cifra{padding:34px 40px}
+.f916 .cifra .v{font-size:96px}
+/* nivel 1: lo que le dan — verde sobre negro, con borde */
+.cifra.uno{background:#0e1013;border:1px solid #2a3320}
+.cifra.uno .k{color:var(--mut)}
+.cifra.uno .v{color:var(--paper)}
+/* nivel 2: lo que se ahorra — bloque verde lleno, el que debe recordar */
+.cifra.dos{background:var(--brand)}
+.cifra.dos .k{color:#3f5410}
+.cifra.dos .v{color:#0a0c07}
+.cifra .d{font-size:24px;font-weight:400;margin-top:12px;line-height:1.4}
+.cifra.uno .d{color:var(--mut)}
+.cifra.dos .d{color:#41560f}
+.f11 .cifra .d{font-size:20px}
+/* el cierre a 5 años: llena el aire que quedaba bajo las dos cifras y
+   remata con el número más grande de todos, que es el que hace pensar */
+.cnj-5{display:flex;align-items:baseline;justify-content:space-between;gap:20px;
+  margin-top:26px;padding-top:26px;border-top:1px solid #23272e}
+.cnj-5 span{font-size:24px;color:var(--mut);font-weight:600}
+.cnj-5 b{font-size:44px;font-weight:800;color:var(--brand);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.f11 .cnj-5{margin-top:15px;padding-top:15px}
+.f11 .cnj-5 span{font-size:19px}
+.f11 .cnj-5 b{font-size:35px}
+/* la banda de foto de esta pieza: más corta que la de las H */
+.f45 .cnj-ph{height:430px}
+.f11 .cnj-ph{height:300px}
+.f916 .cnj-ph{height:620px}
+
 /* ---- índice de contacto (solo pantalla, no se captura) ---- */
 .idx{padding:40px;color:#ddd;font-size:14px;line-height:2}
 .idx a{color:var(--brand)}
@@ -76,17 +132,22 @@ body.shot .idx{display:none}
 (function(){
 "use strict";
 
-/* La Q en piezas: el dial de la marca tiene 16 marcas y a tamaño de anuncio
+/* La O en piezas: el dial de la marca tiene 16 marcas y a tamaño de anuncio
    se convierte en una mancha. Aquí lleva 10 marcas más gruesas — misma idea,
-   legible en el feed. Es la versión reducida del sistema, no otro logo. */
-function Q(){
-  return '<svg viewBox="0 0 100 100" aria-label="Q">'
+   legible en el feed. Es la versión reducida del sistema, no otro logo.
+
+   Esto estaba mal y salió a 15 piezas: el renombrado a TORQUE cambió el
+   <title> de este archivo pero no el sello, que seguía armando 'TOR'+rueda
+   -o sea TORQ, con la rueda haciendo de Q y su colita-. La marca se llama
+   TORQUE y la rueda es la O, así que el sello es T + rueda + RQUE. */
+function O(){
+  return '<svg viewBox="0 0 100 100" aria-label="O">'
     +'<circle cx="50" cy="50" r="34" fill="none" stroke="#fafafa" stroke-width="15" '
     +'stroke-dasharray="8.4 12.96" stroke-dashoffset="4.2" shape-rendering="geometricPrecision"/>'
-    +'<path d="M60 60 L89 89" stroke="#c8f24a" stroke-width="14" stroke-linecap="round"/></svg>';
+    +'<circle cx="50" cy="50" r="12" fill="#c8f24a"/></svg>';
 }
 function lock(){
-  return '<div class="lock"><div class="wm">TOR'+Q()+'</div>'
+  return '<div class="lock"><div class="wm">T'+O()+'RQUE</div>'
     +'<div class="tag">Tu carro, tu mejor decisión.</div></div>';
 }
 
@@ -111,15 +172,79 @@ var P = {
       hl:'«¿Y dónde le hago<br>los mantenimientos?»',
       sub:"Es la primera pregunta que hace todo el mundo. La respuesta son 26 centros de servicio en 19 ciudades del país.",
       cta:"Ver el más cercano"},
+  /* ── Jugada Duster → Vigo ──────────────────────────────────────────
+     Estas tres no son de categoría como las H: no preguntan si quiere un
+     eléctrico, le proponen cambiar la SUV que YA tiene por la misma SUV
+     eléctrica. Por eso el gancho es su propio carro y no una cifra: la
+     lección que costó la primera versión fue que $14.533.333 sin referente
+     no comunica, y $5.212.720 tampoco lo haría. El referente aquí es lo
+     único que él conoce mejor que nosotros — lo que tiene parqueado. */
+  D1:{img:"img/vigo/frontal.jpg", pos:"center 54%",
+      hl:'Tu Duster vale<br><em>$81 millones</em><br>hoy.',
+      sub:"Una Vigo nueva cuesta $84.990.000. Pones $3,6 millones y ahorras $5.212.720 al año.",
+      cta:"Calcular mi cambio"},
+
+  /* Respaldo de D1 sin nombrar la marca ajena. Meta manda a revisión
+     manual la publicidad comparativa y puede tumbarla sin explicación;
+     esta queda lista para subir el mismo día sin rehacer nada. Va con la
+     misma foto a propósito: es la misma campaña, no otra. */
+  D1G:{img:"img/vigo/frontal.jpg", pos:"center 54%",
+      hl:'Tu SUV usada<br>vale <em>$81<br>millones</em> hoy.',
+      sub:"Una Vigo nueva cuesta $84.990.000. Pones $3,6 millones y ahorras $5.212.720 al año.",
+      cta:"Calcular mi cambio"},
+
+  /* Solo para la cohorte 2025, la única donde el avalúo aguanta la
+     promesa incluso castigado un 5%. No lleva la cifra del vuelto porque
+     depende del avalúo real de Corautos, que todavía no está validado. */
+  D2:{img:"img/vigo/hero.jpg", img11:"img/vigo/hero-ancho.jpg", img916:"img/vigo/frontal.jpg",
+      pos:"center 52%",
+      hl:'Cambia tu Duster<br>y te sobran<br><em>$8 millones.</em>',
+      sub:"Un Duster 2025 vale hoy $93.228.000; una Vigo eléctrica nueva, $84.990.000. Te devuelven la diferencia y te ahorras $5.212.720 al año.",
+      cta:"Ver cuánto me sobra"},
+
+  /* Las dos cifras juntas, sin foto: la pieza para quien ya vio D1 y
+     está haciendo la cuenta. «Aprox.» no es un adorno legal — el avalúo
+     real lo pone Corautos, y la Ley 1480 nos amarra a lo que el aviso
+     afirme. Decimos lo que el mercado pide, no lo que nosotros pagamos. */
+  D3:{canje:true,
+      /* la banda de esta pieza es más corta, así que recorta más alto que
+         en las H: el 68% baja la ventana lo justo para que entren las
+         llantas y el carro quede entero */
+      img:"img/vigo/frontal.jpg", img11:"img/vigo/hero-ancho.jpg", pos:"center 68%",
+      t:'Vende tu SUV.<br><em>Cámbiate a eléctrico.</em>',
+      c1k:"Por tu Duster 2024, aprox.", c1v:"$81.383.000",
+      c1d:"es lo que se está pidiendo hoy en el mercado de usados",
+      c2k:"Te ahorras cada año", c2v:"$5.212.720",
+      c2d:"en gasolina, impuesto, seguro y mantenimiento",
+      c5k:"En 5 años", c5v:"$26.063.600",
+      cta:"Calcular lo mío"},
+
   S1:{sim:true, t:'Lo que te estás<br><em>gastando de más.</em>',
       k:"Te ahorrarías cada mes", v:"$233.317", d:"solo en gasolina, frente a tu carro actual",
-      rows:[["Tu carro hoy","11 L/100 km"],["MAGE HEV","4,9 L/100 km"],["En un año","$2.799.804"]],
+      /* «Mage», no «MAGE»: instrucción de Daniel, y así está en las 18
+         apariciones del sitio. Solo esta pieza había quedado gritando. */
+      rows:[["Tu carro hoy","11 L/100 km"],["Mage HEV","4,9 L/100 km"],["En un año","$2.799.804"]],
       cta:"Calcular lo mío"}
 };
 var FORMATS={"45":"f45","11":"f11","916":"f916"};
 
 function render(id,fmt){
   var d=P[id], f=FORMATS[fmt]||"f45";
+  if(d.canje){
+    return '<div class="pz '+f+'" id="canvas">'
+      +'<div class="ph cnj-ph"><img src="'+(d["img"+fmt]||d.img)+'" style="object-position:'+(d.pos||"center")+'" alt=""></div>'
+      +'<div class="cnj">'
+        +'<div class="cnj-t">'+d.t+'</div>'
+        +'<div class="cifra uno"><div class="k">'+d.c1k+'</div>'
+          +'<div class="v">'+d.c1v+'</div><div class="d">'+d.c1d+'</div></div>'
+        +'<div class="cifra dos"><div class="k">'+d.c2k+'</div>'
+          +'<div class="v">'+d.c2v+'</div><div class="d">'+d.c2d+'</div></div>'
+        +'<div class="cnj-5"><span>'+d.c5k+'</span><b>'+d.c5v+'</b></div>'
+      +'</div>'
+      +'<div class="body" style="flex:0 0 auto"><div class="foot">'+lock()
+      +'<div class="cta">'+d.cta+'</div></div></div>'
+    +'</div>';
+  }
   if(d.sim){
     return '<div class="pz '+f+'" id="canvas">'
       +'<div class="sim">'

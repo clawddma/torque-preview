@@ -36,6 +36,7 @@ h1{font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-.032em;line-he
 .chip{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:4px 9px;border-radius:4px;background:#191d23;color:var(--mut)}
 .chip.frio{background:rgba(57,135,229,.14);color:#7fb3f0}
 .chip.ret{background:rgba(217,89,38,.14);color:#e79470}
+.chip.resp{background:rgba(250,178,25,.14);color:#e8c069}
 .porque{font-size:13px;color:var(--mut);line-height:1.7;max-width:660px;margin-bottom:26px;font-weight:300}
 
 .cuerpo{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:34px;align-items:start}
@@ -104,7 +105,7 @@ footer b{color:var(--mut)}
 <header>
   <div class="eyebrow">Tablero de piezas · Fase 1</div>
   <h1>Todo lo que iría<br>a pauta.</h1>
-  <p class="lede">Cinco ganchos en tres formatos cada uno. Toca cualquier pieza para verla en tamaño completo. Nada de esto está publicado ni programado: es material de revisión.</p>
+  <p class="lede">Nueve ganchos en tres formatos cada uno. Las cuatro primeras son la jugada <strong>Duster&nbsp;&rarr;&nbsp;Vigo</strong> para Medellín, con las cifras explícitas; las cinco siguientes son los ganchos de categoría de la Mage. Toca cualquier pieza para verla en tamaño completo. Nada de esto está publicado ni programado: es material de revisión.</p>
 </header>
 
 <div class="alerta">
@@ -135,11 +136,37 @@ footer b{color:var(--mut)}
 (function(){
 "use strict";
 var P=[
+ /* ── Jugada Duster → Vigo (Medellín) ─────────────────────────────────
+    No son piezas de categoría como las H: no preguntan si quiere un
+    eléctrico, le proponen cambiar la SUV que ya tiene por la misma SUV
+    eléctrica. Las cifras lideran porque aquí sí tienen referente -su
+    propio carro-, que es justo lo que le faltaba a los $14.533.333 de
+    la primera versión. */
+ {id:"D3",t:"Las dos cifras",cod:"D3-MED-F1",tipo:"frio",
+  porque:"Es la pieza que Daniel pidió: lo que le dan por el suyo y lo que se ahorra al año, sin rodeos. El color hace la jerarquía —el ahorro va sobre bloque verde lleno porque es la cifra que debe recordar— y el acumulado a 5 años remata. La Vigo va en cuadro porque el producto es parte del gancho.",
+  titular:"Vende tu SUV. Cámbiate a eléctrico.", cta:"Calcular lo mío",
+  texto:"Por tu Duster 2024 se están pidiendo hoy unos $81.383.000 en el mercado de usados. Una Vigo eléctrica nueva cuesta $84.990.000. Cámbiate y ahórrate $5.212.720 cada año en gasolina, impuesto, seguro y mantenimiento: $26.063.600 en cinco años.",
+  destino:"simulador.html?c=D3-MED-F1"},
+ {id:"D1",t:"El canje",cod:"D1-MED-F1",tipo:"frio",
+  porque:"El gancho es su propio carro, no una cifra flotando: «tu Duster» es el referente que hace que $81 millones signifique algo. Nombra la marca ajena, así que es publicidad comparativa —legal en Colombia si es veraz, pero Meta la manda a revisión manual—.",
+  titular:"Tu Duster vale $81 millones hoy", cta:"Calcular mi cambio",
+  texto:"Tu Duster vale hoy más de lo que crees: casi lo mismo que una Vigo eléctrica nueva, que cuesta $84.990.000. Pones $3,6 millones y te ahorras $5.212.720 al año. Calcula tu cambio con tus propios números.",
+  destino:"simulador.html?c=D1-MED-F1"},
+ {id:"D1G",t:"El canje · genérica",cod:"D1G-MED-F1",tipo:"resp",
+  porque:"Respaldo de D1 sin nombrar la marca ajena, listo para subir el mismo día si Meta tumba la comparativa. Va con la misma foto a propósito: es la misma campaña, no otra. Pierde filo pero no se cae.",
+  titular:"Tu SUV usada vale $81 millones hoy", cta:"Calcular mi cambio",
+  texto:"Tu SUV usada puede valer hoy casi lo mismo que una Vigo eléctrica nueva, que cuesta $84.990.000. Calcula tu cambio con tus propios números.",
+  destino:"simulador.html?c=D1G-MED-F1"},
+ {id:"D2",t:"El vuelto",cod:"D2-MED-F1",tipo:"frio",
+  porque:"Solo para cohorte 2025, la única donde el avalúo aguanta la promesa incluso castigado un 5%. Aquí la cifra sí puede ir sola en el titular porque el mensaje es que le DEVUELVEN plata, que es lo contrario de lo que espera oír en un concesionario.",
+  titular:"Cambia tu Duster y te sobran $8 millones", cta:"Ver cuánto me sobra",
+  texto:"Un Duster 2025 vale hoy unos $93.228.000 y una Vigo eléctrica nueva cuesta $84.990.000. Te devuelven la diferencia y encima te ahorras $5.212.720 al año.",
+  destino:"simulador.html?c=D2-MED-F1"},
  {id:"H1",t:"Tanqueada",cod:"H1-BOG-F1",tipo:"frio",
   porque:"Es una pregunta, no una afirmación: obliga a hacer la cuenta mental. Y esa cuenta la termina el simulador, que ya está construido en el sitio.",
   titular:"La mitad de las tanqueadas", cta:"Calcular lo mío",
   texto:"¿Cuántas veces pasas por la bomba al mes? Haz la cuenta: son horas y son varios cientos de miles de pesos. Con 4,9 litros cada 100 km esa cuenta se parte por la mitad. Calcula lo tuyo con tus propios números, toma un minuto.",
-  destino:"index.html?c=H1-BOG-F1#simulador"},
+  destino:"simulador.html?c=H1-BOG-F1"},
  {id:"H2",t:"Enchufe",cod:"H2-BOG-F1",tipo:"frio",
   porque:"En Colombia la objeción número uno contra electrificarse es dónde cargar. Esta pieza la elimina de entrada, y casi nadie la está usando.",
   titular:"Sin cargador, sin instalación", cta:"Ver cómo funciona",
@@ -149,20 +176,20 @@ var P=[
   porque:"La pieza que no parece pieza. La gente se resiste a un aviso de carros; no se resiste a descubrir cuánto está gastando de más. Es el activo que ningún concesionario tiene.",
   titular:"Lo que te estás gastando de más", cta:"Calcular lo mío",
   texto:"Con tu consumo real y los kilómetros que haces al mes, el cálculo toma un minuto. Los números son tuyos; nosotros solo ponemos el 4,9 L cada 100 km de la ficha técnica.",
-  destino:"index.html?c=S1-BOG-F1#simulador"},
+  destino:"simulador.html?c=S1-BOG-F1"},
  {id:"H4",t:"Mantenimiento",cod:"H4-BOG-R1",tipo:"ret",
   porque:"Pone la duda en boca del cliente, no en la nuestra. Le da permiso para tenerla y la resuelve en la misma pieza, sin que nosotros mencionemos jamás una falla. Va en retargeting: el manejo de objeciones no funciona en frío.",
   titular:"26 centros de servicio", cta:"Ver el más cercano",
   texto:"Es la primera pregunta que hace todo el mundo cuando la marca no le suena. La respuesta son 26 centros de servicio en 19 ciudades del país: más sitios para atenderla que para comprarla.",
-  destino:"index.html?c=H4-BOG-R1#ciudades"},
+  destino:"index.html?c=H4-BOG-R1#respaldo"},
  {id:"H3",t:"Viaje",cod:"H3-BOG-R1",tipo:"ret",
   porque:"«Más de 1.000 km» no significa nada; «ida y vuelta a Medellín sin parar» sí. Traducir la cifra a una escena vivida es lo que la vuelve memorable.",
   titular:"Con un solo tanque", cta:"Ver la ficha",
   texto:"Bogotá–Medellín, ida y vuelta: 830 km de los más de 1.000 de autonomía. Sin parar a tanquear.",
-  destino:"index.html?c=H3-BOG-R1#ficha"}
+  destino:"mage.html?c=H3-BOG-R1#ficha"}
 ];
 var F=[["45","Feed 4:5"],["11","Cuadrada"],["916","Stories 9:16"]];
-var tipoTxt={frio:"Prospección en frío",ret:"Retargeting"};
+var tipoTxt={frio:"Prospección en frío",ret:"Retargeting",resp:"Respaldo sin marca ajena"};
 
 document.getElementById("app").innerHTML=P.map(function(p){
   return '<div class="pieza">'
