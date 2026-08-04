@@ -28,6 +28,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const cerebro = require("./cerebro.js");
+const acceso = require("./acceso.js");
 
 const RAIZ = path.join(__dirname, "..");
 const PUERTO = parseInt(process.env.PORT || "8790", 10);
@@ -48,10 +49,27 @@ const TIPOS = {
 const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
 
 const servidor = http.createServer(async (req, res) => {
-  const url = new URL(req.url, "http://x");
-  res.setHeader("access-control-allow-origin", "*");
+  /* `new URL(req.url, base)` lanza con rutas como "//", y una excepción aquí
+     no da un 500: mata el proceso. Cualquiera podía apagar este servidor
+     pidiendo "//". Se envuelve en try y se normaliza. */
+  let url;
+  try { url = new URL(req.url.replace(/^\/{2,}/, "/"), "http://x") }
+  catch(e) { res.writeHead(400); return res.end() }
+  /* El comodín de CORS estaba bien cuando todo era público; con la puerta
+     puesta permitiría que cualquier página ajena leyera estas vistas desde
+     el navegador de quien ya entró. Este servidor no lo necesita: nadie lo
+     consume desde otro origen. */
   res.setHeader("access-control-allow-headers", "content-type");
+  res.setHeader("x-robots-tag", "noindex, nofollow");
   if (req.method === "OPTIONS") { res.writeHead(204); return res.end() }
+
+  /* ── la puerta ──────────────────────────────────────────────────────────
+     Va ANTES que todo lo demás, incluido /pensar y /cerebro: este servidor
+     sirve el proyecto entero -inteligencia, cubo del RUNT, piezas de pauta,
+     documentos de estrategia-, así que aquí no hay nada público. El showroom
+     abierto vive en su propio servidor (vitrina.js), que solo tiene copia de
+     las páginas que sí pueden verse. */
+  if (!acceso.exigir(req, res)) return;
 
   /* ── el puente al modelo ───────────────────────────────────────────── */
   if (req.method === "POST" && url.pathname === "/pensar") {

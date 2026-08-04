@@ -2,3 +2,6 @@ preview-*.png
 servidor/datos/
 *.db
 *.db-journal
+
+# Credenciales de la puerta. El repositorio es PUBLICO: esto no se sube nunca.
+servidor/usuarios.json
