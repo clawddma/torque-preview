@@ -54,13 +54,16 @@ const TIPOS = {
    dejara un .md o un .json dentro de img/, no saldría. */
 const EXT_OK = new Set([".jpg",".jpeg",".png",".svg",".webp",".ico",".css"]);
 
-/* La marca de tiempo del CSS, leida al arrancar. Se recalcula en cada
-   arranque, que es cuando puede haber cambiado el archivo. */
+/* La marca de tiempo del CSS. Se mira en cada peticion de HTML y no una
+   sola vez al arrancar: si se calculara al arrancar, editar torq.css no
+   cambiaria la URL hasta reiniciar el servidor, y el visitante seguiria
+   con la hoja vieja en cache — justo el problema que esto viene a evitar.
+   Un statSync cuesta microsegundos y solo corre en las paginas, que son
+   seis; los archivos estaticos ni pasan por aqui. */
 function versionCss(){
   try { return String(Math.floor(fs.statSync(path.join(RAIZ, "torq.css")).mtimeMs)) }
   catch(e){ return "0" }
 }
-const VERSION_CSS = versionCss();
 
 function permitido(rel){
   if (PAGINAS.has(rel) || SUELTOS.has(rel)) return true;
@@ -93,7 +96,7 @@ function limpiar(html, anfitrion){
      nadie tenga que saber lo que es un refresco forzado.
      La segunda es permanente: al editar el CSS cambia el mtime, cambia la
      URL, y nadie se queda con la version vieja. */
-  html = html.replace(/(href=["'])torq\.css(["'])/gi, "$1torq.css?v=" + VERSION_CSS + "$2");
+  html = html.replace(/(href=["'])torq\.css(["'])/gi, "$1torq.css?v=" + versionCss() + "$2");
 
   /* solo si la página no trae ya el suyo: dos <meta robots> en el mismo
      documento es basura que además deja el resultado a interpretación */

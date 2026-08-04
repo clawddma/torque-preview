@@ -287,6 +287,26 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 .marcas img{height:clamp(32px,3.4vw,46px);width:auto;opacity:var(--marcacolorop);
   transition:opacity .25s;filter:var(--marcacolor)}
 .marcas img:hover{opacity:1}
+/* Dongfeng Electricos es el unico de los cuatro que no es texto positivo:
+   lleva la palabra ELECTRICOS *calada* dentro de una pastilla -letras
+   vaciadas, no dibujadas-. Con la silueta negra al 62% la pastilla queda
+   gris medio y esas letras, de unos 5px de alto, se vuelven papilla.
+   Sube a .88 y no a 1: comparadas las cuatro opacidades una al lado de
+   otra, en 1 el logo pesa notoriamente mas que Corautos y Foton -que
+   siguen en .62- y desbalancea la fila; en .88 el calado ya recorta
+   limpio sin robarse la atencion.
+   Y un poco mas alto: su arte es 622x163 contra 614x91 del logo simple,
+   porque la pastilla se apila encima. A la misma altura de caja su
+   palabra DONGFENG sale mas chica que la de los vecinos; el 1.2 la
+   devuelve al mismo tamano optico, que es lo que el ojo compara. */
+/* La altura corrige un desbalance optico que existe en los DOS temas, asi
+   que va fuera del tema. La opacidad no: en oscuro el arte se queda blanco
+   sobre fondo negro y el calado ya recorta con maximo contraste solo. */
+.marcas img[src$="dongfeng-electricos.png"]{
+  height:calc(clamp(32px,3.4vw,46px) * 1.2);
+}
+:root[data-theme="light"] .marcas img[src$="dongfeng-electricos.png"]{opacity:.88}
+:root[data-theme="light"] .marcas img[src$="dongfeng-electricos.png"]:hover{opacity:1}
 .marcas .txt{font-size:clamp(15px,1.5vw,19px);font-weight:700;color:var(--mut);
   letter-spacing:-.01em;white-space:nowrap}
 .marcas .txt small{display:block;font-size:10px;letter-spacing:.16em;
