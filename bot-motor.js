@@ -419,7 +419,7 @@ var KB = [
   }, espera:function(lead){ return lead.ciudad ? "precioAsesor" : null }},
 
  {id:"marca", k:["dongfeng","china","chino","marca","confiable","confianza","corautos","ustedes","quienes son","quiénes son","es buena","reputacion","reputación","quiebra","se van del pais"],
-  r:"Dongfeng es uno de los fabricantes más grandes de China y en Colombia lo representa Corautos Andino, del grupo Colombiana de Comercio (Corbeta) — el mismo grupo detrás de Foton.\n\nEn el primer semestre de 2026 la marca creció 217% en matrículas en el país. Y el respaldo se mide en cosas concretas: "+COMUN.red+" Y 8 años de garantía de batería."},
+  r:"Dongfeng es uno de los fabricantes más grandes de China y en Colombia lo representa Corautos Andino, del grupo Colombiana de Comercio (Corbeta) — el mismo grupo detrás de Foton.\n\nEntre enero y julio de 2026 la marca creció 190,7% en matrículas en el país, según el boletín de Fenalco y la ANDI. Y el respaldo se mide en cosas concretas: "+COMUN.red+" Y 8 años de garantía de batería."},
 
  {id:"reventa", k:["reventa","revender","se desvaloriza","desvalorizacion","desvalorización","precio de venta despues","valor futuro","depreciacion","depreciación"],
   r:"Te contesto con honestidad: la reventa de marcas chinas y de eléctricos en Colombia todavía tiene poco histórico, así que cualquier cifra que te dé sería inventada.\n\nLo que sí es objetivo: 8 años de garantía de batería y 26 centros de servicio son lo que sostiene un valor de reventa. Un carro sin red de servicio es el que no se vende después.", esc:null},

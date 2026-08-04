@@ -82,7 +82,8 @@ empaquetado) viven **solo en el Mac de Daniel**, en
 - 157.620 vehículos nuevos, **+50,1%**
 - Híbridos 44.605 (+74,6%, 28,3% del mercado) · Eléctricos 24.477 (+235,5%, 15,5%)
 - Sostenibles = **43,8%** del mercado
-- Dongfeng: puesto 16, 2.189 unidades, **+217,2%** — pero ese crecimiento es en
+- Dongfeng: puesto 15, **2.416 unidades ene–jul, +190,7%** (boletín Fenalco-ANDI de
+  julio) — pero ese crecimiento es en
   **camiones diésel y GNV**, no en SUV de pasajeros. Ver abajo.
 - **47,4%** del mercado nuevo se compra a crédito (**50,9%** en SUV híbrida)
 - Diciembre es el pico del año; enero cae ~34%
@@ -126,6 +127,33 @@ del país, y Pasto además es mercado de contado (30%). Detalle y palabras clave
 - Cartagena tiene taller pero no sala — laboratorio ideal de venta 100% digital:
   la objeción de servicio ya está resuelta. **Confirmado con microdata**: 108
   unidades/mes, +34%, y 59% a crédito.
+
+## Cierre de julio 2026 — boletín Fenalco-ANDI (fuente en `fuentes/`)
+
+Llegó el boletín oficial del mes completo. El cubo del proyecto llega al 8 de julio,
+así que esto lo cierra y sirve de control.
+
+- Mercado: **28.633 en julio (+20%)**, acumulado **186.253 (+44,5%)**
+- Eléctricos: 4.870 en el mes (**+211%**), acumulado 29.347 (+231%)
+- Híbridos: 9.410 (+23,2%), acumulado 54.015 (+63%)
+- **Sostenibles ya son el 44,8% del mercado** del año
+- Dongfeng: 227 en julio (+61%), acumulado **2.416 (+190,7%), puesto 15**
+
+**Tres cosas que cambian decisiones:**
+
+1. **El Corolla Cross se desploma**: −43,2% en julio (712 contra 1.254), −21,4% en el
+   acumulado. Es el rival directo de la MAGE y el único del set que retrocede mientras
+   el mercado crece 20%.
+2. **Manizales, la Ola 1, tiene el mercado total en caída**: −28,3% en el mes y −9,7%
+   acumulado. No invalida la decisión —el boletín mide matrícula por área metropolitana
+   y nuestro cubo mide ciudad del comprador, y la porción sostenible de esa plaza sí
+   crece ~32%— pero conviene **arrancar con presupuesto de prueba menor ahí**.
+3. **Tesla Model Y es la línea más matriculada del país**: 1.795 en julio, 10.259
+   acumulado. Tesla es la 4ª marca del mes, arriba de Chevrolet y Mazda.
+
+Funza (−27,1%), Mosquera (−49,4%), Madrid (−45,2%) y Chía (−25,5%) caen en el mes:
+confirma que la matrícula desplazada por impuesto está volviendo a su ciudad real, que
+es justo por lo que aquí se pauta sobre ciudad del propietario.
 
 ## Alcance de esta fase — decidido el 27 de julio de 2026
 
