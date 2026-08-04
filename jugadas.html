@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>TORQUE &mdash; Jugadas</title>
+<style>
+:root{
+  --ink:#08090a; --surf:#0e1013; --surf2:#141719; --line:#1c1f24; --line2:#2a2e35;
+  --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b; --brand:#c8f24a;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --win:#22c98d; --neutral:#4a4f57;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--ink);color:var(--paper);font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+.num{font-variant-numeric:tabular-nums}
+
+.eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--brand);font-weight:700}
+h1.pg{font-size:30px;font-weight:800;margin:12px 0 0;letter-spacing:-.02em;line-height:1.1}
+.lede{color:var(--mut);font-size:14.5px;max-width:680px;margin-top:16px;line-height:1.7}
+.lede b{color:var(--paper)}
+.head{padding:34px 0 0}
+
+.flash{margin:26px 0 0;border:1px solid rgba(200,242,74,.3);background:rgba(200,242,74,.06);border-radius:8px;padding:18px 20px}
+.flash .t{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:9px}
+.flash p{margin:0;font-size:14px;line-height:1.7;color:var(--paper)}
+.flash p+p{margin-top:9px;color:var(--mut)}
+.flash b{color:var(--paper)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:20px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:17px 18px;background:var(--surf)}
+.kpi .k{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);margin-bottom:9px;line-height:1.4}
+.kpi .v{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.kpi .d{font-size:11px;color:var(--mut2);margin-top:7px;line-height:1.45}
+
+.panel{border:1px solid var(--line);border-radius:8px;background:var(--surf);padding:24px;margin-top:9px;position:relative}
+.panel h2{font-size:16px;font-weight:700;margin:0 0 5px;letter-spacing:-.01em}
+.panel .sub{font-size:12.5px;color:var(--mut);margin:0 0 20px;line-height:1.6;max-width:660px}
+.subtit{font-size:14px;font-weight:700;letter-spacing:-.01em;margin:30px 0 5px}
+.sec{margin-top:34px}
+.sec:first-child{margin-top:0}
+
+/* ── la jugada: el bloque de copy con estructura fija ──────────────
+   Titular · una cifra · qué significa · la jugada · cuánto vale.
+   La estructura es siempre la misma para que se lean en serie y se
+   comparen entre sí sin releerlas. */
+.jug{border:1px solid var(--line2);border-radius:8px;background:var(--surf2);padding:0;overflow:hidden;margin-top:18px}
+.jug .cab{padding:20px 22px 18px;border-bottom:1px solid var(--line)}
+.jug .n{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--brand);font-weight:700}
+.jug .tit{font-size:23px;font-weight:800;letter-spacing:-.025em;line-height:1.15;margin:9px 0 0;max-width:14ch}
+.jug .cifra{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--brand);margin-top:16px}
+.jug .cifra small{display:block;font-size:11.5px;font-weight:500;letter-spacing:0;color:var(--mut);margin-top:8px;max-width:34ch;line-height:1.5}
+.jug .cuerpo{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.jug .c{padding:18px 22px 20px}
+.jug .c+.c{border-left:1px solid var(--line)}
+.jug .c .r{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut2);font-weight:700;margin-bottom:9px}
+.jug .c p{margin:0;font-size:13.5px;line-height:1.65;color:var(--mut)}
+.jug .c p b{color:var(--paper)}
+.jug .pie{border-top:1px solid var(--line);padding:16px 22px;background:rgba(200,242,74,.04);font-size:13px;line-height:1.6;color:var(--paper)}
+.jug .pie b{color:var(--brand)}
+
+/* el mensaje tal como se le dice al cliente: se cita, no se parafrasea */
+.dicho{margin:18px 0 0;border-left:3px solid var(--brand);padding:2px 0 2px 17px}
+.dicho p{margin:0;font-size:17px;line-height:1.5;font-weight:600;letter-spacing:-.015em;color:var(--paper)}
+.dicho .quien{font-size:11px;color:var(--mut2);margin-top:9px;font-weight:400;letter-spacing:0}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}
+th{text-align:left;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);font-weight:700;padding:0 10px 10px 0;border-bottom:1px solid var(--line2)}
+th.r,td.r{text-align:right;padding-right:0}
+td{padding:11px 10px 11px 0;border-bottom:1px solid var(--line);color:var(--mut)}
+td b{color:var(--paper);font-weight:600}
+tr:last-child td{border-bottom:none}
+.marca{color:var(--win);font-weight:600}
+.tibio{color:var(--mut2)}
+.tabla-scroll{overflow-x:auto;margin:0 -4px;padding:0 4px}
+
+.insight{border-left:3px solid var(--s1);background:rgba(57,135,229,.07);border-radius:0 7px 7px 0;padding:14px 17px;margin-top:18px;font-size:13px;line-height:1.7;color:var(--mut)}
+.insight b{color:var(--paper)}
+.insight .t{display:block;font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--s1);margin-bottom:7px}
+.insight.warn{border-left-color:var(--s2);background:rgba(217,89,38,.07)}
+.insight.warn .t{color:var(--s2)}
+.insight.win{border-left-color:var(--win);background:rgba(34,201,141,.07)}
+.insight.win .t{color:var(--win)}
+
+/* el embudo del plan de medios: cada escalón con su rango honesto */
+.embudo{display:grid;gap:7px;margin-top:16px}
+.paso{display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px;
+  border:1px solid var(--line);border-radius:7px;padding:13px 16px;background:var(--surf)}
+.paso .q{font-size:13px;color:var(--paper)}
+.paso .q small{display:block;color:var(--mut2);font-size:11.5px;margin-top:4px;line-height:1.45}
+.paso .v{font-size:17px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;color:var(--brand)}
+.paso.fin{border-color:var(--brand);background:rgba(200,242,74,.06)}
+
+.vista-barra{position:sticky;top:0;z-index:60;margin:18px 0 0;
+  background:rgba(8,9,10,.9);backdrop-filter:blur(18px);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.seg{display:flex;gap:5px;background:var(--surf);border:1px solid var(--line);border-radius:100px;padding:3px;width:max-content;max-width:100%}
+.seg button{border:none;background:transparent;color:var(--mut);font-size:12.5px;padding:8px 17px;border-radius:100px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--brand);color:#0a0c07;font-weight:700}
+.panel-shell{margin-top:12px}
+.panel-content{min-width:0}
+
+.fuente{font-size:11px;color:var(--mut2);line-height:1.6;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.fuente b{color:var(--mut)}
+
+footer{margin:56px 0 40px;padding-top:22px;border-top:1px solid var(--line);font-size:11.5px;color:var(--mut2);line-height:1.7}
+
+@media(max-width:820px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .panel{padding:18px 15px}
+  .jug .cuerpo{grid-template-columns:1fr}
+  .jug .c+.c{border-left:none;border-top:1px solid var(--line)}
+  .jug .tit{font-size:20px;max-width:none}
+  .jug .cifra{font-size:32px}
+  h1.pg{font-size:25px}
+  .vista-barra{padding:9px 10px;border-radius:9px;overflow-x:auto;scrollbar-width:none}
+  .vista-barra::-webkit-scrollbar{display:none}
+}
+</style>
+<script src="admin.js" defer></script>
+<script src="panel-nav.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="eyebrow">Jugadas</div>
+    <h1 class="pg">Cuatro frases que mueven un carro</h1>
+    <p class="lede">Cada jugada nace de una cifra del RUNT y termina en una frase que un vendedor puede decir por WhatsApp sin adornarla. Si el hallazgo no cabe en una frase, no es una jugada: es un gr&aacute;fico. <b>La cifra manda sobre el copy, nunca al rev&eacute;s.</b></p>
+  </div>
+
+  <div class="flash">
+    <div class="t">La correcci&oacute;n que ordena todo lo dem&aacute;s</div>
+    <p><b>Hay que comparar por segmento, no por precio.</b> La primera versi&oacute;n de esta jugada emparejaba un Duster con un Box porque los precios cuadraban. Es un error de fondo: el Duster es SUV y el Box es autom&oacute;vil. A un due&ntilde;o de SUV se le estar&iacute;a ofreciendo <b>menos carro</b>, que es la peor manera de abrir una conversaci&oacute;n de cambio.</p>
+    <p>El par correcto es <b>Duster &rarr; Vigo</b>: misma carrocer&iacute;a, mismo uso, mejor tecnolog&iacute;a. Con ese emparejamiento la jugada no solo es honesta &mdash;es m&aacute;s fuerte&mdash;. Todas las parejas de este m&oacute;dulo respetan la regla: <b>SUV con SUV, autom&oacute;vil con autom&oacute;vil</b>.</p>
+  </div>
+
+  <div class="vista-barra">
+    <div class="seg" role="group" aria-label="Escenario de aval&uacute;o">
+      <button id="b-3" aria-pressed="true">Aval&uacute;o &minus;3%</button>
+      <button id="b-5" aria-pressed="false">Aval&uacute;o &minus;5%</button>
+    </div>
+    <span style="font-size:11.5px;color:var(--mut2)">Los precios de tucarro.com son <b style="color:var(--mut)">pedidos</b>, no cerrados. El interruptor castiga el aval&uacute;o para ver qu&eacute; mensaje sobrevive.</span>
+  </div>
+  <nav class="panel-nav" hidden aria-label="Secciones de jugadas"></nav>
+
+  <div class="panel-shell">
+    <div class="panel-content">
+
+  <div class="kpis">
+    <div class="kpi"><div class="k">Cohorte en juego</div><div class="v num">21.414</div><div class="d">Duster 2023&ndash;2025 matriculados &middot; RUNT</div></div>
+    <div class="kpi"><div class="k">Ahorro anual al cambiar</div><div class="v num">$5,21 M</div><div class="d">Energ&iacute;a + seguro + impuesto + taller</div></div>
+    <div class="kpi"><div class="k">Plaza recomendada</div><div class="v">Medell&iacute;n</div><div class="d">24,0% de la cohorte &middot; dos salas Corautos</div></div>
+    <div class="kpi"><div class="k">Presupuesto mes 1</div><div class="v num">$1,0 M</div><div class="d">Una plaza, una cohorte, un mensaje</div></div>
+  </div>
+
+  <div class="sec">
+    <div class="panel" style="border-color:var(--brand)">
+      <h2>Jugada 01 &mdash; La cohorte Duster</h2>
+      <p class="sub">La jugada m&aacute;s madura del tablero: cohorte medida en el RUNT, precio de reventa raspado de tucarro.com y ahorro calculado con el mismo motor del simulador p&uacute;blico. Es la &uacute;nica que ya se puede pautar sin pedirle un dato m&aacute;s a nadie.</p>
+
+      <div class="jug">
+        <div class="cab">
+          <div class="n">Jugada 01</div>
+          <div class="tit">Cambia tu Duster por una Vigo</div>
+          <div class="cifra num" id="j1-cifra">$5.212.720
+            <small>es lo que deja de pagar al a&ntilde;o quien hace el cambio &mdash;sin manejar un kil&oacute;metro m&aacute;s ni uno menos&mdash;.</small>
+          </div>
+        </div>
+        <div class="cuerpo">
+          <div class="c">
+            <div class="r">Qu&eacute; significa</div>
+            <p>Un Duster reciente vale hoy, en el mercado de usados, <b>casi exactamente lo que cuesta una Vigo nueva</b>. El due&ntilde;o no est&aacute; frente a una decisi&oacute;n de comprar carro: est&aacute; frente a una de <b>cambiar el que ya tiene</b>, que es una conversaci&oacute;n mucho m&aacute;s corta.</p>
+          </div>
+          <div class="c">
+            <div class="r">La jugada</div>
+            <p>Pauta segmentada a due&ntilde;os de SUV compacta en Antioquia con una sola promesa: <b>traiga el suyo, salga en el&eacute;ctrico</b>. El simulador ya pregunta &laquo;&iquest;qu&eacute; carro tiene hoy?&raquo;, as&iacute; que la marca de origen del lead se captura sola &mdash;no hay que construir nada nuevo&mdash;.</p>
+          </div>
+        </div>
+        <div class="pie">Vale <b>5.139 conversaciones</b> en Antioquia con un argumento que ning&uacute;n concesionario de la competencia puede copiar: requiere saber qu&eacute; carro tiene el cliente <em>antes</em> de hablarle.</div>
+      </div>
+
+      <div class="dicho">
+        <p id="j1-dicho">&laquo;Su Duster 2024 vale hoy m&aacute;s o menos lo mismo que una Vigo nueva. Se cambia poniendo $3,6 millones &mdash;y el ahorro se los devuelve en 8 meses&mdash;. De ah&iacute; en adelante son $5,2 millones al a&ntilde;o a su favor.&raquo;</p>
+        <div class="quien">El mensaje, tal como se dice por WhatsApp. Sin adjetivos, con las tres cifras que importan.</div>
+      </div>
+
+      <!-- No es un <h2>: panel-nav.js arma el índice lateral con los h2
+           directos del panel, y como este subtítulo vive DENTRO del panel
+           de la Jugada 01, su enlace apuntaría al mismo ancla que ella.
+           Dos entradas al mismo sitio en el índice se siente roto. -->
+      <div class="subtit">La paridad, cohorte por cohorte</div>
+      <p class="sub">El a&ntilde;o del carro cambia el mensaje por completo. Un mismo anuncio para todos desperdicia la mitad del presupuesto.</p>
+      <div class="tabla-scroll">
+      <table>
+        <thead><tr>
+          <th>Su Duster</th><th class="r">Vale hoy</th><th class="r">Al cambiarse por la Vigo</th><th class="r">Se paga en</th><th>El mensaje</th>
+        </tr></thead>
+        <tbody id="tb-paridad"></tbody>
+      </table>
+      </div>
+
+      <div class="insight win">
+        <span class="t">Lo que hay que pautar</span>
+        Las cohortes <b>2023, 2024 y 2025</b> son el objetivo &mdash;<b>21.414 carros</b>&mdash;. Ah&iacute; el cambio es a la par o con vuelto, y el mensaje se sostiene incluso castigando el aval&uacute;o un 5%. La cohorte 2021 <b>no entra en esta jugada</b>: pedirle $20 millones a alguien no es una conversaci&oacute;n de ahorro, es una de financiaci&oacute;n, y necesita otra pieza.
+      </div>
+
+      <div class="insight warn">
+        <span class="t">La advertencia, antes de que salga al aire</span>
+        Los valores de reventa son <b>medianas de precios pedidos</b> en tucarro.com, no de transacciones cerradas. El aval&uacute;o real de retoma suele ir por debajo. Por eso arriba hay un interruptor de &minus;3% y &minus;5%: con el castigo aplicado, <b>&laquo;sin poner un peso&raquo; solo es literal para la cohorte 2025</b>. Para 2023&ndash;2024 la frase honesta es &laquo;lo que pone se lo devuelve el ahorro en menos de un a&ntilde;o&raquo;, que sigue siendo muy vendedora. <b>Camilo tiene que validar el aval&uacute;o real de Corautos antes de publicar cualquier pieza con la palabra &laquo;cero&raquo;.</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="panel">
+      <h2>La cuenta que sostiene el mensaje</h2>
+      <p class="sub">De d&oacute;nde salen los $5,21 millones. Es el mismo motor del simulador p&uacute;blico &mdash;si esta cuenta cambia, la del simulador cambia con ella&mdash;. Escenario: Bogot&aacute;-Medell&iacute;n, 1.200 km al mes, gasolina a $16.000 el gal&oacute;n, energ&iacute;a a $950 el kWh.</p>
+      <div class="tabla-scroll">
+      <table>
+        <thead><tr><th>Concepto</th><th class="r">Duster gasolina</th><th class="r">Vigo el&eacute;ctrica</th><th class="r">Diferencia al a&ntilde;o</th></tr></thead>
+        <tbody>
+          <tr><td><b>Energ&iacute;a</b><br><span style="font-size:11.5px">7,4 L/100 km vs. 12,9 kWh/100 km</span></td><td class="r num">$4.559.000</td><td class="r num">$1.247.910</td><td class="r num marca">$3.311.090</td></tr>
+          <tr><td>Seguro todo riesgo <span style="font-size:11.5px">(3,3% del valor)</span></td><td class="r num">$2.521.200</td><td class="r num">$2.804.670</td><td class="r num tibio">&minus;$283.470</td></tr>
+          <tr><td>Impuesto vehicular <span style="font-size:11.5px">(Ley 1964: 1% a el&eacute;ctricos)</span></td><td class="r num">$1.910.000</td><td class="r num">$849.900</td><td class="r num marca">$1.060.100</td></tr>
+          <tr><td>Mantenimiento</td><td class="r num">$1.200.000</td><td class="r num">$450.000</td><td class="r num marca">$750.000</td></tr>
+          <tr><td>SOAT <span style="font-size:11.5px">(10% de descuento a el&eacute;ctricos)</span></td><td class="r num">$650.000</td><td class="r num">$585.000</td><td class="r num marca">$65.000</td></tr>
+          <tr><td>T&eacute;cnico-mec&aacute;nica <span style="font-size:11.5px">(exenta los 2 primeros a&ntilde;os)</span></td><td class="r num">$310.000</td><td class="r num">$0</td><td class="r num marca">$310.000</td></tr>
+          <tr style="border-top:2px solid var(--line2)"><td><b>Total al a&ntilde;o</b></td><td class="r num"><b>$11.150.200</b></td><td class="r num"><b>$5.937.480</b></td><td class="r num" style="color:var(--brand);font-weight:800">$5.212.720</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="insight">
+        <span class="t">El detalle contraintuitivo que conviene decir en voz alta</span>
+        <b>El seguro del el&eacute;ctrico sale m&aacute;s caro</b> &mdash;$283.470 m&aacute;s al a&ntilde;o&mdash;, porque el carro vale m&aacute;s y la prima es un porcentaje del valor. Decirlo primero, sin que el cliente lo descubra, es lo que hace cre&iacute;ble todo lo dem&aacute;s: quien admite el &uacute;nico rubro que sube gana el derecho a que le crean los cinco que bajan.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="panel">
+      <h2>D&oacute;nde vive la cohorte</h2>
+      <p class="sub">Con $1.000.000 no se pauta en todo el pa&iacute;s: se pauta en una plaza. La concentraci&oacute;n del parque Renault dice cu&aacute;l, y cruzarla con la cobertura de Corautos deja una sola respuesta razonable.</p>
+      <div class="tabla-scroll">
+      <table>
+        <thead><tr><th>Departamento</th><th class="r">Renault 2023&ndash;2026</th><th class="r">Participaci&oacute;n</th><th class="r">Duster estimados</th><th>Corautos</th></tr></thead>
+        <tbody>
+          <tr><td><b>Bogot&aacute; D.C.</b></td><td class="r num">28.346</td><td class="r num">27,9%</td><td class="r num">5.975</td><td>Sala y taller</td></tr>
+          <tr style="background:rgba(200,242,74,.05)"><td><b class="marca">Antioquia</b></td><td class="r num">24.383</td><td class="r num">24,0%</td><td class="r num">5.139</td><td><b>Medell&iacute;n + Copacabana</b></td></tr>
+          <tr><td>Valle del Cauca</td><td class="r num">8.430</td><td class="r num">8,3%</td><td class="r num">1.777</td><td>Sala y taller</td></tr>
+          <tr><td>Cundinamarca</td><td class="r num">4.931</td><td class="r num">4,9%</td><td class="r num">1.049</td><td class="tibio">Cubierto desde Bogot&aacute;</td></tr>
+          <tr><td>Santander</td><td class="r num">4.741</td><td class="r num">4,7%</td><td class="r num">1.006</td><td>Bucaramanga</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="insight win">
+        <span class="t">La recomendaci&oacute;n, y por qu&eacute; no es Bogot&aacute;</span>
+        <b>Medell&iacute;n.</b> Tiene el 24,0% de la cohorte &mdash;casi tanto como Bogot&aacute;&mdash; pero con tres ventajas que deciden: el CPM es sensiblemente m&aacute;s barato, hay <b>dos puntos de venta</b> (Medell&iacute;n y Copacabana) para repartir los <em>test drive</em>, y la plaza es lo bastante contenida como para que $1.000.000 alcance a <b>saturar</b> la audiencia en vez de rozarla. En Bogot&aacute; ese mismo mill&oacute;n se diluye y el resultado no se puede leer: no se sabr&iacute;a si el mensaje funcion&oacute; o si simplemente no alcanz&oacute; a verse.
+      </div>
+
+      <div class="fuente"><b>Sobre el estimado:</b> el RUNT publica la l&iacute;nea (Duster) y el departamento en tablas separadas, as&iacute; que no hay un cruce directo de Duster&nbsp;&times;&nbsp;departamento. La columna &laquo;Duster estimados&raquo; aplica la distribuci&oacute;n geogr&aacute;fica de <b>toda la marca Renault</b> a la cohorte Duster. Es una aproximaci&oacute;n razonable para decidir plaza, no una cifra para reportar.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="panel" style="border-color:var(--line2)">
+      <h2>El plan del primer mill&oacute;n</h2>
+      <p class="sub">Un mill&oacute;n de pesos no compra alcance: compra <b>una lectura</b>. El objetivo del mes 1 no es vender, es conseguir un CPL real y una tasa de conversi&oacute;n reales para poder decidir el mes 2 con datos propios en vez de con supuestos m&iacute;os.</p>
+
+      <div class="embudo">
+        <div class="paso"><div class="q">Inversi&oacute;n<small>Meta Ads &middot; una sola campa&ntilde;a, dos piezas, sin diluir</small></div><div class="v num">$1.000.000</div></div>
+        <div class="paso"><div class="q">Impresiones<small>CPM estimado $12.000 en audiencia estrecha de Antioquia</small></div><div class="v num">~83.000</div></div>
+        <div class="paso"><div class="q">Clics<small>CTR 0,8%&ndash;1,2% &mdash; la oferta es concreta, no de marca</small></div><div class="v num">670&ndash;1.000</div></div>
+        <div class="paso"><div class="q">Leads con simulador completo<small>Conversi&oacute;n a formulario 4%&ndash;6%</small></div><div class="v num">27&ndash;60</div></div>
+        <div class="paso"><div class="q">Costo por lead<small>El n&uacute;mero que decide todo el mes 2</small></div><div class="v num">$17k&ndash;$37k</div></div>
+        <div class="paso"><div class="q">Test drive agendados<small>15% de los leads &mdash; supuesto a validar, no hay hist&oacute;rico</small></div><div class="v num">4&ndash;9</div></div>
+        <div class="paso fin"><div class="q"><b>Ventas cerradas</b><small>20% de cierre sobre test drive &middot; una Vigo son $84.990.000</small></div><div class="v num">1&ndash;2</div></div>
+      </div>
+
+      <div class="insight">
+        <span class="t">Lo que este plan compra de verdad</span>
+        <b>Una venta paga el mes ochenta y cinco veces.</b> Pero esa no es la raz&oacute;n para hacerlo &mdash;una venta tambi&eacute;n puede ser suerte&mdash;. Lo que el mill&oacute;n compra es el <b>CPL real</b>: con 27 a 60 leads ya se sabe si el costo por lead est&aacute; en $17.000 o en $37.000, y esa sola cifra decide si el mes 2 son $2 millones en la misma plaza o $1 mill&oacute;n probando otra. Sin ese n&uacute;mero, escalar es apostar.
+      </div>
+
+      <div class="insight warn">
+        <span class="t">D&oacute;nde est&aacute;n los supuestos m&iacute;os y no los datos suyos</span>
+        <b>Las dos &uacute;ltimas filas del embudo no tienen respaldo.</b> El 15% de test drive y el 20% de cierre son referencias de industria, no de Corautos &mdash;porque a&uacute;n no hay hist&oacute;rico de embudo&mdash;. Las primeras cinco filas s&iacute; se sostienen en CPM y CTR observables. Cuando lleguen los primeros 30 leads reales, estas dos filas se reemplazan y el modelo deja de ser prestado.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="panel">
+      <h2>Las jugadas que siguen</h2>
+      <p class="sub">Tres m&aacute;s en cola, con el mismo criterio de pareja por segmento. Ninguna se publica hasta tener el precio de reventa raspado &mdash;la 01 lo tiene, estas no todav&iacute;a&mdash;.</p>
+      <div class="tabla-scroll">
+      <table>
+        <thead><tr><th>Jugada</th><th>La pareja</th><th class="r">Cohorte</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td><b>02 &mdash; Las marcas en fuga</b><br><span style="font-size:11.5px">Renault, Chevrolet y Suzuki perdieron 21,7 puntos de participaci&oacute;n entre 2022 y 2026. Sus due&ntilde;os de 2022 entran justo ahora en ventana de reemplazo, y su marca ya no est&aacute; donde la dejaron.</span></td><td>Tracker &rarr; Vigo<br>Onix &rarr; Box</td><td class="r num">107.562</td><td class="tibio">Falta raspar reventa</td></tr>
+          <tr><td><b>03 &mdash; El mapa de la financiaci&oacute;n</b><br><span style="font-size:11.5px">El RUNT marca qu&eacute; matr&iacute;culas fueron a cr&eacute;dito. Hay ciudades donde se financia el 70% y otras donde no llega al 40%: no es el mismo anuncio ni la misma cuota.</span></td><td>Por ciudad</td><td class="tibio r">&mdash;</td><td class="tibio">Cubo listo, falta panel</td></tr>
+          <tr><td><b>04 &mdash; Paridad de cambio</b><br><span style="font-size:11.5px">Generalizar la jugada 01: para cada modelo popular, el a&ntilde;o exacto en que su reventa cruza el precio de un Dongfeng. El simulador ya lo calcula uno por uno; falta la tabla que lo muestra todo junto.</span></td><td>Todo el portafolio</td><td class="tibio r">&mdash;</td><td class="tibio">Depende del scraping</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <b>Fuentes.</b> Cohortes y geograf&iacute;a: cubo RUNT del proyecto, 1.073.054 matr&iacute;culas individuales, enero 2022 &ndash; julio 2026.
+    Precios de reventa: ~700 avisos de tucarro.com raspados el 31 de julio de 2026, mediana por a&ntilde;o de modelo.
+    Costos de tenencia: mismo motor del simulador p&uacute;blico &mdash;seguro 3,3% del valor, impuesto por rango de aval&uacute;o, Ley 1964 de 2019 para el&eacute;ctricos&mdash;.
+    Precios Vigo: lista Dongfeng vigente (E2 $84.990.000 &middot; E2+ $89.990.000).<br>
+    <b>Vista interna de trabajo.</b> Ninguna cifra de este m&oacute;dulo sale a una pieza p&uacute;blica sin que Camilo valide el aval&uacute;o real de retoma.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* Los precios de tucarro son lo que el vendedor PIDE, no lo que el carro
+     se transa. Daniel propuso castigarlos 3-5% para acercarlos al avalúo
+     real de retoma, y tiene razón: con el castigo aplicado la frase «sin
+     poner un peso» deja de ser cierta para 2023-2024. El interruptor no
+     está para maquillar el mejor escenario, está para ver cuál mensaje
+     aguanta el peor. */
+  var DUSTER = {2021:67450000, 2022:76400000, 2023:83700000, 2024:83900000, 2025:96112000};
+  var VIGO   = 84990000;
+  var AHORRO = 5212720;          /* ver «La cuenta que sostiene el mensaje» */
+
+  var pesos = new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0});
+
+  function pintar(castigo){
+    var tb = document.getElementById("tb-paridad");
+    tb.innerHTML = "";
+    Object.keys(DUSTER).sort().reverse().forEach(function(anio){
+      var vale  = Math.round(DUSTER[anio] * (1 - castigo));
+      var falta = VIGO - vale;
+      /* Se clasifica por los meses REDONDEADOS, no por los exactos: la
+         tabla muestra el redondeo, y con el castigo del 5% la cohorte 2024
+         cae en 12,16 meses -o sea «12 meses» en pantalla-. Clasificar por
+         el exacto la mandaba al mensaje de cuota, y quedaba una fila que
+         decía «12 meses» al lado de un texto que insinuaba más de un año. */
+      var meses = falta > 0 ? Math.round(falta / (AHORRO/12)) : 0;
+
+      /* El mensaje no es un adorno: cada rango de paridad es una
+         conversación distinta, y mezclarlas es lo que hace que un anuncio
+         genérico no convierta. */
+      var msj, clase = "";
+      if(falta <= 0){
+        msj = "Le devuelven " + pesos.format(-falta);
+        clase = "marca";
+      }else if(meses <= 12){
+        msj = "El ahorro se lo devuelve en el primer año";
+        clase = "marca";
+      }else if(meses <= 30){
+        msj = "Se paga solo, pero hay que hablar de cuota";
+      }else{
+        msj = "No es esta jugada — es financiación";
+        clase = "tibio";
+      }
+
+      var tr = document.createElement("tr");
+      if(falta <= 0 || meses <= 12) tr.style.background = "rgba(200,242,74,.05)";
+      tr.innerHTML =
+        '<td><b>Duster ' + anio + '</b></td>' +
+        '<td class="r num">' + pesos.format(vale) + '</td>' +
+        '<td class="r num">' + (falta <= 0
+            ? '<b class="marca">le sobran ' + pesos.format(-falta) + '</b>'
+            : 'pone <b>' + pesos.format(falta) + '</b>') + '</td>' +
+        '<td class="r num">' + (falta <= 0 ? "—" : meses + " meses") + '</td>' +
+        '<td class="' + clase + '">' + msj + '</td>';
+      tb.appendChild(tr);
+    });
+
+    /* la frase de WhatsApp se recalcula con la cohorte 2024, que es la que
+       mejor aguanta el castigo sin dejar de ser un mensaje de ahorro */
+    var v24 = Math.round(DUSTER[2024] * (1 - castigo));
+    var f24 = VIGO - v24, m24 = Math.max(1, Math.round(f24 / (AHORRO/12)));
+    document.getElementById("j1-dicho").textContent = f24 <= 0
+      ? "«Su Duster 2024 vale hoy más que una Vigo nueva. Se cambia sin poner un peso —de hecho le sobran " +
+        pesos.format(-f24) + "— y se ahorra " + pesos.format(AHORRO) + " al año.»"
+      : "«Su Duster 2024 vale hoy más o menos lo mismo que una Vigo nueva. Se cambia poniendo " +
+        pesos.format(f24) + " —y el ahorro se los devuelve en " + m24 + " meses—. " +
+        "De ahí en adelante son " + pesos.format(AHORRO) + " al año a su favor.»";
+  }
+
+  var b3 = document.getElementById("b-3"), b5 = document.getElementById("b-5");
+  function elegir(castigo, activo, otro){
+    activo.setAttribute("aria-pressed","true");
+    otro.setAttribute("aria-pressed","false");
+    pintar(castigo);
+  }
+  b3.onclick = function(){ elegir(0.03, b3, b5) };
+  b5.onclick = function(){ elegir(0.05, b5, b3) };
+  pintar(0.03);
+})();
+</script>
+</body>
+</html>

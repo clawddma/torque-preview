@@ -47,7 +47,8 @@
     robot: '<rect x="4" y="7" width="12" height="9" rx="2"/><path d="M10 7V4M7.5 11h.01M12.5 11h.01"/><circle cx="10" cy="3.5" r="1"/>',
     lista: '<path d="M4 5h12M4 10h12M4 15h7"/>',
     imagen:'<rect x="3" y="4" width="14" height="12" rx="1.5"/><circle cx="7.5" cy="8.5" r="1.5"/><path d="M3 13.5l4-3.5 4 3.5 2.5-2 3.5 3"/>',
-    marca: '<circle cx="10" cy="10" r="6.5"/><circle cx="10" cy="10" r="2"/>'
+    marca: '<circle cx="10" cy="10" r="6.5"/><circle cx="10" cy="10" r="2"/>',
+    diana: '<circle cx="9" cy="11" r="6"/><circle cx="9" cy="11" r="2.4"/><path d="M9 11l7-7M13.4 4.1h2.8v2.8"/>'
   };
 
   /* Los módulos, en el orden en que se usan. Las fichas de vehículo
@@ -61,6 +62,7 @@
       ["Política de datos","politica-datos.html", I.doc]
     ]},
     { grupo:"Datos y mercado", items:[
+      ["Jugadas",          "jugadas.html",        I.diana],
       ["Mercado",          "mercado.html",        I.grafico],
       ["Inteligencia",     "inteligencia.html",   I.mapa],
       ["Tablero",          "analitica.html",      I.panel]
@@ -160,6 +162,15 @@
     'body.tqadm-on .bar,body.tqadm-on nav.nav{left:'+LADO+'px;right:0;width:auto}',
     '#tqadm-btn,#tqadm-velo{display:none}',
 
+    /* Las barras de filtros de las páginas de datos se pegan con top:0,
+       que era correcto ANTES de que existiera esta consola: ahora hay una
+       barra superior propia ocupando esa franja, y los filtros se deslizan
+       por debajo hasta desaparecer. Justo la queja de Daniel -"los filtros
+       no son intuitivos"- pero por una causa distinta a la de entonces.
+       El alto de #tqtop no es constante (cambia de padding en móvil), así
+       que no se escribe a mano: se mide y se publica en --tqtop-h. */
+    'body.tqadm-on .vista-barra{top:var(--tqtop-h,0px)}',
+
     /* ── móvil ────────────────────────────────────────────────────── */
     '@media(max-width:1050px){',
     '  body.tqadm-on{padding-left:0}',
@@ -251,6 +262,18 @@
       b.style.cssText = "position:fixed;top:9px;left:9px;z-index:401";
       document.body.appendChild(b);
     }
+
+    /* El alto real de la barra superior, para que lo que la página pegue
+       al tope quede DEBAJO y no detrás. Se remide en cada resize porque el
+       padding de #tqtop cambia en móvil, y una vez más tarde por si las
+       fuentes acaban de cargar y la barra creció un pixel. */
+    function medirTecho(){
+      var h = top ? Math.round(top.getBoundingClientRect().height) : 0;
+      document.documentElement.style.setProperty("--tqtop-h", h + "px");
+    }
+    medirTecho();
+    window.addEventListener("resize", medirTecho);
+    setTimeout(medirTecho, 300);
 
     function abrir(v){
       barra.classList.toggle("abierto", v);
