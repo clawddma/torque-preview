@@ -119,8 +119,25 @@ const servidor = http.createServer(async (req, res) => {
 
   fs.readFile(archivo, (err, datos) => {
     if (err) { res.writeHead(404, { "content-type": "text/plain" }); return res.end("no está") }
+    const ext = path.extname(archivo).toLowerCase();
+
+    /* La hoja se pide versionada, igual que en la vitrina. Aquí el
+       cache-control ya es no-store, así que en teoría no haría falta —pero
+       eso solo vale para lo que se pide DE AHORA EN ADELANTE. Quien tenga
+       una copia vieja de torq.css guardada de antes se queda con ella y no
+       vuelve a preguntar; cambiarle la URL es lo unico que lo despega. Pasó
+       hoy con el contraste de los logos: el servidor ya servía la hoja
+       nueva y el navegador seguía pintando la vieja. */
+    if (ext === ".html") {
+      let mt = "0";
+      try { mt = String(Math.floor(fs.statSync(path.join(RAIZ, "torq.css")).mtimeMs)) } catch(e){}
+      datos = Buffer.from(
+        datos.toString("utf8").replace(/(href=["'])torq\.css(["'])/gi, "$1torq.css?v=" + mt + "$2"),
+        "utf8");
+    }
+
     res.writeHead(200, {
-      "content-type": TIPOS[path.extname(archivo).toLowerCase()] || "application/octet-stream",
+      "content-type": TIPOS[ext] || "application/octet-stream",
       "cache-control": "no-store"   /* en pruebas, nunca servir una copia vieja */
     });
     res.end(datos);
