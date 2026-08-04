@@ -15,7 +15,12 @@
      vuelve blancos- porque asi conservan el alfa y quedan nitidos en
      cualquier fondo. Aclararlos con brightness>1, que servia en oscuro,
      los borraba sobre papel: blanco sobre blanco. */
-  --marcafiltro:grayscale(1) brightness(0) invert(1); --marcaop:.62; --marcaop2:.78;
+  /* .marcaop es la barra "Respaldan" de arriba, lo PRIMERO que se ve al
+     entrar. Estaba en .62 oscuro / .5 claro y quedaba lavada: Daniel no
+     podia leer el logo de Dongfeng. Sube a .8, comparadas las opciones
+     sobre el fondo real -a .92 gritan, a .68 todavia cuesta-. Suben los
+     tres juntos: levantar solo uno en una fila de tres se ve roto. */
+  --marcafiltro:grayscale(1) brightness(0) invert(1); --marcaop:.8; --marcaop2:.95;
   --marcacolor:saturate(.95); --marcacolorop:.9;
   --ok:#22c98d; --warn:#d95926;
   --nav:98px; --pad:44px;
@@ -32,7 +37,9 @@
   --paper:#16181a; --mut:#5b6167; --mut2:#8d9299;
   --acc:#4a6d15; --onacc:#f7f6f3;
   --ph:#eceae5; --navbg:rgba(247,246,243,.82); --dockbg:rgba(247,246,243,.95);
-  --marcafiltro:grayscale(1) brightness(0); --marcaop:.5; --marcaop2:.66;
+  /* En claro la silueta es negra sobre papel y el .5 la dejaba en gris
+     claro: era el caso peor de los dos temas. Mismo .8 que en oscuro. */
+  --marcafiltro:grayscale(1) brightness(0); --marcaop:.8; --marcaop2:.95;
   --marcacolor:grayscale(1) brightness(0); --marcacolorop:.62;
 }
 *{margin:0;padding:0;box-sizing:border-box}
