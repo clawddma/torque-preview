@@ -35,6 +35,7 @@ const PAGINAS = new Set([
   "/simulador.html", "/politica-datos.html"
 ]);
 const SUELTOS = new Set([
+  "/torq.css",                       /* la hoja de estilos de TODO el sitio */
   "/tema.js", "/menu.js", "/contacto.js", "/favicon.ico"
 ]);
 /* Las fotos de los vehículos. Solo `img/`: `fuentes/` tiene capturas de
@@ -53,6 +54,14 @@ const TIPOS = {
    dejara un .md o un .json dentro de img/, no saldría. */
 const EXT_OK = new Set([".jpg",".jpeg",".png",".svg",".webp",".ico",".css"]);
 
+/* La marca de tiempo del CSS, leida al arrancar. Se recalcula en cada
+   arranque, que es cuando puede haber cambiado el archivo. */
+function versionCss(){
+  try { return String(Math.floor(fs.statSync(path.join(RAIZ, "torq.css")).mtimeMs)) }
+  catch(e){ return "0" }
+}
+const VERSION_CSS = versionCss();
+
 function permitido(rel){
   if (PAGINAS.has(rel) || SUELTOS.has(rel)) return true;
   if (!CARPETAS.some(c => rel.startsWith(c))) return false;
@@ -63,8 +72,29 @@ function permitido(rel){
    de verdad, sin copias que se desincronicen— pero le quita la consola al
    vuelo. Así Daniel conserva su navegación cuando entra autenticado, y el
    público jamás recibe el archivo que enumera los módulos privados. */
-function limpiar(html){
+function limpiar(html, anfitrion){
   html = html.replace(/[ \t]*<script[^>]*src=["']admin\.js["'][^>]*>\s*<\/script>\s*\n?/gi, "");
+
+  /* El canonical y el og:url de las páginas apuntan a torq.bellapop.co, que
+     desde el 4 de agosto pide usuario y clave. Servidos tal cual desde la
+     vitrina le dirían a Google -y a la vista previa de WhatsApp- que la
+     versión buena de esta página está detrás de un login: la vista previa
+     saldría vacía y el buscador seguiría un 401. Se reescriben al dominio
+     por el que realmente entró la visita, que es el público. */
+  if (anfitrion && /^[a-z0-9.-]+$/i.test(anfitrion)) {
+    html = html.replace(/https:\/\/torq\.bellapop\.co/g, "https://" + anfitrion);
+  }
+  /* La hoja de estilos se pide con su version pegada: torq.css?v=<mtime>.
+     Sirve para dos cosas. La primera es la que jodio hoy: mientras torq.css
+     estuvo fuera de la lista blanca devolvio 404, y ese 404 se le quedo
+     cacheado a todo el que abrio la pagina en esa ventana -se veia cruda,
+     con el logo gigante-. Arreglar el servidor no los arregla a ellos:
+     su navegador ni vuelve a preguntar. Cambiar la URL si, y sin que
+     nadie tenga que saber lo que es un refresco forzado.
+     La segunda es permanente: al editar el CSS cambia el mtime, cambia la
+     URL, y nadie se queda con la version vieja. */
+  html = html.replace(/(href=["'])torq\.css(["'])/gi, "$1torq.css?v=" + VERSION_CSS + "$2");
+
   /* solo si la página no trae ya el suyo: dos <meta robots> en el mismo
      documento es basura que además deja el resultado a interpretación */
   if (!/name=["']robots["']/i.test(html)) {
@@ -99,7 +129,12 @@ const servidor = http.createServer((req, res) => {
      /CONTEXTO.md desde la vitrina no debe poder deducir que está ahí. */
   if (!permitido(rel)) {
     log("bloqueado", rel);
-    res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+    /* no-store en los 404: sin esto el navegador -y Cloudflare- se guardan
+       el fallo. Paso justo eso con torq.css: bastaron unos minutos con la
+       hoja fuera de la lista blanca para que el sitio se viera crudo aun
+       despues de arreglado, porque el 404 seguia cacheado. */
+    res.writeHead(404, { "content-type": "text/plain; charset=utf-8",
+                         "cache-control": "no-store" });
     return res.end("no está");
   }
 
@@ -108,9 +143,14 @@ const servidor = http.createServer((req, res) => {
   if (!archivo.startsWith(RAIZ + path.sep)) { res.writeHead(404); return res.end() }
 
   fs.readFile(archivo, (err, datos) => {
-    if (err) { res.writeHead(404, { "content-type": "text/plain" }); return res.end("no está") }
+    if (err) { res.writeHead(404, { "content-type": "text/plain; charset=utf-8",
+                                    "cache-control": "no-store" }); return res.end("no está") }
     const ext = path.extname(archivo).toLowerCase();
-    if (ext === ".html") datos = Buffer.from(limpiar(datos.toString("utf8")), "utf8");
+    if (ext === ".html") {
+      /* el host que pidió: Cloudflare lo pasa tal cual, sin el puerto */
+      const anfitrion = String(req.headers.host || "").split(":")[0];
+      datos = Buffer.from(limpiar(datos.toString("utf8"), anfitrion), "utf8");
+    }
     res.writeHead(200, {
       "content-type": TIPOS[ext] || "application/octet-stream",
       "cache-control": ext === ".html" ? "no-cache" : "public, max-age=3600",
