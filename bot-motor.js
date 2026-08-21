@@ -20,6 +20,29 @@
 /* ═══ LOS TRES VEHÍCULOS ═══════════════════════════════════════════════════
    Toda cifra de aquí está publicada hoy en el sitio. Cambiar un precio es
    editar UNA fila, no reescribir respuestas. */
+
+/* ── DATOS QUE TODAVIA NO EXISTEN ──────────────────────────────────────────
+   El E70 entro al catalogo en agosto sin ficha tecnica: Corautos no la ha
+   entregado. El motor interpola v.autonomia y v.bateria directo en la frase,
+   asi que sin esto el bot le diria al cliente "da null con una carga" —el peor
+   fallo posible, porque suena a dato y no lo es—. Un dato que no existe se
+   dice, no se rellena: es la misma regla que sigue la pagina del E70. */
+function sinDato(v, que){
+  /* Concuerda con el vehiculo: "el mas nuevo" / "la mas nueva". Escrito a
+     mano y no con una plantilla fija porque esto lo lee un cliente por
+     WhatsApp, y un genero mal puesto delata que hay una maquina detras. */
+  var f = v.art === "la";
+  var nuevo = f ? "la más nueva" : "el más nuevo";
+  var tipo  = v.tec === "hibrido"
+    ? (f ? "es híbrida y no se enchufa nunca" : "es híbrido y no se enchufa nunca")
+    : (f ? "es 100% eléctrica" : "es 100% eléctrico");
+  return v.Art+" "+v.nombre+" es "+nuevo+" de la línea y su ficha técnica "+
+    "todavía no la publica Corautos, así que no te voy a dar "+(que||"ese dato")+
+    " al aire.\n\nTe lo confirmo con la sala y te escribo con el número exacto. "+
+    "Lo que sí te puedo decir: "+tipo+", tiene cinco puestos y está en "+v.precio+
+    " con entrega inmediata.";
+}
+
 var VEH = {
   mage: {
     id:"mage", nombre:"MAGE", art:"la", Art:"La", largo:"Dongfeng MAGE HEV", url:"mage.html",
@@ -87,9 +110,45 @@ var VEH = {
     colores:"Azul, Blanco y Plata, y varios bicolor: Azul/Blanco, Rojo/Blanco, Verde/Blanco, Rosa Perlado/Blanco y Violeta Perlado/Blanco. Es el de la línea con más carta de color",
     gancho:"Se carga en tu casa mientras duermes",
     llaves:["box","boxe","bocs","urbano","pequeño","pequeno","chiquito","hatchback","el barato","el económico","el economico"]
+  },
+  e70: {
+    id:"e70", nombre:"E70", art:"el", Art:"El", largo:"Dongfeng E70", url:"e70.html",
+    clase:"sedán 100% eléctrico", tec:"electrico",
+    precio:"$79.990.000", precioNum:79990000,
+    /* Sin ficha tecnica: Corautos no la ha entregado. Todo lo que no esta
+       confirmado va en null y el motor responde con sinDato(). NO se rellena
+       con cifras de internet — la pagina del E70 tampoco lo hace. */
+    autonomia:null,
+    consumo:"no consume gasolina: se carga con electricidad",
+    motor:null,
+    bateria:null,
+    carga:null,
+    baul:null,
+    medidas:null,
+    colores:null,
+    gancho:"El sedán eléctrico, con baúl de verdad",
+    llaves:["e70","e 70","sedan","sedán","el sedan","el sedán","de baul","de baúl"]
+  },
+  huge: {
+    id:"huge", nombre:"Huge", art:"la", Art:"La", largo:"Dongfeng Huge", url:"huge.html",
+    clase:"SUV híbrida autorecargable", tec:"hibrido",
+    precio:"$124.990.000", precioNum:124990000,
+    /* La ficha de julio no publica autonomia total con el tanque lleno, y no
+       se calcula: 13,7 galones a 5,8 litros da una cifra, pero seria nuestra,
+       no del fabricante. Se dice el consumo, que si es dato oficial. */
+    autonomia:null,
+    consumo:"5,8 litros cada 100 km en ciclo WLTC",
+    motor:"241 caballos combinados y 540 Nm, con motor 1.5T Mach Dual Engine más motor eléctrico y transmisión híbrida dedicada HD120",
+    bateria:"se recarga sola andando — no se enchufa",
+    carga:null,
+    baul:null,
+    medidas:"4.720 mm de largo, 1.910 de ancho y 1.702 de alto, con 2.825 mm entre ejes",
+    colores:"Azul, Blanco y Negro",
+    gancho:"La SUV grande que no se enchufa",
+    llaves:["huge","hug","juge","hiuge","suv grande","la mas grande","la más grande","la de 4,72","siete puestos"]
   }
 };
-var ORDEN = ["vigo","box","mage"];
+var ORDEN = ["box","e70","vigo","mage","huge"];
 
 /* Datos que son iguales para los tres. Una sola fuente. */
 var COMUN = {
@@ -216,7 +275,8 @@ var KB = [
 
     var detalle = v.versiones
       ? v.versiones.map(function(x){ return "· "+x.n+": carga rápida en "+x.carga+" ("+x.autonomia+")." }).join("\n")
-      : "En carga rápida, "+v.carga+". Batería de "+v.bateria+" y "+v.autonomia+".";
+      : (v.carga ? "En carga rápida, "+v.carga+". Batería de "+v.bateria+" y "+v.autonomia+"."
+                 : "Los tiempos de carga y la capacidad de la batería te los confirmo con la sala: la ficha oficial todavía no está.");
     return v.Art+" "+v.nombre+" es 100% eléctrico, así que sí se carga.\n\n"+
       "En casa, con un cargador de pared: lo dejas conectado en la noche y amaneces al 100%.\n\n"+
       detalle+
@@ -242,6 +302,7 @@ var KB = [
         return "· "+x.n+" ("+x.precio+"): "+x.autonomia+" con una carga, batería de "+x.bateria+".";
       }).join("\n")+"\n\n"+
       COLA_SIMULADOR;
+    if(!v.autonomia) return sinDato(v, "una cifra de autonomía");
     return v.Art+" "+v.nombre+" no gasta gasolina: da "+v.autonomia+" con una carga, y la batería es de "+v.bateria+".\n\n"+
       COLA_SIMULADOR;
   /* La oferta del simulador estaba condicionada a `tec==="hibrido"`: solo la MAGE.
@@ -253,14 +314,16 @@ var KB = [
 
  {id:"ficha", k:["potencia","caballos","hp","torque","motor","especificac","ficha","tecnica","técnica","velocidad","transmision","transmisión","bateria","batería","kwh","cuanta bateria","cuánta batería"],
   r:function(v){
+    if(!v.motor) return sinDato(v, "la potencia ni el torque");
     var t = v.Art+" "+v.nombre+" da "+v.motor+".";
-    if(v.tec==="electrico") t += "\n\nBatería de "+v.bateria+", "+v.autonomia+" y "+v.carga+".";
-    else t += "\n\nBatería de "+v.bateria+".";
+    if(v.tec==="electrico" && v.bateria) t += "\n\nBatería de "+v.bateria+(v.autonomia? ", "+v.autonomia:"")+(v.carga? " y "+v.carga:"")+".";
+    else if(v.bateria) t += "\n\nBatería de "+v.bateria+".";
     return t+"\n\n¿Quieres la ficha completa?";
   }, espera:"ficha"},
 
  {id:"espacio", k:["espacio","tamaño","grande","baul","baúl","maleta","familia","asientos","cabe","caben","puestos","dimension","dimensión","mercado","coche de bebe","coche de bebé"],
   r:function(v){
+    if(!v.baul) return sinDato(v, "la capacidad del baúl");
     var t = v.Art+" "+v.nombre+" tiene "+v.baul+" de baúl";
     t += v.medidas ? " y mide "+v.medidas+"." : ", con cinco puestos.";
     if(v.id==="box") t += "\n\nOjo: el Box es el urbano de la línea. Si necesitas espacio de familia, el Vigo tiene 500 litros y la MAGE 360 con carrocería de SUV grande.";
@@ -683,8 +746,8 @@ function frasesCobertura(tipo, ciudad){
 var DIMENSIONES = [
   {id:"autonomia", k:["autonomia","autonomía","kilometros","kilómetros","km","recorre","rinde","alcanza","cuanto anda","cuánto anda","rango"],
    titulo:"Autonomía",
-   dato:function(v){ return v.autonomia },
-   nota:"Ojo con compararlas de frente: la MAGE hace esos kilómetros con gasolina y sin enchufarse nunca; el Vigo y el Box los hacen con una carga de electricidad. Son dos formas de gastar menos, no la misma."},
+   dato:function(v){ return v.autonomia || "ficha pendiente" },
+   nota:"Ojo con compararlas de frente: la MAGE y la Huge hacen esos kilómetros con gasolina y sin enchufarse nunca; el Box, el E70 y el Vigo los hacen con una carga de electricidad. Son dos formas de gastar menos, no la misma."},
 
   {id:"precio", k:["precio","cuesta","vale","valor","costo","mas barato","más barato","economico","económico"],
    titulo:"Precio",
@@ -693,19 +756,19 @@ var DIMENSIONES = [
 
   {id:"potencia", k:["potencia","caballos","hp","torque","motor","fuerza","acelera"],
    titulo:"Potencia",
-   dato:function(v){ return v.motor },
+   dato:function(v){ return v.motor || "ficha pendiente" },
    nota:"La MAGE es la más potente de la línea por bastante; los eléctricos entregan su fuerza desde cero, que en ciudad se siente distinto a la cifra."},
 
   {id:"espacio", k:["espacio","baul","baúl","maleta","tamaño","grande","cabe","familia","puestos"],
    titulo:"Espacio",
-   dato:function(v){ return v.baul + (v.medidas ? " · "+v.medidas : "") },
-   nota:"Los tres son de cinco puestos. La diferencia real está en el baúl y en el largo."},
+   dato:function(v){ return v.baul ? v.baul + (v.medidas ? " · "+v.medidas : "") : "ficha pendiente" },
+   nota:"Todos son de cinco puestos. La diferencia real está en el baúl y en el largo."},
 
   {id:"bateria", k:["bateria","batería","kwh","carga","cargar","enchufe","enchufar"],
    titulo:"Batería y carga",
-   dato:function(v){ return v.tec==="hibrido"
-      ? v.bateria+" — no se enchufa nunca"
-      : v.bateria+" · carga rápida en "+v.carga },
+   dato:function(v){ return !v.bateria ? "ficha pendiente"
+      : v.tec==="hibrido" ? v.bateria+" — no se enchufa nunca"
+      : v.bateria+(v.carga? " · carga rápida en "+v.carga : "") },
    nota:"La MAGE no se enchufa: su batería se recarga sola andando. Los otros dos sí, y ahí lo que manda es si tienes dónde cargar en casa."}
 ];
 
@@ -1487,7 +1550,7 @@ function crearSesion(vehiculoInicial){
     if(!items.length && out.vehiculoNombrado){
       s.fallos=0; out.entendido=true; out.tema="presenta";
       out.texto = v.Art+" "+v.largo+" — "+v.clase+", desde "+v.precio+".\n\n"+
-        v.gancho+". Autonomía: "+v.autonomia+".\n\n"+
+        v.gancho+(v.autonomia? ". Autonomía: "+v.autonomia:"")+".\n\n"+
         "¿Qué quieres saber: precio en detalle, ficha, garantía o servicio?";
       s.historia.push(out); return out;
     }

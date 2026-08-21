@@ -229,6 +229,24 @@ var PERSONAS = [
     {q:"si comparteme", espera:"resp:simulador", contiene:"simulador.html?v=vigo"}
   ]},
 
+ {nombre:"Camilo A. · pregunta por el E70, que no tiene ficha",
+  perfil:"El E70 entró al catálogo en agosto sin ficha técnica. El motor interpola v.autonomia directo en la frase, así que sin guardarraíl le diría al cliente 'da null con una carga'. Esta persona cubre esa rama: el bot tiene que decir que no lo tiene y ofrecer confirmarlo, no inventarlo.",
+  veh:"e70",
+  turnos:[
+    {q:"cuanta autonomia tiene", espera:"consumo", contiene:"todavía no la publica"},
+    {q:"y cuantos caballos", espera:"ficha", contiene:"no te voy a dar"},
+    {q:"bueno y cuanto vale", espera:"precio", contiene:"$79.990.000"}
+  ]},
+
+ {nombre:"Rocío · la Huge, que es la grande",
+  perfil:"La Huge entró en agosto. Es híbrida, así que la respuesta del dato ausente NO puede decirle '100% eléctrico' —el primer intento lo hacía— ni tratarla en masculino.",
+  veh:"huge",
+  turnos:[
+    {q:"cuanto gasta de gasolina", espera:"consumo", contiene:"5,8"},
+    {q:"cuanto baul tiene", espera:"espacio", contiene:"híbrida"},
+    {q:"que precio tiene", espera:"precio", contiene:"$124.990.000"}
+  ]},
+
  {nombre:"Julián · el que acepta todo lo que le ofrecen",
   perfil:"Daniel encontró que el bot ofrecía el simulador de ahorro y no lo compartía: prometía y no cumplía. Este cliente dice que sí a todo lo que el bot le propone, para que ninguna promesa quede sin respuesta.",
   veh:"mage",
@@ -266,8 +284,11 @@ var PERSONAS = [
     /* y la comparación sigue sola: un fragmento mantiene los mismos carros */
     {q:"y en precio?", espera:"resp:otraDimension", contiene:"$84.990.000"},
     {q:"cuanto vale la mage", espera:"precio"},
-    {q:"comparame los tres en potencia", espera:"compara:vigo-box-mage:potencia", contiene:"288"},
-    {q:"cual es la diferencia entre la e2 y la e2+", espera:"compara:vigo-box-mage"}
+    /* Decía `vigo-box-mage` de cuando la línea eran tres carros. Desde agosto
+       son cinco familias y el comparador las trae todas: la prueba fijaba el
+       catálogo viejo, no una conducta. */
+    {q:"comparame los tres en potencia", espera:"compara:box-e70-vigo-mage-huge:potencia", contiene:"288"},
+    {q:"cual es la diferencia entre la e2 y la e2+", espera:"compara:box-e70-vigo-mage-huge"}
   ]},
 
  {nombre:"Sara · las versiones de un mismo carro",
