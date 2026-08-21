@@ -24,7 +24,7 @@ var VEH = {
   mage: {
     id:"mage", nombre:"MAGE", art:"la", Art:"La", largo:"Dongfeng MAGE HEV", url:"mage.html",
     clase:"SUV híbrida autorecargable", tec:"hibrido",
-    precio:"$109.000.000", precioNum:109000000,
+    precio:"$109.990.000", precioNum:109990000,
     autonomia:"más de 1.000 km con el tanque lleno",
     consumo:"4,9 litros cada 100 km en ciclo WLTC",
     motor:"288 caballos combinados y 565 Nm, con motor 1.5T turbo más motor eléctrico y transmisión híbrida de 4 velocidades",
@@ -155,7 +155,7 @@ var KB = [
   r:function(v,lead){
     /* Antes esta respuesta listaba el precio de los otros dos SIEMPRE. Con la
        MAGE eso era un autogol: al cliente que ya se decidió por la de
-       $109.000.000 se le ponían al lado dos carros más baratos que no pidió.
+       $109.990.000 se le ponían al lado dos carros más baratos que no pidió.
        Ningún vendedor hace eso.
 
        La comparación se OFRECE, no se impone. Si el cliente la quiere —y
@@ -241,10 +241,15 @@ var KB = [
       v.versiones.map(function(x){
         return "· "+x.n+" ("+x.precio+"): "+x.autonomia+" con una carga, batería de "+x.bateria+".";
       }).join("\n")+"\n\n"+
-      "Cargando en casa, el costo por kilómetro es una fracción del de un carro a gasolina. La cifra exacta depende de tu tarifa de energía y de tu estrato — no te la invento aquí; un asesor te la calcula con tu recibo.";
+      COLA_SIMULADOR;
     return v.Art+" "+v.nombre+" no gasta gasolina: da "+v.autonomia+" con una carga, y la batería es de "+v.bateria+".\n\n"+
-      "Cargando en casa, el costo por kilómetro es una fracción del de un carro a gasolina. La cifra exacta depende de tu tarifa de energía y de tu estrato — no te la invento aquí; un asesor te la calcula con tu recibo.";
-  }, espera:function(lead){ return VEH[lead.vehiculo] && VEH[lead.vehiculo].tec==="hibrido" ? "simulador" : null }},
+      COLA_SIMULADOR;
+  /* La oferta del simulador estaba condicionada a `tec==="hibrido"`: solo la MAGE.
+     Justo los dos eléctricos —los más baratos y los de volumen— se quedaban sin
+     ella, y encima el texto mandaba a un asesor a calcular con el recibo de la luz
+     algo que la página ya resuelve: el simulador PIDE el precio del kWh del recibo.
+     Era mandar a una persona a hacer a mano lo que ya está hecho. */
+  }, espera:"simulador"},
 
  {id:"ficha", k:["potencia","caballos","hp","torque","motor","especificac","ficha","tecnica","técnica","velocidad","transmision","transmisión","bateria","batería","kwh","cuanta bateria","cuánta batería"],
   r:function(v){
@@ -289,7 +294,7 @@ var KB = [
   }},
 
  {id:"reforma", k:["reforma","reforma tributaria","proyecto","sube el iva","subir","aumenta el precio","van a subir"],
-  r:"Hoy los híbridos pagan 5% de IVA. El gobierno radicó el 22 de julio un proyecto que lo subiría a 19%.\n\nSi ese proyecto se aprueba, la MAGE pasaría de $109.000.000 a unos $123.500.000. Ojo: está radicado, no aprobado — todavía puede cambiar o no pasar.\n\nNo te lo pongo como presión de venta: es un hecho público que conviene que sepas."},
+  r:"Hoy los híbridos pagan 5% de IVA. El gobierno radicó el 22 de julio un proyecto que lo subiría a 19%.\n\nSi ese proyecto se aprueba, la MAGE pasaría de $109.990.000 a unos $124.700.000. Ojo: está radicado, no aprobado — todavía puede cambiar o no pasar.\n\nNo te lo pongo como presión de venta: es un hecho público que conviene que sepas."},
 
  /* "Si es empresa, ¿tengo beneficio de IVA?" caía en renting porque compartían
     la palabra "empresa". Son cosas distintas: una es un producto financiero,
@@ -426,7 +431,7 @@ var KB = [
 
  {id:"comparar", k:["comparar","versus","vs","mejor que","corolla","sportage","territory","mazda","toyota","kia","byd","geely","chery","mg","competencia","seagull","dolphin"],
   r:function(v){
-    if(v.id==="mage") return "Contra las híbridas que se venden hoy en Colombia: la MAGE da 288 hp y 565 Nm por $109.000.000.\n\nLa Corolla Cross híbrida da 122 hp y cuesta $136.200.000. El Sportage Zenith híbrido da 231 hp y cuesta $176.990.000. La Territory Trend híbrida da 240 hp y cuesta $148.990.000.\n\nEs la de más potencia y la de menor precio del grupo. En la página está el comparador completo.";
+    if(v.id==="mage") return "Contra las híbridas que se venden hoy en Colombia: la MAGE da 288 hp y 565 Nm por $109.990.000.\n\nLa Corolla Cross híbrida da 122 hp y cuesta $136.200.000. El Sportage Zenith híbrido da 231 hp y cuesta $176.990.000. La Territory Trend híbrida da 240 hp y cuesta $148.990.000.\n\nEs la de más potencia y la de menor precio del grupo. En la página está el comparador completo.";
     if(v.id==="box") return "Contra los eléctricos urbanos: el Box cuesta $69.990.000 con batería de 43,89 kWh y 430 km.\n\nEl BYD Seagull cuesta $76.990.000 con 30,08 kWh y 310 km. El MG4 EV Urban, $74.990.000 con 42,8 kWh.\n\nEl Box empata en el precio más bajo del grupo y tiene la segunda mejor batería. Contra el Seagull: 46% más batería, 120 km más y 6 airbags contra 4, por $7.000.000 menos.";
     return "Contra los eléctricos de su rango: el Vigo tiene batería de 51,87 kWh y 500 litros de baúl.\n\nEl Kia EV2 Air cuesta lo mismo con 42,2 kWh y 362 litros. El Geely EX5 SE cuesta más y tiene menos batería.\n\nEl Vigo lleva la batería más grande y el baúl más grande del trío. Donde pierde: el Kia es de fabricación europea y trae un airbag más — te lo digo para que decidas con todo sobre la mesa.";
   }},
@@ -834,6 +839,14 @@ function buscarTema(id){
    "sí" tres mensajes después ya no es respuesta a nada. */
 var SITIO = "https://clawddma.github.io/torque-preview/";
 
+/* El cierre de las respuestas de consumo. Una sola redacción para los tres carros:
+   antes el híbrido ofrecía el simulador y los eléctricos remitían a un asesor. */
+var COLA_SIMULADOR =
+  "Cargando en casa el costo por kilómetro es una fracción del de un carro a gasolina, "+
+  "pero la cifra exacta depende de tu tarifa de energía y de los kilómetros que hagas.\n\n"+
+  "En la página hay un simulador que la calcula: le dices qué carro tienes hoy y el precio "+
+  "del kWh que aparece en tu recibo de la luz. ¿Te lo comparto?";
+
 function recomendar(lead){
   if(lead.carga==="No") return VEH.mage;
   if(lead.uso==="Familia" || lead.uso==="Carretera") return VEH.vigo;
@@ -844,7 +857,11 @@ var ESPERAS = {
 
   /* "En la página hay un simulador… ¿Te lo comparto?" — y no lo compartía. */
   simulador: {
-    si:function(v){ return {texto:"Claro, aquí está:\n\n"+SITIO+v.url+"#simulador\n\nPones tu consumo de hoy y los kilómetros que haces al mes, y te dice cuánto cambiaría tu gasto.\n\n¿Te ayudo con algo más?"} },
+    /* El enlace apuntaba a `<vehiculo>.html#simulador` y ese ancla solo existe en
+       mage.html: quien preguntaba por la Vigo o el Box aterrizaba en la ficha del
+       carro sin ver ningún simulador. La página real es `simulador.html?v=<id>`,
+       que además arranca con el vehículo correcto ya elegido. */
+    si:function(v){ return {texto:"Claro, aquí está:\n\n"+SITIO+"simulador.html?v="+v.id+"\n\nPones qué carro tienes hoy y los kilómetros que haces al mes, y te dice cuánto cambiaría tu gasto — seguro, impuesto, mantenimiento y combustible, no solo la gasolina.\n\n¿Te ayudo con algo más?"} },
     no:function(v){ return {texto:"Listo. ¿Qué más quieres saber "+(v.art==="la"?"de la ":"del ")+v.nombre+"?"} }
   },
 

@@ -286,3 +286,42 @@ enfrió. Es otro argumento para que el SLA de respuesta sea cláusula del contra
 Instalar **WhatsApp Business** en el 305 431 0851 y configurar el saludo automático.
 Eso cubre la respuesta inmediata sin costo ni desarrollo, y es lo único que separa hoy
 al proyecto de recibir su primer lead bien atendido.
+
+## Corrección del 16 de agosto de 2026 — el simulador y los eléctricos
+
+Se revisó si convenía construir dentro del bot la comparación «tu carro actual vs el
+nuestro». **No convenía: ya existe y es mejor.** `simulador.html` no compara solo la
+gasolina — modela seguro (3,3% del valor), impuesto por rango con el tope del 1% de la
+Ley 1964 de 2019 para eléctricos, descuento del 10% en SOAT, mantenimiento por tipo de
+motor, y ajusta el consumo real con un factor de 1,15. Duplicar esa cuenta en
+`bot-motor.js` habría creado **dos fuentes de verdad para la misma cifra**: el día que
+alguien cambie la tarifa en un lado, la marca da dos respuestas distintas.
+
+Lo que sí había eran dos fallos, y los dos silenciosos:
+
+**1. El enlace estaba roto en dos de los tres carros.** El bot mandaba a
+`<vehiculo>.html#simulador`, y ese ancla **solo existe en `mage.html`**. Quien
+preguntaba por la Vigo o el Box aterrizaba en la ficha del carro sin ver simulador
+alguno. La URL devuelve 200 —la página existe— así que ningún chequeo de enlaces lo
+habría detectado: el ancla inexistente simplemente no hace nada. Ahora apunta a
+`simulador.html?v=<id>`, que además llega con el vehículo ya elegido.
+
+**2. La oferta del simulador solo salía para el híbrido.** Estaba condicionada a
+`tec==="hibrido"`, así que **los dos eléctricos —los más baratos y los de volumen— nunca
+la recibían**. En su lugar el bot decía «la cifra exacta depende de tu tarifa de energía
+y de tu estrato, un asesor te la calcula con tu recibo»: mandaba a una persona a hacer a
+mano exactamente lo que la página ya resuelve, porque el simulador **pide el precio del
+kWh que aparece en el recibo**. Ahora los tres ofrecen el simulador con la misma
+redacción (`COLA_SIMULADOR`, una sola fuente).
+
+**La prueba exigía el fallo.** `bot-sim.js` afirmaba `contiene:"#simulador"` — es decir,
+verificaba que el bot mandara el enlace roto. Corregida, y añadido el cliente **«Sandra ·
+pregunta el ahorro de un eléctrico»** para que esa rama no vuelva a cerrarse.
+La suite queda en 37 clientes y 138 turnos, sin fallos.
+
+**Sobre integrar la IA de Meta de WhatsApp: no se puede.** Meta AI es una función de
+consumidor, sin API para desarrolladores; no se puede invocar desde un producto ni hacer
+que responda en nombre de TORQ. Y aunque se pudiera, un modelo que redacta sobre carros
+inventa cifras — justo lo que prohíbe la regla madre de este documento. Lo que sí existe
+es la **Cloud API**, que es transporte: el cerebro seguiría siendo `bot-motor.js`. La
+decisión de `WHATSAPP.md` (no migrar hasta ver volumen real) sigue vigente.

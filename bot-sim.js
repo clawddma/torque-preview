@@ -218,7 +218,15 @@ var PERSONAS = [
   turnos:[
     {q:"cuanto cuesta aproximadamente un seguro para este vehiculo?", espera:"seguro", contiene:"asesor especializado"},
     {q:"y cuanto cuesta el mantenimiento", espera:"escala:costoservicio"},
-    {q:"cuanto vale el carro entonces", espera:"precio", contiene:"$109.000.000"}
+    {q:"cuanto vale el carro entonces", espera:"precio", contiene:"$109.990.000"}
+  ]},
+
+ {nombre:"Sandra · pregunta el ahorro de un eléctrico",
+  perfil:"El hueco que encontró Daniel el 16-ago: la oferta del simulador estaba condicionada a que el carro fuera híbrido, así que los DOS eléctricos —los más baratos y los de volumen— nunca la recibían. A quien preguntaba por el ahorro de la Vigo o el Box se le mandaba a un asesor a calcular con el recibo de la luz justo lo que la página ya resuelve. Esta clienta cubre esa rama para que no vuelva a cerrarse.",
+  veh:"vigo",
+  turnos:[
+    {q:"cuanto me ahorro de gasolina", espera:"consumo", contiene:"simulador"},
+    {q:"si comparteme", espera:"resp:simulador", contiene:"simulador.html?v=vigo"}
   ]},
 
  {nombre:"Julián · el que acepta todo lo que le ofrecen",
@@ -227,7 +235,10 @@ var PERSONAS = [
   turnos:[
     {q:"estoy en medellin", espera:"senal:ciudad"},
     {q:"cuanto gasta de gasolina", espera:"consumo"},
-    {q:"dale, compartelo", espera:"resp:simulador", contiene:"#simulador"},
+    /* La prueba exigía "#simulador", que era el ancla ROTA: solo existe en
+       mage.html, así que para Vigo y Box el cliente aterrizaba en la ficha del
+       carro sin ver simulador alguno. Ahora se exige la página de verdad. */
+    {q:"dale, compartelo", espera:"resp:simulador", contiene:"simulador.html?v="},
     {q:"cuanto vale", espera:"precio"},
     {q:"si", espera:"resp:precioAsesor"},
     {q:"cual es la potencia", espera:"ficha"},
