@@ -42,8 +42,27 @@ var PASOS=[
   {k:"Nombre", q:"¿Cómo te llamas?", campo:"Tu nombre"}
 ];
 if(!VEH){
-  PASOS.unshift({k:"Vehiculo", q:"¿Cuál te interesa?",
-    opts:["Vigo eléctrica","Box eléctrico","Mage híbrida","Todavía no sé"]});
+  /* Las opciones salen de CATALOGO cuando está cargado, para que agregar un
+     carro al catálogo lo meta también aquí. La lista escrita a mano es el
+     respaldo para las páginas que no cargan catalogo.js. */
+  var ops;
+  if(typeof CATALOGO!=="undefined" && typeof ORDEN!=="undefined"){
+    var vistos={};
+    ops=ORDEN.filter(function(sku){
+      // Box E2 y E3 son el mismo carro para quien todavía está eligiendo:
+      // se pregunta por familia y la versión se define con el asesor.
+      var f=CATALOGO[sku].familia;
+      if(vistos[f]) return false;
+      vistos[f]=1; return true;
+    }).map(function(sku){
+      var v=CATALOGO[sku];
+      return v.nombre.replace(/\s(E2\+?|E3|HEV)$/,"")+" · "+etiquetaEnergia(v).toLowerCase();
+    });
+  } else {
+    ops=["Box eléctrico","E70 eléctrico","Vigo eléctrica","Mage híbrida","Huge híbrida"];
+  }
+  ops.push("Todavía no sé");
+  PASOS.unshift({k:"Vehiculo", q:"¿Cuál te interesa?", opts:ops});
 }
 
 var i=0, r={};

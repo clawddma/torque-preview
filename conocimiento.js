@@ -84,7 +84,7 @@ function comunes(){
 
 function competencia(){
   return ["### Contra la competencia (cifras verificadas)",
-    "MAGE $109.000.000 / 288 hp · Corolla Cross híbrida $136.200.000 / 122 hp · Sportage Zenith híbrido $176.990.000 / 231 hp · Territory Trend híbrida $148.990.000 / 240 hp.",
+    "MAGE $109.990.000 / 288 hp · Corolla Cross híbrida $136.200.000 / 122 hp · Sportage Zenith híbrido $176.990.000 / 231 hp · Territory Trend híbrida $148.990.000 / 240 hp.",
     "Box $69.990.000 / 43,89 kWh / 430 km · BYD Seagull $76.990.000 / 30,08 kWh / 310 km · MG4 EV Urban $74.990.000 / 42,8 kWh.",
     "Vigo · Kia EV2 Air $89.990.000 / 42,2 kWh / 362 L de baúl · Geely EX5 SE $92.990.000 / 49,52 kWh.",
     "Dongfeng creció 190,7% en matrículas en Colombia entre enero y julio de 2026 (2.416 unidades, puesto 15), según el boletín Fenalco-ANDI de julio. Lo representa Corautos Andino, del grupo Colombiana de Comercio (Corbeta), el mismo de Foton."

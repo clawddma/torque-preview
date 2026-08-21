@@ -1,33 +1,86 @@
 # TORQ — Portafolio Corautos Andino
 
-> Fuente: tres cuadros comparativos que envió Daniel el 27 de julio de 2026
-> (fotos en `~/Downloads/PHOTO-2026-07-27-16-43-*.jpg`).
-> **Estos cuadros los armó un tercero, no los verifiqué ficha por ficha** como
-> sí hice con `COMPETENCIA.md`. Antes de publicar cualquier cifra de aquí,
-> confirmarla con Corautos.
+> **Precios vigentes: lista de agosto de 2026** (foto de la tabla que envió
+> Daniel el 21 de agosto). Esta es la fuente de la que salen `catalogo.js` y
+> todas las páginas. Si cambia el precio, se cambia aquí y en `catalogo.js`.
 
-## Precio — resuelto
+## Precios de agosto de 2026
 
-**$109.000.000, precio de lanzamiento.** Confirmado por Daniel el 27 de julio de
-2026. Es el precio que opera en todo el material y con el que se calcula la
-comisión ($1.245.714 al 1,2% sobre base de $103.809.524).
+| Referencia | Precio de lista | Descuento | **Precio vigente** | Beneficio |
+|---|---|---|---|---|
+| Box E2 | $84.990.000 | $15.000.000 | **$69.990.000** | Bono especial de agosto |
+| Box E3 | $89.990.000 | $15.000.000 | **$74.990.000** | Bono especial de agosto |
+| E70 | $95.990.000 | $16.000.000 | **$79.990.000** | Lanzamiento |
+| Vigo E2 | $89.990.000 | $5.000.000 | **$84.990.000** | Lanzamiento |
+| Vigo E2+ | $96.990.000 | $7.000.000 | **$89.990.000** | Lanzamiento |
+| Mage HEV | $129.990.000 | $20.000.000 | **$109.990.000** | Lanzamiento |
+| Huge G59 | $140.990.000 | $16.000.000 | **$124.990.000** | Lanzamiento |
 
-El cuadro comparativo del 27 de julio muestra $116.990.000 como «versión de
-entrada». **No es el precio operativo.** Se deja anotado por si más adelante hay
-que explicar la diferencia: probablemente sea el precio de lista sin el
-descuento de lanzamiento. Lo que importa para vender hoy son los $109.000.000.
+**Ojo con el precio de la MAGE.** Hasta el 21 de agosto el sitio decía
+$109.000.000 en cinco lugares. La lista de agosto dice **$109.990.000** y esa es
+la que manda. La comisión al 1,2% se recalcula: base sin IVA $104.752.381 →
+**$1.257.029**.
 
-## El alcance de hoy: solo la MAGE
+**Pendiente ante la SIC.** Publicar un precio tachado exige que el precio
+anterior se haya cobrado de verdad. Hay que pedirle a Corautos la lista de
+agosto **por escrito**. Va en el mismo paquete de la autorización de marca que
+ya estaba pendiente en `CONTEXTO.md`.
 
-Corautos tiene tres vehículos y Dongfeng tiene más eléctricos en el país. Pero
-la decisión de Daniel (27 de julio) es concentrarse **solo en la MAGE** hasta
-comprobar que TORQ es capaz de generar leads que produzcan ingresos.
+## Fichas técnicas: qué hay y qué falta
 
-El catálogo multimarca y multiproducto —con filtros por marca y categoría— viene
-después, y esa es la razón de que este documento exista: cuando llegue el
-momento, la información ya está levantada y no hay que volver a empezar.
+| Referencia | Ficha | Versión |
+|---|---|---|
+| Box E2 / E3 | ✅ en el sitio | marzo de 2026 |
+| Vigo E2 / E2+ | ✅ en el sitio | 21 de mayo de 2026 |
+| Mage HEV | ✅ en el sitio | julio de 2026 |
+| Huge G59 | ✅ en el sitio | julio de 2026 (estaba en Google Drive, no en Descargas) |
+| **E70** | ❌ **no existe** | — |
 
-Lo de abajo es **inventario de conocimiento, no lista de tareas.**
+El E70 salió publicado con fotos y precio, y su sección de ficha dice
+explícitamente que falta. **No se le inventó ni una cifra.** Cuando llegue la
+ficha se llena la tabla de `e70.html` y se completan los campos en `null` de
+`catalogo.js`.
+
+## Fotos y video
+
+34 fotos nuevas de Corautos (4.119 a 6.192 px) procesadas con `build-img.sh`.
+Dos calidades distintas: **Box y Vigo vienen de estudio** sobre ciclorama
+blanco, **Mage, Huge y E70 son de sala**. El Box tiene los tres colores
+fotografiados en el mismo encuadre, que es lo que permite el selector de color
+de `box.html`.
+
+Dos fotos quedaron descartadas como portada por tener el carro cortado —regla
+de oficio de `CLAUDE.md`—: `HUGE 2` y `E70 2`. Se usan `HUGE 3` (lateral) y
+`E70 4` (tres cuartos trasero).
+
+El video de presentación de la Vigo que vino en el zip pesa **112,8 MB y no
+cabe en GitHub** (tope de 100 MB por archivo). Se publicó el teaser de 15
+segundos, recomprimido a 1,3 MB en `video/vigo-teaser.mp4`.
+
+## El carrusel de la portada estaba inflado
+
+Las tres bandas de apertura salían de fotos de **1.280 px ampliadas a 3.840**.
+Esas fotos llegaron por WhatsApp: las 50 "originales" guardadas sueltas en
+`Mobility now/` miden 1.280 px, no más. Ampliar no agrega detalle, y a pantalla
+completa se veía pastoso.
+
+Ahora las tres se generan desde los originales de Corautos (4.240 a 6.192 px)
+dentro de `build-img.sh`. La portada **pesa menos que antes** —de 841 a 217 KB—
+porque el compresor ya no gasta bytes en detalle inventado.
+
+La foto de la Vigo en la playa (la de los cinco colores) es de marketing del
+fabricante y también estaba inflada: servida a 3.600 px se le veían los
+artefactos en los adoquines. Se movió a la galería, donde se muestra a ~1.230 px
+—su resolución real— y ahí sí se ve bien. El hero de `vigo.html` pasó a la foto
+de estudio de la E2+, que sí tiene 4.240 px de verdad.
+
+---
+
+# Lo que sigue abajo es el levantamiento de julio de 2026
+
+> Se conserva por el análisis competitivo, que sigue siendo válido. **Los
+> precios de esta sección están desactualizados**: los vigentes son los de la
+> tabla de arriba.
 
 ### 1 · Dongfeng Box E2 — $69.990.000 · eléctrico urbano
 

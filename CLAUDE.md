@@ -12,9 +12,15 @@ mercado, los hallazgos del tablero y los pendientes legales.
 
 | Archivo | Qué es |
 |---|---|
-| `index.html` | Showroom de la MAGE HEV |
+| `index.html` | Showroom: carrusel + catálogo de las 7 referencias |
+| `catalogo.js` | **La única fuente de precios y fichas.** Todo sale de aquí |
+| `catalogo-vista.js` | El comparador con filtros del índice |
+| `efectos.js` | Movimiento: revelados, selector de color, galería, video |
+| `build-img.sh` | Procesa las fotos originales a webp multi-ancho |
+| `box.html` · `e70.html` · `vigo.html` · `mage.html` · `huge.html` | Una por modelo |
 | `analitica.html` | Inteligencia de mercado (mapa, matriz de oportunidad, series) |
-| `img/` | 9 fotos optimizadas a 1400px |
+| `img/` | Fotos en webp de 640 a 2560 px + respaldo jpeg + miniaturas |
+| `video/` | Teaser de la Vigo, 15 s |
 | `CONTEXTO.md` | Traspaso completo del proyecto |
 | `PAUTA.md` | Motor de captación: códigos de campaña, malla de calificación, ruta de pauta |
 | `politica-datos.html` | Política Ley 1581 — **borrador**, con campos pendientes marcados en lima |
@@ -27,7 +33,7 @@ Se publica en GitHub Pages: https://clawddma.github.io/torque-preview/
 - **Cero dependencias externas.** Nada de CDN, nada de frameworks. Todo el SVG
   está escrito a mano. Si necesitas un gráfico, lo dibujas; no importas librerías.
 - **HTML monolítico**, un archivo por página, estilos en un `<style>` al inicio.
-- **Español de Colombia.** Miles con punto, decimales con coma ($109.000.000, 4,9 L).
+- **Español de Colombia.** Miles con punto, decimales con coma ($109.990.000, 4,9 L).
 - **La marca es TORQ**, con la Q punteada: el anillo es la escala del instrumento
   (`stroke-dasharray`) y la cola lima sale del centro. Vive aislada en el
   `<div class="logo">` del nav y en el footer — cambiarla sigue siendo editar esos dos
@@ -35,6 +41,35 @@ Se publica en GitHub Pages: https://clawddma.github.io/torque-preview/
   La Q va **unos píxeles más grande que las letras** (24 vs 21 en el nav): un círculo
   punteado lee más pequeño que una versal maciza y cada punto necesita píxeles.
   Es textura fina: se ve nítida en pantallas retina y se empasta a 1×.
+- **Los precios viven en `catalogo.js`, no en el HTML.** Con siete referencias,
+  un precio escrito a mano en cuatro sitios por página garantiza que algún día
+  se publiquen dos precios distintos del mismo carro. Las páginas de producto
+  todavía llevan el suyo en el HTML —son de antes— pero todo lo nuevo lo lee de
+  `catalogo.js`, y ahí es donde se cambia.
+- **Ninguna cifra sin fuente.** El E70 salió publicado sin ficha técnica porque
+  Corautos no la ha entregado, y su página lo dice en vez de rellenarla con
+  datos de internet. Si un dato no existe, se dice que no existe.
+- **Las fotos se procesan con `build-img.sh`, nunca a mano.** Los originales
+  vienen entre 4.000 y 6.200 px y no se sirven crudos. El script saca los
+  anchos del `srcset`, el respaldo jpeg, la miniatura y el desenfoque de
+  arranque. El manifiesto de adentro dice qué foto es cuál: el nombre del
+  archivo original no dice nada del ángulo.
+- **Reducir con lanczos, nunca con `sips --resampleWidth`.** Medido sobre la
+  misma foto bajada de 5.847 a 2.560 px: sips deja PSNR 39,0 y lanczos 35,2
+  —más bajo es más detalle—. A tamaño completo esa diferencia se ve como
+  pixelado. Después de reducir va `unsharp=3:3:0.5` para devolver la acutancia;
+  en 1,0 aparecen halos en el borde de los rines y se ve peor que la foto
+  blanda. Está todo en la función `reducir()` del script.
+- **Nunca servir una foto más grande de lo que mide.** El carrusel estaba
+  inflado de 1.280 a 3.840 px, y ampliar no agrega detalle: agrega peso y se
+  ve pastoso. Curiosamente pesa MÁS —la portada bajó de 841 a 217 KB al
+  rehacerla desde el original—, porque el compresor gasta bytes codificando
+  detalle inventado. Si una foto no da el tamaño, se cambia la foto o se
+  achica el marco; no se estira.
+- **Los originales de verdad viven fuera del repo.** Los de Corautos de agosto
+  están en el zip de Drive; los de julio, en `../torque/img/` — y ahí son más
+  grandes que las copias que estaban publicadas. Antes de dar una foto por
+  buena, verificar que no exista una mayor afuera.
 - **`noindex` en todas las páginas.** Esto es material de revisión interna, no
   producción. No quitar el meta hasta resolver los pendientes legales de `CONTEXTO.md`.
 

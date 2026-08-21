@@ -92,13 +92,20 @@ section{padding:clamp(72px,9vw,130px) 0}
 .lede{color:var(--mut);font-size:clamp(17px,1.5vw,20px);line-height:1.7;max-width:700px;margin-top:22px}
 
 /* ── tarjetas de vehículo ────────────────────────────────────── */
-.flota{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px}
+/* Eran tres carros y la rejilla estaba fija en tres columnas. Con siete
+   referencias esa cuenta ya no da: se deja que quepan las que quepan, con
+   340px de ancho mínimo, que es lo que necesita el precio para no partirse. */
+.flota{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;margin-top:36px}
 .veh{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;
   background:var(--ink2);text-decoration:none;display:flex;flex-direction:column;
   transition:border-color .3s,transform .3s}
 .veh:hover{border-color:var(--line2);transform:translateY(-3px)}
-.veh .ph{position:relative;aspect-ratio:5/4;overflow:hidden;background:var(--ph)}
-.veh .ph img{width:100%;height:100%;object-fit:cover;object-position:center 54%;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
+/* Era 5:4, de cuando las fotos venían de fuentes distintas. Las nuevas son
+   casi todas 3:2 y en un marco 5:4 el recorte le cortaba la cola al E70 y
+   el frente a la Mage. Un carro cortado en automotriz cuesta la
+   credibilidad entera: el marco se ajusta a la foto, no al revés. */
+.veh .ph{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--ph)}
+.veh .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
 .veh:hover .ph img{transform:scale(1.04)}
 /* Las tres fotos vienen de estudios distintos y las dos de fondo claro
    dejaban una franja brillante -el piso del ciclorama- que chocaba con
@@ -524,3 +531,106 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 /* ── zonas sobre fotografía: tinta fija, ajena al tema ─────────── */
 .carr, .gal .marco{--paper:#fafafa; --mut2:#5d636b}
 .carr{color:#fafafa}
+
+/* ══ CATÁLOGO ═══════════════════════════════════════════════════════════
+   La barra de filtros del comparador. Quien compara es quien compra: el
+   objetivo de esta pieza es que la persona se quede jugando con los siete
+   carros hasta que dos o tres le queden en la mano. */
+.filtros{display:flex;flex-wrap:wrap;gap:10px 26px;align-items:center;
+  margin-top:34px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.fgrupo{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fgrupo>span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--mut2);font-weight:700;margin-right:2px}
+.chip{appearance:none;background:transparent;color:var(--mut);cursor:pointer;
+  border:1px solid var(--line2);border-radius:100px;padding:8px 15px;
+  font:inherit;font-size:13.5px;font-weight:600;line-height:1;
+  transition:color .2s,border-color .2s,background .2s}
+.chip:hover{color:var(--paper);border-color:var(--mut2)}
+.chip[aria-pressed="true"]{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
+.fcuenta{margin-left:auto;font-size:13.5px;color:var(--mut2);font-variant-numeric:tabular-nums}
+
+/* La tarjeta entra desvanecida cuando cambia el filtro: sin esto el cambio
+   se lee como un parpadeo y no como una respuesta a lo que la persona pidió. */
+.veh.entra{animation:vehEntra .42s cubic-bezier(.2,.7,.3,1) both}
+@keyframes vehEntra{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.vacio{grid-column:1/-1;padding:56px 0;text-align:center;color:var(--mut2);font-size:15.5px}
+
+/* El precio tachado dentro de la tarjeta necesita menos peso que en la ficha:
+   compite con el precio vigente, que es el que tiene que leerse primero. */
+.veh .precio .antes{font-size:13px;margin-bottom:1px}
+/* "$15.000.000 menos" es una etiqueta larga y al lado de un precio de nueve
+   cifras no cabe en una tarjeta de 340px: se salía del borde. Ahora la fila
+   envuelve y la etiqueta baja sola cuando no cabe, en vez de desbordarse. */
+.veh .pie{flex-wrap:wrap;row-gap:10px}
+.veh .precio{flex:1 1 auto;min-width:0}
+.veh .ahorro{margin-top:0;align-self:flex-end;flex:0 0 auto}
+
+/* ══ EFECTOS ════════════════════════════════════════════════════════════
+   Todo lo de abajo se apaga entero si el sistema pide menos movimiento.
+   Ver el bloque prefers-reduced-motion al final. */
+
+/* El desenfoque de arranque: la foto de 24px se pinta como fondo mientras
+   baja la real. Cuando carga, se desvanece encima. Cero peticiones extra. */
+img[style*="background-image"]{background-position:center;background-repeat:no-repeat}
+.fundir{opacity:0;transition:opacity .5s ease}
+.fundir.lista{opacity:1}
+
+/* Revelado al scroll. Escalonado por posición para que una fila no aparezca
+   de golpe sino que se arme de izquierda a derecha. */
+.rev{opacity:0;transform:translateY(22px);
+  transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.rev.visible{opacity:1;transform:none}
+
+/* Selector de color: el crossfade entre carrocerías. Las fotos del Box son
+   el mismo encuadre en tres colores, así que el cambio se lee como si el
+   carro se pintara, no como si cambiara de foto. */
+.colorsel{display:flex;gap:11px;align-items:center;margin-top:20px;flex-wrap:wrap}
+.colorsel>span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--mut2);font-weight:700;margin-right:4px}
+.pinta{width:34px;height:34px;border-radius:50%;cursor:pointer;padding:0;
+  border:1px solid var(--line2);position:relative;transition:transform .2s,border-color .2s}
+.pinta:hover{transform:scale(1.08)}
+.pinta[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 22%,transparent)}
+.pinta i{position:absolute;inset:3px;border-radius:50%;background:var(--c)}
+.pinta-n{font-size:13.5px;color:var(--mut);margin-left:2px}
+
+/* Marco del carro con crossfade. Las capas se apilan y solo una es opaca.
+   Todas van en posición absoluta, así que ninguna le da altura al marco:
+   la altura la fija aspect-ratio con la proporción real de las fotos. Sin
+   eso el marco colapsa a cero y no se ve nada. */
+.carro{position:relative;overflow:hidden;border-radius:16px;background:var(--ph);
+  aspect-ratio:var(--ar,3/2)}
+.carro img{position:absolute;inset:0;display:block;width:100%;height:100%;
+  object-fit:cover;opacity:0;transition:opacity .55s ease}
+.carro img.on{opacity:1}
+.carro::after{content:"";position:absolute;inset:0;border-radius:16px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);pointer-events:none}
+@media(max-width:960px){ .carro{border-radius:14px} }
+
+@media (prefers-reduced-motion: reduce){
+  .veh.entra,.rev{animation:none!important;transition:none!important;
+    opacity:1!important;transform:none!important}
+  .carro img.capa{transition:none}
+  .fundir{transition:none;opacity:1}
+}
+
+@media(max-width:640px){
+  .filtros{gap:10px 18px}
+  .fcuenta{margin-left:0;width:100%}
+  .flota{grid-template-columns:1fr}
+}
+
+/* ══ VIDEO ══════════════════════════════════════════════════════════════
+   Va mudo y en bucle, como una pieza de sala de exhibición, no como algo
+   que haya que "ver". Solo empieza a descargar cuando entra en pantalla:
+   arrancarlo con la página se lleva por delante el tiempo de carga y, en
+   móvil, los datos de alguien que quizá nunca baje hasta aquí. */
+.cine{position:relative;border-radius:18px;overflow:hidden;background:#000;
+  margin-top:44px;aspect-ratio:53/30}
+.cine video{width:100%;height:100%;object-fit:cover;display:block}
+.cine::after{content:"";position:absolute;inset:0;border-radius:18px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);pointer-events:none}
+.cine .rotulo{position:absolute;left:0;right:0;bottom:0;z-index:2;
+  padding:70px 30px 24px;font-size:13.5px;color:#fafafa;
+  background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
+@media(max-width:960px){ .cine{border-radius:14px} }

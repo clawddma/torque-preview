@@ -524,8 +524,15 @@
       ]},
     mage: { nombre:"Mage", art:"la", lead:"Mage", ele:false, url:"mage.html",
       versiones:[
-        {n:"HEV", precio:109000000, l100:4.9, ficha:"4,9 L/100 km · no se enchufa"}
+        {n:"HEV", precio:109990000, l100:4.9, ficha:"4,9 L/100 km · no se enchufa"}
+      ]},
+    huge: { nombre:"Huge", art:"la", lead:"Huge", ele:false, url:"huge.html",
+      versiones:[
+        {n:"G59", precio:124990000, l100:5.8, ficha:"5,8 L/100 km · no se enchufa"}
       ]}
+    /* El E70 no está: el simulador se apoya entero en el consumo y su ficha
+       todavía no llegó de Corautos. Meterlo con una cifra inventada haría
+       que la única herramienta que da números exactos diera uno falso. */
   };
 
   /* ── lo que cuesta TENER el carro un año ───────────────────────────
@@ -624,7 +631,7 @@
   function texto(html){ var d=document.createElement("div"); d.innerHTML=html; return d.textContent }
 
   /* llega elegido desde la ficha: simulador.html?v=vigo */
-  var pedido=(location.search.match(/[?&]v=(vigo|box|mage)/i)||[])[1];
+  var pedido=(location.search.match(/[?&]v=(vigo|box|e70|mage|huge)/i)||[])[1];
   if(pedido) nuestro.value = pedido.toLowerCase();
 
   /* ── los botones de tecnología ─────────────────────────────────── */

@@ -20,7 +20,7 @@ automotriz: motos, combustión, híbridos, eléctricos, maquinaria amarilla, pes
 
 - Comisión **1,2% a 1,5%** sobre el valor **antes de IVA**, según escala de unidades.
 - **Acuerdo verbal — sin contrato firmado.** Es el mayor riesgo abierto del negocio.
-- MAGE a $109.000.000 con IVA del 5% → base $103.809.524 → **$1.245.714 (1,2%)** a
+- MAGE a $109.990.000 con IVA del 5% → base $104.752.381 → **$1.257.029 (1,2%)** a
   **$1.557.143 (1,5%)** por unidad vendida.
 - Con $1.000.000 de pauta mensual, el punto de equilibrio es **0,8 unidades**.
 
@@ -69,7 +69,7 @@ empaquetado) viven **solo en el Mac de Daniel**, en
 ## Los dos ganchos comerciales (verificados)
 
 1. **Reforma tributaria radicada el 22 de julio de 2026**: subiría el IVA de híbridos
-   del 5% al 19%. La MAGE pasaría de $109.000.000 a **$123.533.333** (+$14.533.333).
+   del 5% al 19%. La MAGE pasaría de $109.990.000 a **$124.655.333** (+$14.665.333).
 2. **Devolución de IVA**: el Concepto DIAN 000673 de 2026 fija el procedimiento para
    devolver el IVA de vehículos certificados por la **UPME**, dentro de los 5 años
    siguientes a la factura. En la MAGE son **~$5.190.476**. La MAGE sí tiene
@@ -98,7 +98,7 @@ que se hizo con los PDF agregados. Lo esencial:
 - **La MAGE tiene CERO matrículas en Colombia.** Es un lanzamiento real, no una
   pelea por participación. Y las 1.952 unidades de Dongfeng son camiones y vans:
   la marca está posicionada en **carga**, no en familia. Eso juega en contra de
-  una camioneta de $109.000.000 y es lo primero que la pauta debe resolver.
+  una camioneta de $109.990.000 y es lo primero que la pauta debe resolver.
 - **Mercado direccionable:** SUV híbrida = 34.441 unidades en 5,2 meses
   (≈6.600/mes), 24,1% del mercado nuevo, creciendo +26% de febrero a junio.
 - Los 4 rivales del comparador son el **31,5%** del segmento: la comparación no
@@ -187,7 +187,14 @@ servir a esa validación; lo demás espera.
    abierto del negocio.
 5. **Verificar ficha por ficha la competencia del comparador** (Corolla Cross, Sportage,
    Territory, CX-30). Hoy son estimados de mercado y publicar un dato errado expone.
-6. **Confirmar vigencia** del precio de $109.000.000.
+6. **Respaldo escrito de la lista de precios de agosto.** Desde el 21 de
+   agosto el sitio publica precio tachado en las siete referencias
+   ($15.000.000 en el Box, $20.000.000 en la Mage, $16.000.000 en el E70 y la
+   Huge). Ante la SIC, un precio comparativo exige que el anterior se haya
+   cobrado de verdad: hay que pedirle a Corautos esa lista **por escrito**.
+   Va en el mismo paquete de la autorización de marca del punto 3.
+7. **La ficha técnica del E70.** No existe en ninguna parte. La página salió
+   con fotos y precio, y su sección de ficha dice que falta.
 7. **El renting no está modelado.** El descriptor lo anuncia pero el sitio entero está
    construido sobre la compra. Falta saber quién es la contraparte (arrendadora, banco,
    Corautos) — de eso depende también el párrafo legal del pie.

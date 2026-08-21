@@ -57,7 +57,8 @@
   var MODULOS = [
     { grupo:"Sitio público", items:[
       ["Showroom",         "index.html",          I.tienda,
-        [["Vigo","vigo.html"],["Box","box.html"],["Mage","mage.html"]]],
+        [["Box","box.html"],["E70","e70.html"],["Vigo","vigo.html"],
+         ["Mage","mage.html"],["Huge","huge.html"]]],
       ["Simulador",        "simulador.html",      I.calc],
       ["Política de datos","politica-datos.html", I.doc]
     ]},
