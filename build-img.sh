@@ -197,6 +197,50 @@ if [ -d "$HEREDADAS" ]; then
   done
 fi
 
+
+# ── REEMPLAZO DE LAS FOTOS HEREDADAS ────────────────────────────────────────
+# Las rutas viejas siguen vivas por dos motivos: la portada anterior que la
+# gente tiene en cache las pide, y algunas paginas internas todavia enlazan a
+# ellas. Reemplazar el ARCHIVO conservando el nombre arregla las dos cosas de
+# una vez —incluida la copia cacheada en el navegador de alguien, que no va a
+# volver a pedir el HTML pero si vuelve a pedir la imagen—.
+#
+# img/g1.jpg estaba en 933px y se mostraba en una tarjeta de ~800px reales en
+# retina: por eso se veia pixelada. El original de la misma foto tiene 5.847.
+#
+#   destino heredado | origen | ancho al que se sirve
+HEREDADO=$(cat <<'FIN'
+img/g1.jpg|MAGE/MAGE 2.jpg|1600
+img/g2.jpg|MAGE/MAGE 3.jpg|1600
+img/g3.jpg|MAGE/MAGE 4.jpg|1600
+img/g4.jpg|MAGE/MAGE 1.jpg|1600
+img/hero.jpg|MAGE/MAGE 2.jpg|1600
+img/mage-ancho.jpg|MAGE/MAGE 2.jpg|2400
+img/box/hero.jpg|BOX/BLANCO/BOX BLANCO 2.jpg|2000
+img/box/hero-ancho.jpg|BOX/BLANCO/BOX BLANCO 2.jpg|2400
+img/vigo/frontal.jpg|VIGO E2+/VIGO E2+ 1.jpg|2000
+img/vigo/lateral.jpg|VIGO E2+/VIGO E2+ 3.jpg|2000
+img/vigo/interior.jpg|VIGO E2/VIGO E2 5.jpg|2000
+FIN
+)
+
+echo "→ reemplazo de fotos heredadas"
+while IFS='|' read -r dest origen ancho; do
+  [ -z "$dest" ] && continue
+  f="$SRC/$origen"
+  [ -f "$f" ] || { echo "  ⚠ falta: $origen"; continue; }
+  antes=$(sips -g pixelWidth "$RAIZ/$dest" 2>/dev/null | tail -1 | tr -dc '0-9')
+  reducir "$f" "$ancho" "$TMP/r.png"
+  ffmpeg -nostdin -v error -y -i "$TMP/r.png" -q:v 3 "$RAIZ/$dest"
+  # La miniatura que le corresponde, si existe
+  t="$(dirname "$RAIZ/$dest")/t-$(basename "$dest")"
+  if [ -f "$t" ]; then
+    reducir "$f" 400 "$TMP/r.png"
+    ffmpeg -nostdin -v error -y -i "$TMP/r.png" -q:v 4 "$t"
+  fi
+  printf "  %-26s %s → %s px\n" "$dest" "${antes:-?}" "$ancho"
+done <<< "$HEREDADO"
+
 { echo "{"; sed '$!s/$/,/' "$LQIP"; echo "}"; } > "$IMG/lqip.json"
 
 echo "→ $n fotos · peso total de img/: $(du -sh "$IMG" | cut -f1)"

@@ -66,6 +66,18 @@ Se publica en GitHub Pages: https://clawddma.github.io/torque-preview/
   rehacerla desde el original—, porque el compresor gasta bytes codificando
   detalle inventado. Si una foto no da el tamaño, se cambia la foto o se
   achica el marco; no se estira.
+- **Reemplazar el archivo, no solo la referencia.** Las rutas viejas
+  (`img/g1.jpg`, `img/box/hero.jpg`, `img/vigo/frontal.jpg`) siguen vivas: las
+  pide la portada anterior que la gente tiene en caché, y algunas páginas
+  internas todavía enlazan a ellas. Sobrescribir el archivo conservando el
+  nombre arregla las dos cosas de una vez — incluido el navegador de alguien
+  que no va a volver a pedir el HTML pero sí vuelve a pedir la imagen.
+  `img/g1.jpg` estaba en 933 px y se mostraba en una tarjeta de ~800 px reales
+  en retina: por eso se veía pixelada aunque el original tuviera 5.847.
+- **Antes de decir que algo está arreglado, verificarlo en la URL que mira el
+  cliente, no en `127.0.0.1`.** Un `curl` a la página publicada es un segundo y
+  es la única prueba que cuenta. Verificar en local y reportar "listo" es
+  reportar contra la verdad propia, no contra la del otro.
 - **Los originales de verdad viven fuera del repo.** Los de Corautos de agosto
   están en el zip de Drive; los de julio, en `../torque/img/` — y ahí son más
   grandes que las copias que estaban publicadas. Antes de dar una foto por
