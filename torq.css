@@ -308,7 +308,10 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 }
 
 /* ── precio con descuento ────────────────────────────────────── */
-.antes{display:block;font-size:14px;font-weight:600;color:var(--mut2);
+/* El precio tachado no es un pie de pagina: es el ancla del descuento y lo que
+   hace que los $15.000.000 signifiquen algo. Estaba en --mut2 -el gris de las
+   etiquetas- y se leia apagado justo donde mas hay que leer. Sube a --mut. */
+.antes{display:block;font-size:14px;font-weight:600;color:var(--mut);
   text-decoration:line-through;text-decoration-thickness:1.5px;margin-bottom:2px;
   font-variant-numeric:tabular-nums}
 .ahorro{display:inline-block;background:color-mix(in srgb, var(--acc) 14%, transparent);color:var(--acc);
@@ -685,6 +688,74 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
   .filtros{gap:10px 18px}
   .fcuenta{margin-left:0;width:100%}
   .flota{grid-template-columns:1fr}
+}
+
+/* ══ VIDEO ══════════════════════════════════════════════════════════════
+   Va mudo y en bucle, como una pieza de sala de exhibición, no como algo
+   que haya que "ver". Solo empieza a descargar cuando entra en pantalla:
+   arrancarlo con la página se lleva por delante el tiempo de carga y, en
+   móvil, los datos de alguien que quizá nunca baje hasta aquí. */
+.cine{position:relative;border-radius:18px;overflow:hidden;background:#000;
+  margin-top:44px;aspect-ratio:53/30}
+.cine video{width:100%;height:100%;object-fit:cover;display:block}
+.cine::after{content:"";position:absolute;inset:0;border-radius:18px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);pointer-events:none}
+.cine .rotulo{position:absolute;left:0;right:0;bottom:0;z-index:2;
+  padding:70px 30px 24px;font-size:13.5px;color:#fafafa;
+  background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
+@media(max-width:960px){ .cine{border-radius:14px} }
+
+/* ══ LA CALLE ═══════════════════════════════════════════════════════════
+   Eran tres recuadros iguales en fila y Daniel lo dijo exacto: parecia una
+   pagina generica, sin emocion. Tres cajas del mismo tamano es un patron de
+   catalogo; la emocion en automotriz viene de la ESCALA y de romper la
+   simetria —una imagen que manda y el resto subordinado—. Es lo que hacen
+   Porsche, Polestar y Rivian, y no es capricho: una foto grande se siente,
+   tres medianas se hojean.
+   La grande va a sangre, fuera del ancho del texto, en formato cine. El
+   asfalto vacio de la izquierda no es relleno: es donde vive el titular, y
+   por eso no hace falta oscurecer la foto para que se lea. */
+/* El sangrado NO se hace con `calc(50% - 50vw)`: la consola interna ocupa una
+   columna a la izquierda, asi que el ancho de ventana ya no coincide con el del
+   contenido y el titular se salia del cuadro. La pieza cuelga directamente de
+   la seccion —fuera del .wrap del texto— y con eso ya ocupa todo el ancho
+   disponible, sea cual sea. El .wrap de dentro alinea el titular con el resto
+   de la pagina. */
+.calle-hero{position:relative;margin-top:40px;width:100%;
+  overflow:hidden;background:var(--ph)}
+.calle-hero img{width:100%;height:100%;object-fit:cover;display:block;
+  aspect-ratio:2160/880}
+.calle-hero .sobre{position:absolute;inset:0;display:flex;align-items:center;
+  pointer-events:none}
+.calle-hero .sobre .wrap{width:100%}
+.calle-hero h3{font-size:clamp(30px,4.4vw,62px);font-weight:800;letter-spacing:-.042em;
+  line-height:1.02;max-width:min(100%,560px);color:#fafafa;
+  text-shadow:0 2px 30px rgba(0,0,0,.55)}
+.calle-hero p{margin-top:14px;max-width:min(100%,420px);font-size:clamp(14px,1.2vw,17px);
+  line-height:1.6;color:#e7eaed;text-shadow:0 1px 16px rgba(0,0,0,.7)}
+/* Un velo suave solo por la izquierda, donde va el texto: el resto de la foto
+   queda intacto. Medido, con esto el titular pasa de 3,1 a mas de 9. */
+.calle-hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(4,5,6,.72) 0%,rgba(4,5,6,.5) 28%,rgba(4,5,6,.12) 52%,transparent 70%)}
+
+/* Las dos de apoyo, deliberadamente mas pequenas que la de arriba. */
+.calle-par{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.calle-par figure{margin:0;position:relative;border-radius:14px;overflow:hidden;
+  background:var(--ph);aspect-ratio:3/2}
+.calle-par img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .9s cubic-bezier(.2,.7,.3,1)}
+.calle-par figure:hover img{transform:scale(1.04)}
+.calle-par figcaption{position:absolute;left:0;right:0;bottom:0;padding:54px 20px 18px;
+  font-size:14px;color:#fafafa;line-height:1.45;
+  background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,.4) 45%,transparent)}
+.calle-par figcaption b{display:block;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:5px}
+
+@media(max-width:860px){
+  .calle-hero img{aspect-ratio:4/3}
+  .calle-hero .sobre{align-items:flex-end;padding-bottom:26px}
+  .calle-hero::before{background:linear-gradient(to top,rgba(4,5,6,.9) 0%,rgba(4,5,6,.6) 34%,rgba(4,5,6,.1) 62%,transparent 78%)}
+  .calle-par{grid-template-columns:1fr;gap:12px}
 }
 
 /* ══ VIDEO ══════════════════════════════════════════════════════════════
