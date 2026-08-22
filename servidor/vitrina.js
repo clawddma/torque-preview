@@ -123,6 +123,22 @@ function limpiar(html, anfitrion){
     html = html.replace(re, '$1' + archivo + '?v=' + v + '$2');
   });
 
+  /* Y las fotos igual. Versionar el CSS y los guiones no bastaba: al cambiar
+     una foto conservando el nombre —que es justo lo que hay que hacer para que
+     tambien se arregle la copia cacheada de quien no vuelve a pedir el HTML—
+     el navegador seguia con la vieja cuatro horas. Se veia el maquetado nuevo
+     con la imagen anterior dentro, que es peor que no haber cambiado nada.
+     Un statSync por foto y unas veinte por pagina: microsegundos. */
+  html = html.replace(/((?:src|srcset)=["'])([^"']+)(["'])/gi, function(_, a, valor, z){
+    var nuevo = valor.split(',').map(function(parte){
+      var t = parte.trim().split(/\s+/);
+      if (t[0].indexOf('img/') !== 0 || t[0].indexOf('?') >= 0) return parte.trim();
+      t[0] = t[0] + '?v=' + version(t[0]);
+      return t.join(' ');
+    }).join(', ');
+    return a + nuevo + z;
+  });
+
   /* solo si la página no trae ya el suyo: dos <meta robots> en el mismo
      documento es basura que además deja el resultado a interpretación */
   if (!/name=["']robots["']/i.test(html)) {
