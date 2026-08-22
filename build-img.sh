@@ -257,6 +257,50 @@ while IFS='|' read -r dest origen ancho; do
   printf "  %-26s %s → %s px\n" "$dest" "${antes:-?}" "$ancho"
 done <<< "$HEREDADO"
 
+
+# ── REENCUADRE DE LAS PORTADAS ──────────────────────────────────────────────
+# Las fotos de estudio no vienen con el mismo aire: medido buscando las partes
+# oscuras del vehiculo -ruedas, ventanas, parrilla, que son las que marcan su
+# ancho real-, el carro ocupaba el 74% del cuadro en el Box azul y solo el 46%
+# en las dos Vigo. Servidas tal cual, las Vigo se veian lejisimos al lado del
+# resto: no era el maquetado, era el origen.
+#
+# Aqui se recortan a un 78% comun. Los tres colores del Box comparten EL MISMO
+# recorte a proposito: el selector de color cruza la opacidad entre ellos y con
+# encuadres distintos el carro daria un salto en vez de pintarse.
+#
+#   destino | origen | crop w:h:x:y
+REENCUADRE=$(cat <<'FIN'
+box/azul-tresq|BOX/AZUL/BOX AZUL 2.jpg|4008:2672:230:159
+box/blanco-tresq|BOX/BLANCO/BOX BLANCO 2.jpg|4008:2672:230:159
+box/gris-tresq|BOX/GRIS/BOX GRIS 2.jpg|4008:2672:230:159
+vigo/e2-tresq|VIGO E2/VIGO E2 4.jpg|2514:1676:748:576
+vigo/e2mas-tresq|VIGO E2+/VIGO E2+ 4.jpg|2491:1660:732:610
+FIN
+)
+
+echo "→ reencuadre de portadas"
+while IFS='|' read -r dest origen c; do
+  [ -z "$dest" ] && continue
+  f="$SRC/$origen"
+  [ -f "$f" ] || { echo "  ⚠ falta: $origen"; continue; }
+  cw="${c%%:*}"; r="${c#*:}"; chh="${r%%:*}"; r="${r#*:}"; cx="${r%%:*}"; cy="${r##*:}"
+  base="$IMG/$dest"
+  for a in 640 1280 1920 2560; do
+    [ "$a" -gt "$cw" ] && continue
+    ffmpeg -nostdin -v error -y -i "$f" -vf \
+      "crop=$cw:$chh:$cx:$cy,scale=$a:-2:flags=lanczos,unsharp=3:3:0.5" "$TMP/r.png"
+    cwebp -quiet -metadata none -q 82 -m 6 -sharp_yuv "$TMP/r.png" -o "${base}-${a}.webp"
+  done
+  ffmpeg -nostdin -v error -y -i "$f" -vf \
+    "crop=$cw:$chh:$cx:$cy,scale=1280:-2:flags=lanczos,unsharp=3:3:0.5" "$TMP/r.png"
+  ffmpeg -nostdin -v error -y -i "$TMP/r.png" -q:v 3 "${base}.jpg"
+  ffmpeg -nostdin -v error -y -i "$f" -vf \
+    "crop=$cw:$chh:$cx:$cy,scale=400:-2:flags=lanczos,unsharp=3:3:0.5" "$TMP/r.png"
+  ffmpeg -nostdin -v error -y -i "$TMP/r.png" -q:v 4 "$IMG/$(dirname "$dest")/t-$(basename "$dest").jpg"
+  printf "  %-22s recortada\n" "$dest"
+done <<< "$REENCUADRE"
+
 { echo "{"; sed '$!s/$/,/' "$LQIP"; echo "}"; } > "$IMG/lqip.json"
 
 echo "→ $n fotos · peso total de img/: $(du -sh "$IMG" | cut -f1)"
