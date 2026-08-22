@@ -146,25 +146,9 @@
     videos.forEach(function (v) { ojoV.observe(v); });
   }
 
-  /* ── 6 · Paralaje del hero ──────────────────────────────────────────────
-     Muy sutil y a propósito: el carro se hunde un poco más lento que el
-     texto al bajar. Da profundidad de sala de exhibición. Todo dentro de un
-     rAF para no leer el scroll en cada evento y trabar el desplazamiento. */
-  var heroes = document.querySelectorAll("[data-paralaje]");
-  if (heroes.length && !quieto && window.innerWidth > 860) {
-    var pendiente = false;
-    window.addEventListener("scroll", function () {
-      if (pendiente) return;
-      pendiente = true;
-      requestAnimationFrame(function () {
-        var y = window.scrollY;
-        heroes.forEach(function (h) {
-          if (y < window.innerHeight * 1.2) {
-            h.style.transform = "translate3d(0," + (y * 0.14).toFixed(1) + "px,0)";
-          }
-        });
-        pendiente = false;
-      });
-    }, { passive: true });
-  }
+  /* El paralaje del hero se quitó: el carro se traducía hasta 151px hacia
+     abajo con el scroll (0,14 × hasta 1,2 pantallas), y el hueco real antes
+     de la franja de cifras es de apenas 30-56px. El transform no reserva
+     espacio, así que la foto terminaba encima del texto — justo lo que no
+     puede pasar nunca. Un efecto decorativo no vale ese riesgo. */
 })();
