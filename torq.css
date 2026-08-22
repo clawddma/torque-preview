@@ -634,3 +634,33 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
   padding:70px 30px 24px;font-size:13.5px;color:#fafafa;
   background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
 @media(max-width:960px){ .cine{border-radius:14px} }
+
+/* ══ LA CALLE ═══════════════════════════════════════════════════════════
+   Las unicas imagenes de ambiente que existen del proyecto: salen del video
+   de presentacion de la Vigo, que es 2.160x3.840 VERTICAL. Ese formato manda
+   el diseno: en vertical el material tiene detalle de sobra a 560px de ancho
+   -que es como se muestran-; estirado en horizontal se ablanda. Por eso la
+   banda es de columnas altas y no de una foto a sangre. */
+/* Tres columnas y dos filas: la grande ocupa 2x2 y las otras dos se apilan
+   a la derecha. Sin fijar las filas, la tercera se caia a una fila nueva. */
+.calle{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);
+  gap:16px;margin-top:44px;aspect-ratio:16/9}
+.calle figure{margin:0;position:relative;border-radius:16px;overflow:hidden;
+  background:var(--ph)}
+.calle img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .8s cubic-bezier(.2,.7,.3,1)}
+.calle figure:hover img{transform:scale(1.03)}
+.calle figcaption{position:absolute;left:0;right:0;bottom:0;padding:56px 20px 18px;
+  font-size:13.5px;color:#fafafa;line-height:1.45;
+  background:linear-gradient(to top,rgba(0,0,0,.76),transparent)}
+.calle figcaption b{display:block;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:5px}
+/* La primera manda: ocupa dos columnas y las dos filas. */
+.calle figure:first-child{grid-column:1/3;grid-row:1/3}
+@media(max-width:860px){
+  /* En movil la rejilla se deshace: una debajo de otra, en vertical, que es
+     la proporcion nativa del material. */
+  .calle{grid-template-columns:1fr;grid-template-rows:none;gap:12px;aspect-ratio:auto}
+  .calle figure{aspect-ratio:4/3}
+  .calle figure:first-child{grid-column:auto;grid-row:auto;aspect-ratio:1/1}
+}
