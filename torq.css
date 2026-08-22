@@ -7,7 +7,7 @@
 :root{
   --ink:#08090a; --ink2:#0e1013; --ink3:#141719;
   --line:#1c1f24; --line2:#2a2e35;
-  --paper:#fafafa; --mut:#8b9199; --mut2:#5d636b;
+  --paper:#fafafa; --mut:#8b9199; --mut2:#7d838b;
   --acc:#c8f24a; --onacc:#0a0c07;
   --ph:#0b0c0e; --navbg:rgba(8,9,10,.78); --dockbg:rgba(8,9,10,.94);
   /* Los tres logos de aliados son arte BLANCO sobre transparente. Se
@@ -22,6 +22,10 @@
      tres juntos: levantar solo uno en una fila de tres se ve roto. */
   --marcafiltro:grayscale(1) brightness(0) invert(1); --marcaop:.8; --marcaop2:.95;
   --marcacolor:saturate(.95); --marcacolorop:.9;
+  /* --mut2 es el gris de las etiquetas pequenas y estaba en #5d636b: 3,29 de
+     contraste cuando el minimo legible para texto pequeno es 4,5. En el tema
+     claro era peor -#8d9299, 2,90-. Auditado elemento por elemento en el
+     navegador, era el unico responsable de los 18 textos que fallaban. */
   --ok:#22c98d; --warn:#d95926;
   --nav:98px; --pad:44px;
   --safe-l:env(safe-area-inset-left,0px); --safe-r:env(safe-area-inset-right,0px);
@@ -34,7 +38,7 @@
 :root[data-theme="light"]{
   --ink:#f7f6f3; --ink2:#ffffff; --ink3:#edebe6;
   --line:#e7e4de; --line2:#d5d1c9;
-  --paper:#16181a; --mut:#5b6167; --mut2:#8d9299;
+  --paper:#16181a; --mut:#5b6167; --mut2:#6b7076;
   --acc:#4a6d15; --onacc:#f7f6f3;
   --ph:#eceae5; --navbg:rgba(247,246,243,.82); --dockbg:rgba(247,246,243,.95);
   /* En claro la silueta es negra sobre papel y el .5 la dejaba en gris
@@ -109,7 +113,12 @@ section{padding:clamp(72px,9vw,130px) 0}
    ciclorama claro y piden un campo claro; las de sala de ventas traen piso y
    mostradores oscuros y piden uno oscuro. Sin distinguirlo, la mitad de las
    tarjetas quedaba con un halo ajeno. Lo declara `campo` en catalogo.js. */
-.veh .ph{position:relative;aspect-ratio:16/10;overflow:hidden;
+/* 16:10 con 30px de relleno dejaba el carro al 76% del ancho: demasiado aire,
+   se veia lejos. El marco baja a 3:2 —la proporcion de las propias fotos— y el
+   relleno a 20px: asi el vehiculo ocupa el 90% y conserva un margen visible.
+   Con el marco mas ancho que la foto, el alto manda y el carro se encoge; con
+   el marco a la misma proporcion, el aire es el que uno decide. */
+.veh .ph{position:relative;aspect-ratio:3/2;overflow:hidden;
   background:var(--campo,var(--ph))}
 /* Se probo extender la foto desenfocada detras: no sirve. Con desenfoque
    suave el letrero de fondo sigue legible y se lee como una imagen doble;
@@ -118,7 +127,7 @@ section{padding:clamp(72px,9vw,130px) 0}
    lados- y no solo de la franja superior, que en las fotos de sala cae sobre
    el letrero iluminado y sacaba un morado inexistente. */
 .veh .ph img{width:100%;height:100%;object-fit:contain;
-  padding:22px 30px 26px;box-sizing:border-box;
+  padding:14px 20px 16px;box-sizing:border-box;
   transition:transform .6s cubic-bezier(.2,.7,.3,1)}
 .veh:hover .ph img{transform:scale(1.04)}
 /* Las tres fotos vienen de estudios distintos y las dos de fondo claro
@@ -485,7 +494,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 .carr .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.1s ease;
   pointer-events:none;will-change:opacity}
 .carr .slide.on{opacity:1;pointer-events:auto}
-.carr .slide img{width:100%;height:100%;object-fit:cover;display:block;
+.carr .slide img{width:100%;height:100%;object-fit:cover;object-position:center 64%;display:block;
   transform:scale(1.045);transition:transform 9s linear}
 .carr .slide.on img{transform:scale(1)}
 @media(prefers-reduced-motion:reduce){
@@ -499,16 +508,35 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
    -las tres por encima de AAA (7:1)- sin apagar el vehiculo, que es lo
    que pasaba con la version mas oscura que tambien pasaba la medicion.
    Contraste alto Y foto viva: las dos cosas, no una. */
+/* EL VELO. Medido antes de tocarlo: el eyebrow daba 1,06 de contraste sobre la
+   foto clara -invisible- y el titular 2,07, cuando el minimo legible es 4,5 y
+   3,0 respectivamente. La curva anterior solo se ponia oscura en el ultimo
+   cuarto, y el texto empieza a media altura.
+   La forma es la de cualquier portada de automotriz seria: el vehiculo limpio
+   arriba y a la derecha, y una zona oscura definida abajo a la izquierda donde
+   vive el texto. Se refuerza tambien con una capa inferior solida en el tramo
+   del bloque de texto, porque un degradado solo nunca garantiza el minimo:
+   depende de que foto haya debajo. */
 .carr .velo{position:absolute;inset:0;
   background:
-    linear-gradient(to top, rgba(4,5,6,.97) 0%, rgba(4,5,6,.9) 26%, rgba(4,5,6,.62) 44%, rgba(4,5,6,.2) 62%, transparent 78%),
-    linear-gradient(90deg, rgba(4,5,6,.7) 0%, rgba(4,5,6,.3) 46%, transparent 72%)}
+    linear-gradient(to top, rgba(4,5,6,.97) 0%, rgba(4,5,6,.95) 24%, rgba(4,5,6,.9) 34%, rgba(4,5,6,.66) 44%, rgba(4,5,6,.24) 54%, rgba(4,5,6,.06) 62%, transparent 70%),
+    linear-gradient(90deg, rgba(4,5,6,.5) 0%, rgba(4,5,6,.22) 34%, transparent 60%)}
 .carr .txt{position:absolute;left:0;right:0;bottom:0;z-index:2}
 .carr .txt .wrap{padding-bottom:clamp(38px,4.6vw,74px)}
 .carr .lin{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:clamp(14px,1.6vw,22px)}
 .carr .tag{background:var(--acc);color:var(--onacc);font-size:clamp(9.5px,.78vw,11px);
   letter-spacing:.15em;text-transform:uppercase;font-weight:800;padding:6px 13px;border-radius:100px}
+/* El eyebrow es la linea mas fragil de la portada: texto pequeno, encima de la
+   foto y en la zona donde el degradado ya se esta soltando. Medido diapositiva
+   por diapositiva daba 4,78 · 17,42 · 4,31 —dos al filo y una por debajo del
+   minimo—, y depende de que foto toque, asi que un degradado no lo garantiza.
+   Se le pone su propia pastilla oscura, en pareja con la lima de al lado: el
+   fondo deja de depender de la imagen y el par se lee como una decision, no
+   como un parche. */
 .carr .mod{font-size:clamp(11.5px,.98vw,14px);letter-spacing:.22em;text-transform:uppercase;
+  background:rgba(4,5,6,.68);backdrop-filter:blur(10px);
+  padding:6px 14px;border-radius:100px;
+  border:1px solid rgba(255,255,255,.1);
   color:#eef1f3;font-weight:700;text-shadow:0 1px 12px rgba(0,0,0,.85)}
 .carr h2{font-size:clamp(38px,6.4vw,96px);font-weight:800;letter-spacing:-.048em;
   line-height:.96;margin:0;max-width:16ch;
@@ -516,7 +544,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 .carr .pie{display:flex;align-items:flex-end;justify-content:space-between;
   gap:clamp(20px,3vw,52px);flex-wrap:wrap;margin-top:clamp(20px,2.4vw,34px)}
 .carr .izq{display:flex;align-items:flex-end;gap:clamp(22px,2.8vw,46px);flex-wrap:wrap}
-.carr .dato{font-size:clamp(11px,.88vw,13px);color:#b6bcc3;text-shadow:0 1px 10px rgba(0,0,0,.8);line-height:1.3;white-space:nowrap}
+.carr .dato{font-size:clamp(11px,.88vw,13px);color:#d7dbdf;text-shadow:0 1px 10px rgba(0,0,0,.8);line-height:1.3;white-space:nowrap}
 .carr .dato b{display:block;color:var(--paper);text-shadow:0 1px 10px rgba(0,0,0,.7);font-size:clamp(21px,2.3vw,32px);font-weight:800;
   letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-top:3px}
 .carr .cta{padding:clamp(13px,1.3vw,18px) clamp(24px,2.4vw,36px);font-size:clamp(13px,1.15vw,16px)}
@@ -568,7 +596,7 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 }
 
 /* ── zonas sobre fotografía: tinta fija, ajena al tema ─────────── */
-.carr, .gal .marco{--paper:#fafafa; --mut2:#5d636b}
+.carr, .gal .marco{--paper:#fafafa; --mut2:#9aa0a8}
 .carr{color:#fafafa}
 
 /* ══ CATÁLOGO ═══════════════════════════════════════════════════════════
