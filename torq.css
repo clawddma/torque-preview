@@ -100,22 +100,35 @@ section{padding:clamp(72px,9vw,130px) 0}
   background:var(--ink2);text-decoration:none;display:flex;flex-direction:column;
   transition:border-color .3s,transform .3s}
 .veh:hover{border-color:var(--line2);transform:translateY(-3px)}
-/* Era 5:4, de cuando las fotos venían de fuentes distintas. Las nuevas son
-   casi todas 3:2 y en un marco 5:4 el recorte le cortaba la cola al E70 y
-   el frente a la Mage. Un carro cortado en automotriz cuesta la
-   credibilidad entera: el marco se ajusta a la foto, no al revés. */
-.veh .ph{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--ph)}
-.veh .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
+/* EL AIRE. Esto es lo que Daniel pedia cuando decia "demasiado zoom": no era
+   que la foto estuviera recortada -medido, se veia el 97-100%- sino que el
+   carro llenaba el marco de borde a borde. En automotriz premium el vehiculo
+   FLOTA: `contain` mas relleno generoso, y el marco se ve como una sala, no
+   como una foto de clasificado.
+   El campo de fondo cambia segun de donde venga la foto: las de estudio traen
+   ciclorama claro y piden un campo claro; las de sala de ventas traen piso y
+   mostradores oscuros y piden uno oscuro. Sin distinguirlo, la mitad de las
+   tarjetas quedaba con un halo ajeno. Lo declara `campo` en catalogo.js. */
+.veh .ph{position:relative;aspect-ratio:16/10;overflow:hidden;
+  background:var(--campo,var(--ph))}
+/* Se probo extender la foto desenfocada detras: no sirve. Con desenfoque
+   suave el letrero de fondo sigue legible y se lee como una imagen doble;
+   con desenfoque fuerte, como una mancha. El color plano del borde funde
+   mejor, siempre que se muestree del anillo COMPLETO -arriba, abajo y los
+   lados- y no solo de la franja superior, que en las fotos de sala cae sobre
+   el letrero iluminado y sacaba un morado inexistente. */
+.veh .ph img{width:100%;height:100%;object-fit:contain;
+  padding:22px 30px 26px;box-sizing:border-box;
+  transition:transform .6s cubic-bezier(.2,.7,.3,1)}
 .veh:hover .ph img{transform:scale(1.04)}
 /* Las tres fotos vienen de estudios distintos y las dos de fondo claro
    dejaban una franja brillante -el piso del ciclorama- que chocaba con
    la tarjeta oscura y se leia como una linea de borde, no como foto.
    Este degradado apaga solo ese ultimo tramo y cose la imagen con la
    tarjeta. No toca el vehiculo: arranca al 78% de alto. */
-.veh .ph::after{content:'';position:absolute;left:0;right:0;bottom:0;height:26%;
-  pointer-events:none;
-  background:linear-gradient(to bottom,transparent 0%,color-mix(in srgb, var(--ink2) 35%, transparent) 46%,color-mix(in srgb, var(--ink2) 80%, transparent) 78%,var(--ink2) 100%)}
-.veh .tag{position:absolute;top:13px;left:13px;background:var(--acc);color:var(--onacc);
+.veh .ph::after{content:'';position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 -1px 0 var(--line)}
+.veh .tag{position:absolute;top:13px;left:13px;z-index:2;background:var(--acc);color:var(--onacc);
   font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;
   padding:5px 11px;border-radius:100px}
 .veh .tag.alt{background:rgba(8,9,10,.82);color:var(--paper);border:1px solid var(--line2);

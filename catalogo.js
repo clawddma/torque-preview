@@ -24,6 +24,7 @@ var CATALOGO = {
     autonomia: 430, autonomiaReal: 310, potencia: 94, torque: 160,
     bateria: 43.89, largo: 4045, plazas: 5,
     pos: "center 52%",
+    campo: "#d9e4eb",
     foto: "box/azul-tresq",
     colores: [
       { id: "azul",   nombre: "Azul",   hex: "#8fb4c9", foto: "box/azul-tresq" },
@@ -43,6 +44,7 @@ var CATALOGO = {
     autonomia: 430, autonomiaReal: 310, potencia: 94, torque: 160,
     bateria: 43.89, largo: 4045, plazas: 5,
     pos: "center 52%",
+    campo: "#c0ccd2",
     foto: "box/blanco-tresq",
     colores: [
       { id: "azul",   nombre: "Azul",   hex: "#8fb4c9", foto: "box/azul-tresq" },
@@ -62,6 +64,7 @@ var CATALOGO = {
     autonomia: 401, autonomiaReal: 296, potencia: 161, torque: 230,
     bateria: 44.94, largo: 4292, plazas: 5,
     pos: "center 50%",
+    campo: "#e7e4e5",
     foto: "vigo/e2-tresq",
     colores: [{ id: "naranja", nombre: "Naranja", hex: "#e2652a", foto: "vigo/e2-tresq" }],
     galeria: ["vigo/e2-tresq", "vigo/e2-frontal", "vigo/e2-lateral", "vigo/e2-trasera", "vigo/e2-interior"],
@@ -78,6 +81,7 @@ var CATALOGO = {
     autonomia: 470, autonomiaReal: 340, potencia: 161, torque: 230,
     bateria: 51.87, largo: 4292, plazas: 5,
     pos: "center 50%",
+    campo: "#e8e8eb",
     foto: "vigo/e2mas-tresq",
     colores: [{ id: "blanco", nombre: "Blanco", hex: "#e9e9e7", foto: "vigo/e2mas-tresq" }],
     galeria: ["vigo/e2mas-tresq", "vigo/e2mas-frontal", "vigo/e2mas-lateral", "vigo/e2mas-trasera"],
@@ -95,6 +99,7 @@ var CATALOGO = {
     bateria: null, largo: null, plazas: 5,
     fichaPendiente: true,
     pos: "center 55%",
+    campo: "#63635f",
     foto: "e70/tresq-tras",
     colores: [{ id: "blanco", nombre: "Blanco", hex: "#f0f0ee", foto: "e70/tresq-tras" }],
     galeria: ["e70/tresq-tras", "e70/tresq", "e70/frontal", "e70/trasera"]
@@ -110,6 +115,7 @@ var CATALOGO = {
     autonomia: 1000, autonomiaReal: null, potencia: 288, torque: 565,
     consumo: 4.9, largo: 4650, plazas: 5,
     pos: "center 50%",
+    campo: "#474442",
     foto: "mage/tresq",
     colores: [
       { id: "blanco", nombre: "Blanco", hex: "#efefed", foto: "mage/tresq" },
@@ -130,6 +136,7 @@ var CATALOGO = {
     autonomia: null, autonomiaReal: null, potencia: 241, torque: 540,
     consumo: 5.8, largo: 4720, plazas: 5,
     pos: "center 50%",
+    campo: "#a7a69b",
     foto: "huge/lateral",
     colores: [
       { id: "blanco", nombre: "Blanco", hex: "#efefed", foto: "huge/lateral" },

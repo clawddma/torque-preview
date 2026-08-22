@@ -81,7 +81,7 @@
     var estilo = "object-position:" + (v.pos || "center");
     if (lq) estilo += ";background-image:url(" + lq.d + ");background-size:cover";
 
-    h += '<div class="ph"><span class="tag">' + v.beneficio + "</span>" +
+    h += '<div class="ph" style="--campo:' + (v.campo || "var(--ph)") + '"><span class="tag">' + v.beneficio + "</span>" +
          '<picture><source type="image/webp" srcset="' + srcset +
          '" sizes="(max-width:640px) 100vw, 400px">' +
          '<img src="img/' + v.foto + '.jpg" alt="' + v.marca + " " + v.nombre +
