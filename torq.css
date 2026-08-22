@@ -636,31 +636,31 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
 @media(max-width:960px){ .cine{border-radius:14px} }
 
 /* ══ LA CALLE ═══════════════════════════════════════════════════════════
-   Las unicas imagenes de ambiente que existen del proyecto: salen del video
-   de presentacion de la Vigo, que es 2.160x3.840 VERTICAL. Ese formato manda
-   el diseno: en vertical el material tiene detalle de sobra a 560px de ancho
-   -que es como se muestran-; estirado en horizontal se ablanda. Por eso la
-   banda es de columnas altas y no de una foto a sangre. */
-/* Tres columnas y dos filas: la grande ocupa 2x2 y las otras dos se apilan
-   a la derecha. Sin fijar las filas, la tercera se caia a una fila nueva. */
-.calle{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);
-  gap:16px;margin-top:44px;aspect-ratio:16/9}
+   Las unicas imagenes de ambiente del proyecto salen del video de la Vigo,
+   que es 2.160x3.840 VERTICAL. El marco respeta esa proporcion y no la pelea:
+   metidas en un marco horizontal con `cover`, el navegador se comia mas de la
+   mitad del alto y el carro desaparecia —peor en movil, donde el recorte es
+   mayor—. En 9:16 no se recorta un pixel y el vehiculo se ve entero. */
+.calle{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
 .calle figure{margin:0;position:relative;border-radius:16px;overflow:hidden;
-  background:var(--ph)}
+  background:var(--ph);aspect-ratio:1120/1992}
 .calle img{width:100%;height:100%;object-fit:cover;display:block;
-  transition:transform .8s cubic-bezier(.2,.7,.3,1)}
+  transition:transform .9s cubic-bezier(.2,.7,.3,1)}
 .calle figure:hover img{transform:scale(1.03)}
-.calle figcaption{position:absolute;left:0;right:0;bottom:0;padding:56px 20px 18px;
-  font-size:13.5px;color:#fafafa;line-height:1.45;
-  background:linear-gradient(to top,rgba(0,0,0,.76),transparent)}
+.calle figcaption{position:absolute;left:0;right:0;bottom:0;padding:70px 22px 20px;
+  font-size:14px;color:#fafafa;line-height:1.45;
+  background:linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,.45) 40%,transparent)}
 .calle figcaption b{display:block;font-size:11px;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:5px}
-/* La primera manda: ocupa dos columnas y las dos filas. */
-.calle figure:first-child{grid-column:1/3;grid-row:1/3}
+  text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:6px}
+
 @media(max-width:860px){
-  /* En movil la rejilla se deshace: una debajo de otra, en vertical, que es
-     la proporcion nativa del material. */
-  .calle{grid-template-columns:1fr;grid-template-rows:none;gap:12px;aspect-ratio:auto}
-  .calle figure{aspect-ratio:4/3}
-  .calle figure:first-child{grid-column:auto;grid-row:auto;aspect-ratio:1/1}
+  /* En movil no se apilan tres columnas altas -serian 2.000px de scroll-:
+     la banda se desliza de lado, cada pieza a 72vw y en su proporcion. */
+  .calle{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    margin-left:calc(-1 * (var(--pad) + var(--safe-l)));
+    margin-right:calc(-1 * (var(--pad) + var(--safe-r)));
+    padding:0 calc(var(--pad) + var(--safe-l))}
+  .calle::-webkit-scrollbar{display:none}
+  .calle figure{flex:0 0 72vw;scroll-snap-align:center}
 }
