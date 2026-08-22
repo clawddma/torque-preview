@@ -706,6 +706,75 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
 @media(max-width:960px){ .cine{border-radius:14px} }
 
 /* ══ LA CALLE ═══════════════════════════════════════════════════════════
+   Un carro no se compra por la ficha: se compra por lo que se siente. Y lo
+   que se siente son gestos —una mano sobre la carroceria, alguien entrando,
+   los faros encendidos—, no otro vehiculo parado de tres cuartos.
+   El limite lo pone el material: las imagenes salen del video de Dongfeng y
+   medido fotograma a fotograma ninguna aguanta mas de ~900-1.300px de detalle
+   real. Una foto a sangre en escritorio pide 2.880px en retina, o sea el
+   triple, y por eso la cenital a todo el ancho se veia pixelada.
+   Asi que la composicion es de revista y no de cartel: piezas de 380 a 600px
+   en una rejilla desalineada, donde el ritmo y el aire hacen el trabajo que
+   hoy no puede hacer el tamano. Cuando lleguen las fotos en alta, estas
+   mismas casillas admiten piezas grandes sin tocar el maquetado. */
+.calle{display:grid;grid-template-columns:repeat(12,1fr);
+  gap:clamp(14px,1.8vw,26px);margin-top:46px;align-items:start}
+.calle figure{margin:0;position:relative;border-radius:14px;overflow:hidden;
+  background:var(--ph)}
+.calle img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform 1s cubic-bezier(.2,.7,.3,1)}
+.calle figure:hover img{transform:scale(1.035)}
+.calle figcaption{position:absolute;left:0;right:0;bottom:0;padding:52px 18px 16px;
+  font-size:13.5px;color:#fafafa;line-height:1.45;
+  background:linear-gradient(to top,rgba(0,0,0,.84),rgba(0,0,0,.42) 46%,transparent)}
+.calle figcaption b{display:block;font-size:10.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:4px}
+
+/* La rejilla desalineada. Cada pieza cae en su casilla y el desnivel entre
+   filas es a proposito: alineadas volverian a leerse como un catalogo. */
+/* La foto y su texto van en la MISMA columna, agrupados. Sueltos en la rejilla
+   cada uno caia en su celda y la fila la marcaba la pieza mas alta de al lado:
+   quedaba un hueco muerto de 330px bajo la primera foto que se leia como error,
+   no como aire. */
+.calle .col{grid-column:1/7;display:flex;flex-direction:column;
+  gap:clamp(20px,2.6vw,34px)}
+.calle .col figure{aspect-ratio:4/3}
+.calle .f2{grid-column:8/13;aspect-ratio:3/4;margin-top:clamp(20px,3vw,52px)}
+.calle .f3{grid-column:2/6;aspect-ratio:3/4}
+.calle .f4{grid-column:7/13;aspect-ratio:3/2;align-self:end}
+.calle .f5{grid-column:3/11;aspect-ratio:3/2;margin-top:clamp(14px,2vw,30px)}
+
+/* El texto vive DENTRO de la rejilla: es parte de la composicion, no un
+   encabezado colgado encima. */
+.calle .dice{padding:0}
+.calle .dice p{color:var(--mut);font-size:clamp(15px,1.35vw,17.5px);line-height:1.7;max-width:44ch}
+.calle .dice .gr{font-size:clamp(24px,3vw,38px);font-weight:800;letter-spacing:-.035em;
+  line-height:1.1;color:var(--paper);margin-bottom:14px}
+
+@media(max-width:860px){
+  .calle{grid-template-columns:1fr 1fr;gap:12px}
+  .calle .col{grid-column:1/3;gap:14px}
+  .calle .col figure{aspect-ratio:3/2}
+  .calle .f4,.calle .f5{grid-column:1/3;aspect-ratio:3/2;margin-top:0}
+  .calle .f2,.calle .f3{grid-column:auto;aspect-ratio:3/4;margin-top:0}
+}
+
+/* ══ VIDEO ══════════════════════════════════════════════════════════════
+   Va mudo y en bucle, como una pieza de sala de exhibición, no como algo
+   que haya que "ver". Solo empieza a descargar cuando entra en pantalla:
+   arrancarlo con la página se lleva por delante el tiempo de carga y, en
+   móvil, los datos de alguien que quizá nunca baje hasta aquí. */
+.cine{position:relative;border-radius:18px;overflow:hidden;background:#000;
+  margin-top:44px;aspect-ratio:53/30}
+.cine video{width:100%;height:100%;object-fit:cover;display:block}
+.cine::after{content:"";position:absolute;inset:0;border-radius:18px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);pointer-events:none}
+.cine .rotulo{position:absolute;left:0;right:0;bottom:0;z-index:2;
+  padding:70px 30px 24px;font-size:13.5px;color:#fafafa;
+  background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
+@media(max-width:960px){ .cine{border-radius:14px} }
+
+/* ══ LA CALLE ═══════════════════════════════════════════════════════════
    Eran tres recuadros iguales en fila y Daniel lo dijo exacto: parecia una
    pagina generica, sin emocion. Tres cajas del mismo tamano es un patron de
    catalogo; la emocion en automotriz viene de la ESCALA y de romper la
