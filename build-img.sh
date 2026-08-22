@@ -175,8 +175,13 @@ while IFS='|' read -r dest origen corte; do
   # se conservaba el 50%—, y por eso en el telefono se veia un cuarto de carro.
   # Ahora sale SIN recorte, en la proporcion que trae el original; es el
   # maquetado el que se adapta a la foto y no al reves.
+  # A 3:2 y no en la proporcion de cada original: las tres fuentes vienen en
+  # 1,50 · 1,78 · 1,45 y con alturas distintas las diapositivas apiladas quedan
+  # desiguales, asi que el texto de una cae encima de la imagen de otra durante
+  # el fundido. Igualarlas cuesta poco -del Vigo se recorta un 16% de ancho,
+  # de la Mage un 3% de alto- y es un recorte suave, no el 50% de antes.
   ffmpeg -nostdin -v error -y -i "$fuente" -vf \
-    "scale=1200:-2:flags=lanczos,unsharp=3:3:0.5" "$TMP/c.png"
+    "scale=1200:800:force_original_aspect_ratio=increase:flags=lanczos,crop=1200:800:(iw-1200)/2:(ih-800)*${corte},unsharp=3:3:0.5" "$TMP/c.png"
   cwebp -quiet -metadata none -q 82 -m 6 -sharp_yuv "$TMP/c.png" -o "$IMG/carr/${dest}-m.webp"
   ffmpeg -nostdin -v error -y -i "$TMP/c.png" -q:v 3 "$IMG/carr/${dest}-m.jpg"
   printf "  %-6s desde %s\n" "$dest" "$origen"
