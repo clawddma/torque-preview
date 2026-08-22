@@ -531,13 +531,27 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
 
 @media(max-width:860px){
   .carr{height:auto;aspect-ratio:3/4;max-height:76vh}
-  .carr .velo{background:
-    radial-gradient(150% 62% at 50% 118%, rgba(4,5,6,.97) 0%, rgba(4,5,6,.86) 34%, rgba(4,5,6,.4) 58%, transparent 78%),
-    linear-gradient(to top, rgba(5,6,7,.96) 22%, rgba(5,6,7,.6) 46%, rgba(5,6,7,.1) 70%, transparent 86%)}
-  .carr h2{max-width:none;font-size:clamp(34px,8.8vw,50px)}
-  .carr .txt .wrap{padding-bottom:44px}
-  .carr .pie{flex-direction:column;align-items:stretch;gap:20px}
+  /* EL CARRUSEL EN MOVIL. Estaba a 82vh con la foto en `cover` y el texto
+     encima: un marco de 390x692 -vertical- comiendose una foto apaisada, que
+     obliga a tirar la mitad del ancho. En el telefono se veia un cuarto de
+     carro y era, de lejos, lo peor del sitio.
+     Aqui el maquetado se adapta a la foto: la imagen entra ENTERA, en su
+     proporcion, y el texto baja debajo sobre el fondo. Las diapositivas se
+     apilan en la misma celda de una rejilla para conservar el fundido. */
+  .carr{height:auto;display:grid}
+  .carr .slide{position:relative;grid-area:1/1;display:flex;flex-direction:column}
+  .carr .slide img{height:auto;object-fit:contain;flex:none}
+  .carr .velo{display:none}
+  .carr .txt{position:relative;background:var(--ink);flex:1;
+    display:flex;align-items:flex-end;padding-top:22px}
+  .carr h2{max-width:none;font-size:clamp(32px,8.4vw,46px)}
+  .carr .txt .wrap{padding-bottom:34px;width:100%}
+  .carr .lin{margin-bottom:12px}
+  .carr .dato{text-shadow:none}
+  .carr .dato b{text-shadow:none}
+  .carr .pie{flex-direction:column;align-items:stretch;gap:18px}
   .carr .cta{text-align:center;width:100%}
+  .carr .dots{position:relative}
   .carr .dots .wrap{padding-bottom:16px}
 }
 

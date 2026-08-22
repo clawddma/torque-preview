@@ -159,8 +159,8 @@ while IFS='|' read -r dest origen corte; do
   fuente="$SRC/$origen"
   [ -f "$fuente" ] || { echo "  ⚠ falta: $origen"; continue; }
 
-  # -d 2560 y -d2x 3840 para pantallas retina; -m es la vertical de movil.
-  for par in "d:2560:1440" "d2x:3840:2160" "m:1200:1600"; do
+  # -d 2560 y -d2x 3840 recortan a 16:9 para la banda de escritorio.
+  for par in "d:2560:1440" "d2x:3840:2160"; do
     suf="${par%%:*}"; resto="${par#*:}"; aw="${resto%%:*}"; ah="${resto##*:}"
     ffmpeg -nostdin -v error -y -i "$fuente" -vf \
       "scale=${aw}:${ah}:force_original_aspect_ratio=increase:flags=lanczos,crop=${aw}:${ah}:(iw-${aw})/2:(ih-${ah})*${corte},unsharp=3:3:0.5" \
@@ -168,6 +168,17 @@ while IFS='|' read -r dest origen corte; do
     cwebp -quiet -metadata none -q 82 -m 6 -sharp_yuv "$TMP/c.png" -o "$IMG/carr/${dest}-${suf}.webp"
     ffmpeg -nostdin -v error -y -i "$TMP/c.png" -q:v 3 "$IMG/carr/${dest}-${suf}.jpg"
   done
+
+  # -m es la de movil, y aqui estaba el error que se veia peor de todo el
+  # sitio: se recortaba a 1200x1600 VERTICAL desde una foto APAISADA. Cubrir
+  # un marco 3:4 con una imagen 3:2 obliga a tirar la mitad del ancho —medido:
+  # se conservaba el 50%—, y por eso en el telefono se veia un cuarto de carro.
+  # Ahora sale SIN recorte, en la proporcion que trae el original; es el
+  # maquetado el que se adapta a la foto y no al reves.
+  ffmpeg -nostdin -v error -y -i "$fuente" -vf \
+    "scale=1200:-2:flags=lanczos,unsharp=3:3:0.5" "$TMP/c.png"
+  cwebp -quiet -metadata none -q 82 -m 6 -sharp_yuv "$TMP/c.png" -o "$IMG/carr/${dest}-m.webp"
+  ffmpeg -nostdin -v error -y -i "$TMP/c.png" -q:v 3 "$IMG/carr/${dest}-m.jpg"
   printf "  %-6s desde %s\n" "$dest" "$origen"
 done <<< "$CARRUSEL"
 
