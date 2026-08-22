@@ -32,27 +32,38 @@ const PUERTO = parseInt(process.env.PORT_VITRINA || "8795", 10);
    revela los catorce módulos privados con sus nombres y direcciones. */
 const PAGINAS = new Set([
   "/index.html", "/vigo.html", "/box.html", "/mage.html",
+  /* Agosto de 2026: el catálogo pasó de tres referencias a siete. Estas dos
+     nacieron fuera de la lista, como manda el diseño de este servidor, y
+     entran a mano. */
+  "/e70.html", "/huge.html",
   "/simulador.html", "/politica-datos.html"
 ]);
 const SUELTOS = new Set([
   "/torq.css",                       /* la hoja de estilos de TODO el sitio */
-  "/tema.js", "/menu.js", "/contacto.js", "/favicon.ico"
+  "/tema.js", "/menu.js", "/contacto.js", "/favicon.ico",
+  /* Los tres del catálogo nuevo. `catalogo.js` son precios y fichas, que es
+     justo lo que el sitio publica; `catalogo-vista.js` pinta la vitrina y
+     `efectos.js` es movimiento. Sin ellos la portada carga pero el catálogo
+     queda vacío: el <div id="catalogo"> no lo llena nadie. */
+  "/catalogo.js", "/catalogo-vista.js", "/efectos.js"
 ]);
-/* Las fotos de los vehículos. Solo `img/`: `fuentes/` tiene capturas de
-   inventario y de cobertura que son material de trabajo, no de vitrina. */
-const CARPETAS = ["/img/"];
+/* Las fotos de los vehículos y el video de la Vigo. Solo `img/` y `video/`:
+   `fuentes/` tiene capturas de inventario y de cobertura que son material de
+   trabajo, no de vitrina. */
+const CARPETAS = ["/img/", "/video/"];
 
 const TIPOS = {
   ".html": "text/html; charset=utf-8",
   ".js":   "application/javascript; charset=utf-8",
   ".css":  "text/css; charset=utf-8",
   ".jpg":  "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
-  ".svg":  "image/svg+xml", ".webp": "image/webp", ".ico": "image/x-icon"
+  ".svg":  "image/svg+xml", ".webp": "image/webp", ".ico": "image/x-icon",
+  ".mp4":  "video/mp4"
 };
 
 /* Extensiones servibles dentro de las carpetas permitidas: aunque alguien
    dejara un .md o un .json dentro de img/, no saldría. */
-const EXT_OK = new Set([".jpg",".jpeg",".png",".svg",".webp",".ico",".css"]);
+const EXT_OK = new Set([".jpg",".jpeg",".png",".svg",".webp",".ico",".css",".mp4"]);
 
 /* La marca de tiempo del CSS. Se mira en cada peticion de HTML y no una
    sola vez al arrancar: si se calculara al arrancar, editar torq.css no
