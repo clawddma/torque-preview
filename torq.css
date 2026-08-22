@@ -538,12 +538,15 @@ footer .cols{display:flex;flex-wrap:wrap;gap:44px;justify-content:space-between}
      Aqui el maquetado se adapta a la foto: la imagen entra ENTERA, en su
      proporcion, y el texto baja debajo sobre el fondo. Las diapositivas se
      apilan en la misma celda de una rejilla para conservar el fundido. */
-  .carr{height:auto;display:grid}
-  .carr .slide{position:relative;grid-area:1/1;display:flex;flex-direction:column}
-  .carr .slide img{height:auto;object-fit:contain;flex:none}
+  .carr{height:auto;display:grid;overflow:visible}
+  .carr .slide{position:relative;grid-area:1/1;display:block}
+  .carr .slide img{height:auto;object-fit:contain}
   .carr .velo{display:none}
-  .carr .txt{position:relative;background:var(--ink);flex:1;
-    display:flex;align-items:flex-end;padding-top:22px}
+  /* Sin `flex:1` en el texto: con las diapositivas apiladas en una celda de
+     rejilla, ese flex lo estiraba hasta 691px dentro de un carrusel de 618 y
+     `overflow:hidden` se comia el titular entero. La imagen y el texto van uno
+     detras de otro y la altura sale sola. */
+  .carr .txt{position:relative;background:var(--ink);padding-top:22px}
   .carr h2{max-width:none;font-size:clamp(32px,8.4vw,46px)}
   .carr .txt .wrap{padding-bottom:34px;width:100%}
   .carr .lin{margin-bottom:12px}
