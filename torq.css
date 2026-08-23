@@ -917,11 +917,11 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
    Esta variante fija el ratio EXACTO del archivo (2400x1021) en los dos
    tamanos: no hay nada que recortar en ancho porque nunca se le pide un
    marco mas angosto que el que ya trae. */
-.calle-hero.panoramica img{aspect-ratio:2400/1021}
+.calle-hero.panoramica img{aspect-ratio:3960/1697}
 
 @media(max-width:860px){
   .calle-hero img{aspect-ratio:4/3}
-  .calle-hero.panoramica img{aspect-ratio:2400/1021}
+  .calle-hero.panoramica img{aspect-ratio:3960/1697}
   .calle-hero .sobre{align-items:flex-end;padding-bottom:26px}
   .calle-hero::before{background:linear-gradient(to top,rgba(4,5,6,.9) 0%,rgba(4,5,6,.6) 34%,rgba(4,5,6,.1) 62%,transparent 78%)}
   .calle-par{grid-template-columns:1fr;gap:12px}
