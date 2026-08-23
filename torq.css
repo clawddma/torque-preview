@@ -878,8 +878,17 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
 .calle-par figcaption b{display:block;font-size:11px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:5px}
 
+/* .panoramica es para fotos donde el gesto ocupa TODO el ancho -varios carros
+   en fila, casi sin margen a los lados-. El recorte 4/3 del hero normal en
+   movil corta por los costados, y ahi se pierden los carros de las puntas.
+   Esta variante fija el ratio EXACTO del archivo (2400x1021) en los dos
+   tamanos: no hay nada que recortar en ancho porque nunca se le pide un
+   marco mas angosto que el que ya trae. */
+.calle-hero.panoramica img{aspect-ratio:2400/1021}
+
 @media(max-width:860px){
   .calle-hero img{aspect-ratio:4/3}
+  .calle-hero.panoramica img{aspect-ratio:2400/1021}
   .calle-hero .sobre{align-items:flex-end;padding-bottom:26px}
   .calle-hero::before{background:linear-gradient(to top,rgba(4,5,6,.9) 0%,rgba(4,5,6,.6) 34%,rgba(4,5,6,.1) 62%,transparent 78%)}
   .calle-par{grid-template-columns:1fr;gap:12px}

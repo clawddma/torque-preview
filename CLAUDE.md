@@ -49,6 +49,16 @@ Se publica en GitHub Pages: https://clawddma.github.io/torque-preview/
 - **Ninguna cifra sin fuente.** El E70 salió publicado sin ficha técnica porque
   Corautos no la ha entregado, y su página lo dice en vez de rellenarla con
   datos de internet. Si un dato no existe, se dice que no existe.
+- **Material de marca sí, foto de otro concesionario no.** Dongfeng y Corautos
+  publican fotografía y CGI de prensa que Daniel, como contratista de la marca,
+  puede usar (paisajismo, gama completa, uso en la calle). Lo que NUNCA se
+  publica es una imagen que muestre el logo, el teléfono o la sala de OTRO
+  concesionario — la del showroom bielorruso `dongfeng.by` es el ejemplo real
+  que se descartó. Tampoco fotos con placa de otro mercado (china, con nombre
+  de modelo distinto) por la confusión de identidad que generan. Antes de
+  publicar cualquier imagen que no salió de `build-img.sh`, mirarla completa:
+  si aparece un rótulo, un vendedor o un interior de sala que no es de
+  Corautos, se descarta.
 - **Las fotos se procesan con `build-img.sh`, nunca a mano.** Los originales
   vienen entre 4.000 y 6.200 px y no se sirven crudos. El script saca los
   anchos del `srcset`, el respaldo jpeg, la miniatura y el desenfoque de
@@ -183,3 +193,18 @@ antes de pasarle un enlace a alguien.
 Los archivos fuente pesados (3 PDFs de mercado, 50 fotos originales, script de
 empaquetado `build_artifact.py`) viven fuera de este repo, en
 `~/braindma/proyectos/Mobility now/torque/`. Una sesión en la nube no los tiene.
+
+---
+
+<!-- VIVO:BEGIN -->
+## Estado real — 2026-08-23 00:30
+
+> Regenerado cada noche por `recursos/sistema-vivo/sistema_vivo.py` leyendo el
+> disco. **No editar a mano**: lo de afuera de las marcas sí es tuyo y se respeta.
+
+- **Git** · rama `main` · **5 archivos sin commitear**
+  - último commit: `5e9a440 2026-08-22 Quita el paralaje del hero y corrige contraste en el simulador`
+- **Publicado en:** [torq.bellapop.co](https://torq.bellapop.co) (:8790) · [torque.bellapop.co](https://torque.bellapop.co) (:8790) · [torque.themesa.co](https://torque.themesa.co) (:8795) · [showroom.bellapop.co](https://showroom.bellapop.co) (:8795)
+- **Automatización** · ninguna: nada corre solo en este proyecto
+- **Código** · 418 archivos · último cambio 2026-08-22 en `_v2.html`
+<!-- VIVO:END -->
