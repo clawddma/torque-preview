@@ -75,14 +75,6 @@
       <div class="txt"><div class="wrap">
         <div class="lin"><span class="tag">Entrega inmediata</span><span class="mod">Dongfeng Vigo E2+ &middot; 100% el&eacute;ctrica</span></div>
         <h2>Todo lo que esperas<br>de una SUV</h2>
-        <div class="pie">
-          <div class="izq">
-            <span class="dato">de autonom&iacute;a<b>470 km</b></span>
-            <span class="dato">carga al 80%<b>18 min</b></span>
-            <span class="dato">Desde<b>$89.990.000</b></span>
-          </div>
-          <a class="cta" href="vigo.html">Conocer la Vigo</a>
-        </div>
       </div></div>
     </div>
     <div class="slide" data-i="1">
@@ -97,14 +89,6 @@
       <div class="txt"><div class="wrap">
         <div class="lin"><span class="tag">Entrega inmediata</span><span class="mod">Dongfeng Box &middot; 100% el&eacute;ctrico</span></div>
         <h2>La ciudad,<br>sin pensar en nada</h2>
-        <div class="pie">
-          <div class="izq">
-            <span class="dato">de autonom&iacute;a<b>430 km</b></span>
-            <span class="dato">carga r&aacute;pida<b>30 min</b></span>
-            <span class="dato">Desde<b>$69.990.000</b></span>
-          </div>
-          <a class="cta" href="box.html">Conocer el Box</a>
-        </div>
       </div></div>
     </div>
     <div class="slide" data-i="2">
@@ -119,18 +103,41 @@
       <div class="txt"><div class="wrap">
         <div class="lin"><span class="tag">Entrega inmediata</span><span class="mod">Dongfeng Mage HEV &middot; H&iacute;brida</span></div>
         <h2>288 caballos<br>que se recargan solos</h2>
-        <div class="pie">
-          <div class="izq">
-            <span class="dato">de autonom&iacute;a<b>1.000 km</b></span>
-            <span class="dato">cada 100 km<b>4,9 L</b></span>
-            <span class="dato">Desde<b>$109.990.000</b></span>
-          </div>
-          <a class="cta" href="mage.html">Conocer la Mage</a>
-        </div>
       </div></div>
     </div>
     <div class="dots"><div class="wrap"><button data-go="0" aria-label="Ver vigo" aria-current="true"><i></i></button><button data-go="1" aria-label="Ver box"><i></i></button><button data-go="2" aria-label="Ver mage"><i></i></button></div></div>
 </section>
+
+<!-- La franja vive FUERA de la foto: en la referencia de Dongfeng NZ el hero
+     es solo foto+titular, sin cifras ni CTA encima. Las cifras bajan aquí,
+     sobre superficie plana, sincronizadas con la diapositiva activa por el
+     mismo indice data-i que ya usan los puntos. -->
+<div class="carr-franja"><div class="wrap">
+  <div class="fr-slide on" data-i="0">
+    <div class="izq">
+      <span class="dato">de autonom&iacute;a<b>470 km</b></span>
+      <span class="dato">carga al 80%<b>18 min</b></span>
+      <span class="dato">Desde<b>$89.990.000</b></span>
+    </div>
+    <a class="cta" href="vigo.html">Conocer la Vigo</a>
+  </div>
+  <div class="fr-slide" data-i="1">
+    <div class="izq">
+      <span class="dato">de autonom&iacute;a<b>430 km</b></span>
+      <span class="dato">carga r&aacute;pida<b>30 min</b></span>
+      <span class="dato">Desde<b>$69.990.000</b></span>
+    </div>
+    <a class="cta" href="box.html">Conocer el Box</a>
+  </div>
+  <div class="fr-slide" data-i="2">
+    <div class="izq">
+      <span class="dato">de autonom&iacute;a<b>1.000 km</b></span>
+      <span class="dato">cada 100 km<b>4,9 L</b></span>
+      <span class="dato">Desde<b>$109.990.000</b></span>
+    </div>
+    <a class="cta" href="mage.html">Conocer la Mage</a>
+  </div>
+</div></div>
 
 <main>
 <section class="carr-sec" style="padding-top:0"><div class="wrap">
@@ -301,6 +308,7 @@
   var c=document.getElementById("carr"); if(!c) return;
   var sl=[].slice.call(c.querySelectorAll(".slide"));
   var dots=[].slice.call(c.querySelectorAll(".dots button"));
+  var fr=[].slice.call(document.querySelectorAll(".carr-franja .fr-slide"));
   var DUR=5000, i=0, t0=0, raf=null, visible=true;
   var quieto=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   c.style.setProperty("--dur", DUR+"ms");
@@ -308,6 +316,7 @@
   function pinta(n){
     i=(n+sl.length)%sl.length;
     sl.forEach(function(s,k){ s.classList.toggle("on",k===i) });
+    fr.forEach(function(f,k){ f.classList.toggle("on",k===i) });
     dots.forEach(function(d,k){
       var on=k===i, barra=d.querySelector("i");
       barra.style.transition="none"; barra.style.width="0";

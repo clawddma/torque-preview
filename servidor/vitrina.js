@@ -45,7 +45,9 @@ const SUELTOS = new Set([
      justo lo que el sitio publica; `catalogo-vista.js` pinta la vitrina y
      `efectos.js` es movimiento. Sin ellos la portada carga pero el catálogo
      queda vacío: el <div id="catalogo"> no lo llena nadie. */
-  "/catalogo.js", "/catalogo-vista.js", "/efectos.js"
+  "/catalogo.js", "/catalogo-vista.js", "/efectos.js",
+  /* Submenu pegajoso de secciones en las paginas de producto. */
+  "/subnav.js"
 ]);
 /* Las fotos de los vehículos y el video de la Vigo. Solo `img/` y `video/`:
    `fuentes/` tiene capturas de inventario y de cobertura que son material de
@@ -84,7 +86,7 @@ function version(rel){
    es la peor combinacion posible porque parece que el cambio no se hizo.
    Regla: si un archivo decide lo que se VE, va versionado. */
 var VERSIONAR = ["torq.css", "catalogo.js", "catalogo-vista.js", "efectos.js",
-                 "contacto.js", "menu.js", "tema.js"];
+                 "contacto.js", "menu.js", "tema.js", "subnav.js"];
 
 function permitido(rel){
   if (PAGINAS.has(rel) || SUELTOS.has(rel)) return true;
