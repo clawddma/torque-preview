@@ -866,27 +866,6 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
 .calle-par figcaption b{display:block;font-size:11px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:5px}
 
-/* El visor de 360: arrastrar la foto rota entre angulos y colores reales -la
-   logica ya vive en efectos.js, seccion 4-. A diferencia del selector de
-   color del Box, estas fotos NO comparten encuadre -son angulos distintos
-   en dos unidades distintas-, asi que aqui .contiene usa object-fit:contain
-   en vez de cover: ninguna puede recortar el carro solo porque otra foto del
-   set tenga otra proporcion. */
-.calle-360{margin-top:32px}
-.calle-360 .carro.contiene{cursor:grab;touch-action:pan-y}
-.calle-360 .carro.contiene:active{cursor:grabbing}
-.calle-360 .carro.contiene img{object-fit:contain;padding:22px}
-.calle-360 .minis{display:flex;gap:10px;margin-top:16px;overflow-x:auto;padding-bottom:4px}
-.calle-360 .minis::-webkit-scrollbar{display:none}
-.calle-360 .mini{flex:none;width:84px;aspect-ratio:4/3;border-radius:9px;overflow:hidden;
-  padding:0;cursor:pointer;border:2px solid transparent;background:var(--ph);
-  opacity:.5;transition:opacity .2s,border-color .2s}
-.calle-360 .mini[aria-pressed="true"]{opacity:1;border-color:var(--acc)}
-.calle-360 .mini img{width:100%;height:100%;object-fit:cover;display:block}
-.calle-360 .pie{margin-top:14px;font-size:14.5px;font-weight:700;color:var(--paper)}
-.calle-360 .ayuda{margin-top:4px;font-size:13px;color:var(--mut2)}
-@media(max-width:860px){ .calle-360 .mini{width:68px} }
-
 /* .panoramica es para fotos donde el gesto ocupa TODO el ancho -varios carros
    en fila, casi sin margen a los lados-. El recorte 4/3 del hero normal en
    movil corta por los costados, y ahi se pierden los carros de las puntas.
