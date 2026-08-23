@@ -703,7 +703,23 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
 .cine .rotulo{position:absolute;left:0;right:0;bottom:0;z-index:2;
   padding:70px 30px 24px;font-size:13.5px;color:#fafafa;
   background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
-@media(max-width:960px){ .cine{border-radius:14px} }
+/* Si el autoplay muteado falla -pasa en varios navegadores moviles bajo
+   ahorro de datos o ahorro de bateria, y ahi no queda ningun rastro visible,
+   el poster se queda fijo para siempre-, este boton es el unico camino que
+   SIEMPRE funciona: un tap es gesto de usuario real, y ningun navegador
+   bloquea eso. Se oculta solo en cuanto el video arranca, por el camino que
+   haya sido. */
+.cine .jugar{position:absolute;inset:0;z-index:3;display:flex;align-items:center;
+  justify-content:center;background:rgba(0,0,0,.22);border:0;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;transition:opacity .25s}
+.cine .jugar.oculto{opacity:0;pointer-events:none}
+.cine .jugar span{width:76px;height:76px;border-radius:50%;
+  background:rgba(8,9,10,.72);backdrop-filter:blur(2px);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 24px rgba(0,0,0,.4)}
+.cine .jugar svg{width:26px;height:26px;margin-left:4px;fill:#fafafa}
+@media(max-width:960px){ .cine{border-radius:14px} .cine .jugar span{width:60px;height:60px}
+  .cine .jugar svg{width:20px;height:20px} }
 
 /* ══ MOMENTO ═════════════════════════════════════════════════════════════
    Iba con cinco fotogramas del video de la Vigo: eran feos, se veian
@@ -748,20 +764,6 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
   .momento .texto{padding:28px 24px 34px}
 }
 
-/* ══ VIDEO ══════════════════════════════════════════════════════════════
-   Va mudo y en bucle, como una pieza de sala de exhibición, no como algo
-   que haya que "ver". Solo empieza a descargar cuando entra en pantalla:
-   arrancarlo con la página se lleva por delante el tiempo de carga y, en
-   móvil, los datos de alguien que quizá nunca baje hasta aquí. */
-.cine{position:relative;border-radius:18px;overflow:hidden;background:#000;
-  margin-top:44px;aspect-ratio:53/30}
-.cine video{width:100%;height:100%;object-fit:cover;display:block}
-.cine::after{content:"";position:absolute;inset:0;border-radius:18px;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);pointer-events:none}
-.cine .rotulo{position:absolute;left:0;right:0;bottom:0;z-index:2;
-  padding:70px 30px 24px;font-size:13.5px;color:#fafafa;
-  background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
-@media(max-width:960px){ .cine{border-radius:14px} }
 
 /* ══ LA CALLE ═══════════════════════════════════════════════════════════
    Un carro no se compra por la ficha: se compra por lo que se siente. Y lo
@@ -817,20 +819,6 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
   .calle .f2,.calle .f3{grid-column:auto;aspect-ratio:3/4;margin-top:0}
 }
 
-/* ══ VIDEO ══════════════════════════════════════════════════════════════
-   Va mudo y en bucle, como una pieza de sala de exhibición, no como algo
-   que haya que "ver". Solo empieza a descargar cuando entra en pantalla:
-   arrancarlo con la página se lleva por delante el tiempo de carga y, en
-   móvil, los datos de alguien que quizá nunca baje hasta aquí. */
-.cine{position:relative;border-radius:18px;overflow:hidden;background:#000;
-  margin-top:44px;aspect-ratio:53/30}
-.cine video{width:100%;height:100%;object-fit:cover;display:block}
-.cine::after{content:"";position:absolute;inset:0;border-radius:18px;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);pointer-events:none}
-.cine .rotulo{position:absolute;left:0;right:0;bottom:0;z-index:2;
-  padding:70px 30px 24px;font-size:13.5px;color:#fafafa;
-  background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
-@media(max-width:960px){ .cine{border-radius:14px} }
 
 /* ══ LA CALLE ═══════════════════════════════════════════════════════════
    Eran tres recuadros iguales en fila y Daniel lo dijo exacto: parecia una
@@ -878,6 +866,27 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
 .calle-par figcaption b{display:block;font-size:11px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:5px}
 
+/* El visor de 360: arrastrar la foto rota entre angulos y colores reales -la
+   logica ya vive en efectos.js, seccion 4-. A diferencia del selector de
+   color del Box, estas fotos NO comparten encuadre -son angulos distintos
+   en dos unidades distintas-, asi que aqui .contiene usa object-fit:contain
+   en vez de cover: ninguna puede recortar el carro solo porque otra foto del
+   set tenga otra proporcion. */
+.calle-360{margin-top:32px}
+.calle-360 .carro.contiene{cursor:grab;touch-action:pan-y}
+.calle-360 .carro.contiene:active{cursor:grabbing}
+.calle-360 .carro.contiene img{object-fit:contain;padding:22px}
+.calle-360 .minis{display:flex;gap:10px;margin-top:16px;overflow-x:auto;padding-bottom:4px}
+.calle-360 .minis::-webkit-scrollbar{display:none}
+.calle-360 .mini{flex:none;width:84px;aspect-ratio:4/3;border-radius:9px;overflow:hidden;
+  padding:0;cursor:pointer;border:2px solid transparent;background:var(--ph);
+  opacity:.5;transition:opacity .2s,border-color .2s}
+.calle-360 .mini[aria-pressed="true"]{opacity:1;border-color:var(--acc)}
+.calle-360 .mini img{width:100%;height:100%;object-fit:cover;display:block}
+.calle-360 .pie{margin-top:14px;font-size:14.5px;font-weight:700;color:var(--paper)}
+.calle-360 .ayuda{margin-top:4px;font-size:13px;color:var(--mut2)}
+@media(max-width:860px){ .calle-360 .mini{width:68px} }
+
 /* .panoramica es para fotos donde el gesto ocupa TODO el ancho -varios carros
    en fila, casi sin margen a los lados-. El recorte 4/3 del hero normal en
    movil corta por los costados, y ahi se pierden los carros de las puntas.
@@ -894,20 +903,6 @@ img[style*="background-image"]{background-position:center;background-repeat:no-r
   .calle-par{grid-template-columns:1fr;gap:12px}
 }
 
-/* ══ VIDEO ══════════════════════════════════════════════════════════════
-   Va mudo y en bucle, como una pieza de sala de exhibición, no como algo
-   que haya que "ver". Solo empieza a descargar cuando entra en pantalla:
-   arrancarlo con la página se lleva por delante el tiempo de carga y, en
-   móvil, los datos de alguien que quizá nunca baje hasta aquí. */
-.cine{position:relative;border-radius:18px;overflow:hidden;background:#000;
-  margin-top:44px;aspect-ratio:53/30}
-.cine video{width:100%;height:100%;object-fit:cover;display:block}
-.cine::after{content:"";position:absolute;inset:0;border-radius:18px;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);pointer-events:none}
-.cine .rotulo{position:absolute;left:0;right:0;bottom:0;z-index:2;
-  padding:70px 30px 24px;font-size:13.5px;color:#fafafa;
-  background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
-@media(max-width:960px){ .cine{border-radius:14px} }
 
 /* ══ LA CALLE ═══════════════════════════════════════════════════════════
    Las unicas imagenes de ambiente del proyecto salen del video de la Vigo,

@@ -94,12 +94,14 @@
     if (!marco || !minis.length) return;
 
     var capas = marco.querySelectorAll("img.capa");
+    var pie = host.querySelector(".pie");
     var actual = 0;
 
     function ir(i) {
       actual = (i + capas.length) % capas.length;
       capas.forEach(function (c, n) { c.classList.toggle("on", n === actual); });
       minis.forEach(function (m, n) { m.setAttribute("aria-pressed", String(n === actual)); });
+      if (pie) pie.textContent = capas[actual].dataset.nombre || "";
       // La siguiente se pide antes de que la pidan: el arrastre tiene que
       // responder ya, no esperar una descarga.
       var sig = capas[(actual + 1) % capas.length];
@@ -116,7 +118,9 @@
       if (x0 === null) return;
       var d = e.clientX - x0;
       x0 = null;
-      if (Math.abs(d) > 40) ir(actual + (d < 0 ? 1 : -1));
+      // Arrastrar hacia la DERECHA (d>0) muestra la SIGUIENTE foto: es el
+      // sentido que se pidió explícitamente, como pasar la página.
+      if (Math.abs(d) > 40) ir(actual + (d > 0 ? 1 : -1));
     });
     marco.addEventListener("pointercancel", function () { x0 = null; });
 
@@ -129,8 +133,30 @@
   /* ── 5 · El video solo carga si se va a ver ─────────────────────────────
      Un video que arranca a descargar con la página se lleva por delante el
      tiempo de carga de todo lo demás, y en móvil se lleva también los datos
-     de alguien que quizá nunca baje hasta ahí. */
+     de alguien que quizá nunca baje hasta ahí.
+
+     El autoplay mudo no es garantía en todos los navegadores móviles -en
+     varios se bloquea con ahorro de datos o de batería activo-, y cuando
+     falla la promesa de play() se descarta en silencio: el poster se queda
+     fijo para siempre y nadie se entera de que hay un video ahí. El botón
+     .jugar es el camino que SIEMPRE funciona porque un tap es un gesto de
+     usuario real; se oculta apenas el video arranca, sea por el autoplay o
+     por el propio tap. */
   var videos = document.querySelectorAll("video[data-src]");
+  if (videos.length) {
+    videos.forEach(function (v) {
+      var boton = v.parentElement.querySelector(".jugar");
+      var arranco = function () { if (boton) boton.classList.add("oculto"); };
+      v.addEventListener("playing", arranco);
+      if (boton) {
+        boton.addEventListener("click", function () {
+          if (!v.src) v.src = v.dataset.src;
+          var p = v.play();
+          if (p) p.catch(function () {});
+        });
+      }
+    });
+  }
   if (videos.length && "IntersectionObserver" in window) {
     var ojoV = new IntersectionObserver(function (entradas) {
       entradas.forEach(function (e) {
