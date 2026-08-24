@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#08090a">
+<meta name="color-scheme" content="dark light">
+<title>Simulador de gasto &middot; Tu carro contra el que te interesa &middot; TORQUE</title>
+<meta name="description" content="Dinos con qu&eacute; anda tu carro &mdash; gasolina, di&eacute;sel, h&iacute;brido, el&eacute;ctrico o gas &mdash; y en qu&eacute; ciudad, y te calculamos cu&aacute;nto gastas hoy frente al Dongfeng que est&aacute;s mirando.">
+<link rel="canonical" href="https://torq.bellapop.co/simulador.html">
+<link rel="stylesheet" href="torq.css">
+<script src="tema.js"></script>
+<script src="admin.js" defer></script>
+<script src="menu.js" defer></script>
+<style>
+/* selects con la misma voz que los inputs del sistema */
+.campo select{width:100%;background:var(--ink);border:1px solid var(--line2);color:var(--paper);
+  padding:14px 16px;border-radius:10px;font-size:17px;font-family:inherit;cursor:pointer;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%238b9199' stroke-width='1.8'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center}
+.campo select:focus{outline:none;border-color:var(--acc)}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+/* el formulario son dos preguntas distintas —qué tienes, qué miras—
+   y se leen mejor rotuladas que corridas */
+.grupo{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  font-weight:700;margin-bottom:16px}
+.grupo.sep{margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+.sim-out .barra .t small{color:var(--mut2);font-weight:500;margin-left:7px;font-size:11.5px}
+@media(max-width:560px){ .dos{grid-template-columns:1fr} }
+
+/* la tecnología es la primera pregunta y cambia todo lo demás: va como
+   fila de botones, no como lista desplegable, para que se vea completa */
+.tecs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px}
+.tecs button{background:var(--ink);border:1px solid var(--line2);color:var(--mut);
+  border-radius:100px;padding:9px 15px;font-size:13.5px;font-family:inherit;font-weight:600;
+  cursor:pointer;transition:color .2s,border-color .2s,background .2s}
+.tecs button:hover{color:var(--paper)}
+.tecs button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);
+  color:var(--onacc);font-weight:700}
+
+/* el rendimiento se estima y se puede corregir: es el dato del cliente */
+.campo .pista{font-size:11.5px;color:var(--mut2);margin-top:7px;line-height:1.5}
+.campo .pista button{background:none;border:none;padding:0;font:inherit;color:var(--acc);
+  text-decoration:underline;cursor:pointer}
+
+/* ── el año completo ───────────────────────────────────────────────
+   Una tabla, no tarjetas: son seis rubros comparables línea por línea y
+   la tabla es la forma en que la gente ya sabe leer una cuenta. Las
+   casillas del cliente van DENTRO de la tabla, en su columna: escribe
+   sobre la cifra que quiere corregir, sin buscarla en otro formulario. */
+.tit2{font-size:clamp(28px,3.6vw,44px);font-weight:800;letter-spacing:-.03em;
+  line-height:1.06;margin-top:clamp(64px,7vw,104px);padding-top:clamp(40px,5vw,64px);
+  border-top:1px solid var(--line)}
+.anual{width:100%;border-collapse:collapse;font-size:15.5px;margin-top:38px;min-width:660px}
+.anual th,.anual td{padding:15px 16px;border-bottom:1px solid var(--line);text-align:left}
+.anual thead th{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--mut2);
+  font-weight:700;border-bottom:1px solid var(--line2);vertical-align:bottom}
+.anual thead th small{display:block;font-size:9.5px;letter-spacing:.1em;color:var(--mut2);
+  font-weight:600;margin-top:5px;opacity:.75}
+.anual tbody th{font-weight:500;color:var(--mut);font-size:15px}
+.anual .r{text-align:right;font-variant-numeric:tabular-nums}
+.anual .yo{background:color-mix(in srgb, var(--acc) 6%, transparent);color:var(--paper);font-weight:700}
+.anual thead .yo{color:var(--acc);font-size:14px;letter-spacing:.02em;text-transform:none}
+.anual input{width:100%;max-width:170px;background:var(--ink);border:1px solid var(--line2);
+  color:var(--paper);padding:9px 12px;border-radius:8px;font-size:15px;font-family:inherit;
+  text-align:right;font-variant-numeric:tabular-nums}
+.anual input:focus{outline:none;border-color:var(--acc)}
+.anual .total th,.anual .total td{border-bottom:none;border-top:1px solid var(--line2);
+  padding-top:19px;font-size:19px;font-weight:800;letter-spacing:-.02em}
+.anual .total th{color:var(--paper)}
+.anual .gana{color:var(--acc)}
+.anual .pierde{color:var(--mut)}
+.cierre{font-size:clamp(17px,1.7vw,21px);line-height:1.6;margin-top:30px;color:var(--mut);
+  max-width:860px}
+.cierre b{color:var(--paper)}
+.cierre .cifra{color:var(--acc)}
+
+/* En un teléfono la tabla de cuatro columnas se deslizaba y el visitante
+   veía solo la suya: la comparación, que es el punto entero, quedaba
+   fuera de pantalla. Se sacrifica la columna de diferencia -el color y el
+   total ya la cuentan- y las dos que importan caben juntas. */
+@media(max-width:700px){
+  .anual{min-width:0;font-size:14px;table-layout:fixed}
+  .anual th,.anual td{padding:12px 9px}
+  .anual thead th:last-child,.anual tbody td:last-child{display:none}
+  .anual tbody th{font-size:13.5px;width:33%}
+  .anual thead th small{font-size:8.5px;letter-spacing:.06em}
+  .anual input{max-width:100%;padding:8px 9px;font-size:14px}
+  .anual .total th,.anual .total td{font-size:16px;padding-top:16px}
+}
+
+/* ── el resumen: los dos comparativos en un solo número ────────────
+   Va DESPUÉS de la letra chica a propósito: el visitante ya vio de dónde
+   sale cada cifra, y esta tarjeta cierra con la conclusión sin repetir
+   el argumento. Es la pieza que empuja al botón, así que lleva su propio
+   fondo -como el resultado de arriba- para que no se lea como una nota
+   más entre las dos de metodología. */
+.resumen{border:1px solid var(--line2);border-radius:16px;
+  padding:clamp(30px,4vw,44px) clamp(28px,4vw,40px);margin-top:40px;
+  background:linear-gradient(160deg,color-mix(in srgb, var(--acc) 8%, transparent),var(--ink2) 55%);
+  text-align:center}
+.resumen .eyebrow{display:block}
+.tit3{font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-.03em;margin-top:8px}
+.resumen .lede{margin-left:auto;margin-right:auto;color:var(--mut)}
+.resumen .tecs{justify-content:center;margin:26px 0 0}
+.resumen .big{font-size:clamp(44px,7vw,68px);margin:20px 0 6px}
+.resumen .sm{max-width:560px;margin-left:auto;margin-right:auto;color:var(--mut);font-size:15.5px;line-height:1.7}
+/* este CTA lleva una cifra variable y a veces es más largo que
+   "Hablar con un asesor": el nowrap de .cta sirve a los botones cortos
+   del resto del sitio, pero aquí necesita envolver */
+/* este CTA lleva una cifra variable y a veces es más largo que
+   "Hablar con un asesor": el nowrap de .cta sirve a los botones cortos
+   del resto del sitio, pero aquí necesita envolver */
+.resumen .cta{display:inline-block;margin-top:24px;padding:15px 34px;font-size:16px;
+  white-space:normal;max-width:min(100%,420px);line-height:1.35}
+
+/* ── la línea de tiempo ────────────────────────────────────────────
+   Una decisión de compra no se piensa en "por año": se piensa en hoy,
+   al año y a cinco años. Antes esas tres cifras existían pero dos
+   estaban escondidas dentro de un párrafo, y la de cinco años -que es
+   la que de verdad convence- había que buscarla leyendo. Aquí las tres
+   se ven de un golpe, y cada una dice qué incluye para que nadie tenga
+   que confiar a ciegas en el total. */
+.linea{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:22px;
+  background:var(--line2);border:1px solid var(--line2);border-radius:14px;overflow:hidden}
+.hito{background:var(--ink2);padding:22px 16px;text-align:center;display:flex;
+  flex-direction:column;justify-content:flex-start;gap:6px}
+.hito .et{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--mut2);font-weight:700}
+.hito b{font-size:clamp(21px,2.6vw,30px);font-weight:800;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;line-height:1.05}
+.hito .pie{font-size:11.5px;color:var(--mut2);line-height:1.4}
+/* el hito de cinco años es el que cierra el argumento: se destaca sin
+   gritar, con el mismo tinte de acento que ya usa la tarjeta.
+   La etiqueta y el pie de ESTE hito no pueden heredar --mut2: contra el
+   tinte de acento dan 3,28 en tema claro y 4,15 en oscuro -medido-, los dos
+   por debajo del minimo de 4,5. --paper si pasa de sobra en los dos temas
+   (11,7 y 15,2), y es la unica combinacion que no depende de que tan fuerte
+   quede el tinte. */
+.hito.destaca{background:color-mix(in srgb, var(--acc) 9%, var(--ink2))}
+.hito.destaca .et,.hito.destaca .pie{color:var(--paper)}
+@media(max-width:620px){
+  /* apilado y en dos columnas -etiqueta a la izquierda, cifra a la
+     derecha-: en 375px tres columnas dejan la cifra en dos renglones */
+  .linea{grid-template-columns:1fr}
+  .hito{flex-direction:row;align-items:baseline;justify-content:space-between;
+    text-align:left;padding:16px 18px;gap:12px;flex-wrap:wrap}
+  .hito .et{flex:1 1 auto}
+  .hito b{font-size:20px}
+  .hito .pie{flex:1 0 100%;text-align:left}
+}
+
+/* el horizonte de años: una barra, no un campo de texto -Camilo pidió
+   justo esto-, porque es una cantidad chica (1 a 10) que se explora
+   deslizando, no se escribe */
+.anios-plan{margin-top:26px;max-width:460px;margin-left:auto;margin-right:auto}
+.anios-plan label{display:block;font-size:13.5px;color:var(--mut);margin-bottom:10px}
+.anios-plan label b{color:var(--paper);font-variant-numeric:tabular-nums}
+.anios-plan input[type=range]{width:100%;accent-color:var(--acc);height:20px;cursor:pointer}
+
+/* el bloque de reventa: la respuesta directa al miedo de "cuánto pierdo
+   cuando lo venda". Vive fuera de la grilla de hitos porque es una idea
+   distinta -no es saldo acumulado, es cu&aacute;nto del precio de compra
+   se recupera entre el ahorro y lo que el carro todav&iacute;a vale-. */
+.reventa{margin-top:20px;padding-top:20px;border-top:1px solid var(--line);
+  max-width:640px;margin-left:auto;margin-right:auto;text-align:center}
+.reventa .k{font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--acc);font-weight:700}
+.reventa .sm{margin-top:10px;color:var(--mut);font-size:15px;line-height:1.7}
+.reventa .sm b{color:var(--paper)}
+
+/* la lectura del carro del cliente, antes de las barras */
+.lectura{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px;
+  font-size:15px;color:var(--mut);line-height:1.7}
+.lectura b{color:var(--paper)}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="wrap">
+  <a class="marca" href="index.html" aria-label="TORQUE, inicio">
+    <span class="logo">T<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="34" fill="none" stroke="currentColor" stroke-width="13" stroke-dasharray="4.9 8.45" stroke-dashoffset="2.45"/><circle cx="50" cy="50" r="10.5" fill="#c8f24a"/></svg>RQUE</span>
+    <span class="lema">Tu carro, tu mejor decisi&oacute;n.</span>
+  </a>
+  <ul class="navl">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="vigo.html">Vigo</a></li>
+    <li><a href="box.html">Box</a></li>
+    <li><a href="mage.html">Mage</a></li>
+    <li><a href="simulador.html" aria-current="page">Simulador</a></li>
+  </ul>
+  <a class="cta" href="#contacto">Cotizar</a>
+</div></nav>
+
+<main style="padding-top:var(--nav)">
+<section><div class="wrap">
+  <p class="eyebrow">Tu carro contra el que te interesa</p>
+  <h2 class="tit">Dinos qu&eacute; manejas<br>y d&oacute;nde lo manejas</h2>
+  <p class="lede">Empieza por lo que mueve tu carro hoy &mdash; gasolina, di&eacute;sel, h&iacute;brido, el&eacute;ctrico o gas &mdash; porque cada uno se paga distinto. Con tu referencia y tu ciudad estimamos lo que gastas y lo ponemos frente al que est&aacute;s mirando.</p>
+
+  <div class="sim">
+    <div class="sim-in">
+      <p class="grupo">Tu carro de hoy</p>
+      <div class="campo">
+        <label id="lb-tec">&iquest;Con qu&eacute; anda?</label>
+        <div class="tecs" id="q-tec" role="group" aria-labelledby="lb-tec"></div>
+      </div>
+      <div class="dos">
+        <div class="campo"><label for="q-marca">Marca</label>
+          <select id="q-marca"></select></div>
+        <div class="campo" id="w-ref"><label for="q-ref">Referencia</label>
+          <select id="q-ref"></select></div>
+      </div>
+      <div class="campo" id="w-trans"><label for="q-trans">Transmisi&oacute;n</label>
+        <select id="q-trans">
+          <option value="1">Mec&aacute;nica</option>
+          <option value="1.06">Autom&aacute;tica</option>
+        </select></div>
+      <div class="campo"><label for="q-ciudad">Ciudad donde anda el carro</label>
+        <select id="q-ciudad"></select></div>
+      <div class="campo">
+        <label for="q-rend" id="lb-rend">Rendimiento</label>
+        <input id="q-rend" type="text" inputmode="decimal" value="">
+        <p class="pista" id="p-rend"></p>
+      </div>
+      <div class="dos">
+        <div class="campo"><label for="q-km">Kil&oacute;metros al mes</label>
+          <input id="q-km" type="text" inputmode="numeric" value="1.200"></div>
+        <div class="campo" id="w-precio"><label for="q-precio" id="lb-precio">Precio del gal&oacute;n</label>
+          <input id="q-precio" type="text" inputmode="numeric" value="16.000"></div>
+      </div>
+      <div class="dos">
+        <div class="campo" id="w-anio"><label for="q-anio">A&ntilde;o de tu carro</label>
+          <select id="q-anio"></select></div>
+        <div class="campo"><label for="q-valor">Valor aproximado hoy</label>
+          <input id="q-valor" type="text" inputmode="numeric" value="60.000.000">
+          <p class="pista" id="p-valor">Con esto estimamos tu seguro y tu impuesto.</p></div>
+      </div>
+
+      <p class="grupo sep">El que te interesa</p>
+      <div class="dos">
+        <div class="campo"><label for="q-nmarca">Marca</label>
+          <select id="q-nmarca"><option>Dongfeng</option></select></div>
+        <div class="campo"><label for="q-nuestro">Modelo</label>
+          <select id="q-nuestro">
+            <option value="vigo">Vigo &middot; SUV el&eacute;ctrica</option>
+            <option value="box">Box &middot; hatchback el&eacute;ctrico</option>
+            <option value="mage">Mage &middot; SUV h&iacute;brida</option>
+          </select></div>
+      </div>
+      <div class="campo" id="w-nversion"><label for="q-nversion">Versi&oacute;n</label>
+        <select id="q-nversion"></select></div>
+      <div class="campo" id="w-kwh"><label for="q-kwh">Precio del kWh en tu casa (est&aacute; en el recibo de la luz)</label>
+        <input id="q-kwh" type="text" inputmode="numeric" value="950"></div>
+      <div class="campo" id="w-corriente" hidden><label for="q-corriente">Precio del gal&oacute;n de corriente (lo que tanquea la Mage)</label>
+        <input id="q-corriente" type="text" inputmode="numeric" value="16.000"></div>
+    </div>
+
+    <div class="sim-out">
+      <p class="lectura" id="r-lectura">&mdash;</p>
+      <span class="k" id="r-titulo">Gasto de energ&iacute;a al mes</span>
+      <div class="big" id="r-mes">&mdash;</div>
+      <p class="sm" id="r-frase">&mdash;</p>
+      <div class="barras">
+        <div class="barra"><div class="t"><span id="r-n0">Tu carro hoy</span><b id="r-b0">&mdash;</b></div>
+          <div class="p"><i id="r-f0" style="background:var(--mut2);width:0"></i></div></div>
+        <div class="barra"><div class="t"><span id="r-n1">&mdash;</span><b id="r-b1">&mdash;</b></div>
+          <div class="p"><i id="r-f1" style="background:var(--acc);width:0"></i></div></div>
+      </div>
+      <p class="ayuda" id="r-pie">&mdash;</p>
+    </div>
+  </div>
+
+  <h3 class="tit2">El a&ntilde;o completo, no solo la energ&iacute;a</h3>
+  <p class="lede" style="margin-top:14px">La gasolina es lo que se siente cada semana, pero no es lo que m&aacute;s cambia. El seguro, el impuesto, el SOAT y los mantenimientos se pagan una vez al a&ntilde;o y ah&iacute; es donde un el&eacute;ctrico se separa: paga <b style="color:var(--paper)">1% de impuesto</b> en vez de 2,5%, tiene descuento en SOAT y no lleva aceite, filtros, correa ni buj&iacute;as. <b style="color:var(--paper)">Escribe lo que t&uacute; pagas</b> y la cuenta se hace con tus cifras.</p>
+
+  <div class="tw"><table class="anual">
+    <thead><tr>
+      <th>Al a&ntilde;o</th>
+      <th class="r">Tu carro <small>escr&iacute;belo t&uacute;</small></th>
+      <th class="r yo" id="a-cab">&mdash; <small>estimado</small></th>
+      <th class="r">Diferencia</th>
+    </tr></thead>
+    <tbody>
+      <tr><th>Combustible / Energ&iacute;a</th>
+        <td class="r" id="a-e0">&mdash;</td><td class="r yo" id="a-e1">&mdash;</td><td class="r" id="a-e2">&mdash;</td></tr>
+      <tr><th>Seguro todo riesgo</th>
+        <td class="r"><input id="a-seg" type="text" inputmode="numeric"></td>
+        <td class="r yo" id="a-seg1">&mdash;</td><td class="r" id="a-seg2">&mdash;</td></tr>
+      <tr><th>SOAT</th>
+        <td class="r"><input id="a-soat" type="text" inputmode="numeric"></td>
+        <td class="r yo" id="a-soat1">&mdash;</td><td class="r" id="a-soat2">&mdash;</td></tr>
+      <tr><th>T&eacute;cnico-mec&aacute;nica</th>
+        <td class="r"><input id="a-rtm" type="text" inputmode="numeric"></td>
+        <td class="r yo" id="a-rtm1">&mdash;</td><td class="r" id="a-rtm2">&mdash;</td></tr>
+      <tr><th>Impuesto vehicular</th>
+        <td class="r"><input id="a-imp" type="text" inputmode="numeric"></td>
+        <td class="r yo" id="a-imp1">&mdash;</td><td class="r" id="a-imp2">&mdash;</td></tr>
+      <tr><th>Mantenimiento</th>
+        <td class="r"><input id="a-man" type="text" inputmode="numeric"></td>
+        <td class="r yo" id="a-man1">&mdash;</td><td class="r" id="a-man2">&mdash;</td></tr>
+      <tr class="total"><th>Total al a&ntilde;o</th>
+        <td class="r" id="a-t0">&mdash;</td><td class="r yo" id="a-t1">&mdash;</td><td class="r" id="a-t2">&mdash;</td></tr>
+    </tbody>
+  </table></div>
+  <p class="cierre" id="a-cierre">&mdash;</p>
+
+  <div class="nota"><b>De d&oacute;nde salen nuestras estimaciones:</b> el <b>seguro</b>, 3,3% del valor del veh&iacute;culo &mdash; la referencia real que nos dio un cliente de la Vigo. El <b>impuesto</b>, la tarifa por rango de valor comercial (1,5% · 2,5% · 3,5%), salvo los el&eacute;ctricos, que por la <b>Ley 1964 de 2019</b> tienen tarifa m&aacute;xima del 1% y 10% de descuento en el <b>SOAT</b>. La <b>t&eacute;cnico-mec&aacute;nica</b> no se le hace a un carro nuevo los primeros a&ntilde;os. El <b>mantenimiento</b> es el plan de taller para unos 15.000 km al a&ntilde;o: un el&eacute;ctrico no lleva aceite, filtro de aceite, correa ni buj&iacute;as. Son estimaciones para comparar; <b>el valor exacto de tu ciudad lo liquida el asesor</b>, porque el impuesto lo cobra cada departamento y el seguro depende de tu historial.</div>
+
+  <div class="nota"><b>C&oacute;mo calculamos:</b> el rendimiento arranca de la cifra de ficha de tu referencia en la tecnolog&iacute;a que nos digas, y se ajusta por la altura y la topograf&iacute;a de tu ciudad &mdash; en monta&ntilde;a un motor de combusti&oacute;n gasta m&aacute;s; un h&iacute;brido lo siente a la mitad porque regenera en las bajadas, y un el&eacute;ctrico casi no lo siente. <b>Ese n&uacute;mero lo puedes corregir</b>: si conoces el rendimiento real de tu carro, escr&iacute;belo y calculamos con el tuyo. Es una estimaci&oacute;n para comparar, no una promesa. Si tu carro gasta menos que el nuestro, aqu&iacute; lo va a decir.</div>
+
+  <div class="nota"><b>Y la depreciaci&oacute;n, de d&oacute;nde sale:</b> se revisaron cerca de 700 anuncios reales en tucarro.com (31 de julio de 2026) de 12 referencias &mdash;desde un Picanto hasta una Hilux&mdash; comparando cu&aacute;nto pide el mercado por cada a&ntilde;o de modelo. La curva que mejor sigue esos datos: un carro pierde r&aacute;pido los primeros a&ntilde;os y se aplana despu&eacute;s, sin llegar nunca a cero. <b>El&eacute;ctricos e h&iacute;bridos usan la misma curva</b>: en Colombia todav&iacute;a no hay suficiente historial de reventa propio para esas tecnolog&iacute;as &mdash;la Mage, por ejemplo, no tiene una sola matr&iacute;cula en el pa&iacute;s a&uacute;n&mdash;, as&iacute; que es el punto de partida m&aacute;s honesto que tenemos, no un dato espec&iacute;fico de la marca. El valor real de reventa siempre depende del estado del carro y de qui&eacute;n compre.</div>
+
+  <div class="resumen" id="resumen">
+    <p class="eyebrow" id="rs-cap-eyebrow">Al cambiarte, hoy</p>
+    <h3 class="tit3" id="rs-cap-tit">&mdash;</h3>
+    <div class="big" id="rs-cap">&mdash;</div>
+    <p class="sm" id="rs-cap-frase" style="max-width:640px;margin-left:auto;margin-right:auto">&mdash;</p>
+
+    <p class="grupo sep" style="margin-top:38px;text-align:center;border-top:none;padding-top:0">M&aacute;s lo que ahorras cada a&ntilde;o</p>
+    <p class="lede" style="margin-top:6px;max-width:640px">Elige qu&eacute; contar: lo que dejas de pagar en consumo, en seguro e impuesto y taller, o los dos juntos.</p>
+    <div class="tecs" id="rs-tecs" role="group" aria-label="Qu&eacute; ahorro sumar">
+      <button type="button" data-rs="consumo" aria-pressed="true">Ahorro en consumo</button>
+      <button type="button" data-rs="gastos" aria-pressed="true">Ahorro en seguro, impuesto y taller</button>
+    </div>
+    <div class="big" id="rs-total">&mdash;</div>
+    <p class="sm" id="rs-frase">&mdash;</p>
+
+    <p class="grupo sep" style="margin-top:38px;text-align:center;border-top:none;padding-top:0">Todo junto, en el tiempo</p>
+    <div class="anios-plan">
+      <label for="rs-anios">&iquest;Cu&aacute;ntos a&ntilde;os planeas tener el carro? <b id="rs-anios-val">5 a&ntilde;os</b></label>
+      <input type="range" id="rs-anios" min="1" max="10" step="1" value="5">
+    </div>
+    <div class="linea" id="rs-linea">
+      <div class="hito">
+        <span class="et">Hoy, al cambiarte</span>
+        <b id="rs-h0">&mdash;</b>
+        <span class="pie" id="rs-p0">&mdash;</span>
+      </div>
+      <div class="hito">
+        <span class="et">En 1 a&ntilde;o</span>
+        <b id="rs-h1">&mdash;</b>
+        <span class="pie" id="rs-p1">&mdash;</span>
+      </div>
+      <div class="hito destaca">
+        <span class="et" id="rs-et5">En 5 a&ntilde;os</span>
+        <b id="rs-h5">&mdash;</b>
+        <span class="pie" id="rs-p5">&mdash;</span>
+      </div>
+    </div>
+
+    <div class="reventa" id="rs-reventa">
+      <span class="k">Y la reventa, para que no te quede la duda</span>
+      <p class="sm" id="rs-reventa-frase">&mdash;</p>
+    </div>
+
+    <p class="cierre" id="rs-cierre" style="margin-top:26px;max-width:640px;margin-left:auto;margin-right:auto;text-align:center">&mdash;</p>
+    <a class="cta" href="#contacto" id="rs-cta">Hablar con un asesor</a>
+  </div>
+</div></section>
+
+<section id="contacto" style="background:var(--ink2);border-top:1px solid var(--line)"><div class="wrap">
+  <p class="eyebrow">Hablemos</p>
+  <h2 class="tit">&iquest;Quieres verlo con cifras reales?</h2>
+  <p class="lede">Cuatro preguntas r&aacute;pidas y te escribimos por WhatsApp con la disponibilidad en tu ciudad y los gastos de matr&iacute;cula calculados por el asesor.</p>
+  <div id="qz-host" data-vehiculo=""></div>
+</div></section>
+</main>
+
+<footer><div class="wrap cols">
+  <div><b style="color:var(--paper);font-size:15px">TORQUE</b><br>Tu carro, tu mejor decisi&oacute;n.<br>Compra y renting de carros.<br>Comercializador de Corautos Andino.</div>
+  <div><a href="vigo.html">Vigo</a> &middot; <a href="box.html">Box</a> &middot; <a href="mage.html">Mage</a> &middot; <a href="simulador.html">Simulador</a><br><a href="politica-datos.html">Pol&iacute;tica de Tratamiento de Datos</a></div>
+  <div>El simulador estima con cifras de ficha ajustadas por ciudad; el consumo real var&iacute;a.<br>
+    Precios de combustible y de energ&iacute;a editables: los pone el visitante.<br>
+    Precios de venta con IVA incluido, sin gastos de matr&iacute;cula.</div>
+</div></footer>
+
+<script src="contacto.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   EL SIMULADOR — tu carro contra el que te interesa
+
+   La primera pregunta es CON QUÉ ANDA, y no es un detalle: antes el
+   simulador daba por hecho que todo carro es de gasolina y le cobraba
+   $16.000 el galón al dueño de un diésel —que paga bastante menos—, al
+   de un carro a gas y al de un eléctrico, que no tanquea. La cuenta
+   quedaba mal para todo el que no tuviera un carro de gasolina, que es
+   justo el visitante más informado y el más difícil de convencer.
+
+   Las cinco tecnologías del mercado colombiano se pagan por unidades
+   distintas: galón de corriente, galón de ACPM, metro cúbico de GNV o
+   kilovatio hora. La tecnología elegida filtra las marcas y las
+   referencias —un Hilux no existe en eléctrico— y define qué campo de
+   precio se pregunta.
+
+   El resto del diseño se mantiene: se compara contra UN SOLO vehículo
+   nuestro, el que él elija, porque tres a la vez son un menú y no una
+   decisión. Si llega desde una ficha (?v=vigo), llega ya elegido.
+
+   El rendimiento estimado es EDITABLE. Si el visitante lo corrige,
+   usamos su número tal cual y no le aplicamos ningún ajuste: él conoce
+   su carro mejor que una tabla. Eso es lo que sostiene la credibilidad
+   del resultado.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+  var GAL = 3.785411784;          /* litros por galón */
+
+  /* ── las cinco tecnologías ─────────────────────────────────────────
+     clave: de dónde sale la cifra de ficha en la tabla de carros
+     unidad de cobro y precio por defecto, editable siempre */
+  var TEC = {
+    gasolina:  { nom:"Gasolina", clave:"g", precio:16000, campo:"Precio del gal&oacute;n de corriente",
+                 rend:"km por gal&oacute;n", ajuste:"gas" },
+    diesel:    { nom:"Di&eacute;sel", clave:"d", precio:11500, campo:"Precio del gal&oacute;n de ACPM",
+                 rend:"km por gal&oacute;n", ajuste:"gas" },
+    hibrida:   { nom:"H&iacute;brida", clave:"h", precio:16000, campo:"Precio del gal&oacute;n de corriente",
+                 rend:"km por gal&oacute;n", ajuste:"hib" },
+    gnv:       { nom:"Gas (GNV)", clave:"g", precio:3200, campo:"Precio del metro c&uacute;bico de GNV",
+                 rend:"km por m&sup3;", ajuste:"gas", gnv:true },
+    electrica: { nom:"El&eacute;ctrica", clave:"e", precio:950, campo:"Precio del kWh",
+                 rend:"kWh cada 100 km", ajuste:"ele", kwh:true }
+  };
+  var ORDEN_TEC = ["gasolina","diesel","hibrida","gnv","electrica"];
+
+  /* ── los carros del mercado ────────────────────────────────────────
+     Consumo combinado de ficha. g = gasolina y d = diésel en L/100 km,
+     h = híbrido en L/100 km, e = eléctrico en kWh/100 km. Una referencia
+     aparece solo en las tecnologías en que de verdad se vende aquí: el
+     Corolla Cross está en gasolina y en híbrido, el Hilux solo en
+     diésel, el Dolphin solo en eléctrico.
+     El GNV se deriva de la cifra de gasolina con un 5% de castigo: un
+     motor convertido rinde algo menos por unidad de energía. */
+  /* Las referencias NO son una lista de ocurrencia: son las más
+     matriculadas del país en 2025 y 2026 según el cubo RUNT del
+     proyecto —el mismo que alimenta el panel de mercado—, filtradas a
+     vehículos de pasajeros y en orden alfabético, marca y referencia.
+     Que el visitante encuentre SU carro en los primeros segundos es lo
+     que hace que se quede: una lista con carros que nadie tiene se
+     siente inventada, y con razón.
+
+     Consumo combinado de ficha. g = gasolina y d = diésel en L/100 km,
+     h = híbrido en L/100 km, e = eléctrico en kWh/100 km. Una referencia
+     aparece solo en las tecnologías en que de verdad se vende aquí: el
+     Corolla Cross está en gasolina y en híbrido, el Hilux solo en diésel,
+     el Seagull solo en eléctrico.
+     El GNV se deriva de la cifra de gasolina con un 5% de castigo: un
+     motor convertido rinde algo menos por unidad de energía.
+
+     Renault es la marca que más registra en Colombia —150.473 livianos
+     matriculados 2022-2026 según el cubo RUNT, más que Chevrolet
+     (101.533)— y la Duster es su línea líder: es la marca y la
+     referencia con las que abre el simulador. */
+  /* "seg" clasifica cada referencia por tamaño/precio para poder
+     sugerir un valor de uso aproximado (ver valorEstimado más abajo):
+     citycar · compacto · suvCompacta · suvGrande · premium. */
+  var CARROS = {
+    "BYD":        [{n:"Seagull",e:11.5,seg:"citycar"},{n:"Yuan Plus",e:15.0,seg:"suvCompacta"},
+                   {n:"Yuan Up",e:14.0,seg:"compacto"}],
+    "Chery":      [{n:"iCar 03",e:16.0,seg:"suvCompacta"},{n:"Tiggo 4 Pro",g:7.0,seg:"suvCompacta"},
+                   {n:"Tiggo 7 Pro",g:7.6,seg:"suvCompacta"}],
+    "Chevrolet":  [{n:"Captiva",g:7.8,seg:"suvGrande"},{n:"Colorado",d:9.5,seg:"suvGrande"},
+                   {n:"Joy",g:6.2,seg:"citycar"},{n:"Montana",g:7.2,seg:"compacto"},
+                   {n:"Onix",g:5.8,seg:"compacto"},{n:"Tracker",g:6.5,seg:"suvCompacta"}],
+    "Citro&euml;n":[{n:"C3",g:6.5,seg:"compacto"},{n:"C3 Aircross",g:6.8,seg:"suvCompacta"}],
+    "Cupra":      [{n:"Formentor",g:7.8,seg:"premium"}],
+    "Deepal":     [{n:"S05",e:15.5,seg:"suvCompacta"}],
+    "Ford":       [{n:"Escape",g:8.7,h:6.0,seg:"suvGrande"},{n:"Ranger",d:8.6,seg:"suvGrande"},
+                   {n:"Territory",g:7.9,h:5.9,seg:"suvCompacta"}],
+    "Hyundai":    [{n:"Accent",g:6.5,seg:"compacto"},{n:"Grand i10",g:5.7,seg:"citycar"},
+                   {n:"Kona",g:7.0,h:4.6,e:14.7,seg:"suvCompacta"},
+                   {n:"Tucson",g:8.3,h:5.6,seg:"suvGrande"},{n:"Venue",g:6.8,seg:"suvCompacta"}],
+    "Kia":        [{n:"K3",g:6.3,seg:"compacto"},{n:"K3 Cross",g:6.6,seg:"suvCompacta"},
+                   {n:"Niro",h:4.4,e:15.3,seg:"suvCompacta"},{n:"Picanto",g:5.6,seg:"citycar"},
+                   {n:"Seltos",g:7.0,seg:"suvCompacta"},{n:"Sonet",g:6.6,seg:"suvCompacta"},
+                   {n:"Soluto",g:6.2,seg:"compacto"},{n:"Sportage",g:8.0,h:5.6,seg:"suvGrande"},
+                   {n:"Stonic",g:6.4,seg:"suvCompacta"}],
+    "Mazda":      [{n:"2 Hatchback",g:6.1,seg:"compacto"},{n:"2 Sed&aacute;n",g:6.1,seg:"compacto"},
+                   {n:"3",g:6.9,seg:"compacto"},{n:"CX-30",g:7.2,seg:"suvCompacta"},
+                   {n:"CX-5",g:8.2,seg:"suvGrande"},{n:"CX-50",g:8.0,seg:"suvGrande"}],
+    "Nissan":     [{n:"Frontier",d:9.0,seg:"suvGrande"},{n:"Kicks",g:6.9,h:5.0,seg:"suvCompacta"},
+                   {n:"Qashqai",h:5.4,seg:"suvCompacta"},{n:"Versa",g:6.5,seg:"compacto"},
+                   {n:"X-Trail",g:8.3,h:6.1,seg:"suvGrande"}],
+    "Peugeot":    [{n:"2008",g:6.6,seg:"suvCompacta"}],
+    "Renault":    [{n:"Arkana",g:7.0,seg:"suvCompacta"},{n:"Duster",g:7.4,d:6.2,h:4.8,seg:"suvCompacta"},
+                   {n:"Duster Oroch",g:7.8,seg:"suvGrande"},{n:"Kardian",g:6.2,seg:"suvCompacta"},
+                   {n:"Kwid",g:5.4,e:13.5,seg:"citycar"},{n:"Logan",g:6.6,seg:"compacto"},
+                   {n:"Sandero",g:6.8,seg:"compacto"},{n:"Stepway",g:6.9,seg:"compacto"}],
+    "Suzuki":     [{n:"Dzire",g:5.4,seg:"compacto"},{n:"Fronx",g:6.0,seg:"suvCompacta"},
+                   {n:"Grand Vitara",h:5.4,seg:"suvCompacta"},{n:"Jimny",g:7.4,seg:"suvCompacta"},
+                   {n:"S-Cross",g:6.8,seg:"suvCompacta"},{n:"Swift",g:5.5,seg:"compacto"}],
+    "Tesla":      [{n:"Model 3",e:14.0,seg:"premium"},{n:"Model Y",e:15.5,seg:"premium"}],
+    "Toyota":     [{n:"4Runner",g:12.5,seg:"suvGrande"},{n:"Corolla",g:6.4,h:4.2,seg:"compacto"},
+                   {n:"Corolla Cross",g:7.0,h:4.3,seg:"suvCompacta"},{n:"Fortuner",d:8.9,seg:"suvGrande"},
+                   {n:"Hilux",d:8.4,seg:"suvGrande"},{n:"Land Cruiser Prado",d:9.8,seg:"premium"},
+                   {n:"Yaris Cross",g:6.3,h:4.4,seg:"suvCompacta"}],
+    "Volkswagen": [{n:"Nivus",g:6.6,seg:"suvCompacta"},{n:"Polo",g:6.4,seg:"compacto"},
+                   {n:"T-Cross",g:6.7,seg:"suvCompacta"}]
+  };
+  var OTRA = "Otra marca / no est&aacute; la m&iacute;a";
+
+  /* msnm y relieve de las ciudades donde más se cotiza.
+     relieve: 1 = plano · 1.08 = ondulado · 1.16 = montañoso */
+  var CIUDADES = [
+    ["Bogotá",2640,1.08],["Medellín",1495,1.16],["Cali",1018,1],
+    ["Barranquilla",18,1],["Cartagena",2,1],["Bucaramanga",959,1.16],
+    ["Cúcuta",320,1.08],["Ibagué",1285,1.08],["Pereira",1411,1.16],
+    ["Manizales",2160,1.16],["Armenia",1483,1.08],["Villavicencio",467,1],
+    ["Santa Marta",6,1],["Montería",18,1],["Neiva",442,1],
+    ["Valledupar",168,1],["Pasto",2527,1.16],["Popayán",1738,1.08],
+    ["Tunja",2820,1.08],["Duitama",2530,1.08],["Otra ciudad",1000,1.08]
+  ];
+
+  /* La línea, CON sus versiones reales: Daniel lo pidió porque comparar
+     siempre contra el precio "desde" no es un comparativo justo cuando el
+     cliente puede elegir la versión con más autonomía. Consumos reales
+     estimados: la ficha CLTC de un eléctrico es optimista, así que se le
+     suma 15% para no prometer de menos. */
+  var LINEA = {
+    vigo: { nombre:"Vigo", art:"la", lead:"Vigo", ele:true, url:"vigo.html",
+      versiones:[
+        {n:"E2",  precio:84990000, kwh100: 44.94/401*100*1.15, ficha:"401 km CLTC · 44,94 kWh"},
+        {n:"E2+", precio:89990000, kwh100: 51.87/470*100*1.15, ficha:"470 km CLTC · 51,87 kWh"}
+      ]},
+    box: { nombre:"Box", art:"el", lead:"Box", ele:true, url:"box.html",
+      versiones:[
+        {n:"E2", precio:69990000, kwh100: 43.89/430*100*1.15, ficha:"430 km CLTC · 43,89 kWh"},
+        {n:"E3", precio:74990000, kwh100: 43.89/430*100*1.15, ficha:"430 km CLTC · 43,89 kWh, m\u00e1s equipada"}
+      ]},
+    mage: { nombre:"Mage", art:"la", lead:"Mage", ele:false, url:"mage.html",
+      versiones:[
+        {n:"HEV", precio:109990000, l100:4.9, ficha:"4,9 L/100 km · no se enchufa"}
+      ]},
+    huge: { nombre:"Huge", art:"la", lead:"Huge", ele:false, url:"huge.html",
+      versiones:[
+        {n:"G59", precio:124990000, l100:5.8, ficha:"5,8 L/100 km · no se enchufa"}
+      ]}
+    /* El E70 no está: el simulador se apoya entero en el consumo y su ficha
+       todavía no llegó de Corautos. Meterlo con una cifra inventada haría
+       que la única herramienta que da números exactos diera uno falso. */
+  };
+
+  /* ── lo que cuesta TENER el carro un año ───────────────────────────
+     Camilo lo pidió con razón: la gasolina es lo que se siente cada
+     semana, pero el seguro y el impuesto son lo que de verdad separa a
+     un eléctrico. Cada cifra nuestra sale de una regla que se enseña en
+     pantalla; las del cliente las escribe él y ganan siempre.
+
+       seguro  3,3% del valor comercial. El ancla es real: el seguro de
+               una Vigo de $84.990.000 le costó a un cliente cerca de
+               $2.800.000. No se le da descuento al eléctrico, porque no
+               lo tiene: la batería encarece la póliza.
+       SOAT    tarifa de automóvil particular. Los eléctricos llevan 10%
+               de descuento por la Ley 1964 de 2019.
+       RTM     no se le hace a un carro nuevo los primeros años. Para el
+               carro usado del cliente entra completa.
+       impuesto  tarifa por rango de valor comercial. Los eléctricos
+               tienen tope del 1% por la misma ley; al híbrido no se le
+               reclama descuento, que en eso la norma no es uniforme y
+               preferimos quedarnos cortos.
+       mantenimiento  plan de taller para unos 15.000 km al año. Un
+               eléctrico no lleva aceite, filtro de aceite, correa ni
+               bujías: es la diferencia que Camilo señaló. */
+  /* Valor de USO aproximado del carro del cliente: antes era un
+     "$60.000.000" a ciegas, igual para un Picanto que para una Prado. No
+     es una tasación -eso lo hace el asesor con el carro delante- sino un
+     punto de partida razonable para que el cliente no tenga que
+     adivinarlo: precio nuevo aproximado por segmento hoy en Colombia,
+     depreciado por la edad del carro. Siempre editable, y siempre se
+     dice que es grueso. */
+  var SEGMENTOS = { citycar:60000000, compacto:78000000, suvCompacta:105000000,
+                     suvGrande:155000000, premium:230000000 };
+
+  /* La curva de depreciación, SIN inventarla: se sacó de ~700 anuncios
+     reales de tucarro.com (31 de julio de 2026), 12 referencias entre
+     citycar y SUV grande -Picanto, Kwid, Onix, Logan, Corolla, Duster,
+     CX-30, Seltos, Creta, Fortuner, Hilux, Duster Oroch-, comparando el
+     precio pedido de cada año de modelo contra el año más reciente con
+     al menos 3 anuncios (se descartan 2026-2027: mezclan carros 0&nbsp;km
+     con usados y rompen la curva). Los puntos reales, medianos:
+       +1 año 95,8% · +2 88,3% · +3 80,7% · +4 76,9% · +5 73,3% ·
+       +6 72,2% · +7 66,7% · +8 63,6% · +9 62,8% · +11 53,9% · +13 49,9%
+     Se les ajustó la curva más simple que los sigue de cerca -pierde
+     rápido al principio, se aplana después, nunca llega a cero-:
+     retiene = 36% + 64% × 0,90^edad. El eléctrico e híbrido usan la
+     MISMA curva: el mercado de usados de estas tecnologías en Colombia
+     es todavía muy nuevo para tener su propio historial confiable -la
+     Mage, por ejemplo, tiene cero matrículas en el país-, así que es un
+     punto de partida razonable, no un dato específico de la marca. */
+  function retencion(edad){
+    return 0.36 + 0.64 * Math.pow(0.90, Math.max(0, edad));
+  }
+  function valorEstimado(seg, anio){
+    var nuevo = SEGMENTOS[seg]; if(!nuevo) return null;
+    var edad = Math.max(0, new Date().getFullYear() - anio);
+    return Math.round(nuevo * retencion(edad) / 500000) * 500000;
+  }
+
+  var SOAT_BASE = 650000, RTM_BASE = 310000;
+  var MANTEN = { gasolina:1200000, diesel:1500000, hibrida:950000,
+                 gnv:1400000, electrica:450000 };
+  function tarifaImpuesto(valor, electrico){
+    if(electrico) return 0.01;                 /* Ley 1964 de 2019 */
+    if(valor <= 59000000) return 0.015;
+    if(valor <= 133000000) return 0.025;
+    return 0.035;
+  }
+  function costosAnuales(valor, electrico, mantenimiento, nuevo){
+    return {
+      seguro: valor * 0.033,
+      soat:   SOAT_BASE * (electrico ? 0.9 : 1),
+      rtm:    nuevo ? 0 : RTM_BASE,
+      imp:    valor * tarifaImpuesto(valor, electrico),
+      man:    mantenimiento
+    };
+  }
+
+  var $ = function(id){ return document.getElementById(id) };
+  var caja=$("q-tec"), marca=$("q-marca"), ref=$("q-ref"), trans=$("q-trans"), ciudad=$("q-ciudad");
+  var rend=$("q-rend"), kmEl=$("q-km"), precioEl=$("q-precio"), kwhEl=$("q-kwh"), corrEl=$("q-corriente");
+  var valorEl=$("q-valor"), nuestro=$("q-nuestro"), nversion=$("q-nversion"), anioEl=$("q-anio");
+  var tocadoValor = false;   /* ¿el visitante corrigió el valor estimado de su carro? */
+  var RUBROS = ["seg","soat","rtm","imp","man"];   /* orden de la tabla */
+  var CLAVE = { seg:"seguro", soat:"soat", rtm:"rtm", imp:"imp", man:"man" };
+  var suyoTocado = {};   /* qué rubros escribió el cliente: los suyos mandan */
+  var tec = "gasolina";
+  var tocado = false;   /* ¿el visitante corrigió el rendimiento? */
+
+  var pesos=function(n){ return "$"+Math.round(n).toLocaleString("es-CO") };
+  var mil=function(n){ return Math.round(n).toLocaleString("es-CO") };
+  var coma=function(n,d){ return n.toFixed(d==null?1:d).replace(".",",") };
+  function num(el,def){
+    var t=String(el.value).replace(/\./g,"").replace(",",".").replace(/[^0-9.]/g,"");
+    var v=parseFloat(t); return isFinite(v)&&v>0?v:def;
+  }
+  function texto(html){ var d=document.createElement("div"); d.innerHTML=html; return d.textContent }
+
+  /* llega elegido desde la ficha: simulador.html?v=vigo */
+  var pedido=(location.search.match(/[?&]v=(vigo|box|e70|mage|huge)/i)||[])[1];
+  if(pedido) nuestro.value = pedido.toLowerCase();
+
+  /* ── los botones de tecnología ─────────────────────────────────── */
+  ORDEN_TEC.forEach(function(k){
+    var b=document.createElement("button");
+    b.type="button"; b.dataset.tec=k; b.innerHTML=TEC[k].nom;
+    b.setAttribute("aria-pressed", k===tec ? "true" : "false");
+    b.addEventListener("click", function(){
+      if(tec===k) return;
+      tec=k; tocado=false;
+      Array.prototype.forEach.call(caja.children, function(x){
+        x.setAttribute("aria-pressed", x.dataset.tec===tec ? "true":"false");
+      });
+      precioEl.value = mil(TEC[tec].precio);
+      refrescarMarcas();
+    });
+    caja.appendChild(b);
+  });
+
+  CIUDADES.forEach(function(c,i){
+    ciudad.insertAdjacentHTML("beforeend","<option value='"+i+"'>"+c[0]+"</option>");
+  });
+
+  /* años del carro del cliente: del más nuevo al más viejo, con un
+     default de 4 años -la edad típica de un carro que se está pensando
+     cambiar, ni nuevo ni castigado- */
+  var ANIO_HOY = new Date().getFullYear();
+  for(var yy=ANIO_HOY; yy>=ANIO_HOY-20; yy--){
+    anioEl.insertAdjacentHTML("beforeend","<option value='"+yy+"'>"+yy+"</option>");
+  }
+  anioEl.value = ANIO_HOY-4;
+
+  /* ── qué marcas y referencias existen en esta tecnología ───────── */
+  function tieneTec(m){
+    var k = TEC[tec].clave;
+    return CARROS[m].some(function(r){ return r[k] != null });
+  }
+  function refsDe(m){
+    var k = TEC[tec].clave;
+    return (CARROS[m]||[]).filter(function(r){ return r[k] != null });
+  }
+  var primerCarga = true;
+  function refrescarMarcas(){
+    var previa = marca.value;
+    marca.innerHTML = "";
+    Object.keys(CARROS).filter(tieneTec).forEach(function(m){
+      marca.insertAdjacentHTML("beforeend","<option value=\""+m+"\">"+m+"</option>");
+    });
+    marca.insertAdjacentHTML("beforeend","<option value=\"otra\">"+OTRA+"</option>");
+    if(previa && [].some.call(marca.options,function(o){ return o.value===previa })){
+      /* si la marca elegida también existe en la nueva tecnología, se
+         respeta: cambiar de gasolina a híbrido no debe mover el Toyota */
+      marca.value = previa;
+    }else if(primerCarga){
+      /* la primera carga no puede abrir en BYD solo porque es la primera
+         en el alfabeto: Renault es la marca líder del país -150.473
+         livianos matriculados 2022-2026 en el RUNT- y la Duster su
+         referencia más vendida */
+      marca.value = "Renault";
+    }
+    refrescarRefs();
+    primerCarga = false;
+  }
+  function refrescarRefs(){
+    var otra = marca.value === "otra";
+    $("w-ref").hidden = otra;
+    $("w-trans").hidden = otra || tec === "electrica";
+    if(!otra){
+      var previa = ref.selectedOptions[0] && ref.selectedOptions[0].textContent;
+      ref.innerHTML = "";
+      refsDe(marca.value).forEach(function(r,i){
+        ref.insertAdjacentHTML("beforeend","<option value='"+i+"'>"+r.n+"</option>");
+      });
+      if(previa) [].forEach.call(ref.options,function(o){ if(o.textContent===previa) ref.value=o.value });
+      /* dentro de Renault, la referencia con la que abre no es la
+         primera alfabética (Arkana): es la Duster, su línea líder */
+      else if(marca.value === "Renault") [].forEach.call(ref.options,function(o){ if(o.textContent==="Duster") ref.value=o.value });
+    }
+    tocado = false;
+    refrescarValorEstimado();
+    calc();
+  }
+
+  /* ── el valor del carro del cliente: un punto de partida, no una
+     tasación ──────────────────────────────────────────────────────
+     Se recalcula solo mientras el cliente no haya escrito el suyo -el
+     mismo patrón de "estimado, corrígelo" que ya usa el rendimiento-.
+     Sin marca (o "otra"), no hay segmento del que partir: se deja el
+     campo tal como está, en manos del cliente. */
+  function refrescarValorEstimado(){
+    var p = $("p-valor");
+    if(tocadoValor) return;
+    if(marca.value === "otra"){
+      p.innerHTML = "No tenemos un punto de partida para esta marca: escribe t&uacute; el valor aproximado.";
+      return;
+    }
+    var r = refsDe(marca.value)[+ref.value||0];
+    var v = r && valorEstimado(r.seg, +anioEl.value||ANIO_HOY);
+    if(v == null) return;
+    valorEl.value = mil(v);
+    p.innerHTML = "Estimaci&oacute;n gruesa por el segmento y el a&ntilde;o de tu carro. Si conoces el avalu&oacute; real, corr&iacute;gelo.";
+  }
+
+  /* ── la versión del Dongfeng elegido ───────────────────────────────
+     Comparar siempre contra el precio "desde" no es un comparativo
+     justo si el cliente en realidad quiere la versión con más
+     autonomía: cada versión tiene su propio precio y su propio consumo
+     real, y las dos viven en la ficha oficial. */
+  function refrescarVersiones(){
+    var v = LINEA[nuestro.value] || LINEA.vigo;
+    nversion.innerHTML = "";
+    v.versiones.forEach(function(ver,i){
+      nversion.insertAdjacentHTML("beforeend","<option value='"+i+"'>"+ver.n+" &middot; "+pesos(ver.precio)+"</option>");
+    });
+    /* la Mage hoy solo tiene una versión: elegir entre una sola opción
+       no es una decisión, así que el selector no aporta y se oculta */
+    $("w-nversion").hidden = v.versiones.length <= 1;
+  }
+  function verActual(){
+    var v = LINEA[nuestro.value] || LINEA.vigo;
+    return v.versiones[+nversion.value] || v.versiones[0];
+  }
+
+  /* Por qué el rendimiento real es menor que el de la ficha: se nombran
+     solo los factores que existen en ESA ciudad. Decirle a alguien de
+     Barranquilla que "la altura cobra lo suyo" a 18 msnm es falso, y una
+     sola frase falsa desarma todo el resto del cálculo. */
+  function razonCiudad(c){
+    var l = [];
+    if(c[1] >= 1200) l.push("la altura");
+    if(c[2] > 1.08) l.push("la monta&ntilde;a");
+    else if(c[2] > 1) l.push("las lomas");
+    if(c[1] < 600) l.push("el aire acondicionado todo el a&ntilde;o");
+    if(!l.length) return "el tr&aacute;fico y el pare y arranque cobran lo suyo";
+    var ult = l.pop();
+    return (l.length ? l.join(", ") + " y " + ult : ult) + " cobra" + (l.length?"n":"") + " lo suyo";
+  }
+
+  /* ── el rendimiento: se estima, se puede corregir ──────────────── */
+  function factores(c){
+    var calor = c[1] < 600 ? 1.04 : 1;
+    var gas = (1 + c[1]/1000*0.02) * c[2] * calor;
+    return { gas:gas, hib: 1 + (gas-1)*0.45,
+             ele: (1 + (c[2]-1)/3) * (c[1] < 600 ? 1.05 : 1) };
+  }
+  /* consumo por 100 km ya ajustado a la ciudad, en la unidad de cobro */
+  function consumoFicha(c){
+    var t = TEC[tec], f = factores(c)[t.ajuste];
+    var otra = marca.value === "otra";
+    if(otra) return null;
+    var r = refsDe(marca.value)[+ref.value||0];
+    if(!r) return null;
+    var base = r[t.clave];
+    if(t.kwh) return base * f;                                   /* kWh/100 km */
+    var l100 = base * (t.ajuste==="ele" ? 1 : parseFloat(trans.value)) * f;
+    if(t.gnv) return l100 * 1.05;                                /* m³/100 km  */
+    return l100;                                                 /* L/100 km   */
+  }
+  /* lo que se escribe en el campo, en la unidad que el dueño conoce */
+  function aCampo(c100){
+    var t = TEC[tec];
+    if(t.kwh) return coma(c100,1);              /* kWh cada 100 km */
+    if(t.gnv) return coma(100/c100,1);          /* km por m³       */
+    return String(Math.round(GAL/c100*100));    /* km por galón    */
+  }
+  function deCampo(v){
+    var t = TEC[tec];
+    if(t.kwh) return v;                         /* ya viene por 100 km */
+    if(t.gnv) return 100/v;
+    return GAL/v*100;
+  }
+
+  function pintarUnidades(){
+    var t = TEC[tec];
+    $("lb-rend").innerHTML = "Rendimiento" + (tocado ? "" : " estimado") + " (" + t.rend + ")";
+    $("lb-precio").innerHTML = t.campo;
+    /* Cada campo de precio aparece solo cuando cambia el resultado:
+         · el kWh de arriba es el del vehículo NUESTRO, si es eléctrico
+         · si los dos andan con electricidad, sobra uno de los dos y se
+           conserva el de arriba
+         · el galón de corriente aparece solo si entra la Mage y el carro
+           del cliente no tanquea corriente: son dos precios distintos */
+    var v = LINEA[nuestro.value] || LINEA.vigo;
+    var nuestroEle = v.ele;
+    $("w-kwh").hidden = !nuestroEle;
+    $("w-precio").hidden = (t.kwh && nuestroEle);
+    $("w-corriente").hidden = !(!v.ele && !(tec==="gasolina" || tec==="hibrida"));
+  }
+
+  function calc(){
+    var c = CIUDADES[+ciudad.value||0], t = TEC[tec];
+    var km = num(kmEl,1200);
+    pintarUnidades();
+
+    /* precio de la unidad del cliente: si su tecnología es eléctrica y
+       el campo de precio está oculto, el precio vive en el del kWh */
+    var precioSuyo = (t.kwh && $("w-precio").hidden) ? num(kwhEl,950) : num(precioEl,t.precio);
+
+    /* consumo del carro del cliente */
+    var ficha = consumoFicha(c), c100, nombreMio, notaMio;
+    if(ficha != null && !tocado) rend.value = aCampo(ficha);
+    var dado = num(rend, NaN);
+    /* Con "otra marca" y el campo vacío no hay de dónde sacar un
+       rendimiento: antes esto reescribía rend.value con un relleno, y
+       esa reescritura le ganaba la carrera al usuario que apenas estaba
+       borrando para escribir el suyo -el campo "no dejaba borrar" porque
+       se autocompletaba en cada tecla-. El respaldo de 8 ahora vive SOLO
+       en la cuenta interna; el campo se queda exactamente como el
+       cliente lo dejó, vacío incluido. */
+    if(tocado && isFinite(dado)) c100 = deCampo(dado);
+    else if(ficha != null) c100 = ficha;
+    else if(isFinite(dado)) c100 = deCampo(dado);
+    else c100 = 8;
+
+    var mio = km * c100/100 * (t.kwh || t.gnv ? precioSuyo : precioSuyo/GAL);
+
+    if(marca.value !== "otra"){
+      var r = refsDe(marca.value)[+ref.value||0];
+      nombreMio = texto(marca.value) + " " + (r ? r.n : "");
+    } else nombreMio = "Tu carro hoy";
+
+    /* Cuatro estados reales, no tres: importa si HAY una estimación de
+       ficha (ficha!=null) y, por separado, si el campo tiene ahora mismo
+       un número válido (isFinite(dado)) -tocado por sí solo no basta,
+       porque "tocado" queda en true incluso con el campo vacío, y decir
+       "calculado con tu dato: " seguido de nada es peor que decir la
+       verdad: que falta el dato-. */
+    if(ficha != null){
+      if(tocado && isFinite(dado)){
+        notaMio = "Calculado con <b>tu</b> dato: " + rend.value + " " + texto(t.rend) +
+          ". No le aplicamos ning&uacute;n ajuste, t&uacute; conoces tu carro.";
+        $("p-rend").innerHTML = "Usando tu dato. <button type='button' id='b-volver'>Volver a la estimaci&oacute;n</button>";
+      }else if(tocado){
+        notaMio = "Escribe cu&aacute;nto rinde tu carro, o vuelve a nuestra estimaci&oacute;n.";
+        $("p-rend").innerHTML = "Campo vac&iacute;o. <button type='button' id='b-volver'>Volver a la estimaci&oacute;n</button>";
+      }else{
+        var comoRinde = t.kwh
+          ? "gasta unos <b>"+coma(ficha,1)+" kWh cada 100 km</b>"
+          : (t.gnv ? "rinde unos <b>"+coma(100/ficha,1)+" km por m&sup3;</b>"
+                   : "rinde unos <b>"+Math.round(GAL/ficha*100)+" km por gal&oacute;n</b>");
+        notaMio = "Un <b>"+nombreMio+"</b> " + texto(t.nom).toLowerCase() +
+          " en <b>"+c[0]+"</b> ("+mil(c[1])+" msnm) " + comoRinde + ". " +
+          (t.ajuste==="ele"
+            ? "La altura no le quita nada a un el&eacute;ctrico" +
+              (c[2]>1 ? "; lo que pesa son las lomas." : ", y en plano rinde parejo.")
+            : "La ficha dice m&aacute;s: " + razonCiudad(c) + ".");
+        $("p-rend").innerHTML = "Estimado con la ficha y tu ciudad. Si conoces el real, corr&iacute;gelo.";
+      }
+      var vb = $("b-volver");
+      if(vb) vb.onclick = function(){ tocado=false; calc() };
+    }else if(isFinite(dado)){
+      notaMio = "Con el rendimiento que nos das, sin ajustes nuestros.";
+      $("p-rend").innerHTML = "Tu marca no est&aacute; en la lista: este dato lo pones t&uacute;.";
+    }else{
+      /* el campo está vacío -no es un valor a medio escribir, es la
+         nada-: se lo decimos de frente en vez de fingir que ya tenemos
+         un dato con el que calculamos por debajo */
+      notaMio = "Escribe cu&aacute;nto rinde tu carro para calcular con tu dato real.";
+      $("p-rend").innerHTML = "Tu marca no est&aacute; en la lista: escribe el rendimiento aqu&iacute; arriba.";
+    }
+
+    /* el nuestro, ajustado a la MISMA ciudad: los dos suben las mismas lomas */
+    var v = LINEA[nuestro.value] || LINEA.vigo, f = factores(c);
+    var ver = verActual();
+    /* vv es v con la versión ya fundida: nombre completo (Vigo E2+) y el
+       precio de ESA versión donde antes iba el precio "desde". Se pasa
+       así a anual()/resumen() para no tocar nada de esas dos funciones. */
+    var vv = { nombre: v.nombre + " " + ver.n, art:v.art, lead:v.lead, url:v.url, ele:v.ele, valor:ver.precio };
+    var electrico = v.ele;
+    var suyo = electrico
+      ? km * ver.kwh100*f.ele/100 * num(kwhEl,950)
+      : km * ver.l100*f.hib/100/GAL * num($("w-corriente").hidden ? precioEl : corrEl, 16000);
+
+    var max = Math.max(mio, suyo, 1), dif = mio - suyo;
+    $("r-lectura").innerHTML = notaMio;
+    $("r-n0").innerHTML = nombreMio + " <small>" + texto(t.nom).toLowerCase() + "</small>";
+    $("r-n1").innerHTML = vv.nombre + " <small>" + ver.ficha + "</small>";
+    $("r-b0").textContent = pesos(mio);
+    $("r-b1").textContent = pesos(suyo);
+    $("r-f0").style.width = (mio/max*100) + "%";
+    $("r-f1").style.width = (suyo/max*100) + "%";
+
+    var mes = $("r-mes");
+    if(dif > 500){
+      $("r-titulo").innerHTML = "Te ahorrar&iacute;as al mes con " + vv.art + " " + vv.nombre;
+      mes.textContent = pesos(dif);
+      mes.style.color = "var(--acc)";
+      $("r-frase").innerHTML = "Son <b>" + pesos(dif*12) + " al a&ntilde;o</b> y <b>" +
+        pesos(dif*60) + " en cinco a&ntilde;os</b>, solo en energ&iacute;a. " +
+        (vv.art==="la"?"La ":"El ") + vv.nombre + " arranca en <b>" + pesos(ver.precio) +
+        "</b>. <a href='" + vv.url + "' style='color:var(--acc)'>Ver la ficha &rsaquo;</a>";
+    }else{
+      /* si su carro ya gasta menos, se dice de frente: es lo que
+         sostiene la credibilidad de todo lo demás */
+      $("r-titulo").innerHTML = "En energ&iacute;a, tu carro ya va bien";
+      mes.textContent = pesos(0);
+      mes.style.color = "var(--mut)";
+      $("r-frase").innerHTML = "Con esos n&uacute;meros " + vv.art + " " + vv.nombre +
+        " no te cambia el gasto de energ&iacute;a" +
+        (tec==="electrica" ? " &mdash; ya andas con electricidad" :
+         (tec==="gnv" ? " &mdash; el gas es barato y eso cuenta" : "")) +
+        ". La diferencia estar&iacute;a en otra parte: <b>garant&iacute;a de 8 a&ntilde;os</b> en la bater&iacute;a, " +
+        "mantenimiento m&aacute;s simple y un carro nuevo. " +
+        "<a href='" + vv.url + "' style='color:var(--acc)'>Ver la ficha &rsaquo;</a>";
+    }
+
+    /* el pie explica con qué se paga cada lado: es la parte que antes
+       estaba mal, cuando todo se cobraba como gasolina */
+    var unidadSuya = t.kwh ? pesos(precioSuyo)+" el kWh"
+                   : (t.gnv ? pesos(precioSuyo)+" el m&sup3;" : pesos(precioSuyo)+" el gal&oacute;n");
+    var unidadNuestra = electrico ? pesos(num(kwhEl,950))+" el kWh"
+                   : pesos(num($("w-corriente").hidden ? precioEl : corrEl,16000))+" el gal&oacute;n de corriente";
+    $("r-pie").innerHTML = (t.kwh && electrico)
+      ? "Los dos andan con electricidad a <b style='color:var(--paper)'>"+unidadSuya+
+        "</b>: aqu&iacute; la diferencia es solo el consumo. Cambia el precio si el tuyo es otro."
+      : "Tu carro paga <b style='color:var(--paper)'>"+unidadSuya+
+        "</b>; " + vv.art + " " + vv.nombre + ", <b style='color:var(--paper)'>"+unidadNuestra+
+        "</b>. Cambia cualquiera de los dos si en tu ciudad son otros.";
+
+    /* el calificador de abajo se lleva el vehículo elegido: el lead
+       llega con el interés ya declarado, no genérico -la versión no
+       importa aquí, el asesor califica por modelo- */
+    var host = document.getElementById("qz-host");
+    if(host) host.dataset.vehiculo = v.lead;
+
+    anual(mio, suyo, vv, nombreMio);
+  }
+
+  /* ── la segunda etapa: el año completo ─────────────────────────────
+     Recibe los dos gastos de energía MENSUALES ya calculados arriba y
+     los lleva al año, para que las dos etapas nunca se contradigan: un
+     solo motor de cálculo, dos lecturas. */
+  function anual(mioMes, suyoMes, v, nombreMio){
+    var valor = num(valorEl, 60000000);
+    var mioEle = tec === "electrica";
+    var estim = costosAnuales(valor, mioEle, MANTEN[tec], false);
+    var nues  = costosAnuales(v.valor, v.ele, v.ele ? 450000 : 950000, true);
+
+    $("a-cab").innerHTML = v.nombre + " <small>estimado</small>";
+
+    /* la columna del cliente: nuestra estimación como punto de partida,
+       su cifra en cuanto la escriba */
+    var totalMio = mioMes*12, totalNues = suyoMes*12;
+    $("a-e0").textContent = pesos(mioMes*12);
+    $("a-e1").textContent = pesos(suyoMes*12);
+    pintaDif("a-e2", mioMes*12 - suyoMes*12);
+
+    RUBROS.forEach(function(r){
+      var campo = $("a-"+r), k = CLAVE[r];
+      if(!suyoTocado[r]) campo.value = mil(estim[k]);
+      var mio = num(campo, estim[k]);
+      var nue = nues[k];
+      $("a-"+r+"1").textContent = pesos(nue) + (r==="rtm" && nue===0 ? "" : "");
+      pintaDif("a-"+r+"2", mio - nue);
+      totalMio += mio; totalNues += nue;
+    });
+    /* la técnico-mecánica en cero necesita explicación, no un $0 pelado */
+    if(nues.rtm === 0) $("a-rtm1").innerHTML = "$0 <small style='display:block;font-size:10px;font-weight:600;color:var(--mut2)'>no aplica a un carro nuevo</small>";
+
+    $("a-t0").textContent = pesos(totalMio);
+    $("a-t1").textContent = pesos(totalNues);
+    pintaDif("a-t2", totalMio - totalNues);
+
+    var dif = totalMio - totalNues;
+    $("a-cierre").innerHTML = dif > 0
+      ? "Tener " + v.art + " " + v.nombre + " te costar&iacute;a <b class='cifra'>" + pesos(dif) +
+        " menos al a&ntilde;o</b> que tu carro de hoy, sumando energ&iacute;a, seguro, impuesto, SOAT y taller. " +
+        "En cinco a&ntilde;os son <b class='cifra'>" + pesos(dif*5) + "</b>. " +
+        "Eso no es el precio del carro: es lo que deja de salir de tu bolsillo cada a&ntilde;o."
+      : "Con estas cifras, tener " + v.art + " " + v.nombre + " te costar&iacute;a <b>" + pesos(-dif) +
+        " m&aacute;s al a&ntilde;o</b> que tu carro actual. Te lo decimos igual: la raz&oacute;n para cambiarte " +
+        "no ser&iacute;a el costo de tenerlo, sino el carro en s&iacute; &mdash; garant&iacute;a, respaldo y estrenar.";
+
+    /* el consumo ya vive como una fila más de esta misma tabla: no se
+       recalcula, se separa. dif = consumoDif + gastosDif siempre. */
+    var capital = valor - v.valor;   /* > 0: tu carro vale más y sobra; < 0: falta cubrir */
+    resumen(mioMes*12 - suyoMes*12, dif - (mioMes*12 - suyoMes*12), capital, v);
+  }
+
+  /* ── el resumen: los dos comparativos, en el número que el cliente
+     decide sumar ──────────────────────────────────────────────────
+     No es un tercer cálculo: es una selección sobre los dos que ya
+     existen. "Consumo" es la fila de energía de la tabla anual;
+     "gastos" es todo lo demás de esa misma tabla. Sumados dan el mismo
+     total que ya mostraba el cierre de arriba -nunca se contradicen-
+     porque los dos leen del mismo par de números. */
+  var RS_ACTIVO = { consumo:true, gastos:true };
+  var RS_ULTIMO = { consumoDif:0, gastosDif:0, capital:0, v:null };
+  var UMBRAL = 500000;   /* diferencias de valor de carro por debajo de esto: "prácticamente igual" */
+  var ANIOS_PLAN = 5;    /* el horizonte de la barra deslizable */
+
+  /* Vender o entregar el carro de hoy y comprar el nuestro mueve capital
+     el mismo día del cambio, antes de que exista un solo mes de uso. Si
+     el carro del cliente vale más, ese sobrante es plata a favor desde
+     el arranque -el caso que trajo Daniel: una 4Runner de $138.000.000
+     contra una Vigo de $89.990.000 deja $48.010.000 a favor-. Si vale
+     menos, es una diferencia real que hay que cubrir, y se dice así:
+     nunca se disfraza de "ahorro" un hueco de plata. */
+  function pintarCapital(capital, v){
+    var tit = $("rs-cap-tit"), big = $("rs-cap"), frase = $("rs-cap-frase");
+    if(capital > UMBRAL){
+      tit.textContent = "Empiezas con dinero a favor";
+      big.textContent = pesos(capital); big.style.color = "var(--acc)";
+      frase.innerHTML = "Tu carro de hoy vale m&aacute;s que " + v.art + " " + v.nombre +
+        ". Si lo vendes o lo entregas en parte de pago, te sobran <b>" + pesos(capital) +
+        "</b> antes de contar un solo mes de ahorro en el uso.";
+    }else if(capital < -UMBRAL){
+      tit.textContent = "La diferencia que cubrir\u00edas";
+      big.textContent = pesos(-capital); big.style.color = "var(--mut)";
+      frase.innerHTML = (v.art==="la"?"La ":"El ") + v.nombre + " cuesta <b>" + pesos(-capital) +
+        "</b> m&aacute;s que el valor de tu carro hoy. No es plata perdida: es lo que el ahorro de abajo " +
+        "te empieza a devolver desde el primer a&ntilde;o.";
+    }else{
+      tit.textContent = "Tu carro vale casi lo mismo";
+      big.textContent = pesos(0); big.style.color = "var(--mut)";
+      frase.innerHTML = "El valor de tu carro hoy cubre " + (v.art==="la"?"la ":"el ") + v.nombre +
+        " casi por completo: cambiarte no te cuesta nada de bolsillo aparte del ahorro que sigue cada a&ntilde;o.";
+    }
+  }
+
+  /* Los tres momentos que de verdad se piensan al cambiar de carro.
+     Cada hito es un SALDO acumulado desde hoy, no un número suelto:
+     hoy = la diferencia de valor; en 1 año = eso más un año de ahorro;
+     en N años = eso más N -N lo elige el cliente con la barra deslizable
+     de abajo, Camilo pidió justo eso en vez de un plazo fijo-. El capital
+     nunca se multiplica: pasa una sola vez, el día del cambio. */
+  function pintarLinea(capital, total, etiqueta){
+    var n = ANIOS_PLAN;
+    $("rs-et5").textContent = "En " + n + (n===1 ? " año" : " años");
+    var hitos = [
+      { id:"0", valor: capital,
+        pie: Math.abs(capital) <= UMBRAL ? "los dos carros valen casi lo mismo"
+           : (capital > 0 ? "te sobra al vender el tuyo" : "la diferencia que pones") },
+      { id:"1", valor: capital + total,     pie:"m&aacute;s un a&ntilde;o de ahorro en " + etiqueta },
+      { id:"5", valor: capital + total*n,
+        pie:"m&aacute;s " + n + (n===1?" a&ntilde;o":" a&ntilde;os") + " de ahorro en " + etiqueta }
+    ];
+    hitos.forEach(function(h){
+      var b = $("rs-h" + h.id);
+      /* el signo se escribe con color y con palabra, nunca con un menos
+         suelto: en una cuenta de bolsillo "−$3.000.000" no dice si es
+         plata que entra o que sale */
+      if(h.valor > 500){
+        b.textContent = pesos(h.valor); b.style.color = "var(--acc)";
+      }else if(h.valor < -500){
+        b.textContent = "−" + pesos(-h.valor); b.style.color = "var(--mut)";
+      }else{
+        b.textContent = pesos(0); b.style.color = "var(--mut)";
+      }
+      $("rs-p" + h.id).innerHTML = h.pie;
+    });
+  }
+
+  /* ── la reventa: la respuesta directa al miedo de "cuánto pierdo" ───
+     Camilo lo dijo con las palabras exactas de un cliente: "pero en 4
+     años, ¿cuánto le pierdo?". No es lo mismo que la línea de arriba
+     -esa es saldo de caja acumulado desde hoy-. Esto es otra pregunta:
+     de lo que pagaste POR EL CARRO, cuánto recuperas entre el ahorro y
+     lo que el carro todavía valdría. Si esa suma supera el precio de
+     compra, se dice sin rodeos: no solo no se pierde, se gana. */
+  function pintarReventa(total, etiqueta, v){
+    var n = ANIOS_PLAN;
+    var ahorroN = total * n;
+    var retiene = retencion(n);
+    var valorFuturo = v.valor * retiene;
+    var recuperado = ahorroN + valorFuturo;
+    var neto = v.valor - recuperado;
+    var f = $("rs-reventa-frase");
+
+    if(total <= 500){
+      /* sin ahorro que sumar, hablar de "recuperar" sería engañoso:
+         solo se muestra la reventa sola, honesta */
+      f.innerHTML = "Con estas cifras el ahorro de uso no suma, as&iacute; que la cuenta es solo la reventa: " +
+        "en " + n + (n===1?" a&ntilde;o":" a&ntilde;os") + ", " + v.art + " " + v.nombre + " todav&iacute;a valdr&iacute;a " +
+        "aproximadamente <b>" + pesos(valorFuturo) + "</b> (retiene ~" + Math.round(retiene*100) + "% de su precio).";
+    }else if(neto <= 0){
+      f.innerHTML = "En " + n + (n===1?" a&ntilde;o":" a&ntilde;os") + ", entre lo que ahorras (<b>" + pesos(ahorroN) +
+        "</b>) y lo que " + v.art + " " + v.nombre + " todav&iacute;a valdr&iacute;a (<b>" + pesos(valorFuturo) +
+        "</b>, ~" + Math.round(retiene*100) + "% de su precio), recuperas <b>" + pesos(recuperado) +
+        "</b> &mdash; m&aacute;s de los <b>" + pesos(v.valor) + "</b> que pagaste. La depreciaci&oacute;n no deber&iacute;a preocuparte.";
+    }else{
+      f.innerHTML = "En " + n + (n===1?" a&ntilde;o":" a&ntilde;os") + ", " + v.art + " " + v.nombre +
+        " todav&iacute;a valdr&iacute;a aproximadamente <b>" + pesos(valorFuturo) + "</b> (~" + Math.round(retiene*100) +
+        "% de su precio). Sum&aacute;ndolo a lo que ahorras (<b>" + pesos(ahorroN) + "</b>), recuperas <b>" +
+        pesos(recuperado) + "</b> de los <b>" + pesos(v.valor) + "</b> que pagaste: tu costo real de tenerlo " +
+        (n===1?"ese 1 a&ntilde;o":"esos "+n+" a&ntilde;os") + " es de <b>" + pesos(neto) + "</b>.";
+    }
+  }
+
+  function resumen(consumoDif, gastosDif, capital, v){
+    RS_ULTIMO = { consumoDif:consumoDif, gastosDif:gastosDif, capital:capital, v:v };
+    pintarCapital(capital, v);
+
+    var total = (RS_ACTIVO.consumo ? consumoDif : 0) + (RS_ACTIVO.gastos ? gastosDif : 0);
+    var etiqueta = RS_ACTIVO.consumo && RS_ACTIVO.gastos ? "consumo, seguro, impuesto y taller"
+      : (RS_ACTIVO.consumo ? "consumo" : "seguro, impuesto y taller");
+    pintarReventa(total, etiqueta, v);
+
+    var big = $("rs-total"), frase = $("rs-frase"), cierre = $("rs-cierre"), cta = $("rs-cta");
+    var host = document.getElementById("qz-host");
+
+    if(total > 500){
+      big.textContent = pesos(total); big.style.color = "var(--acc)";
+      frase.innerHTML = "Eso es lo que dejar&iacute;as de pagar al a&ntilde;o en <b>" + etiqueta +
+        "</b> con " + v.art + " " + v.nombre + ", frente a tu carro de hoy. " +
+        "En cinco a&ntilde;os son <b>" + pesos(total*5) + "</b>.";
+    }else if(total < -500){
+      big.textContent = pesos(-total); big.style.color = "var(--mut)";
+      frase.innerHTML = "Con lo que elegiste sumar, " + v.art + " " + v.nombre + " sale <b>" + pesos(-total) +
+        " m&aacute;s cara</b> al a&ntilde;o que tu carro de hoy. Prueba sumando solo uno de los dos, o mira " +
+        "la raz&oacute;n en la tabla de arriba.";
+    }else{
+      big.textContent = pesos(0); big.style.color = "var(--mut)";
+      frase.innerHTML = "Con lo que elegiste sumar, el gasto queda pr&aacute;cticamente igual. La raz&oacute;n " +
+        "para cambiarte no ser&iacute;a el ahorro, sino el carro en s&iacute; mismo.";
+    }
+
+    /* ── la línea de tiempo ─────────────────────────────────────────
+       El capital se cuenta UNA vez -es un evento del día del cambio- y
+       el ahorro se cuenta cada año: por eso 5 años es capital + total*5
+       y no capital*5. Las tres cifras son acumuladas desde hoy, así que
+       se leen como un saldo, no como tres números sueltos. */
+    pintarLinea(capital, total, etiqueta);
+
+    /* El cierre ya no repite las cifras que la línea muestra arriba:
+       dice lo único que la línea no puede decir por sí sola -cuándo se
+       cruza a favor, o por qué no vale la pena mirar el ahorro-. */
+    var cincoAnios = capital + total*5;
+    if(Math.abs(capital) <= UMBRAL && Math.abs(total) <= 500){
+      cierre.innerHTML = "Con estas cifras, cambiarte no mueve la plata ni hoy ni despu&eacute;s: la raz&oacute;n " +
+        "ser&iacute;a el carro en s&iacute; mismo.";
+    }else if(capital < -UMBRAL && total > 500){
+      var meses = Math.ceil((-capital) / (total/12));
+      if(meses <= 60){
+        cierre.innerHTML = "La diferencia que pones hoy se devuelve sola en <b>" + meses + " meses</b>. " +
+          "De ah&iacute; en adelante todo es a favor: a los cinco a&ntilde;os llevas <b class='cifra'>" +
+          pesos(cincoAnios) + "</b>.";
+      }else if(meses <= 180){
+        cierre.innerHTML = "A este ritmo la diferencia se devuelve en <b>" + meses + " meses</b> " +
+          "(cerca de " + (Math.round(meses/12*10)/10).toString().replace(".",",") + " a&ntilde;os), " +
+          "as&iacute; que a cinco a&ntilde;os todav&iacute;a no queda a favor. Te lo decimos igual.";
+      }else{
+        /* pasado ese plazo prometer una recuperación deja de ser un argumento de
+           venta y empieza a ser una promesa vacía: se dice de frente */
+        cierre.innerHTML = "A este ritmo, recuperar esa diferencia tomar&iacute;a m&aacute;s de 15 a&ntilde;os: " +
+          "la raz&oacute;n para cambiarte no ser&iacute;a el ahorro, sino el carro en s&iacute; mismo.";
+      }
+    }else if(cincoAnios > 500){
+      cierre.innerHTML = "En cinco a&ntilde;os, cambiarte te deja <b class='cifra'>" + pesos(cincoAnios) +
+        "</b> sumando la diferencia de valor y el ahorro de cada a&ntilde;o. " +
+        "Eso no es el precio del carro: es plata que deja de salir de tu bolsillo.";
+    }else{
+      cierre.innerHTML = "En cinco a&ntilde;os la cuenta te cuesta <b>" + pesos(-cincoAnios) +
+        "</b>. Te lo decimos igual: la raz&oacute;n para cambiarte no ser&iacute;a el ahorro, " +
+        "sino el carro en s&iacute; mismo.";
+    }
+
+    cta.textContent = capital > UMBRAL
+      ? "Hablar con un asesor y asegurar " + pesos(capital + Math.max(total,0))
+      : (total > 500 ? "Hablar con un asesor y asegurar " + pesos(total) + " al a\u00f1o" : "Hablar con un asesor");
+
+    /* el mensaje de WhatsApp se lleva la misma combinación honesta:
+       nunca un número que no se sostenga cuando el asesor pregunte */
+    if(host){
+      if(capital > UMBRAL && total > 500) host.dataset.ahorro =
+        pesos(capital) + " a favor al cambiarme, m\u00e1s " + pesos(total) + " al a\u00f1o en " + etiqueta;
+      else if(capital > UMBRAL) host.dataset.ahorro = pesos(capital) + " a favor al cambiarme de carro";
+      else if(total > 500) host.dataset.ahorro = pesos(total) + " al a\u00f1o en " + etiqueta;
+      else delete host.dataset.ahorro;
+    }
+  }
+  (function(){
+    var caja = $("rs-tecs");
+    Array.prototype.forEach.call(caja.children, function(b){
+      b.addEventListener("click", function(){
+        var clave = b.dataset.rs;
+        /* no se puede apagar el último encendido: sumar "nada" no es
+           una opción válida, y un botón muerto confunde más que ayuda */
+        var otro = clave === "consumo" ? "gastos" : "consumo";
+        if(RS_ACTIVO[clave] && !RS_ACTIVO[otro]) return;
+        RS_ACTIVO[clave] = !RS_ACTIVO[clave];
+        b.setAttribute("aria-pressed", RS_ACTIVO[clave] ? "true" : "false");
+        if(RS_ULTIMO.v) resumen(RS_ULTIMO.consumoDif, RS_ULTIMO.gastosDif, RS_ULTIMO.capital, RS_ULTIMO.v);
+      });
+    });
+  })();
+  /* la barra deslizable: cambia el horizonte de la línea de tiempo y de
+     la reventa sin recalcular nada -reusa el último resultado, igual
+     que los botones de arriba; resumen() ya llama a pintarLinea() y a
+     pintarReventa() internamente- */
+  (function(){
+    var barra = $("rs-anios"), etiqueta = $("rs-anios-val");
+    barra.addEventListener("input", function(){
+      ANIOS_PLAN = +barra.value;
+      etiqueta.textContent = ANIOS_PLAN + (ANIOS_PLAN===1 ? " año" : " años");
+      if(RS_ULTIMO.v) resumen(RS_ULTIMO.consumoDif, RS_ULTIMO.gastosDif, RS_ULTIMO.capital, RS_ULTIMO.v);
+    });
+  })();
+  /* En una cuenta de gastos un signo menos es ambiguo: no se sabe si es
+     menos plata en el bolsillo o menos gasto. Se escribe con palabras. */
+  function pintaDif(id, d){
+    var e = $(id);
+    if(Math.abs(d) < 1000){ e.className = "r pierde"; e.textContent = "igual"; return }
+    e.className = "r " + (d > 0 ? "gana" : "pierde");
+    e.textContent = pesos(Math.abs(d)) + (d > 0 ? " menos" : " m\u00e1s");
+  }
+
+  marca.addEventListener("change", refrescarRefs);
+  [ref,trans,ciudad].forEach(function(el){ el.addEventListener("change", calc) });
+  [kmEl,precioEl,kwhEl,corrEl].forEach(function(el){ el.addEventListener("input", calc) });
+  RUBROS.forEach(function(r){
+    $("a-"+r).addEventListener("input", function(){ suyoTocado[r] = true; calc() });
+  });
+  rend.addEventListener("input", function(){ tocado = true; calc() });
+
+  /* el modelo Dongfeng trae sus propias versiones: hay que reconstruir
+     el selector ANTES de calcular, o calc() leería las versiones del
+     modelo anterior */
+  nuestro.addEventListener("change", function(){ refrescarVersiones(); calc() });
+  nversion.addEventListener("change", calc);
+
+  /* el año es la otra mitad del estimado de valor: cambia el estimado,
+     no el valor que el cliente ya haya escrito a mano */
+  anioEl.addEventListener("change", function(){ refrescarValorEstimado(); calc() });
+
+  /* el mismo patrón "estimado, corrígelo" que ya usa el rendimiento */
+  valorEl.addEventListener("input", function(){
+    tocadoValor = true;
+    $("p-valor").innerHTML = "Usando tu dato. <button type='button' id='b-volver-valor'>Volver a la estimaci&oacute;n</button>";
+    var vb = $("b-volver-valor");
+    if(vb) vb.onclick = function(){ tocadoValor = false; refrescarValorEstimado(); calc() };
+    calc();
+  });
+
+  refrescarVersiones();
+  refrescarMarcas();
+})();
+</script>
+<script>window.addEventListener('load',function(){setTimeout(function(){
+ function lum(c){var s=c.map(function(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});
+   return .2126*s[0]+.7152*s[1]+.0722*s[2];}
+ function ratio(a,b){var l1=lum(a),l2=lum(b);return ((Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05));}
+ // Solo colores rgb()/rgba() limpios. Un fondo con color-mix()/gradient no
+ // resuelve a esta forma en getComputedStyle -se queda como texto de función-
+ // y ANTES eso se parseaba como si fueran fracciones 0-1, dando un negro falso.
+ // Ahora si no calza el patrón exacto, se descarta el fondo (no se inventa).
+ function rgbLimpio(s){
+   var m = s.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/);
+   if (!m) return null;
+   return {c: [+m[1], +m[2], +m[3]], a: m[4]!==undefined ? +m[4] : 1};
+ }
+ function contieneA(cont, el){
+   var a = cont.getBoundingClientRect(), b = el.getBoundingClientRect();
+   return a.left <= b.left+1 && a.top <= b.top+1 && a.right >= b.right-1 && a.bottom >= b.bottom-1;
+ }
+ function fondoDe(el){
+   var n = el;
+   while (n) {
+     var bg = rgbLimpio(getComputedStyle(n).backgroundColor);
+     if (bg && bg.a > 0.55 && (n === el || contieneA(n, el))) return bg.c;
+     n = n.parentElement;
+   }
+   return null; // no se pudo determinar con certeza: no se acusa sin prueba
+ }
+ var malos = [], vistos = {}, total = 0, sinDato = 0;
+ document.querySelectorAll('p,span,div,b,td,th,li,h1,h2,h3,h4,small,em,a,button,label,figcaption,strong')
+   .forEach(function (el) {
+     if (el.closest('#adm-nav') || el.closest('.adm') || el.id==='adm-nav') return;
+     if (el.children.length && !Array.from(el.childNodes).some(function (n) { return n.nodeType === 3 && n.textContent.trim(); })) return;
+     var t = (el.textContent || '').trim();
+     if (!t || t.length > 90) return;
+     var cs = getComputedStyle(el);
+     if (cs.visibility === 'hidden' || cs.display === 'none' || parseFloat(cs.opacity) < 0.15) return;
+     var r = el.getBoundingClientRect();
+     if (r.width < 6 || r.height < 6) return;
+     var col = rgbLimpio(cs.color); if (!col) return;
+     var fondo = fondoDe(el);
+     if (!fondo) { sinDato++; return; }
+     total++;
+     var cr = ratio(col.c, fondo);
+     var px = parseFloat(cs.fontSize);
+     var grande = px >= 24 || (px >= 18.66 && parseInt(cs.fontWeight) >= 700);
+     var min = grande ? 3 : 4.5;
+     if (cr < min) {
+       var k = t.slice(0, 30);
+       if (vistos[k]) return; vistos[k] = 1;
+       malos.push(cr.toFixed(2) + ' (min ' + min + ')  ' + Math.round(px) + 'px  color:' + col.c.join(',') +
+         ' fondo:' + fondo.join(',') + '  "' + t.slice(0, 34) + '"');
+     }
+   });
+ document.title = '@@revisados:' + total + ' sin-dato:' + sinDato + '@@' + (malos.length ? malos.slice(0, 20).join('@@') : 'TODO PASA');
+}, 3200)});
+</script></body>
+</html>
