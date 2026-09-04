@@ -5,3 +5,6 @@ servidor/datos/
 
 # Credenciales de la puerta. El repositorio es PUBLICO: esto no se sube nunca.
 servidor/usuarios.json
+
+# Copias con fecha: son respaldos manuales, no versiones.
+*.pre-*-[0-9]*
