@@ -31,13 +31,13 @@ launchctl list | grep -i cloudflared
 <!-- SESION:BEGIN -->
 **Qué se hizo**
 
-Home: se sacaron las 5 escenas "de la calle" (fotogramas de video, sin emoción) y el hero se reconstruyó con 2 fotos de estudio en alta resolución, foto y texto siempre en planos separados. Vigo: hero pixelado corregido con fotogramas de mayor emoción. Hallazgo sobre el propio testing: el headless reportaba 500px de ancho aunque se pidieran 390 — las capturas "móviles" previas eran falsas; corregido con banco de iframe real, reverificado en 7 páginas × 4 anchos × 390px reales, sin solapamientos ni desbordes. Paralaje del hero (vigo/mage/huge/e70) derramaba la foto hasta 151px sobre la franja de cifras (solo 30-56px de aire) — eliminado, junto con código muerto en `efectos.js`. Contraste extendido a páginas de producto: `--mut` sin margen contra nav/chips/fichas/precios tachados en ambos temas, corregido; igual `--paper` en `simulador.html`. Inventario Camilo corregido: las 34 fotos del zip ya están en alta (4.000-6.200px); faltan 17 puntuales (artifact entregado). Push y verificación en vivo confirmadas (9dc4cfd→5e9a440).
+Video Vigo en móvil corregido: causa real era autoplay muteado bloqueado por ahorro de batería/datos; botón de play manual en las 4 páginas de producto. Hero decluttering estilo Dongfeng NZ, submenú pegajoso y 404 de `subnav.js` resueltos y confirmados en producción. Home: pixelado de galería resuelto de raíz — no era por fotos ampliadas, sino porque el pipeline topaba el ancho servido en 1.920 px por diseño; corrido completo desde originales de 6.000 px, `srcset`/`sizes` actualizados y verificados. Acceso a torq.bellapop.co resuelto (usuario Daniel, confirmado). Llegó carpeta nueva "Fotos Dongfeng HEV" (141 fotos, Mage/Huge ext./int., ~1,5 GB), compartida hoy por solanomolina@gmail.com — distinta de `DONGFENG EV`, sin revisar.
 
 **Pendiente**
 
-Re-muestreo de colores de campo tras el recorte de tarjetas (Box), sin confirmar empalme. Enviar a Camilo la lista de 17 fotos.
+Confirmación del usuario sobre si el hero cumple el estándar aspiracional (paisaje, montañas) de Kia/Tesla/BMW/Audi/Mercedes. Re-muestreo de colores tras recorte de tarjetas (Box), sin confirmar empalme. Enviar a Camilo la lista de 17 fotos faltantes. Guardar la contraseña de torq.bellapop.co, mostrada solo una vez. Revisar y clasificar las 141 fotos nuevas de "Fotos Dongfeng HEV".
 
 **Próximo paso**
 
-Cerrar el re-muestreo de colores de campo y verificar el empalme en las tarjetas recortadas.
+Confirmar con el usuario si el hero actualizado satisface el estándar aspiracional antes de seguir con el re-muestreo de colores.
 <!-- SESION:END -->

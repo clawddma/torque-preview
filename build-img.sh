@@ -40,9 +40,17 @@ reducir() {   # <origen> <ancho> <destino.png>
 }
 
 # El hero se sirve hasta 2560 porque ocupa el ancho completo en pantalla grande.
-# El resto no pasa de 1920: vive dentro de un marco que nunca es mas ancho.
+#
+# La galeria estuvo topada en 1920 con esta premisa: "vive dentro de un marco
+# que nunca es mas ancho". La premisa medida en CSS es cierta y aun asi el
+# resultado era pixelado, porque el marco no se mide en pixeles CSS sino en
+# pixeles fisicos: .gal .marco vive dentro de .wrap -max-width 1320- y en una
+# pantalla retina esos ~1280px CSS son 2560 FISICOS. Servir 1920 obligaba al
+# navegador a estirar 1,33x justo la foto que el visitante abrio para mirar
+# de cerca. Los originales de Corautos tienen 6.000px: el techo lo poniamos
+# nosotros, no la fuente.
 ANCHOS_HERO="640 1280 1920 2560"
-ANCHOS_GAL="640 1280 1920"
+ANCHOS_GAL="640 1280 1920 2560"
 
 # origen relativo a $SRC | destino img/<modelo>/<nombre> | hero?
 #

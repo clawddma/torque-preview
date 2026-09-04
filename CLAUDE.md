@@ -197,14 +197,14 @@ empaquetado `build_artifact.py`) viven fuera de este repo, en
 ---
 
 <!-- VIVO:BEGIN -->
-## Estado real — 2026-08-23 22:09
+## Estado real — 2026-09-03 00:30
 
 > Regenerado cada noche por `recursos/sistema-vivo/sistema_vivo.py` leyendo el
 > disco. **No editar a mano**: lo de afuera de las marcas sí es tuyo y se respeta.
 
-- **Git** · rama `main` · árbol limpio
-  - último commit: `4e5c09b 2026-08-23 Sincroniza trabajo local pendiente`
+- **Git** · rama `main` · **33 archivos sin commitear**
+  - último commit: `db9762a 2026-08-23 Estado vivo regenerado por sistema_vivo.py`
 - **Publicado en:** [torq.bellapop.co](https://torq.bellapop.co) (:8790) · [torque.bellapop.co](https://torque.bellapop.co) (:8790) · [torque.themesa.co](https://torque.themesa.co) (:8795) · [showroom.bellapop.co](https://showroom.bellapop.co) (:8795)
 - **Automatización** · ninguna: nada corre solo en este proyecto
-- **Código** · 430 archivos · último cambio 2026-08-23 en `torq.css`
+- **Código** · 456 archivos · último cambio 2026-08-31 en `huge.html`
 <!-- VIVO:END -->
